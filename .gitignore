@@ -42,3 +42,6 @@ build/Release
 # Typescript v1 declaration files
 typings/
 dist
+git.txt
+secrets/
+.idea/
