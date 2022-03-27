@@ -1,7 +1,7 @@
 build/**/*
 node_modules
 build
-
+.yarn
 .vscode
 
 # Logs
