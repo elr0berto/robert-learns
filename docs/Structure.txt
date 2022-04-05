@@ -1,0 +1,19 @@
+Users
+Groups (users)
+
+Workspaces
+Itempairs an item par is a couple of items, with a front and back.
+Items
+Media
+
+Who owns stuff? users or workspaces? If stuff belongs to a user, then other users that are admins for the same workspace cant see them. But if they are owned by the workspace, then a user will have difficult sharing the item between multiple workspaces?
+Both? Both users and workspaces? Media for example, is just media..
+ no ownership in the media table (but record created by user?!) and then there's connections between media and workspace and media and users..
+
+
+One item has text and/or graphics and/or audio
+One itempair has two items
+One homework has multiple itempairs
+One lesson has multiple homeworks
+One course has multiple lessons
+One school has multiple courses
