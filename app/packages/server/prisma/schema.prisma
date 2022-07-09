@@ -16,4 +16,72 @@ model User {
   firstName String
   lastName String
   password String
+  workspaces WorkspaceUser[]
+  cardSets CardSetUser[]
+}
+
+enum UserRole {
+  OWNER
+  CONTRIBUTOR
+  USER
+}
+
+model WorkspaceUser {
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
+  user    User     @relation(fields: [userId], references: [id])
+  userId  Int
+  role    UserRole
+
+  @@id([workspaceId, userId])
+}
+
+model Workspace {
+  id      Int      @id @default(autoincrement())
+  name    String
+  users   WorkspaceUser[]
+}
+
+model Card {
+  id      Int      @id @default(autoincrement())
+  faces   CardFace[]
+}
+
+enum CardSide {
+  FRONT
+  BACK
+}
+
+model CardFace {
+  id      Int      @id @default(autoincrement())
+  content String
+  card    Card     @relation(fields: [cardId], references: [id])
+  cardId  Int
+  side    CardSide
+}
+
+model CardSetUser {
+  cardSet CardSet @relation(fields: [cardSetId], references: [id])
+  cardSetId Int
+  user    User     @relation(fields: [userId], references: [id])
+  userId  Int
+  role    UserRole
+
+  @@id([cardSetId, userId])
+}
+
+model CardSet {
+  id      Int      @id @default(autoincrement())
+  name    String
+  cards   CardSetCard[]
+  users   CardSetUser[]
+}
+
+model CardSetCard {
+  card Card @relation(fields: [cardId], references: [id])
+  cardId Int
+  cardSet CardSet @relation(fields: [cardSetId], references: [id])
+  cardSetId Int
+
+  @@id([cardId, cardSetId])
 }
