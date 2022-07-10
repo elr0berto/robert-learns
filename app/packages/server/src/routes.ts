@@ -12,6 +12,7 @@ routes.get('/api', async (_, res) => {
         data: {
             firstName: 'Alice',
             lastName: 'Wonder',
+            username: 'xxx',
             password: 'abc123',
             email: 'aliddce@prisma.io',
         },

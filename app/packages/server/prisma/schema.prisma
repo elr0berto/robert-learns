@@ -13,6 +13,7 @@ datasource db {
 model User {
   id      Int      @id @default(autoincrement())
   email   String   @unique
+  username String  @unique
   firstName String
   lastName String
   password String
@@ -40,11 +41,13 @@ model Workspace {
   id      Int      @id @default(autoincrement())
   name    String
   users   WorkspaceUser[]
+  cardSets CardSet[]
 }
 
 model Card {
   id      Int      @id @default(autoincrement())
   faces   CardFace[]
+  sets    CardSetCard[]
 }
 
 enum CardSide {
@@ -75,6 +78,8 @@ model CardSet {
   name    String
   cards   CardSetCard[]
   users   CardSetUser[]
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
 }
 
 model CardSetCard {
