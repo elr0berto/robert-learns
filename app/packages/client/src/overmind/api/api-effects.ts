@@ -1,0 +1,1 @@
+export * from 'dtv-shared/src/api/my-pages';
