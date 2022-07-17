@@ -119,16 +119,7 @@ class IPageUrl<TP extends IParams> {
 
 const pageUrls = {
     front: new IPageUrl('/'),
-    bookings: new IPageUrl('/hantera-bokningar', {child_id: new OptionalNumberParam()}),
-    children: new IPageUrl('/mina-barn'),
-    settings: new IPageUrl('/inställningar'),
-    myClinics: new IPageUrl('/min-klinik', {child_id: new OptionalNumberParam()}),
-    referral: new IPageUrl('/bjud-in-en-kompis'),
-    inbox: new IPageUrl('/inbox', {child_id: new OptionalNumberParam()}),
-    personalOffers: new IPageUrl('/personliga-erbjudanden'),
-    journal: new IPageUrl('/tidigare-besök', {child_id: new OptionalNumberParam()}),
-    atb: new IPageUrl('/mitt-tandvårdsbidrag'),
-    health: new IPageUrl('/hälsodeklaration'),
+    register: new IPageUrl('/register')
 };
 
 export { pageUrls }

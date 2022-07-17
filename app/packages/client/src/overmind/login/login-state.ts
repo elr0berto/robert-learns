@@ -3,9 +3,11 @@ import User from "@elr0berto/robert-learns-shared/src/models/User";
 
 export const UnexpectedLogoutError = "UNEXPECTED_LOGOUT_ERROR";
 
-export enum LoginPageStatus {
-    Default = "Default",
+export enum LoginStatus {
+    initial = "Initial",
     Checking = "Checking",
+    LoggedIn = "LoggedIn",
+    LoggedOut = "LoggedOut",
     LoggingIn = "LoggingIn",
     LoggingOut = "LoggingOut",
     LoggedOutDueToInactivity = "LoggedOutDueToInactivity",
@@ -17,14 +19,14 @@ type LoginFormState = {
     password: string;
 }
 type LoginState = {
-    status: LoginPageStatus,
+    status: LoginStatus,
     user: User | null;
     loginForm: LoginFormState;
     readonly loggedIn: boolean;
 }
 
 export const getInitialLoginState = (): LoginState => ({
-    status: LoginPageStatus.Default,
+    status: LoginStatus.Initial,
     user: null,
     loginForm: {
         username: '',

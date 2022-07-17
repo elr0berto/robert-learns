@@ -1,4 +1,18 @@
 -- CreateTable
+CREATE TABLE `User` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(191) NOT NULL,
+    `username` VARCHAR(191) NOT NULL,
+    `firstName` VARCHAR(191) NOT NULL,
+    `lastName` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+
+    UNIQUE INDEX `User_email_key`(`email`),
+    UNIQUE INDEX `User_username_key`(`username`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `WorkspaceUser` (
     `workspaceId` INTEGER NOT NULL,
     `userId` INTEGER NOT NULL,
@@ -45,6 +59,7 @@ CREATE TABLE `CardSetUser` (
 CREATE TABLE `CardSet` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NOT NULL,
+    `workspaceId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -71,6 +86,9 @@ ALTER TABLE `CardSetUser` ADD CONSTRAINT `CardSetUser_userId_fkey` FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE `CardSetUser` ADD CONSTRAINT `CardSetUser_cardSetId_fkey` FOREIGN KEY (`cardSetId`) REFERENCES `CardSet`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `CardSet` ADD CONSTRAINT `CardSet_workspaceId_fkey` FOREIGN KEY (`workspaceId`) REFERENCES `Workspace`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `CardSetCard` ADD CONSTRAINT `CardSetCard_cardId_fkey` FOREIGN KEY (`cardId`) REFERENCES `Card`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
