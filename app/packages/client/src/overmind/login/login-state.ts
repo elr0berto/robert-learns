@@ -1,16 +1,14 @@
 import {derived} from 'overmind'
-import User from "@elr0berto/robert-learns-shared/src/models/User";
+import User from "@elr0berto/robert-learns-shared/src/api/models/User";
 
 export const UnexpectedLogoutError = "UNEXPECTED_LOGOUT_ERROR";
 
 export enum LoginStatus {
-    initial = "Initial",
     Checking = "Checking",
-    LoggedIn = "LoggedIn",
-    LoggedOut = "LoggedOut",
     LoggingIn = "LoggingIn",
     LoggingOut = "LoggingOut",
     LoggedOutDueToInactivity = "LoggedOutDueToInactivity",
+    Idle = "Idle",
     Error = "Error",
 }
 
@@ -22,18 +20,18 @@ type LoginState = {
     status: LoginStatus,
     user: User | null;
     loginForm: LoginFormState;
-    readonly loggedIn: boolean;
+    readonly isGuest: boolean;
 }
 
 export const getInitialLoginState = (): LoginState => ({
-    status: LoginStatus.Initial,
+    status: LoginStatus.Checking,
     user: null,
     loginForm: {
         username: '',
         password: '',
     },
-    loggedIn: derived((state: LoginState) => {
-        return state.user !== null;
+    isGuest: derived((state: LoginState) => {
+        return state.user?.isGuest ?? true;
     }),
 })
 export const state: LoginState = getInitialLoginState();

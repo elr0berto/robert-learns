@@ -10,6 +10,13 @@ export const showFrontPage = async ({ state, effects, actions }: Context) => {
     }
 }
 
+export const showLoginPage = async ({ state, effects, actions }: Context) => {
+    state.page.current = Pages.Login;
+
+    if (state.login.loggedIn) {
+        effects.page.router.redirect('/');
+    }
+}
 export const showRegisterPage = async ({ state, effects, actions }: Context) => {
     state.page.current = Pages.Register;
 

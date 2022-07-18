@@ -1,1 +1,1 @@
-export * from 'dtv-shared/src/api/my-pages';
+export * from '@elr0berto/robert-learns-shared/src/api';

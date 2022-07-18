@@ -15,7 +15,7 @@ export const config = merge(
     },
     namespaced({
         error,
-        log,
+        //log,
         page,
         api,
         login,

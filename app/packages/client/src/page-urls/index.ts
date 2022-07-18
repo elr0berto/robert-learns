@@ -119,7 +119,8 @@ class IPageUrl<TP extends IParams> {
 
 const pageUrls = {
     front: new IPageUrl('/'),
-    register: new IPageUrl('/register')
+    register: new IPageUrl('/register'),
+    login: new IPageUrl('/login'),
 };
 
 export { pageUrls }

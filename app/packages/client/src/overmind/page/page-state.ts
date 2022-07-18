@@ -1,5 +1,6 @@
 export enum Pages {
     Front = "Front",
+    Login = "Login",
     Register = "Register",
 }
 

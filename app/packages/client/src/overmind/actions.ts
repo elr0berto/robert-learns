@@ -1,14 +1,13 @@
 import {Context} from '.';
-import {Pages} from "./page/page-state";
 import {BaseResponse, Status} from "@elr0berto/robert-learns-shared/src/api/response";
 
 import {pageUrls} from '../page-urls';
-import {LoginStatus, UnexpectedLogoutError} from "./login/login-state";
+import {UnexpectedLogoutError} from "./login/login-state";
 
 
 export const onInitializeOvermind = async ({ actions, effects, state }: Context) => {
 
-    effects.api.myPagesApi.initialize(() => {
+    effects.api.apiClient.initialize(() => {
     }, (resp: BaseResponse) => {
         if (!resp.Success) {
             switch(resp.ResponseStatus) {
@@ -26,17 +25,8 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
     effects.page.router.initialize({
         [pageUrls.front.getRoute()]: actions.page.showFrontPage,
         [pageUrls.register.getRoute()]: actions.page.showRegisterPage,
+        [pageUrls.login.getRoute()]: actions.page.showLoginPage,
     });
 
-    state.login.status = LoginStatus.checking;
-    var result = await effects.api.login.check();
-
-    if (result.LoggedIn) {
-        state.login.status = LoginStatus.LoggedIn;
-        state.login.user = result.User;
-    }
-
-    if (!state.login.loggedIn && state.page.current !== Pages.Front) {
-        effects.page.router.redirect('/');
-    }
+    await actions.login.check();
 }

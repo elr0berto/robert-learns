@@ -17,6 +17,7 @@ model User {
   firstName String
   lastName String
   password String
+  isGuest Boolean
   workspaces WorkspaceUser[]
   cardSets CardSetUser[]
 }
