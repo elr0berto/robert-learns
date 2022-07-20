@@ -26,6 +26,14 @@ class ApiClient {
         this.onAfterRequest(response);
         return response;
     }
+
+    async get<ResponseType extends BaseResponse>(cls: ClassConstructor<ResponseType>, url: string, data?: any, config?: AxiosRequestConfig | undefined) : Promise<ResponseType> {
+        this.onBeforeRequest();
+        const result = await this.axiosInstance.get<ResponseType>(url, config);
+        const response = plainToInstance(cls, result.data);
+        this.onAfterRequest(response);
+        return response;
+    }
 }
 
 export const apiClient = new ApiClient();

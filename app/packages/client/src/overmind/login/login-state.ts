@@ -1,5 +1,5 @@
 import {derived} from 'overmind'
-import User from "@elr0berto/robert-learns-shared/src/api/models/User";
+import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
 
 export const UnexpectedLogoutError = "UNEXPECTED_LOGOUT_ERROR";
 

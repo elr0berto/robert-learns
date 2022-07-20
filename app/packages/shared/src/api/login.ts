@@ -1,13 +1,18 @@
 import {apiClient} from './ApiClient';
 import {BaseResponse} from "./response";
 import User from "./models/User";
-import {Type} from "class-transformer";
 
-class LoginCheckResponse extends BaseResponse {
-    User!: User;
-}
 
-export const LoginCheck = async () : Promise<LoginCheckResponse> => {
-    return await apiClient.post(LoginCheckResponse, '/login/check', {});
+export const LoginCheck = async () : Promise<BaseResponse> => {
+    return await apiClient.get(BaseResponse, '/login/check');
 };
 
+
+export const LoginSubmit = async(params: {username: string, password: string}) : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/login/submit', params);
+}
+
+
+export const Logout = async() : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/login/logout');
+}

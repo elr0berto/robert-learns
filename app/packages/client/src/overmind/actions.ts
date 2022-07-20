@@ -1,23 +1,23 @@
 import {Context} from '.';
-import {BaseResponse, Status} from "@elr0berto/robert-learns-shared/src/api/response";
 
 import {pageUrls} from '../page-urls';
 import {UnexpectedLogoutError} from "./login/login-state";
+import {BaseResponse, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/response";
 
 
 export const onInitializeOvermind = async ({ actions, effects, state }: Context) => {
 
     effects.api.apiClient.initialize(() => {
     }, (resp: BaseResponse) => {
-        if (!resp.Success) {
-            switch(resp.ResponseStatus) {
-                case Status.LoggedOut:
-                    actions.login.unexpectedlyLoggedOut();
+        if (resp.Status !== ResponseStatus.Success) {
+            switch(resp.Status) {
+                case ResponseStatus.LoggedOut:
+                    actions.login.unexpectedlyLoggedOut(resp.User!);
                     throw UnexpectedLogoutError;
-                case Status.UserError:
+                case ResponseStatus.UserError:
                     break;
                 default:
-                    throw new Error(resp.ResponseStatus + ": " + (resp.ErrorMessage ?? ""));
+                    throw new Error(resp.Status + ": " + (resp.ErrorMessage ?? ""));
             }
         }
     })

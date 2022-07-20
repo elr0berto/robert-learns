@@ -1,1 +1,1 @@
-export * from '@elr0berto/robert-learns-shared/src/api';
+export * from '@elr0berto/robert-learns-shared/dist/api';

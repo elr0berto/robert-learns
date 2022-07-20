@@ -1,16 +1,22 @@
 {
   "name": "robert-learns",
+  "description": "Mono-respository with React client, express server and shared typescript module",
   "version": "1.0.0",
   "main": "index.js",
+  "author": "Robert Andersson",
   "license": "MIT",
-  "packageManager": "yarn@3.2.0",
+  "private": true,
   "scripts": {
     "start": "yarn workspaces foreach -pi run start",
-    "build": "yarn workspaces foreach -pti run build"
+    "build": "yarn workspaces foreach -pti run build",
+    "start:server": "yarn workspace @elr0berto/robert-learns-server run start",
+    "start:client": "yarn workspace @elr0berto/robert-learns-client run start",
+    "start:shared": "yarn workspace @elr0berto/robert-learns-shared run start"
   },
   "workspaces": {
     "packages": [
       "packages/*"
     ]
-  }
+  },
+  "packageManager": "yarn@3.0.0"
 }

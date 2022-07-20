@@ -3,6 +3,9 @@ import {
     getInitialLoginState,
     LoginStatus,
 } from "./login-state";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/response";
+import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
+
 
 
 export const check = async ({ state, effects }: Context) => {
@@ -22,20 +25,30 @@ export const changeLoginFormPassword = ({ state }: Context, password: string) =>
 
 export const loginSubmit = async ({ state, actions, effects }: Context) => {
     state.login.status = LoginStatus.LoggingIn;
-    const results = await effects.api.login.Login(state.login.loginForm);
+    const results = await effects.api.login.LoginSubmit(state.login.loginForm);
+    if (results.Status === ResponseStatus.Success) {
+        state.login.status = LoginStatus.Error;
+    } else {
+        state.login.user = results.User;
+        state.login.status = LoginStatus.Idle;
+        effects.page.router.goTo('/');
+    }
 };
 
 
 export const logout = async ({ effects, state }: Context) => {
     state.login.status = LoginStatus.LoggingOut;
-    await effects.api.login.Logout()
+    const results = await effects.api.login.Logout();
     state.login = getInitialLoginState();
+    state.login.user = results.User;
+    state.login.status = LoginStatus.Idle;
     effects.page.router.goTo('/');
 }
 
-export const unexpectedlyLoggedOut = ({ effects, state }: Context) => {
+export const unexpectedlyLoggedOut = ({ effects, state }: Context, user : User) => {
     state.login = getInitialLoginState();
     state.login.status = LoginStatus.LoggedOutDueToInactivity;
+    state.login.user = user;
     effects.page.router.goTo('/');
 }
 

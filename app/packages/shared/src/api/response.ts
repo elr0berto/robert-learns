@@ -1,12 +1,13 @@
-export enum Status {
+import User from "./models/User";
+
+export enum ResponseStatus {
     Success = "Success",
     LoggedOut = "LoggedOut",
     UserError = "UserError",
     UnexpectedError = "UnexpectedError",
 }
 export class BaseResponse {
-    Success!: boolean;
     ErrorMessage!: string | null;
-
-    ResponseStatus!: Status;
+    Status!: ResponseStatus;
+    User!: User | null; // only set when user was logged out etc.
 }
