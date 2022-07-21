@@ -1,6 +1,7 @@
 import express from 'express';
 
 import routes from './routes';
+import session from './session';
 
 class Server {
     public express;
@@ -10,6 +11,7 @@ class Server {
 
         this.middlewares();
         this.routes();
+        this.session();
     }
 
     middlewares() {
@@ -18,6 +20,9 @@ class Server {
 
     routes() {
         this.express.use(routes);
+    }
+    session() {
+        this.express.use(session)
     }
 }
 
