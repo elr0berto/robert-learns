@@ -1646,6 +1646,7 @@ __metadata:
     "@types/express": ^4.17.13
     "@types/express-session": ^1.17.5
     "@types/node": ^17.0.23
+    class-transformer: ^0.5.1
     express: ^4.17.3
     express-session: ^1.17.3
     mysql2: ^2.3.3

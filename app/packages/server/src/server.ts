@@ -11,18 +11,15 @@ class Server {
 
         this.middlewares();
         this.routes();
-        this.session();
     }
 
     middlewares() {
+        this.express.use(session)
         this.express.use(express.json());
     }
 
     routes() {
         this.express.use(routes);
-    }
-    session() {
-        this.express.use(session)
     }
 }
 
