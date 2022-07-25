@@ -3,8 +3,8 @@ import {
     getInitialLoginState,
     LoginStatus,
 } from "./login-state";
-import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/response";
-import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models/BaseResponse";
+import User from "@elr0berto/robert-learns-shared/api/models/User";
 
 
 
@@ -12,7 +12,9 @@ export const check = async ({ state, effects }: Context) => {
     state.login.status = LoginStatus.Checking;
     var result = await effects.api.login.LoginCheck();
     state.login.status = LoginStatus.Idle;
-    state.login.user = result.User;
+    state.login.user = result.user;
+    console.log('login check user: ', result.user);
+    console.log('login check user.anme: ', result.user.name());
 }
 
 export const changeLoginFormUsername = ({ state }: Context, username: string) => {

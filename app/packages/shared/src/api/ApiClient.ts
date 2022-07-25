@@ -1,5 +1,5 @@
 import {AxiosInstance, AxiosRequestConfig, default as axios} from "axios";
-import {BaseResponse} from "./response";
+import {BaseResponse} from "./models/BaseResponse";
 import {ClassConstructor, plainToInstance} from "class-transformer";
 
 class ApiClient {

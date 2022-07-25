@@ -1,7 +1,5 @@
 import {apiClient} from './ApiClient';
-import {BaseResponse} from "./response";
-import User from "./models/User";
-
+import {BaseResponse} from "./models/BaseResponse";
 
 export const LoginCheck = async () : Promise<BaseResponse> => {
     return await apiClient.get(BaseResponse, '/login/check');

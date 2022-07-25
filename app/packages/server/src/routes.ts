@@ -1,9 +1,6 @@
-import { Router } from 'express';
-import { PrismaClient } from '@prisma/client';
+import {Router} from 'express';
 import prisma from "./db/prisma";
-import {plainToClass} from "class-transformer";
-import {BaseResponse} from "@elr0berto/robert-learns-shared/dist/api/response";
-import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
+import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
 //import {RobertLearnsTest} from "@elr0berto/robert-learns-shared/src/test";
 
 const routes = Router();
@@ -56,11 +53,30 @@ routes.get('/api/login/check', async (req, res) => {
         }
     });
 
-    const resp = new BaseResponse();
-    resp.User = new User();
-    return res.json(plainToClass(BaseResponse, {
+    let resp : BaseResponseData;
+    if (user === null) {
+        resp = {
+            status: ResponseStatus.UserError,
+            errorMessage: "Login/password is wrong",
+            user: null,
+        };
+        return res.json(resp);
+    }
 
-    }));
+    resp = {
+        status: ResponseStatus.Success,
+        errorMessage: null,
+        user: {
+            id: user.id,
+            email: user.email,
+            firstName : user.firstName,
+            lastName:user.lastName,
+            username: user.username,
+            isGuest : user.isGuest
+        },
+    };
+
+    return res.json(resp);
 });
 
 export default routes;
