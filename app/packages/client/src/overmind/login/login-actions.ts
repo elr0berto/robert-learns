@@ -3,8 +3,8 @@ import {
     getInitialLoginState,
     LoginStatus,
 } from "./login-state";
-import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models/BaseResponse";
-import User from "@elr0berto/robert-learns-shared/api/models/User";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
+import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
 
 
 
@@ -14,7 +14,7 @@ export const check = async ({ state, effects }: Context) => {
     state.login.status = LoginStatus.Idle;
     state.login.user = result.user;
     console.log('login check user: ', result.user);
-    console.log('login check user.anme: ', result.user.name());
+    console.log('login check user.name: ', result.user?.name() ?? 'user null');
 }
 
 export const changeLoginFormUsername = ({ state }: Context, username: string) => {
@@ -28,10 +28,10 @@ export const changeLoginFormPassword = ({ state }: Context, password: string) =>
 export const loginSubmit = async ({ state, actions, effects }: Context) => {
     state.login.status = LoginStatus.LoggingIn;
     const results = await effects.api.login.LoginSubmit(state.login.loginForm);
-    if (results.Status === ResponseStatus.Success) {
+    if (results.status === ResponseStatus.Success) {
         state.login.status = LoginStatus.Error;
     } else {
-        state.login.user = results.User;
+        state.login.user = results.user;
         state.login.status = LoginStatus.Idle;
         effects.page.router.goTo('/');
     }
@@ -42,7 +42,7 @@ export const logout = async ({ effects, state }: Context) => {
     state.login.status = LoginStatus.LoggingOut;
     const results = await effects.api.login.Logout();
     state.login = getInitialLoginState();
-    state.login.user = results.User;
+    state.login.user = results.user;
     state.login.status = LoginStatus.Idle;
     effects.page.router.goTo('/');
 }

@@ -17,8 +17,7 @@ export type BaseResponseData = {
 export class BaseResponse {
     errorMessage: string | null;
     status: ResponseStatus;
-    @Type(() => User)
-    user: UserData | null; // only set when user was logged out etc.
+    user: User | null; // only set when user was logged out etc.
 
     constructor(data: BaseResponseData) {
         this.errorMessage = data.errorMessage;

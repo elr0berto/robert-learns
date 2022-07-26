@@ -1,5 +1,5 @@
 import {AxiosInstance, AxiosRequestConfig, default as axios} from "axios";
-import {BaseResponse} from "./models/BaseResponse";
+import {BaseResponse, BaseResponseData} from "./models/BaseResponse";
 import {ClassConstructor, plainToInstance} from "class-transformer";
 
 class ApiClient {
@@ -27,10 +27,23 @@ class ApiClient {
         return response;
     }
 
-    async get<ResponseType extends BaseResponse>(cls: ClassConstructor<ResponseType>, url: string, data?: any, config?: AxiosRequestConfig | undefined) : Promise<ResponseType> {
+    /*async get<ResponseType extends BaseResponse>(cls: ClassConstructor<ResponseType>, url: string, data?: any, config?: AxiosRequestConfig | undefined) : Promise<ResponseType> {
         this.onBeforeRequest();
         const result = await this.axiosInstance.get<ResponseType>(url, config);
         const response = plainToInstance(cls, result.data);
+        this.onAfterRequest(response);
+        return response;
+    }*/
+
+    async get<ResponseType extends BaseResponse, ResponseDataType extends BaseResponseData>(
+        cls: {new (args: ResponseDataType): ResponseType;},
+        url: string,
+        data?: any,
+        config?: AxiosRequestConfig | undefined) : Promise<ResponseType>
+    {
+        this.onBeforeRequest();
+        const result = await this.axiosInstance.get<ResponseDataType>(url, config);
+        const response = new cls(result.data);
         this.onAfterRequest(response);
         return response;
     }
