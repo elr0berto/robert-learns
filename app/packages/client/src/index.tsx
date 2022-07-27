@@ -6,6 +6,8 @@ import { createOvermind } from 'overmind';
 import { config } from './overmind';
 import {Provider} from "overmind-react";
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 export const overmind = createOvermind(config, {
     devtools: process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',
 });

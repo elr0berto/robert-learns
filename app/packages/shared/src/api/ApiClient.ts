@@ -19,26 +19,22 @@ class ApiClient {
         this.onAfterRequest = onAfterRequest;
     }
 
-    async post<ResponseType extends BaseResponse>(cls: ClassConstructor<ResponseType>, url: string, data?: any, config?: AxiosRequestConfig | undefined) : Promise<ResponseType> {
+    async post<ResponseType extends BaseResponse, ResponseDataType extends BaseResponseData>(
+        cls: {new (args: ResponseDataType): ResponseType;},
+        url: string,
+        data?: any,
+        config?: AxiosRequestConfig | undefined) : Promise<ResponseType>
+    {
         this.onBeforeRequest();
-        const result = await this.axiosInstance.post<ResponseType>(url, data, config);
-        const response = plainToInstance(cls, result.data);
+        const result = await this.axiosInstance.post<ResponseDataType>(url, data, config);
+        const response = new cls(result.data);
         this.onAfterRequest(response);
         return response;
     }
 
-    /*async get<ResponseType extends BaseResponse>(cls: ClassConstructor<ResponseType>, url: string, data?: any, config?: AxiosRequestConfig | undefined) : Promise<ResponseType> {
-        this.onBeforeRequest();
-        const result = await this.axiosInstance.get<ResponseType>(url, config);
-        const response = plainToInstance(cls, result.data);
-        this.onAfterRequest(response);
-        return response;
-    }*/
-
     async get<ResponseType extends BaseResponse, ResponseDataType extends BaseResponseData>(
         cls: {new (args: ResponseDataType): ResponseType;},
         url: string,
-        data?: any,
         config?: AxiosRequestConfig | undefined) : Promise<ResponseType>
     {
         this.onBeforeRequest();

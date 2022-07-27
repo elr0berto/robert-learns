@@ -18,5 +18,9 @@
       "packages/*"
     ]
   },
-  "packageManager": "yarn@3.0.0"
+  "packageManager": "yarn@3.0.0",
+  "dependencies": {
+    "bootstrap": "^5.2.0",
+    "react-bootstrap": "^2.4.0"
+  }
 }
