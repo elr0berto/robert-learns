@@ -1,8 +1,4 @@
-export enum Pages {
-    Front = "Front",
-    Login = "Login",
-    Register = "Register",
-}
+import {Pages} from "../../page-urls";
 
 type PageState = {
     current: Pages | null;

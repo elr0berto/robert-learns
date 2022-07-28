@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {useAppState} from "./overmind";
 import {LoginStatus} from "./overmind/login/login-state";
 import {Container, Nav, Navbar} from "react-bootstrap";
+import {pageUrls} from "./page-urls";
 
 function App() {
     const state = useAppState();
@@ -17,10 +18,12 @@ function App() {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link href="#home">Home</Nav.Link>
-                        <Nav.Link href="#link">Link</Nav.Link>
+                        {state.login.user!.isGuest ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
+                        {state.login.user!.isGuest ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
+                        {state.login.user!.isGuest ? null : <Nav.Link>Sign out</Nav.Link>}
                     </Nav>
-                    <Nav>Logged in as {state.login.user!.firstName}</Nav>
+                    <Nav>Signed in as {state.login.user!.isGuest ? 'guest' : state.login.user!.username}</Nav>
+                    <Nav>Current Page {state.page.current}</Nav>
                 </Navbar.Collapse>
 
             </Container>

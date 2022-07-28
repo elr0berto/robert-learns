@@ -11,6 +11,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export const overmind = createOvermind(config, {
     devtools: process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',
 });
+
 ReactDOM.render(
   <React.StrictMode>
       <Provider value={overmind}>

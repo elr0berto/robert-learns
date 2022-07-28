@@ -23,9 +23,10 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
     })
 
     effects.page.router.initialize({
-        [pageUrls.front.getRoute()]: actions.page.showFrontPage,
-        [pageUrls.register.getRoute()]: actions.page.showRegisterPage,
-        [pageUrls.login.getRoute()]: actions.page.showLoginPage,
+        [pageUrls.front.route]: actions.page.showFrontPage,
+        [pageUrls.signIn.route]: actions.page.showSignInPage,
+        [pageUrls.signUp.route]: actions.page.showSignUpPage,
+        [pageUrls.workspace.route]: actions.page.showWorkspacePage,
     });
 
     await actions.login.check();
