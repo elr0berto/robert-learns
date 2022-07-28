@@ -1,10 +1,6 @@
 import page from 'page';
 import queryString from 'query-string';
 
-export type IParams = {
-    [param: string]:string
-} | void
-
 export const router = {
     initialize(routes: { [url: string]: (payload: {params: object, querystring: queryString.ParsedQuery<string>}) => void }) {
         Object.keys(routes).forEach(url => {
@@ -13,7 +9,7 @@ export const router = {
                 routes[url](payload);
             })
         })
-        page.base('/');
+        //page.base('/');
         page.start();
     },
     goTo(url: string) {
