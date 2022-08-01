@@ -6,6 +6,7 @@ import * as error from './error';
 import * as page from './page';
 import * as api from './api';
 import * as login from './login';
+import * as signUp from './sign-up';
 
 
 
@@ -19,6 +20,7 @@ export const config = merge(
         page,
         api,
         login,
+        signUp,
     })
 )
 
