@@ -18,3 +18,11 @@ export const changePassword1 = ({ state }: Context, newVal: string) => {
 export const changePassword2 = ({ state }: Context, newVal: string) => {
     state.signUp.password2 = newVal;
 };
+export const submit = async ({state,effects} : Context) => {
+    state.signUp.submitAttempted = true;
+    if (!state.signUp.isValid) {
+        return;
+    }
+    const resp = await effects.api.signUp.submit();
+
+}

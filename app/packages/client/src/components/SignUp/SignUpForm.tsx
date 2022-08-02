@@ -1,4 +1,4 @@
-import {Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import {useActions, useAppState} from "../../overmind";
 import React from "react";
 
@@ -34,6 +34,7 @@ function SignUpForm() {
             <Form.Label>Password (again)</Form.Label>
             <Form.Control type="password" placeholder="Enter password again" value={state.signUp.password2} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.signUp.changePassword2(event.currentTarget.value)}/>
         </Form.Group>
+        <Button disabled={state.signUp.submitDisabled} onClick={() => actions.signUp.submit()}>Sign up</Button>
     </Form>;
 }
 export default SignUpForm;
