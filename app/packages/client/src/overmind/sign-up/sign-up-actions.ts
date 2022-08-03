@@ -1,4 +1,5 @@
 import { Context } from '..';
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
 
 export const changeFirstName = ({ state }: Context, newVal: string) => {
     state.signUp.firstName = newVal;
@@ -20,9 +21,31 @@ export const changePassword2 = ({ state }: Context, newVal: string) => {
 };
 export const submit = async ({state,effects} : Context) => {
     state.signUp.submitAttempted = true;
+
+    state.signUp.submissionError = '';
     if (!state.signUp.isValid) {
         return;
     }
-    const resp = await effects.api.signUp.submit();
 
+    state.signUp.submitting = true;
+    const resp = await effects.api.signUp.SignUpSubmit({
+        username: state.signUp.username,
+        firstName: state.signUp.firstName,
+        lastName: state.signUp.lastName,
+        email: state.signUp.email,
+        password: state.signUp.password1
+    });
+
+    state.signUp.submitting = false;
+    if (resp.status !== ResponseStatus.Success) {
+        state.signUp.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
+        return;
+    }
+
+    if (resp.user === null) {
+        state.signUp.submissionError = "Unexpected error. Please refresh the page and try again later."
+        return;
+    }
+    state.login.user = resp.user;
+    effects.page.router.goTo('/');
 }
