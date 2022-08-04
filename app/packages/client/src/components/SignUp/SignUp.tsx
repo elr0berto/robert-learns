@@ -1,4 +1,4 @@
-import {Container, Form} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import SignUpForm from "./SignUpForm";
 
 function SignUp() {
