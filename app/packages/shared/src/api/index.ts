@@ -1,3 +1,3 @@
-export * as login from './login';
-export * as signUp from './signUp';
+export * as signIn from './sign-in';
+export * as signUp from './sign-up';
 export { apiClient } from './ApiClient';

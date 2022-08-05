@@ -5,7 +5,7 @@ import { IContext } from 'overmind';
 import * as error from './error';
 import * as page from './page';
 import * as api from './api';
-import * as login from './login';
+import * as signIn from './sign-in';
 import * as signUp from './sign-up';
 
 
@@ -19,7 +19,7 @@ export const config = merge(
         //log,
         page,
         api,
-        login,
+        signIn,
         signUp,
     })
 )

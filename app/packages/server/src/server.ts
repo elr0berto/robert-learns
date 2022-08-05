@@ -1,6 +1,8 @@
 import express from 'express';
 
-import routes from './routes';
+import signIn from './routes/sign-in';
+import signUp from './routes/sign-up';
+
 import session from './session';
 
 class Server {
@@ -19,7 +21,8 @@ class Server {
     }
 
     routes() {
-        this.express.use(routes);
+        this.express.use('/api/sign-in', signIn);
+        this.express.use('/api/sign-up', signUp);
     }
 }
 

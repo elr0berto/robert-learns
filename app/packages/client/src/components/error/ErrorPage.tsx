@@ -1,6 +1,6 @@
 import React from "react";
 import {useActions, useAppState} from '../../overmind';
-import {Button} from "react-bootstrap";
+import {Alert, Button} from "react-bootstrap";
 
 function ErrorPage() {
     const actions = useActions();
@@ -11,7 +11,7 @@ function ErrorPage() {
                 {state.error.reloadingPage ?
                     <div className="error-text">Please wait while page reloads...</div> :
                     <>
-                        <div className="error-text">Unexpected error.</div>
+                        <Alert variant="danger">Unexpected error.</Alert>
                         <Button onClick={() => actions.error.reloadPage()}>Reload page</Button>
                     </>
                 }

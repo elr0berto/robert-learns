@@ -1,7 +1,7 @@
 import {Context} from '.';
 
 import {pageUrls} from '../page-urls';
-import {UnexpectedLogoutError} from "./login/login-state";
+import {UnexpectedSignOutError} from "./sign-in/sign-in-state";
 import {BaseResponse, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
 
 
@@ -12,8 +12,8 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         if (resp.status !== ResponseStatus.Success) {
             switch(resp.status) {
                 case ResponseStatus.LoggedOut:
-                    actions.login.unexpectedlyLoggedOut(resp.user!);
-                    throw UnexpectedLogoutError;
+                    actions.signIn.unexpectedlySignedOut(resp.user!);
+                    throw UnexpectedSignOutError;
                 case ResponseStatus.UserError:
                     break;
                 default:
@@ -29,5 +29,5 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         [pageUrls.workspace.route]: actions.page.showWorkspacePage,
     });
 
-    await actions.login.check();
+    await actions.signIn.check();
 }

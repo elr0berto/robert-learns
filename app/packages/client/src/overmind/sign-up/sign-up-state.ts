@@ -1,5 +1,5 @@
 import {derived} from 'overmind'
-import {ValidateSignUpRequest} from "@elr0berto/robert-learns-shared/dist/api/signUp";
+import {ValidateSignUpRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-up";
 
 type SignUpState = {
     username: string;

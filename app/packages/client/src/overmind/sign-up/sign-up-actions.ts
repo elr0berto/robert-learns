@@ -46,6 +46,6 @@ export const submit = async ({state,effects} : Context) => {
         state.signUp.submissionError = "Unexpected error. Please refresh the page and try again later."
         return;
     }
-    state.login.user = resp.user;
+    state.signIn.user = resp.user;
     effects.page.router.goTo('/');
 }
