@@ -2,7 +2,7 @@ import {BaseResponse} from "./models/BaseResponse";
 import {apiClient} from "./ApiClient";
 import {validateEmail} from "../validation";
 
-type SignUpSubmitRequest = {
+export type SignUpSubmitRequest = {
     firstName: string;
     lastName: string;
     username: string;
