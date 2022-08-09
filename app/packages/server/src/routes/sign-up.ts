@@ -3,7 +3,7 @@ import prisma from "../db/prisma";
 import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
 import {SignUpSubmitRequest, ValidateSignUpRequest} from "@elr0berto/robert-learns-shared/src/api/sign-up";
 import {getSignedInUser, TypedResponse} from "../common";
-
+import bcrypt from 'bcryptjs';
 const signUp = Router();
 
 signUp.post('/submit', async (req: Request<{}, {}, SignUpSubmitRequest>, res : TypedResponse<BaseResponseData>) => {
@@ -55,7 +55,23 @@ signUp.post('/submit', async (req: Request<{}, {}, SignUpSubmitRequest>, res : T
         });
     }
 
-    return res.json({blah: true});
+    const newUser = await prisma.user.create({
+        data: {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            username: req.body.username,
+            password: bcrypt.hashSync(req.body.password, 8),
+            email: req.body.email,
+            isGuest: false,
+        }
+    });
+
+    req.session.userId = newUser.id;
+    return res.json({
+        status: ResponseStatus.Success,
+        user: newUser,
+        errorMessage: null,
+    });
 });
 
 export default signUp;
