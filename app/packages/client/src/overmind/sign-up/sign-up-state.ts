@@ -1,5 +1,5 @@
 import {derived} from 'overmind'
-import {ValidateSignUpRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-up";
+import {ValidateSignUpSubmitRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-up";
 
 type SignUpState = {
     username: string;
@@ -32,7 +32,7 @@ export const getInitialSignUpState = (): SignUpState => ({
         return state.submitting;
     }),
     validationErrors: derived((state: SignUpState) => {
-       let errors = ValidateSignUpRequest({
+       let errors = ValidateSignUpSubmitRequest({
            username: state.username.trim(),
            email: state.email.trim(),
            firstName: state.firstName.trim(),

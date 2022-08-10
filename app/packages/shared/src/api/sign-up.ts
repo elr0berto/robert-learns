@@ -10,7 +10,7 @@ export type SignUpSubmitRequest = {
     email: string;
 }
 
-export const ValidateSignUpRequest = (req: SignUpSubmitRequest) : string[] => {
+export const ValidateSignUpSubmitRequest = (req: SignUpSubmitRequest) : string[] => {
     let errs : string[] = [];
     if (req.firstName.length < 3) {
         errs.push('First name must be at least 3 characters.');

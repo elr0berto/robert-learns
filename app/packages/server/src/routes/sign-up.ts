@@ -1,8 +1,8 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma";
 import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {SignUpSubmitRequest, ValidateSignUpRequest} from "@elr0berto/robert-learns-shared/src/api/sign-up";
-import {getSignedInUser, TypedResponse} from "../common";
+import {SignUpSubmitRequest, ValidateSignUpSubmitRequest} from "@elr0berto/robert-learns-shared/src/api/sign-up";
+import {getSignedInUser, getUserData, TypedResponse} from "../common";
 import bcrypt from 'bcryptjs';
 const signUp = Router();
 
@@ -17,7 +17,7 @@ signUp.post('/submit', async (req: Request<{}, {}, SignUpSubmitRequest>, res : T
         });
     }
 
-    let errors : string[] = ValidateSignUpRequest(req.body);
+    let errors : string[] = ValidateSignUpSubmitRequest(req.body);
 
     if (errors.length > 0) {
         return res.json({
@@ -69,7 +69,7 @@ signUp.post('/submit', async (req: Request<{}, {}, SignUpSubmitRequest>, res : T
     req.session.userId = newUser.id;
     return res.json({
         status: ResponseStatus.Success,
-        user: newUser,
+        user: getUserData(newUser),
         errorMessage: null,
     });
 });

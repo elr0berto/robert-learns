@@ -2,6 +2,7 @@ import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma";
 import {Session, SessionData} from "express-session";
 import { User } from '@prisma/client';
+import {UserData} from "@elr0berto/robert-learns-shared/dist/api/models/User";
 
 export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
@@ -42,4 +43,16 @@ export const getSignedInUser = async (session: Session & Partial<SessionData>) :
     }
 
     return user;
+}
+
+
+export const getUserData = (user: UserData) : UserData => {
+    return {
+        id: user.id,
+        email: user.email,
+        firstName : user.firstName,
+        lastName:user.lastName,
+        username: user.username,
+        isGuest : user.isGuest
+    };
 }
