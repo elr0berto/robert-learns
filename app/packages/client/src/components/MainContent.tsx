@@ -1,6 +1,7 @@
 import {useAppState} from "../overmind";
 import {Pages} from "../page-urls";
-import SignUp from "./SignUp/SignUp";
+import SignUp from "./sign-up/SignUp";
+import SignIn from "./sign-in/SignIn";
 
 function MainContent() {
     const state = useAppState();
@@ -8,6 +9,8 @@ function MainContent() {
     switch(state.page.current) {
         case Pages.SignUp:
             return <SignUp/>;
+        case Pages.SignIn:
+            return <SignIn/>;
     }
     return null;
 }

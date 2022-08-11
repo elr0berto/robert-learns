@@ -9,7 +9,7 @@ import {getSignedInUser, getUserData, TypedResponse} from "../common";
 
 const signOut = Router();
 
-signOut.get('/', async (req, res : TypedResponse<BaseResponseData>) => {
+signOut.post('/', async (req, res : TypedResponse<BaseResponseData>) => {
     req.session.userId = null;
     const user = await getSignedInUser(req.session);
 

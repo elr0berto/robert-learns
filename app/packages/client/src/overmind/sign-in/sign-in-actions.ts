@@ -25,11 +25,16 @@ export const changeSignInFormPassword = ({ state }: Context, password: string) =
     state.signIn.signInForm.password = password;
 };
 
-export const signInSubmit = async ({ state, actions, effects }: Context) => {
+export const submit = async ({ state, actions, effects }: Context) => {
     state.signIn.status = SignInStatus.SigningIn;
-    const results = await effects.api.signIn.SignInSubmit(state.signIn.signInForm);
-    if (results.status === ResponseStatus.Success) {
+    state.signIn.signInForm.submitAttempted = true;
+    const results = await effects.api.signIn.SignInSubmit({
+        username: state.signIn.signInForm.username,
+        password: state.signIn.signInForm.password
+    });
+    if (results.status !== ResponseStatus.Success) {
         state.signIn.status = SignInStatus.Error;
+        state.signIn.signInForm.submissionError = results.errorMessage ?? 'Unexpected error';
     } else {
         state.signIn.user = results.user;
         state.signIn.status = SignInStatus.Idle;
@@ -37,10 +42,9 @@ export const signInSubmit = async ({ state, actions, effects }: Context) => {
     }
 };
 
-
 export const signOut = async ({ effects, state }: Context) => {
     state.signIn.status = SignInStatus.SigningOut;
-    const results = await effects.api.signIn.SignOut();
+    const results = await effects.api.signOut.SignOut();
     state.signIn = getInitialSignInState();
     state.signIn.user = results.user;
     state.signIn.status = SignInStatus.Idle;

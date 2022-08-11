@@ -17,10 +17,14 @@ type SignInFormState = {
     username: string;
     password: string;
     submitAttempted: boolean;
+    submissionError: string;
+    submitting: false,
+    readonly submitDisabled: boolean;
     readonly validationErrors: string[];
     readonly showErrors: boolean;
     readonly allErrors: string[];
 }
+
 type SignInState = {
     status: SignInStatus,
     user: User | null;
@@ -35,6 +39,11 @@ export const getInitialSignInState = (): SignInState => ({
         username: '',
         password: '',
         submitAttempted: false,
+        submissionError: '',
+        submitting: false,
+        submitDisabled: derived((state: SignInFormState) => {
+            return state.submitting;
+        }),
         validationErrors: derived((state: SignInFormState) => {
             return ValidateSignInSubmitRequest({
                 username: state.username.trim(),
@@ -55,5 +64,6 @@ export const getInitialSignInState = (): SignInState => ({
     isGuest: derived((state: SignInState) => {
         return state.user?.isGuest ?? true;
     }),
-})
+});
+
 export const state: SignInState = getInitialSignInState();

@@ -1,5 +1,5 @@
 import React from 'react';
-import {useAppState} from "./overmind";
+import {useActions, useAppState} from "./overmind";
 import {SignInStatus} from "./overmind/sign-in/sign-in-state";
 import {Col, Container, Nav, Navbar, Row, Spinner} from "react-bootstrap";
 import {pageUrls} from "./page-urls";
@@ -7,6 +7,7 @@ import MainContent from "./components/MainContent";
 
 function AppInner() {
     const state = useAppState();
+    const actions = useActions();
 
     if (state.signIn.status === SignInStatus.Checking) {
         return <Container>
@@ -28,7 +29,7 @@ function AppInner() {
                     <Nav className="me-auto">
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
-                        {state.signIn.user!.isGuest ? null : <Nav.Link>Sign out</Nav.Link>}
+                        {state.signIn.user!.isGuest ? null : <Nav.Link onClick={() => actions.signIn.signOut()}>{state.signIn.status === SignInStatus.SigningOut ? 'Signing out...' : 'Sign out'}</Nav.Link>}
                     </Nav>
                     <Nav>Signed in as {state.signIn.user!.isGuest ? 'guest' : state.signIn.user!.username}</Nav>
                     <Nav>Current Page {state.page.current}</Nav>

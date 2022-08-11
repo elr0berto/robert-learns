@@ -6,6 +6,7 @@ import {
 } from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
 import {SignInSubmitRequest, ValidateSignInSubmitRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
+import bcrypt from 'bcryptjs';
 
 const signIn = Router();
 
@@ -19,7 +20,7 @@ signIn.get('/check', async (req, res : TypedResponse<BaseResponseData>) => {
     });
 });
 
-signIn.get('/submit', async (req: Request<{}, {}, SignInSubmitRequest>, res : TypedResponse<BaseResponseData>) => {
+signIn.post('/submit', async (req: Request<{}, {}, SignInSubmitRequest>, res : TypedResponse<BaseResponseData>) => {
     const errors = ValidateSignInSubmitRequest(req.body);
 
     if (errors.length !== 0) {
@@ -29,6 +30,33 @@ signIn.get('/submit', async (req: Request<{}, {}, SignInSubmitRequest>, res : Ty
             user: null,
         });
     }
+
+    const u1 = await prisma.user.findFirst({
+        where: {
+            OR: [
+                {username: req.body.username},
+                {email: req.body.username},
+            ]
+        }
+    });
+
+    if (u1 === null) {
+        return res.json({
+            status: ResponseStatus.UserError,
+            errorMessage: 'Login/password is wrong!!',
+            user: null,
+        });
+    }
+
+    if (!bcrypt.compareSync(req.body.password, u1.password)) {
+        return res.json({
+            status: ResponseStatus.UserError,
+            errorMessage: 'Login/password is wrong!',
+            user: null,
+        });
+    }
+
+    req.session.userId = u1.id;
 
     const user = await getSignedInUser(req.session);
 
