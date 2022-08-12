@@ -23,6 +23,7 @@ type SignInFormState = {
     readonly validationErrors: string[];
     readonly showErrors: boolean;
     readonly allErrors: string[];
+    readonly hasErrors: boolean;
 }
 
 type SignInState = {
@@ -59,6 +60,9 @@ export const getInitialSignInState = (): SignInState => ({
                 errors.push(state.submissionError);
             }
             return errors;
+        }),
+        hasErrors: derived((state: SignInFormState) => {
+            return state.allErrors.length > 0;
         }),
     },
     isGuest: derived((state: SignInState) => {

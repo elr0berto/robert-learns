@@ -1,7 +1,7 @@
 import React from 'react';
 import {useActions, useAppState} from "./overmind";
 import {SignInStatus} from "./overmind/sign-in/sign-in-state";
-import {Col, Container, Nav, Navbar, Row, Spinner} from "react-bootstrap";
+import {Col, Container, Nav, Navbar, NavDropdown, Row, Spinner} from "react-bootstrap";
 import {pageUrls} from "./page-urls";
 import MainContent from "./components/MainContent";
 
@@ -29,10 +29,20 @@ function AppInner() {
                     <Nav className="me-auto">
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
-                        {state.signIn.user!.isGuest ? null : <Nav.Link onClick={() => actions.signIn.signOut()}>{state.signIn.status === SignInStatus.SigningOut ? 'Signing out...' : 'Sign out'}</Nav.Link>}
+                        <NavDropdown title="Workspaces">
+                            {state.workspaces.loading ? 'Loading...' : <>
+                                {state.workspaces.list.map(workspace => <NavDropdown.Item href={pageUrls.workspace.url(workspace)}>{workspace.name}</NavDropdown.Item>)}
+                            </>}
+                        </NavDropdown>
                     </Nav>
-                    <Nav>Signed in as {state.signIn.user!.isGuest ? 'guest' : state.signIn.user!.username}</Nav>
-                    <Nav>Current Page {state.page.current}</Nav>
+                    <Nav>
+                        {state.signIn.status === SignInStatus.SigningOut ? 'Signing out...' : state.signIn.user!.isGuest ?
+                            'Signed in as guest' :
+                            <NavDropdown title={'Signed in as ' + state.signIn.user!.username}>
+                                <NavDropdown.Item onClick={() => actions.signIn.signOut()}>Sign out</NavDropdown.Item>
+                            </NavDropdown>
+                        }
+                    </Nav>
                 </Navbar.Collapse>
             </Container>
         </Navbar>

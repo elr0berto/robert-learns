@@ -28,6 +28,10 @@ export const changeSignInFormPassword = ({ state }: Context, password: string) =
 export const submit = async ({ state, actions, effects }: Context) => {
     state.signIn.status = SignInStatus.SigningIn;
     state.signIn.signInForm.submitAttempted = true;
+    state.signIn.signInForm.submissionError = '';
+    if (state.signIn.signInForm.hasErrors) {
+        return;
+    }
     const results = await effects.api.signIn.SignInSubmit({
         username: state.signIn.signInForm.username,
         password: state.signIn.signInForm.password
