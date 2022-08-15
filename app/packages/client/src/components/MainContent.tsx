@@ -11,6 +11,8 @@ function MainContent() {
             return <SignUp/>;
         case Pages.SignIn:
             return <SignIn/>;
+        case Pages.WorkspaceCreate:
+            return <WorkspaceCreate/>;
     }
     return null;
 }

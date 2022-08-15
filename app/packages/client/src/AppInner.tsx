@@ -30,6 +30,8 @@ function AppInner() {
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
                         <NavDropdown title="Workspaces">
+                            <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
+                            <NavDropdown.Divider/>
                             {state.workspaces.loading ? 'Loading...' : <>
                                 {state.workspaces.list.map(workspace => <NavDropdown.Item href={pageUrls.workspace.url(workspace)}>{workspace.name}</NavDropdown.Item>)}
                             </>}

@@ -1,8 +1,11 @@
+import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
+
 export enum Pages {
     Front = "Front",
     SignIn = "SignIn",
     SignUp = "SignUp",
     Workspace = "Workspace",
+    WorkspaceCreate = "WorkspaceCreate",
 }
 
 const pageUrls = {
@@ -29,10 +32,17 @@ const pageUrls = {
     },
     workspace: {
         route: '/workspace/:id',
-        url: function(id: number) {
-            return '/workspace/:id';
+        url: function(workspace: Workspace) {
+            return '/workspace/'+workspace.id;
         },
         page: Pages.Workspace,
+    },
+    workspaceCreate: {
+        route: '/workspace-create',
+        url: function() {
+            return '/workspace-create';
+        },
+        page: Pages.WorkspaceCreate,
     }
 }
 
