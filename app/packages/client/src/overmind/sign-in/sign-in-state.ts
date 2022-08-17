@@ -1,6 +1,6 @@
 import {derived} from 'overmind'
 import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
-import {ValidateSignInSubmitRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
+import {validateSignInRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
 
 export const UnexpectedSignOutError = "UNEXPECTED_SIGN_OUT_ERROR";
 
@@ -46,7 +46,7 @@ export const getInitialSignInState = (): SignInState => ({
             return state.submitting;
         }),
         validationErrors: derived((state: SignInFormState) => {
-            return ValidateSignInSubmitRequest({
+            return validateSignInRequest({
                 username: state.username.trim(),
                 password: state.password,
             });

@@ -15,6 +15,9 @@ const pageUrls = {
             return '/';
         },
         page: Pages.Front,
+        getRouteCallback: () => {
+
+        }
     },
     signIn: {
         route: '/sign-in',

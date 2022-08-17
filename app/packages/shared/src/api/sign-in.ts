@@ -7,12 +7,12 @@ export const SignInCheck = async () : Promise<BaseResponse> => {
 };
 
 
-export type SignInSubmitRequest = {
+export type SignInRequest = {
     username: string;
     password: string;
 }
 
-export const ValidateSignInSubmitRequest = (req: SignInSubmitRequest) : string[] => {
+export const validateSignInRequest = (req: SignInRequest) : string[] => {
     let errs : string[] = [];
     if (req.username.length === 0) {
         errs.push('You must enter a username');
@@ -24,7 +24,7 @@ export const ValidateSignInSubmitRequest = (req: SignInSubmitRequest) : string[]
     return errs;
 }
 
-export const SignInSubmit = async(params: SignInSubmitRequest) : Promise<BaseResponse> => {
+export const signIn = async(params: SignInRequest) : Promise<BaseResponse> => {
     console.log('SignInSubmit');
-    return await apiClient.post(BaseResponse, '/sign-in/submit', params);
+    return await apiClient.post(BaseResponse, '/sign-in', params);
 }

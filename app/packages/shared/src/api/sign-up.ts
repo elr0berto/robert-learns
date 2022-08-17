@@ -2,7 +2,7 @@ import {BaseResponse} from "./models/BaseResponse";
 import {apiClient} from "./ApiClient";
 import {validateEmail} from "../validation";
 
-export type SignUpSubmitRequest = {
+export type SignUpRequest = {
     firstName: string;
     lastName: string;
     username: string;
@@ -10,7 +10,7 @@ export type SignUpSubmitRequest = {
     email: string;
 }
 
-export const ValidateSignUpSubmitRequest = (req: SignUpSubmitRequest) : string[] => {
+export const validateSignUpRequest = (req: SignUpRequest) : string[] => {
     let errs : string[] = [];
     if (req.firstName.length < 3) {
         errs.push('First name must be at least 3 characters.');
@@ -31,7 +31,7 @@ export const ValidateSignUpSubmitRequest = (req: SignUpSubmitRequest) : string[]
     return errs;
 }
 
-export const SignUpSubmit = async(params: SignUpSubmitRequest) : Promise<BaseResponse> => {
-    console.log('SignUpSubmit');
-    return await apiClient.post(BaseResponse, '/sign-up/submit', params);
+export const signUp = async(params: SignUpRequest) : Promise<BaseResponse> => {
+    console.log('SignUp');
+    return await apiClient.post(BaseResponse, '/sign-up', params);
 }

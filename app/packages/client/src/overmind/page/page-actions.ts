@@ -16,3 +16,7 @@ export const showSignUpPage = async ({ state, effects, actions }: Context) => {
 export const showWorkspacePage = async ({ state, effects, actions }: Context) => {
     state.page.current = Pages.Workspace;
 }
+
+export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {
+    state.page.current = Pages.WorkspaceCreate;
+}

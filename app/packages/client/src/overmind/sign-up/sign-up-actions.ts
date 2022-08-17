@@ -28,7 +28,7 @@ export const submit = async ({state,effects} : Context) => {
     }
 
     state.signUp.submitting = true;
-    const resp = await effects.api.signUp.SignUpSubmit({
+    const resp = await effects.api.signUp.signUp({
         username: state.signUp.username,
         firstName: state.signUp.firstName,
         lastName: state.signUp.lastName,
