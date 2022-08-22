@@ -1,9 +1,9 @@
 import {Context} from '.';
 
-import {PageUrlConfigKeys, pageUrls} from '../page-urls';
+import {pageUrls} from '../page-urls';
 import {UnexpectedSignOutError} from "./sign-in/sign-in-state";
 import {BaseResponse, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
-import {objectMap} from "../../../shared/src/common";
+import {objectMap} from "@elr0berto/robert-learns-shared/dist/common";
 
 
 export const onInitializeOvermind = async ({ actions, effects, state }: Context) => {
@@ -23,14 +23,9 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         }
     })
 
-    let routes : {[key: string]: () => void};
+    const routes = objectMap<typeof pageUrls, {getRouteCallback: () => () => void}, () => void>(pageUrls, route => route.getRouteCallback());
 
-    for (let k in pageUrls) {
-        console.log(pageUrls[k].route);
-        routes[pageUrls[k].route] = pageUrls[k].getRouteCallback(actions);
-    }
     effects.page.router.initialize(routes);
 
-    pageUrls.workspacesdsds.url();
     await actions.signIn.check();
 }

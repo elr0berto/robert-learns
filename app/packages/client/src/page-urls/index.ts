@@ -18,7 +18,7 @@ type PageUrlConfig = {
 
 export type PageUrlConfigKeys = 'front' | 'signIn' | 'signUp' | 'workspace' | 'workspaceCreate';
 type PageUrlConfigs = {
-    [name in PageUrlConfigKeys]: PageUrlConfig;
+    [name in PageUrlConfigKeys]: unknown;
 }
 
 /*
@@ -30,7 +30,7 @@ type PageUrlConfigs = {
         [pageUrls.workspaceCreate.route]: actions.page.showWorkspaceCreatePage,
     });
  */
-const pageUrls : PageUrlConfigs = {
+const pageUrls = {
     front: {
         route: '/',
         url: () => '/',

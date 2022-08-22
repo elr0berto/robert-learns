@@ -1,6 +1,6 @@
 import {derived} from 'overmind'
 import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
-import {ValidateWorkspaceCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspace";
+import {validateWorkspaceCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
 
 type WorkspaceCreateFormState = {
     name: string;
@@ -32,7 +32,7 @@ export const getInitialWorkspacesState = (): WorkspacesState => ({
             return state.submitting;
         }),
         validationErrors: derived((state: WorkspaceCreateFormState) => {
-            let errors = ValidateWorkspaceCreateRequest({
+            let errors = validateWorkspaceCreateRequest({
                 name: state.name.trim(),
             });
             return errors;
