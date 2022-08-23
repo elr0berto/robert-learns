@@ -1,12 +1,12 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma";
 import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {SignUpSubmitRequest, ValidateSignUpSubmitRequest} from "@elr0berto/robert-learns-shared/src/api/sign-up";
+import {SignUpRequest, validateSignUpRequest} from "@elr0berto/robert-learns-shared/src/api/sign-up";
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
 import bcrypt from 'bcryptjs';
 const signUp = Router();
 
-signUp.post('/submit', async (req: Request<{}, {}, SignUpSubmitRequest>, res : TypedResponse<BaseResponseData>) => {
+signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse<BaseResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
 
     if (!signedInUser.isGuest) {
@@ -17,7 +17,7 @@ signUp.post('/submit', async (req: Request<{}, {}, SignUpSubmitRequest>, res : T
         });
     }
 
-    let errors : string[] = ValidateSignUpSubmitRequest(req.body);
+    let errors : string[] = validateSignUpRequest(req.body);
 
     if (errors.length > 0) {
         return res.json({

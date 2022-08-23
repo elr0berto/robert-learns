@@ -34,7 +34,7 @@ type SignInState = {
 }
 
 export const getInitialSignInState = (): SignInState => ({
-    status: SignInStatus.Checking,
+    status: SignInStatus.Idle,
     user: null,
     signInForm: {
         username: '',

@@ -5,7 +5,7 @@ import {
     ResponseStatus
 } from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
-import {SignInSubmitRequest, ValidateSignInSubmitRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
+import {SignInRequest, validateSignInRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
 import bcrypt from 'bcryptjs';
 
 const signIn = Router();
@@ -20,8 +20,8 @@ signIn.get('/check', async (req, res : TypedResponse<BaseResponseData>) => {
     });
 });
 
-signIn.post('/submit', async (req: Request<{}, {}, SignInSubmitRequest>, res : TypedResponse<BaseResponseData>) => {
-    const errors = ValidateSignInSubmitRequest(req.body);
+signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse<BaseResponseData>) => {
+    const errors = validateSignInRequest(req.body);
 
     if (errors.length !== 0) {
         return res.json({

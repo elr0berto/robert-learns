@@ -1,65 +1,52 @@
 import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
 import {overmind} from "../index";
+import SignUp from "../components/sign-up/SignUp";
+import SignIn from "../components/sign-in/SignIn";
+import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
 
 export enum Pages {
-    Front = "Front",
-    SignIn = "SignIn",
-    SignUp = "SignUp",
-    Workspace = "Workspace",
-    WorkspaceCreate = "WorkspaceCreate",
+    Front = "front",
+    SignIn = "signIn",
+    SignUp = "signUp",
+    Workspace = "workspace",
+    WorkspaceCreate = "workspaceCreate",
 }
 
-type PageUrlConfig = {
-    route: string;
-    url: (params?: any) => string;
-    page: Pages;
-    getRouteCallback: (actions: typeof overmind.actions) => () => void,
-}
-
-export type PageUrlConfigKeys = 'front' | 'signIn' | 'signUp' | 'workspace' | 'workspaceCreate';
-type PageUrlConfigs = {
-    [name in PageUrlConfigKeys]: unknown;
-}
-
-/*
-    effects.page.router.initialize({
-        [pageUrls.front.route]: actions.page.showFrontPage,
-        [pageUrls.signIn.route]: actions.page.showSignInPage,
-        [pageUrls.signUp.route]: actions.page.showSignUpPage,
-        [pageUrls.workspace.route]: actions.page.showWorkspacePage,
-        [pageUrls.workspaceCreate.route]: actions.page.showWorkspaceCreatePage,
-    });
- */
 const pageUrls = {
-    front: {
+    [Pages.Front]: {
         route: '/',
         url: () => '/',
         page: Pages.Front,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showFrontPage,
+        getPageComponent: () => null,
     },
-    signIn: {
+    [Pages.SignIn]: {
         route: '/sign-in',
         url: () => '/sign-in',
         page: Pages.SignIn,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showSignInPage,
+        getPageComponent: () => SignIn,
     },
-    signUp: {
+    [Pages.SignUp]: {
         route: '/sign-up',
         url: () => '/sign-up',
         page: Pages.SignUp,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showSignUpPage,
+        getPageComponent: () => SignUp,
     },
-    workspace: {
+    [Pages.Workspace]: {
         route: '/workspace/:id',
         url: (workspace: Workspace) => '/workspace/'+workspace.id,
         page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspacePage,
+        getPageComponent: () => null,
     },
-    workspaceCreate: {
+    [Pages.WorkspaceCreate]: {
         route: '/workspace-create',
         url: () => '/workspace-create',
         page: Pages.WorkspaceCreate,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCreatePage,
+        getPageComponent: () => WorkspaceCreate,
     }
 }
 
