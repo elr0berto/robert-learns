@@ -3,12 +3,16 @@ import {BaseResponse} from "./models/BaseResponse";
 
 export type WorkspaceCreateRequest = {
     name: string;
+    description: string;
 }
 
 export const validateWorkspaceCreateRequest = (req: WorkspaceCreateRequest) : string[] => {
     let errs : string[] = [];
-    if (req.name.length === 0) {
+    if (req.name.trim().length === 0) {
         errs.push('You must enter a name');
+    }
+    if (req.description.trim().length === 0) {
+        errs.push('Please provide a description');
     }
 
     return errs;

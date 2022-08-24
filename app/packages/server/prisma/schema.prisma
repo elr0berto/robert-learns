@@ -48,6 +48,7 @@ model WorkspaceUser {
 model Workspace {
   id      Int      @id @default(autoincrement())
   name    String
+  description String
   users   WorkspaceUser[]
   cardSets CardSet[]
 }

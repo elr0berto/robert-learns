@@ -3,6 +3,7 @@ import express from 'express';
 import signIn from './routes/sign-in';
 import signOut from "./routes/sign-out";
 import signUp from './routes/sign-up';
+import workspaces from './routes/workspaces';
 
 import session from './session';
 
@@ -25,6 +26,7 @@ class Server {
         this.express.use('/api/sign-in', signIn);
         this.express.use('/api/sign-out', signOut);
         this.express.use('/api/sign-up', signUp);
+        this.express.use('/api/workspaces', workspaces);
     }
 }
 

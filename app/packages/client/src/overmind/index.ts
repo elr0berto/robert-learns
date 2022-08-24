@@ -7,6 +7,7 @@ import * as page from './page';
 import * as api from './api';
 import * as signIn from './sign-in';
 import * as signUp from './sign-up';
+import * as workspaceCreate from './workspace-create';
 import * as workspaces from './workspaces';
 
 
@@ -21,6 +22,7 @@ export const config = merge(
         api,
         signIn,
         signUp,
+        workspaceCreate,
         workspaces,
     })
 )
