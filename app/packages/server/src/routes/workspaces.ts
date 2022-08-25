@@ -7,11 +7,12 @@ import {
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
 import bcrypt from 'bcryptjs';
 import {validateWorkspaceCreateRequest, WorkspaceCreateRequest} from "../../../shared/src/api/workspaces";
+import { UserRole } from '@prisma/client';
 
 const workspaces = Router();
 
-workspaces.post('/', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<BaseResponseData>) => {
-    const user = await getSignedInUser(req.session);
+workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<BaseResponseData>) => {
+    let user = await getSignedInUser(req.session);
 
     if (user.isGuest) {
         return res.json({
@@ -38,9 +39,20 @@ workspaces.post('/', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : 
         }
     });
 
+    const workspaceUser = await prisma.workspaceUser.create({
+        data: {
+            workspaceId: newWorkspace.id,
+            userId: user.id,
+            role: UserRole.OWNER,
+        }
+    });
+
+    user = await getSignedInUser(req.session);
+    console.log('user', user);
+
     return res.json({
         status: ResponseStatus.Success,
-        user: null,
+        user: user,
         errorMessage: null,
     });
 });

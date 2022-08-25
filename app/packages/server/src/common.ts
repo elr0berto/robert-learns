@@ -35,6 +35,13 @@ export const getSignedInUser = async (session: Session & Partial<SessionData>) :
     const user = await prisma.user.findUnique({
         where: {
             id: session.userId!
+        },
+        include: {
+            workspaces: {
+                include: {
+                    workspace: true
+                }
+            }
         }
     });
 

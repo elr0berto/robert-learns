@@ -10,6 +10,7 @@ function AppInner() {
     const actions = useActions();
 
     if (state.signIn.status === SignInStatus.Checking) {
+        console.log('SignInStatus.Checking');
         return <Container>
             <Row className="justify-content-md-center my-5">
                 <Col className="col-md-auto">

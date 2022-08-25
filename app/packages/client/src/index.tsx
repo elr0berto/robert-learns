@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import './sass/style.scss';
 import App from './App';
 import { createOvermind } from 'overmind';
@@ -27,11 +27,12 @@ window.onunhandledrejection = (e: PromiseRejectionEvent) => {
     overmind.actions.error.setError({error: new Error(e.reason.stack), errorInfo: null});
 }
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root")!);
+
+root.render(
   <React.StrictMode>
       <Provider value={overmind}>
           <App />
       </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
+  </React.StrictMode>
 );
