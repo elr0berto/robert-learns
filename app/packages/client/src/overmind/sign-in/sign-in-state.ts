@@ -33,9 +33,9 @@ type SignInState = {
     readonly isGuest: boolean;
 }
 
-export const getInitialSignInState = (): SignInState => ({
+export const getInitialSignInState = (user: User | null): SignInState => ({
     status: SignInStatus.Idle,
-    user: null,
+    user: user,
     signInForm: {
         username: '',
         password: '',
@@ -70,4 +70,4 @@ export const getInitialSignInState = (): SignInState => ({
     }),
 });
 
-export const state: SignInState = getInitialSignInState();
+export const state: SignInState = getInitialSignInState(null);

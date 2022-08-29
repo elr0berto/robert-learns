@@ -9,11 +9,11 @@ function MainContent() {
     }
 
     if (typeof pageUrls[state.page.current!] === 'object') {
-        const pageComponent = pageUrls[state.page.current!].getPageComponent();
-        if (pageComponent === null) {
+        const PageComponent = pageUrls[state.page.current!].getPageComponent();
+        if (PageComponent === null) {
             return null;
         }
-        return pageComponent();
+        return <PageComponent/>;
     }
 
     return null;

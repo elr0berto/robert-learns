@@ -8,8 +8,10 @@ import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
 
 
 export const check = async ({ state, effects }: Context) => {
+    console.log('state.signIn.status = Checking');
     state.signIn.status = SignInStatus.Checking;
     var result = await effects.api.signIn.SignInCheck();
+    console.log('state.signIn.status = Idle');
     state.signIn.status = SignInStatus.Idle;
     state.signIn.user = result.user;
     console.log('signIn check user: ', result.user);
@@ -48,16 +50,14 @@ export const submit = async ({ state, actions, effects }: Context) => {
 export const signOut = async ({ effects, state }: Context) => {
     state.signIn.status = SignInStatus.SigningOut;
     const results = await effects.api.signOut.signOut();
-    state.signIn = getInitialSignInState();
-    state.signIn.user = results.user;
+    state.signIn = getInitialSignInState(results.user);
     state.signIn.status = SignInStatus.Idle;
     effects.page.router.goTo('/');
 }
 
 export const unexpectedlySignedOut = ({ effects, state }: Context, user : User) => {
-    state.signIn = getInitialSignInState();
+    state.signIn = getInitialSignInState(user);
     state.signIn.status = SignInStatus.SignedOutDueToInactivity;
-    state.signIn.user = user;
     effects.page.router.goTo('/');
 }
 

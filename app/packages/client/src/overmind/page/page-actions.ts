@@ -3,6 +3,7 @@ import {Pages} from "../../page-urls";
 import queryString from "query-string";
 import {getInitialSignUpState} from "../sign-up/sign-up-state";
 import {getInitialSignInState} from "../sign-in/sign-in-state";
+import {getInitialWorkspaceCreateState} from "../workspace-create/workspace-create-state";
 
 export type Payload = {
     params: any,
@@ -14,13 +15,13 @@ export const showFrontPage = async ({ state, effects, actions }: Context) => {
 }
 
 export const showSignInPage = async ({ state, effects, actions }: Context) => {
+    state.signIn = getInitialSignInState(state.signIn.user);
     state.page.current = Pages.SignIn;
-    state.signIn = getInitialSignInState();
 }
 
 export const showSignUpPage = async ({ state, effects, actions }: Context) => {
-    state.page.current = Pages.SignUp;
     state.signUp = getInitialSignUpState();
+    state.page.current = Pages.SignUp;
 }
 
 export const showWorkspacePage = async ({ state, effects, actions }: Context) => {
@@ -28,5 +29,6 @@ export const showWorkspacePage = async ({ state, effects, actions }: Context) =>
 }
 
 export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {
+    state.workspaceCreate = getInitialWorkspaceCreateState();
     state.page.current = Pages.WorkspaceCreate;
 }
