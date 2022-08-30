@@ -6,6 +6,9 @@ function WorkspaceCreate() {
     const state = useAppState();
     const actions = useActions();
 
+    if (state.signIn.user!.isGuest) {
+        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to create workspaces</Alert></Container>;
+    }
     return <Container>
         <h1 className="my-5">Create a workspace</h1>
         <Form className="col-lg-5">

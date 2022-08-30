@@ -1,12 +1,12 @@
 import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
 
 type WorkspacesState = {
-    loading: boolean;
+    loadingList: boolean;
     list: Workspace[];
 }
 
 export const getInitialWorkspacesState = (): WorkspacesState => ({
-    loading: false,
+    loadingList: false,
     list: [],
 });
 

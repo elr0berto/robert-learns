@@ -1,5 +1,6 @@
 import {apiClient} from './ApiClient';
 import {BaseResponse} from "./models/BaseResponse";
+import {WorkspaceListResponse} from "./models/WorkspaceListResponse";
 
 export type WorkspaceCreateRequest = {
     name: string;
@@ -20,4 +21,8 @@ export const validateWorkspaceCreateRequest = (req: WorkspaceCreateRequest) : st
 
 export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<BaseResponse> => {
     return await apiClient.post(BaseResponse, '/workspaces/create', params);
+}
+
+export const workspaceList = async() : Promise<WorkspaceListResponse> => {
+    return await apiClient.get(WorkspaceListResponse, '/workspaces');
 }
