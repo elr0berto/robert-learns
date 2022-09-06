@@ -5,12 +5,37 @@ import {
     ResponseStatus
 } from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
-import bcrypt from 'bcryptjs';
 import {validateWorkspaceCreateRequest, WorkspaceCreateRequest} from "../../../shared/src/api/workspaces";
 import { UserRole } from '@prisma/client';
+import {WorkspaceListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceListResponse";
 
 const workspaces = Router();
 
+workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) => {
+    let user = await getSignedInUser(req.session);
+
+    const workspaces = await prisma.workspace.findMany({
+        where: {
+            users: {
+                some: {
+                    userId: user.id,
+                }
+            }
+        },
+        include: { users : true },
+    });
+
+    return res.json({
+        status: ResponseStatus.Success,
+        user: getUserData(user),
+        errorMessage: null,
+        workspaces: workspaces.map(w => ({
+            id: w.id,
+            name: w.name,
+            description: w.description
+        }))
+    })
+});
 workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<BaseResponseData>) => {
     let user = await getSignedInUser(req.session);
 
@@ -52,7 +77,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
     return res.json({
         status: ResponseStatus.Success,
-        user: user,
+        user: getUserData(user),
         errorMessage: null,
     });
 });

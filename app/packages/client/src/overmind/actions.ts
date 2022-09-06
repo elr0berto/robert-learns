@@ -1,7 +1,7 @@
 import {Context} from '.';
 
 import {pageUrls} from '../page-urls';
-import {SignInStatus, UnexpectedSignOutError} from "./sign-in/sign-in-state";
+import {UnexpectedSignOutError} from "./sign-in/sign-in-state";
 import {BaseResponse, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
 import {Payload} from "./page/page-actions";
 
@@ -30,6 +30,5 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
     }
     effects.page.router.initialize(routes);
 
-    await actions.signIn.check();
-    state.signIn.status = SignInStatus.Idle;
+    await Promise.all([actions.signIn.check(), actions.workspaces.getWorkspaceList()]);
 }

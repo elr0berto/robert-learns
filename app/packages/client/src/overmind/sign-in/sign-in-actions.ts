@@ -8,14 +8,10 @@ import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
 
 
 export const check = async ({ state, effects }: Context) => {
-    console.log('state.signIn.status = Checking');
     state.signIn.status = SignInStatus.Checking;
     var result = await effects.api.signIn.SignInCheck();
-    console.log('state.signIn.status = Idle');
     state.signIn.status = SignInStatus.Idle;
     state.signIn.user = result.user;
-    console.log('signIn check user: ', result.user);
-    console.log('signIn check user.name: ', result.user?.name() ?? 'user null');
 }
 
 export const changeSignInFormUsername = ({ state }: Context, username: string) => {
