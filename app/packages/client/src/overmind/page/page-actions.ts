@@ -24,8 +24,12 @@ export const showSignUpPage = async ({ state, effects, actions }: Context) => {
     state.page.current = Pages.SignUp;
 }
 
-export const showWorkspacePage = async ({ state, effects, actions }: Context) => {
-    state.page.current = Pages.Workspace;
+export const showWorkspacePage = async ({ state, effects, actions }: Context, payload: Payload) => {
+    state.page.current = Pages.Workspace
+    console.log('showWorkspacePage', payload.params?.id);
+    if (payload.params?.id) {
+        state.workspace.id = +payload.params.id;
+    }
 }
 
 export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {

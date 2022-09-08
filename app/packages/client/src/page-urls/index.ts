@@ -3,6 +3,7 @@ import {overmind} from "../index";
 import SignUp from "../components/sign-up/SignUp";
 import SignIn from "../components/sign-in/SignIn";
 import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
+import WorkspacePage from "../components/workspace/WorkspacePage";
 
 export enum Pages {
     Front = "front",
@@ -39,7 +40,7 @@ const pageUrls = {
         url: (workspace: Workspace) => '/workspace/'+workspace.id,
         page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspacePage,
-        getPageComponent: () => null,
+        getPageComponent: () => WorkspacePage,
     },
     [Pages.WorkspaceCreate]: {
         route: '/workspace-create',

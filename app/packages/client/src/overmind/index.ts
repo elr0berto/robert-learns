@@ -9,7 +9,7 @@ import * as signIn from './sign-in';
 import * as signUp from './sign-up';
 import * as workspaceCreate from './workspace-create';
 import * as workspaces from './workspaces';
-
+import * as workspace from './workspace';
 
 export const config = merge(
     {
@@ -24,6 +24,7 @@ export const config = merge(
         signUp,
         workspaceCreate,
         workspaces,
+        workspace,
     })
 )
 

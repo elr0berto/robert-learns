@@ -37,7 +37,7 @@ function AppInner() {
                             <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
                             <NavDropdown.Divider/>
                             {state.workspaces.loading ? 'Loading...' : <>
-                                {state.workspaces.list.map(workspace => <NavDropdown.Item href={pageUrls.workspace.url(workspace)}>{workspace.name}</NavDropdown.Item>)}
+                                {state.workspaces.list.map(workspace => <NavDropdown.Item key={workspace.id} href={pageUrls.workspace.url(workspace)}>{workspace.name}</NavDropdown.Item>)}
                             </>}
                         </NavDropdown>
                     </Nav>

@@ -9,7 +9,7 @@ export const changeFormDescription = ({ state }: Context, desc: string) => {
     state.workspaceCreate.form.description = desc;
 };
 
-export const formSubmit = async ({state,effects} : Context) => {
+export const formSubmit = async ({state,effects,actions} : Context) => {
     state.workspaceCreate.form.submitAttempted = true;
 
     state.workspaceCreate.form.submissionError = '';
@@ -28,6 +28,8 @@ export const formSubmit = async ({state,effects} : Context) => {
         state.workspaceCreate.form.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
         return;
     }
+
+    actions.workspaces.getWorkspaceList();
 
     effects.page.router.goTo('/');
 }
