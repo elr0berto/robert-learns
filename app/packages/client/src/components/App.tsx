@@ -1,10 +1,10 @@
 import React from 'react';
-import {useActions, useAppState} from "./overmind";
-import {SignInStatus} from "./overmind/sign-in/sign-in-state";
+import {useActions, useAppState} from "../overmind";
 import {Col, Container, Nav, Navbar, NavDropdown, Row, Spinner} from "react-bootstrap";
-import {pageUrls} from "./page-urls";
-import MainContent from "./components/MainContent";
-import ErrorBoundary from "./components/error/ErrorBoundary";
+import {SignInStatus} from "../overmind/sign-in/sign-in-state";
+import {Pages, pageUrls} from "../page-urls";
+import MainContent from "./MainContent";
+import ErrorBoundary from "./error/ErrorBoundary";
 
 function AppInner() {
     const state = useAppState();
@@ -33,13 +33,20 @@ function AppInner() {
                     <Nav className="me-auto">
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
                         {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
-                        <NavDropdown title="Workspaces">
-                            <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
-                            <NavDropdown.Divider/>
-                            {state.workspaces.loading ? 'Loading...' : <>
+                        <NavDropdown title={state.page.current === Pages.Workspace ? ("Workspace " + state.workspace.workspace?.name ?? '') : "Workspaces"}>
+                            {state.workspaces.loading ? <>
+                                <NavDropdown.Item key="loading">Loading...</NavDropdown.Item>
+                                <NavDropdown.Divider/>
+                            </> : <>
                                 {state.workspaces.list.map(workspace => <NavDropdown.Item key={workspace.id} href={pageUrls.workspace.url(workspace)}>{workspace.name}</NavDropdown.Item>)}
+                                {state.workspaces.list.length > 0 ? <NavDropdown.Divider/> : null}
                             </>}
+                            <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
                         </NavDropdown>
+                        {state.page.current === Pages.Workspace ?
+                            <NavDropdown title={state.workspace.cardSets.loading ? 'Loading card sets...' : ''}>
+                                {state.workspace.workspace.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.cardSet.url(cardSet)}>{cardSet.name}</NavDropdown.Item>)}
+                            </NavDropdown> : null}
                     </Nav>
                     <Nav>
                         {state.signIn.status === SignInStatus.SigningOut ? 'Signing out...' : state.signIn.user!.isGuest ?

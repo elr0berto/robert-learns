@@ -10,21 +10,29 @@ export type Payload = {
     querystring: queryString.ParsedQuery<string>
 }
 
+export const _loadAllData = async ({ state, effects, actions }: Context) => {
+    actions.workspaces.getWorkspaceList();
+}
+
 export const showFrontPage = async ({ state, effects, actions }: Context) => {
+    actions.page._loadAllData();
     state.page.current = Pages.Front;
 }
 
 export const showSignInPage = async ({ state, effects, actions }: Context) => {
+    actions.page._loadAllData();
     state.signIn = getInitialSignInState(state.signIn.user);
     state.page.current = Pages.SignIn;
 }
 
 export const showSignUpPage = async ({ state, effects, actions }: Context) => {
+    actions.page._loadAllData();
     state.signUp = getInitialSignUpState();
     state.page.current = Pages.SignUp;
 }
 
 export const showWorkspacePage = async ({ state, effects, actions }: Context, payload: Payload) => {
+    actions.page._loadAllData();
     state.page.current = Pages.Workspace
     console.log('showWorkspacePage', payload.params?.id);
     if (payload.params?.id) {
@@ -33,6 +41,7 @@ export const showWorkspacePage = async ({ state, effects, actions }: Context, pa
 }
 
 export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {
+    actions.page._loadAllData();
     state.workspaceCreate = getInitialWorkspaceCreateState();
     state.page.current = Pages.WorkspaceCreate;
 }
