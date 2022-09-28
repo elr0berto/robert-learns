@@ -3,22 +3,26 @@ import {derived} from "overmind";
 import {config} from "../index";
 
 type WorkspaceState = {
-    id: number | null;
+    workspaceId: number | null;
+    cardSetsLoading: boolean;
+    cardSets: CardSet[];
     readonly workspace: Workspace | null;
 }
 
 export const getInitialWorkspaceState = (): WorkspaceState => ({
-    id: null,
+    workspaceId: null,
+    cardSetsLoading: false,
+    cardSets: [],
     workspace: derived((state: WorkspaceState, rootState: typeof config.state) => {
-        if (state.id === null) {
+        if (state.workspaceId === null) {
             return null;
         }
-        const found = rootState.workspaces.list.filter(w => w.id === state.id);
+        const found = rootState.workspaces.list.filter(w => w.id === state.workspaceId);
         if (found.length !== 1) {
             return null;
         }
         return found[0];
-    })
+    }),
 });
 
 export const state: WorkspaceState = getInitialWorkspaceState();
