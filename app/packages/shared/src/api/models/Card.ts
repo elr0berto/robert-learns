@@ -2,13 +2,12 @@ export type CardData = {
     id: number;
     front: string;
     back: string;
-    media: Media;
+    audio: Media | null;
 }
 
 export default class Card {
     id: number;
     name: string;
-    cards: Card[];
 
     constructor(data: CardData) {
         this.id = data.id;

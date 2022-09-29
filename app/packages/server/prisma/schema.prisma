@@ -53,10 +53,26 @@ model Workspace {
   cardSets CardSet[]
 }
 
+enum MediaType {
+   AUDIO
+   IMAGE
+}
+
+model Media {
+  id        Int      @id @default(autoincrement())
+  data      String   @db.MediumText
+  name      String
+  type      MediaType
+  cardFaces CardFace[]
+  cards     Card[]
+}
+
 model Card {
   id      Int      @id @default(autoincrement())
   faces   CardFace[]
   sets    CardSetCard[]
+  audio   Media?   @relation(fields: [audioId], references: [id])
+  audioId Int?
 }
 
 enum CardSide {
@@ -70,6 +86,8 @@ model CardFace {
   card    Card     @relation(fields: [cardId], references: [id])
   cardId  Int
   side    CardSide
+  media   Media    @relation(fields: [mediaId], references: [id])
+  mediaId Int
 }
 
 model CardSetUser {
