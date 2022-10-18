@@ -1,6 +1,8 @@
 import {apiClient} from './ApiClient';
 import {BaseResponse} from "./models/BaseResponse";
 import {WorkspaceListResponse} from "./models/WorkspaceListResponse";
+import Workspace from "./models/Workspace";
+import {WorkspaceCardSetListResponse} from "./models/WorkspaceCardSetListResponse";
 
 export type WorkspaceCreateRequest = {
     name: string;
@@ -25,4 +27,8 @@ export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<B
 
 export const workspaceList = async() : Promise<WorkspaceListResponse> => {
     return await apiClient.get(WorkspaceListResponse, '/workspaces');
+}
+
+export const workspaceCardSetList = async(workspace : Workspace) : Promise<WorkspaceCardSetListResponse> => {
+    return await apiClient.get(WorkspaceCardSetListResponse, '/workspace/'+workspace.id+'/card-sets/');
 }

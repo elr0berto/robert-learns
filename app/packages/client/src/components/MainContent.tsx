@@ -4,6 +4,8 @@ import {pageUrls} from "../page-urls";
 function MainContent() {
     const state = useAppState();
 
+    console.log('state.page.current', state.page.current);
+
     if (state.page.current === null) {
         return null;
     }
