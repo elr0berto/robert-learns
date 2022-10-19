@@ -8,6 +8,10 @@ import {getSignedInUser, getUserData, TypedResponse} from "../common";
 import {validateWorkspaceCreateRequest, WorkspaceCreateRequest} from "../../../shared/src/api/workspaces";
 import { UserRole } from '@prisma/client';
 import {WorkspaceListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceListResponse";
+import {
+    WorkspaceCardSetListResponse,
+    WorkspaceCardSetListResponseData
+} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceCardSetListResponse";
 
 const workspaces = Router();
 
@@ -80,6 +84,28 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         user: getUserData(user),
         errorMessage: null,
     });
+});
+
+workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<WorkspaceCardSetListResponseData>) => {
+    let user = await getSignedInUser(req.session);
+
+    const cardSets = await prisma.cardSet.findMany({
+        where: {
+            workspaceId: {
+                equals: parseInt(req.params.workspaceId)
+            }
+        },
+    });
+
+    return res.json({
+        status: ResponseStatus.Success,
+        user: getUserData(user),
+        errorMessage: null,
+        cardSets: cardSets.map(cs => ({
+            id: cs.id,
+            name: cs.name,
+        }))
+    })
 });
 
 export default workspaces;

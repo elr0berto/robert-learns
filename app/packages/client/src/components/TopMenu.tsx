@@ -29,7 +29,10 @@ function TopMenu() {
                     {state.page.current === Pages.Workspace ?
                         <NavDropdown title={state.workspace.cardSetsLoading ? 'Loading card sets...' : ''}>
                             {state.workspace.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.workspace.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
-                        </NavDropdown> : null}
+                            <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.workspace.workspace!)}>Create card set</NavDropdown.Item>
+                        </NavDropdown> : null
+                    }
+
                 </Nav>
                 <Nav>
                     {state.signIn.status === SignInStatus.SigningOut ? 'Signing out...' : state.signIn.user!.isGuest ?

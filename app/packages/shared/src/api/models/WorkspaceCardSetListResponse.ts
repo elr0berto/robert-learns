@@ -6,9 +6,9 @@ export type WorkspaceCardSetListResponseData = BaseResponseData & {
 }
 
 export class WorkspaceCardSetListResponse extends BaseResponse {
-    cardSets: CardSet[] | null;
+    cardSets: CardSet[];
     constructor(data: WorkspaceCardSetListResponseData) {
         super(data);
-        this.cardSets = data.cardSets?.map(csd => new CardSet(csd)) ?? null;
+        this.cardSets = data.cardSets?.map(csd => new CardSet(csd)) ?? [];
     }
 }

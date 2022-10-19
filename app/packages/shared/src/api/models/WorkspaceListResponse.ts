@@ -6,9 +6,9 @@ export type WorkspaceListResponseData = BaseResponseData & {
 }
 
 export class WorkspaceListResponse extends BaseResponse {
-    workspaces: Workspace[] | null;
+    workspaces: Workspace[];
     constructor(data: WorkspaceListResponseData) {
         super(data);
-        this.workspaces = data.workspaces?.map(wd => new Workspace(wd)) ?? null;
+        this.workspaces = data.workspaces?.map(wd => new Workspace(wd)) ?? [];
     }
 }
