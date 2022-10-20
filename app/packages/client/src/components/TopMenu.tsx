@@ -16,7 +16,7 @@ function TopMenu() {
                 <Nav className="me-auto">
                     {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
                     {state.signIn.user!.isGuest ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
-                    <NavDropdown title={state.page.current === Pages.Workspace ? ("Workspace " + state.workspace.workspace?.name ?? '') : "Workspaces"}>
+                    <NavDropdown title={state.workspace.workspace === null ? 'Workspaces' : ('Workspace ' + state.workspace.workspace.name)}>
                         {state.workspaces.loading ? <>
                             <NavDropdown.Item key="loading">Loading...</NavDropdown.Item>
                             <NavDropdown.Divider/>
@@ -27,7 +27,7 @@ function TopMenu() {
                         <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
                     </NavDropdown>
                     {state.page.current === Pages.Workspace ?
-                        <NavDropdown title={state.workspace.cardSetsLoading ? 'Loading card sets...' : ''}>
+                        <NavDropdown title={state.workspace.cardSetsLoading ? 'Loading card sets...' : 'Card sets'}>
                             {state.workspace.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.workspace.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
                             <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.workspace.workspace!)}>Create card set</NavDropdown.Item>
                         </NavDropdown> : null

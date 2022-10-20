@@ -5,6 +5,7 @@ import SignIn from "../components/sign-in/SignIn";
 import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
 import WorkspacePage from "../components/workspace/WorkspacePage";
 import CardSet from "@elr0berto/robert-learns-shared/dist/api/models/CardSet";
+import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
 
 export enum Pages {
     Front = "front",
@@ -39,24 +40,24 @@ const pageUrls = {
         getPageComponent: () => SignUp,
     },
     [Pages.Workspace]: {
-        route: '/workspace/:id',
+        route: '/workspace/:workspaceId',
         url: (workspace: Workspace) => '/workspace/'+workspace.id,
         //page: Pages.Workspace,
-        getRouteCallback: (actions: typeof overmind.actions) => actions.workspace.showWorkspacePage,
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspacePage,
         getPageComponent: () => WorkspacePage,
     },
     [Pages.WorkspaceCardSetCreate]: {
-        route: '/workspace/:id/card-set-create',
+        route: '/workspace/:workspaceId/card-set-create',
         url: (workspace: Workspace) => '/workspace/'+workspace.id+'/card-set-create/',
         //page: Pages.Workspace,
-        getRouteCallback: (actions: typeof overmind.actions) => actions.workspace.showWorkspacePage,
-        getPageComponent: () => WorkspacePage,
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetCreatePage,
+        getPageComponent: () => WorkspaceCardSetCreatePage,
     },
     [Pages.WorkspaceCardSet]: {
-        route: '/workspace/:id/card-set/:cardSetId',
+        route: '/workspace/:workspaceId/card-set/:cardSetId',
         url: (workspace: Workspace, cardSet: CardSet) => '/workspace/'+workspace.id+'/card-set/'+cardSet.id,
         //page: Pages.Workspace,
-        getRouteCallback: (actions: typeof overmind.actions) => actions.workspace.showWorkspacePage,
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetPage,
         getPageComponent: () => WorkspacePage,
     },
     [Pages.WorkspaceCreate]: {

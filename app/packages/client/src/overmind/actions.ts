@@ -23,12 +23,12 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         }
     })
 
+    await Promise.all([actions.signIn.check(), actions.workspaces.getWorkspaceList()]);
+
     let routes : {[key:string]: (payload : Payload) => Promise<void>} = {};
 
     for (const [, value] of Object.entries(pageUrls)) {
         routes[value.route] = value.getRouteCallback(actions);
     }
     effects.page.router.initialize(routes);
-
-    await Promise.all([actions.signIn.check(), actions.workspaces.getWorkspaceList()]);
 }

@@ -30,5 +30,6 @@ export const workspaceList = async() : Promise<WorkspaceListResponse> => {
 }
 
 export const workspaceCardSetList = async(workspace : Workspace) : Promise<WorkspaceCardSetListResponse> => {
-    return await apiClient.get(WorkspaceCardSetListResponse, '/workspace/'+workspace.id+'/card-sets/');
+    console.log('workspaceCardSetList ', '/workspace/'+workspace.id+'/card-sets/');
+    return await apiClient.get(WorkspaceCardSetListResponse, '/workspaces/'+workspace.id+'/card-sets/');
 }
