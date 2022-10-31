@@ -6,7 +6,7 @@ function ErrorPage() {
     const actions = useActions();
     const state = useAppState();
     return (
-        <section className="error-section">
+        <section className="error-section mt-3">
             <div className="container">
                 {state.error.reloadingPage ?
                     <div className="error-text">Please wait while page reloads...</div> :

@@ -18,14 +18,10 @@ function WorkspaceCardSetCreatePage() {
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="cardSetName">
                 <Form.Label>Card Set Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter card set name" value={state.workspaceCreate.form.name} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCreate.changeFormName(event.currentTarget.value)}/>
+                <Form.Control type="text" placeholder="Enter card set name" value={state.workspaceCardSetCreate.form.name} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCardSetCreate.changeFormName(event.currentTarget.value)}/>
             </Form.Group>
-            <Form.Group className="mb-3" controlId="workspaceDescription">
-                <Form.Label>Workspace Description</Form.Label>
-                <Form.Control type="text" placeholder="Please provide a short description for your workspace" value={state.workspaceCreate.form.description} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCreate.changeFormDescription(event.currentTarget.value)}/>
-            </Form.Group>
-            {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err,i) => <p key={i}>{err}</p>)}</Alert> : null}
-            <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit()}>Create Workspace!</Button>
+            {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err,i) => <p key={i}>{err}</p>)}</Alert> : null}
+            <Button disabled={state.workspaceCardSetCreate.form.submitDisabled} onClick={() => actions.workspaceCardSetCreate.formSubmit()}>Create Card Set!</Button>
         </Form>
     </Container>;
 }

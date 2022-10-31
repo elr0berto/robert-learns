@@ -4,8 +4,12 @@ import {
     BaseResponseData,
     ResponseStatus
 } from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {getSignedInUser, getUserData, TypedResponse} from "../common";
-import {validateWorkspaceCreateRequest, WorkspaceCreateRequest} from "../../../shared/src/api/workspaces";
+import {getSignedInUser, getUserData, TypedResponse, userCanWriteToWorkspace} from "../common";
+import {
+    validateWorkspaceCardSetCreateRequest,
+    validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
+    WorkspaceCreateRequest
+} from "../../../shared/src/api/workspaces";
 import { UserRole } from '@prisma/client';
 import {WorkspaceListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceListResponse";
 import {
@@ -106,6 +110,61 @@ workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<Worksp
             name: cs.name,
         }))
     })
+});
+
+workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSetCreateRequest>, res : TypedResponse<BaseResponseData>) => {
+    let user = await getSignedInUser(req.session);
+
+    if (user.isGuest) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: 'Guest users are not allowed to create card sets. please sign in first!',
+            user: null,
+        });
+    }
+
+    const errors = validateWorkspaceCardSetCreateRequest(req.body);
+
+    if (errors.length !== 0) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join(', '),
+            user: null,
+        });
+    }
+
+    const hasRights = userCanWriteToWorkspace(user,req.body.workspaceId);
+    if (!hasRights) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: 'You are not allowed to create card sets in this workspace.',
+            user: null,
+        });
+    }
+
+    const newCardSet = await prisma.cardSet.create({
+        data: {
+            name: req.body.name,
+            workspaceId: req.body.workspaceId,
+        }
+    });
+
+    const cardSetUser = await prisma.cardSetUser.create({
+        data: {
+            cardSetId: newCardSet.id,
+            userId: user.id,
+            role: UserRole.OWNER,
+        }
+    });
+
+    user = await getSignedInUser(req.session);
+    console.log('user', user);
+
+    return res.json({
+        status: ResponseStatus.Success,
+        user: getUserData(user),
+        errorMessage: null,
+    });
 });
 
 export default workspaces;

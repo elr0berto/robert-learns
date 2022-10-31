@@ -1,9 +1,9 @@
 import {derived} from 'overmind'
-import {validateWorkspaceCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
+import {validateWorkspaceCardSetCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
+import {config} from "../index";
 
-type WorkspaceCreateFormState = {
+type WorkspaceCardSetCreateFormState = {
     name: string;
-    description: string;
     submitting: boolean;
     submitAttempted: boolean;
     submissionError: string;
@@ -14,33 +14,32 @@ type WorkspaceCreateFormState = {
     readonly allErrors: string[];
 }
 type WorkspaceCardSetCreateState = {
-    form: WorkspaceCreateFormState;
+    form: WorkspaceCardSetCreateFormState;
 }
 
-export const getInitialWorkspaceCreateState = (): WorkspaceCardSetCreateState => ({
+export const getInitialWorkspaceCardSetCreateState = (): WorkspaceCardSetCreateState => ({
     form: {
         name: '',
-        description: '',
         submitting: false,
         submitAttempted: false,
         submissionError: '',
-        submitDisabled: derived((state: WorkspaceCreateFormState) => {
+        submitDisabled: derived((state: WorkspaceCardSetCreateFormState) => {
             return state.submitting;
         }),
-        validationErrors: derived((state: WorkspaceCreateFormState) => {
-            let errors = validateWorkspaceCreateRequest({
+        validationErrors: derived((state: WorkspaceCardSetCreateFormState, rootState: typeof config.state) => {
+            let errors = validateWorkspaceCardSetCreateRequest({
                 name: state.name.trim(),
-                description: state.description.trim(),
+                workspaceId: rootState.workspace.workspaceId!,
             });
             return errors;
         }),
-        isValid: derived((state: WorkspaceCreateFormState) => {
+        isValid: derived((state: WorkspaceCardSetCreateFormState) => {
             return state.validationErrors.length === 0;
         }),
-        showErrors: derived((state: WorkspaceCreateFormState) => {
+        showErrors: derived((state: WorkspaceCardSetCreateFormState) => {
             return state.submitAttempted && state.allErrors.length > 0;
         }),
-        allErrors: derived((state: WorkspaceCreateFormState) => {
+        allErrors: derived((state: WorkspaceCardSetCreateFormState) => {
             let errors = state.validationErrors;
             if (state.submissionError.length > 0) {
                 errors.push(state.submissionError);
@@ -50,4 +49,4 @@ export const getInitialWorkspaceCreateState = (): WorkspaceCardSetCreateState =>
     },
 });
 
-export const state: WorkspaceCardSetCreateState = getInitialWorkspaceCreateState();
+export const state: WorkspaceCardSetCreateState = getInitialWorkspaceCardSetCreateState();

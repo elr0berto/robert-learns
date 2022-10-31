@@ -1,8 +1,9 @@
 import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma";
 import {Session, SessionData} from "express-session";
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 import {UserData} from "@elr0berto/robert-learns-shared/dist/api/models/User";
+
 
 export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
@@ -62,4 +63,19 @@ export const getUserData = (user: UserData) : UserData => {
         username: user.username,
         isGuest : user.isGuest
     };
+}
+
+export const userCanWriteToWorkspace = async (user: UserData, workspaceId: number) : Promise<boolean> => {
+    const workspaceUser = await prisma.workspaceUser.findFirst({
+        where: {
+            workspaceId: workspaceId,
+            userId: user.id,
+            OR: [
+                {role: UserRole.OWNER},
+                {role: UserRole.CONTRIBUTOR}
+            ]
+        }
+    });
+
+    return workspaceUser !== null;
 }

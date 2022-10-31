@@ -33,3 +33,24 @@ export const workspaceCardSetList = async(workspace : Workspace) : Promise<Works
     console.log('workspaceCardSetList ', '/workspace/'+workspace.id+'/card-sets/');
     return await apiClient.get(WorkspaceCardSetListResponse, '/workspaces/'+workspace.id+'/card-sets/');
 }
+
+export type WorkspaceCardSetCreateRequest = {
+    workspaceId: number;
+    name: string;
+}
+
+export const validateWorkspaceCardSetCreateRequest = (req: WorkspaceCardSetCreateRequest) : string[] => {
+    let errs : string[] = [];
+    if (req.workspaceId <= 0) {
+        errs.push('Workspace id is missing');
+    }
+    if (req.name.trim().length === 0) {
+        errs.push('You must enter a name');
+    }
+
+    return errs;
+}
+
+export const workspaceCardSetCreate = async(params: WorkspaceCardSetCreateRequest) : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/workspaces/card-set-create', params);
+}

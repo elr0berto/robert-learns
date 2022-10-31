@@ -2,34 +2,29 @@ import { Context } from '..';
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
 
 export const changeFormName = ({ state }: Context, name: string) => {
-    state.workspaceCreate.form.name = name;
+    state.workspaceCardSetCreate.form.name = name;
 };
 
-export const changeFormDescription = ({ state }: Context, desc: string) => {
-    state.workspaceCreate.form.description = desc;
-};
 
 export const formSubmit = async ({state,effects,actions} : Context) => {
-    state.workspaceCreate.form.submitAttempted = true;
+    state.workspaceCardSetCreate.form.submitAttempted = true;
 
-    state.workspaceCreate.form.submissionError = '';
-    if (!state.workspaceCreate.form.isValid) {
+    state.workspaceCardSetCreate.form.submissionError = '';
+    if (!state.workspaceCardSetCreate.form.isValid) {
         return;
     }
 
-    state.workspaceCreate.form.submitting = true;
-    const resp = await effects.api.workspaces.workspaceCreate({
+    state.workspaceCardSetCreate.form.submitting = true;
+    const resp = await effects.api.workspaces.workspaceCardSetCreate({
         name: state.workspaceCreate.form.name,
-        description: state.workspaceCreate.form.description,
+        workspaceId: state.workspace.workspaceId!,
     });
 
-    state.workspaceCreate.form.submitting = false;
+    state.workspaceCardSetCreate.form.submitting = false;
     if (resp.status !== ResponseStatus.Success) {
-        state.workspaceCreate.form.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
+        state.workspaceCardSetCreate.form.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
         return;
     }
-
-    actions.workspaces.getWorkspaceList();
 
     effects.page.router.goTo('/');
 }
