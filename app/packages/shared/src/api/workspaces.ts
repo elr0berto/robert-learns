@@ -3,6 +3,7 @@ import {BaseResponse} from "./models/BaseResponse";
 import {WorkspaceListResponse} from "./models/WorkspaceListResponse";
 import Workspace from "./models/Workspace";
 import {WorkspaceCardSetListResponse} from "./models/WorkspaceCardSetListResponse";
+import {WorkspaceCardSetCreateResponse} from "./models/WorkspaceCardSetCreateResponse";
 
 export type WorkspaceCreateRequest = {
     name: string;
@@ -51,6 +52,6 @@ export const validateWorkspaceCardSetCreateRequest = (req: WorkspaceCardSetCreat
     return errs;
 }
 
-export const workspaceCardSetCreate = async(params: WorkspaceCardSetCreateRequest) : Promise<BaseResponse> => {
-    return await apiClient.post(BaseResponse, '/workspaces/card-set-create', params);
+export const workspaceCardSetCreate = async(params: WorkspaceCardSetCreateRequest) : Promise<WorkspaceCardSetCreateResponse> => {
+    return await apiClient.post(WorkspaceCardSetCreateResponse, '/workspaces/card-set-create', params);
 }

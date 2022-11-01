@@ -26,7 +26,10 @@ function TopMenu() {
                         </>}
                         <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
                     </NavDropdown>
-                    {state.page.current === Pages.Workspace ?
+                    {state.page.current === Pages.Workspace ||
+                    state.page.current === Pages.WorkspaceCardSetCreate ||
+                    state.page.current === Pages.WorkspaceCreate ||
+                    state.page.current === Pages.WorkspaceCardSet ?
                         <NavDropdown title={state.workspace.cardSetsLoading ? 'Loading card sets...' : 'Card sets'}>
                             {state.workspace.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.workspace.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
                             <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.workspace.workspace!)}>Create card set</NavDropdown.Item>

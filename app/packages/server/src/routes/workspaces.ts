@@ -16,6 +16,7 @@ import {
     WorkspaceCardSetListResponse,
     WorkspaceCardSetListResponseData
 } from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceCardSetListResponse";
+import {WorkspaceCardSetCreateResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceCardSetCreateResponse";
 
 const workspaces = Router();
 
@@ -112,7 +113,7 @@ workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<Worksp
     })
 });
 
-workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSetCreateRequest>, res : TypedResponse<BaseResponseData>) => {
+workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSetCreateRequest>, res : TypedResponse<WorkspaceCardSetCreateResponseData>) => {
     let user = await getSignedInUser(req.session);
 
     if (user.isGuest) {
@@ -120,6 +121,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create card sets. please sign in first!',
             user: null,
+            cardSetId: null,
         });
     }
 
@@ -130,6 +132,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
             user: null,
+            cardSetId: null,
         });
     }
 
@@ -139,6 +142,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not allowed to create card sets in this workspace.',
             user: null,
+            cardSetId: null,
         });
     }
 
@@ -158,12 +162,12 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
     });
 
     user = await getSignedInUser(req.session);
-    console.log('user', user);
 
     return res.json({
         status: ResponseStatus.Success,
         user: getUserData(user),
         errorMessage: null,
+        cardSetId: newCardSet.id,
     });
 });
 
