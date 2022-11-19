@@ -11,6 +11,7 @@ import * as workspaceCreate from './workspace-create';
 import * as workspaceCardSetCreate from './workspace-card-set-create';
 import * as workspaces from './workspaces';
 import * as workspace from './workspace';
+import * as workspaceCardSet from './workspace-card-set';
 
 export const config = merge(
     {
@@ -27,6 +28,7 @@ export const config = merge(
         workspaceCardSetCreate,
         workspaces,
         workspace,
+        workspaceCardSet,
     })
 )
 
