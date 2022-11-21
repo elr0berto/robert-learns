@@ -20,7 +20,7 @@
   },
   "packageManager": "yarn@3.0.0",
   "dependencies": {
-    "bootstrap": "^5.2.0",
-    "react-bootstrap": "^2.4.0"
+    "bootstrap": "^5.2.2",
+    "react-bootstrap": "^2.6.0"
   }
 }

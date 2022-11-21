@@ -14,8 +14,14 @@ export const _loadAllData = async ({ state, effects, actions }: Context) => {
     actions.workspaces.getWorkspaceList();
 }
 
+export const _resetAll = async ({state}: Context) => {
+    state.workspace.workspaceId = null;
+    state.workspaceCardSet.cardSetId = null;
+}
+
 export const showFrontPage = async ({ state, effects, actions }: Context) => {
     actions.page._loadAllData();
+    actions.page._resetAll();
     state.page.current = Pages.Front;
 }
 
@@ -35,12 +41,18 @@ export const _setWorkspacePage = async ({state, effects, actions}: Context, {pay
     state.page.current = page;
     if (payload.params?.workspaceId) {
         state.workspace.workspaceId = +payload.params.workspaceId;
-        actions.workspace._loadCardSets();
+        await actions.workspace._loadCardSets();
+        if (payload.params?.cardSetId) {
+            state.workspaceCardSet.cardSetId = +payload.params.cardSetId;
+            await actions.workspaceCardSet._loadCards();
+        }
     }
+
 }
 
 export const showWorkspacePage = async ({ state, effects, actions }: Context, payload: Payload) => {
     actions.page._loadAllData();
+    state.workspaceCardSet.cardSetId = null;
     actions.page._setWorkspacePage({payload, page: Pages.Workspace});
 }
 
