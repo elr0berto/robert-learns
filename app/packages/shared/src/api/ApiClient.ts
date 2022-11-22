@@ -1,6 +1,7 @@
-import {AxiosInstance, AxiosRequestConfig, default as axios} from "axios";
+import axios from "axios";
+import {AxiosInstance, AxiosRequestConfig} from "axios";
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse";
-import {ClassConstructor, plainToInstance} from "class-transformer";
+
 
 class ApiClient {
     onBeforeRequest: () => void = () => {};

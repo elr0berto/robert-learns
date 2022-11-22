@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
 import './sass/style.scss';
 import { createOvermind } from 'overmind';
 import {config} from './overmind';
@@ -8,6 +7,7 @@ import {Provider} from "overmind-react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";
 import App from "./components/App";
+import {createRoot} from "react-dom/client";
 
 export const overmind = createOvermind(config, {
     devtools: true /*process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',*/
@@ -26,12 +26,9 @@ window.onunhandledrejection = (e: PromiseRejectionEvent) => {
     }
     overmind.actions.error.setError({error: new Error(e.reason.stack), errorInfo: null});
 }
-
-const root = ReactDOM.createRoot(document.getElementById("root")!);
-
-
+const root = createRoot(document.getElementById("root") as HTMLElement);
 root.render(
-  <Provider value={overmind}>
-      <App />
-  </Provider>
+    <Provider value={overmind}>
+        <App />
+    </Provider>
 );
