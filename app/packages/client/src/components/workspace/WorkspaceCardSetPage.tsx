@@ -1,6 +1,7 @@
 import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Container, Form} from "react-bootstrap";
 import React from "react";
+import CardList from "../cards/CardList";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -8,21 +9,23 @@ function WorkspaceCardSetPage() {
 
     if (state.workspace.workspace === null) {
         if (state.workspaces.loading) {
-            return <Container>Loading...</Container>;
+            return <Container className="my-5">Loading...</Container>;
         } else {
-            return <Container>Workspace not found.</Container>
+            return <Container className="my-5">Workspace not found.</Container>
         }
     }
+    if (state.workspaceCardSet.cardSet === null) {
+        if (state.workspace.cardSetsLoading) {
+            return <Container className="my-5">Loading...</Container>;
+        } else {
+            return <Container className="my-5">Card set not found.</Container>
+        }
+    }
+
     return <Container>
-        <h1 className="my-5">Create card set in workspace {state.workspace.workspace.name}</h1>
-        <Form className="col-lg-5">
-            <Form.Group className="mb-3" controlId="cardSetName">
-                <Form.Label>Card Set Name</Form.Label>
-                <Form.Control type="text" placeholder="Enter card set name" value={state.workspaceCardSetCreate.form.name} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCardSetCreate.changeFormName(event.currentTarget.value)}/>
-            </Form.Group>
-            {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err,i) => <p key={i}>{err}</p>)}</Alert> : null}
-            <Button disabled={state.workspaceCardSetCreate.form.submitDisabled} onClick={() => actions.workspaceCardSetCreate.formSubmit()}>Create Card Set!</Button>
-        </Form>
+        <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i></h1>
+        {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList cards={state.workspaceCardSet.cards}/>}
+        <Button onClick={() => actions.work}>+ Create card</Button>
     </Container>;
 }
 

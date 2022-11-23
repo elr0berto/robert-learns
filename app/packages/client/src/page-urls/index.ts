@@ -6,6 +6,7 @@ import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
 import WorkspacePage from "../components/workspace/WorkspacePage";
 import CardSet from "@elr0berto/robert-learns-shared/dist/api/models/CardSet";
 import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
+import WorkspaceCardSetPage from "../components/workspace/WorkspaceCardSetPage";
 
 export enum Pages {
     Front = "front",
@@ -58,7 +59,7 @@ const pageUrls = {
         url: (workspace: Workspace, cardSet: CardSet) => '/workspace/'+workspace.id+'/card-set/'+cardSet.id,
         //page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetPage,
-        getPageComponent: () => WorkspacePage,
+        getPageComponent: () => WorkspaceCardSetPage,
     },
     [Pages.WorkspaceCreate]: {
         route: '/workspace-create',
