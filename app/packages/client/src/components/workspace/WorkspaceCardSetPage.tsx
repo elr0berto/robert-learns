@@ -25,7 +25,7 @@ function WorkspaceCardSetPage() {
     return <Container>
         <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i></h1>
         {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList cards={state.workspaceCardSet.cards}/>}
-        <Button onClick={() => actions.work}>+ Create card</Button>
+        <Button onClick={() => actions.createCardModal.openCreateCardModal(state.workspaceCardSet.cardSetId!)}>+ Create card</Button>
     </Container>;
 }
 

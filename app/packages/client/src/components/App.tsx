@@ -5,6 +5,7 @@ import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import MainContent from "./MainContent";
 import ErrorBoundary from "./error/ErrorBoundary";
 import TopMenu from "./TopMenu";
+import CreateCardModal from "./cards/CreateCardModal";
 
 function AppInner() {
     const state = useAppState();
@@ -26,6 +27,7 @@ function AppInner() {
     return <>
         <TopMenu/>
         <MainContent/>
+        <CreateCardModal/>
     </>;
 }
 

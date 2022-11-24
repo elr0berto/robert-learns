@@ -12,6 +12,7 @@ import * as workspaceCardSetCreate from './workspace-card-set-create';
 import * as workspaces from './workspaces';
 import * as workspace from './workspace';
 import * as workspaceCardSet from './workspace-card-set';
+import * as createCardModal from './create-card-modal';
 
 export const config = merge(
     {
@@ -29,6 +30,7 @@ export const config = merge(
         workspaces,
         workspace,
         workspaceCardSet,
+        createCardModal,
     })
 )
 
