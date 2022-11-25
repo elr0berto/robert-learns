@@ -1,10 +1,9 @@
 import {useActions, useAppState} from "../../overmind";
-import {Alert, Button, Container, Form} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import React from "react";
 
 function WorkspacePage() {
     const state = useAppState();
-    const actions = useActions();
 
     if (state.workspace.workspace === null) {
         if (state.workspaces.loading) {

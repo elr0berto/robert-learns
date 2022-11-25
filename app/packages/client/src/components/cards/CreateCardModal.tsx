@@ -3,6 +3,7 @@ import Modal from 'react-bootstrap/Modal';
 import {useActions, useAppState} from "../../overmind";
 import {Alert, Container, Form, Tab, Tabs} from "react-bootstrap";
 import React from "react";
+import CardFaceEditor from "./CardFaceEditor";
 
 function CreateCardModal() {
     const state = useAppState();
@@ -27,7 +28,8 @@ function CreateCardModal() {
                             className="mb-3"
                         >
                             <Tab eventKey="front" title="Front">
-                                Front
+                                <CardFaceEditor
+                                    onHtmlChange={html => actions.createCardModal.setFrontHtml(html)}/>
                             </Tab>
                             <Tab eventKey="back" title="Back">
                                 Back
