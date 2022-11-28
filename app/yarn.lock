@@ -1695,6 +1695,7 @@ __metadata:
   dependencies:
     "@elr0berto/robert-learns-shared": 1.0.0
     "@types/draftjs-to-html": ^0.8.1
+    "@types/html-to-draftjs": ^1.4.0
     "@types/node": ^18.11.9
     "@types/page": ^1.11.5
     "@types/react": ^18.0.25
@@ -1702,6 +1703,7 @@ __metadata:
     "@types/react-draft-wysiwyg": ^1.13.4
     draft-js: ^0.11.7
     draftjs-to-html: ^0.9.1
+    html-to-draftjs: ^1.5.0
     overmind: ^28.0.2
     overmind-react: ^29.0.2
     page: ^1.11.6
@@ -2805,6 +2807,15 @@ __metadata:
   version: 6.1.0
   resolution: "@types/html-minifier-terser@npm:6.1.0"
   checksum: eb843f6a8d662d44fb18ec61041117734c6aae77aa38df1be3b4712e8e50ffaa35f1e1c92fdd0fde14a5675fecf457abcd0d15a01fae7506c91926176967f452
+  languageName: node
+  linkType: hard
+
+"@types/html-to-draftjs@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "@types/html-to-draftjs@npm:1.4.0"
+  dependencies:
+    "@types/draft-js": "*"
+  checksum: 727243c8b72ab453e0d81cd6e68c764277dd2c363fdb0700a47f07979cc4f488557f213ee836a6b5bb422689056c65d661e2b149fb27740a940ad1d86abbdb03
   languageName: node
   linkType: hard
 

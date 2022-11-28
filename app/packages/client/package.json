@@ -4,11 +4,13 @@
   "private": true,
   "dependencies": {
     "@elr0berto/robert-learns-shared": "1.0.0",
+    "@types/html-to-draftjs": "^1.4.0",
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
+    "html-to-draftjs": "^1.5.0",
     "overmind": "^28.0.2",
     "overmind-react": "^29.0.2",
     "page": "^1.11.6",
