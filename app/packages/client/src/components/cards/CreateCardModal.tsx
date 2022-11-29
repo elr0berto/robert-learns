@@ -29,7 +29,9 @@ function CreateCardModal() {
                         >
                             <Tab eventKey="front" title="Front">
                                 <CardFaceEditor
-                                    onHtmlChange={html => actions.createCardModal.setFrontHtml(html)}/>
+                                    onHtmlChange={html => actions.createCardModal.setFrontHtml(html)}
+                                    uploadCallback={file => actions.createCardModal.uploadFile(file)}
+                                />
                             </Tab>
                             <Tab eventKey="back" title="Back">
                                 Back

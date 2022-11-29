@@ -7,6 +7,7 @@ import {ContentState, EditorState} from "draft-js";
 
 type Props = {
     onHtmlChange: (html: string) => void;
+    uploadCallback: (file: File) => Promise<string>;
 };
 
 function CardFaceEditor(props: Props) {
@@ -18,7 +19,7 @@ function CardFaceEditor(props: Props) {
         toolbar={{
             image: {
                 uploadEnabled: true,
-                uploadCallback: async (file: object) => { console.log('file', file); return { data: { link : '/blah.jpg'} }; }
+                uploadCallback: async (file: File) => { const url = await props.uploadCallback(file); return {data:{link:url}}; }
             }
         }}
     />;
