@@ -60,7 +60,7 @@ enum MediaType {
 
 model Media {
   id        Int      @id @default(autoincrement())
-  data      String   @db.MediumText
+  path      String
   name      String
   type      MediaType
   cardFaces CardFace[]

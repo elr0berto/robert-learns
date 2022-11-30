@@ -45,3 +45,5 @@ dist
 git.txt
 secrets/
 .idea/
+
+app/packages/server/uploads/*
