@@ -6,13 +6,13 @@ import {
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
 import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia } from '@prisma/client';
 import {CardSetCardListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/CardSetCardListResponse";
-import CardFace, {CardFaceData} from "@elr0berto/robert-learns-shared/dist/api/models/CardFace";
-import Media, {MediaData} from "@elr0berto/robert-learns-shared/dist/api/models/Media";
+import {CardFaceData} from "@elr0berto/robert-learns-shared/dist/api/models/CardFace";
+import {MediaData} from "@elr0berto/robert-learns-shared/dist/api/models/Media";
 import {upload} from "../multer";
 import {
-    CardSetUploadFileResponse,
     CardSetUploadFileResponseData
 } from "@elr0berto/robert-learns-shared/dist/api/models/CardSetUploadFileResponse";
+import { fileTypeFromFile } from 'file-type';
 
 const cardSets = Router();
 
@@ -81,6 +81,32 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
 
 cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res : TypedResponse<CardSetUploadFileResponseData>) => {
     let user = await getSignedInUser(req.session);
+
+    if (req.file === null || typeof req.file === 'undefined' || req.file.size === 0 || req.file.size > 10000000) {
+        throw new Error('file missing or too large or something. file size: ' + (req.file?.size ?? 'undefined'));
+    }
+
+    const whitelist = [
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+        'image/webp'
+    ];
+
+    const meta = await fileTypeFromFile(req.file.path)
+
+    if (typeof meta === 'undefined' || !whitelist.includes(meta.mime)) {
+        throw new Error('bad file mime: ' + (meta?.mime ?? 'undefined'));
+    }
+
+
+    const newMedia = await prisma.media.create({
+        data: {
+            path: req.file.path,
+            name: req.file.originalname,
+            cardSetId: req.body.cardSetId,
+        }
+    });
 
     return res.json({
         status: ResponseStatus.Success,
