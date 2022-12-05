@@ -4,7 +4,7 @@ import {
     ResponseStatus
 } from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
 import {getSignedInUser, getUserData, TypedResponse} from "../common";
-import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia } from '@prisma/client';
+import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia, MediaType } from '@prisma/client';
 import {CardSetCardListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/CardSetCardListResponse";
 import {CardFaceData} from "@elr0berto/robert-learns-shared/dist/api/models/CardFace";
 import {MediaData} from "@elr0berto/robert-learns-shared/dist/api/models/Media";
@@ -105,6 +105,7 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
             path: req.file.path,
             name: req.file.originalname,
             cardSetId: req.body.cardSetId,
+            type: MediaType.IMAGE
         }
     });
 
