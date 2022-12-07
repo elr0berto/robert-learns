@@ -1,12 +1,11 @@
-import axios from "axios";
-import {AxiosInstance, AxiosRequestConfig} from "axios";
-import {BaseResponse, BaseResponseData} from "./models/BaseResponse";
+import axios, {AxiosInstance, AxiosRequestConfig} from "axios";
+import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 
 
 class ApiClient {
     onBeforeRequest: () => void = () => {};
     onAfterRequest: (response: BaseResponse) => void = () => {};
-    axiosInstance: AxiosInstance = axios.create({
+    axiosInstance: AxiosInstance = axios.default.create({
         baseURL: '/api',
         withCredentials: true,
         headers: {

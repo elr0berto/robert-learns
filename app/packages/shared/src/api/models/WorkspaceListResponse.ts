@@ -1,5 +1,5 @@
-import {BaseResponse, BaseResponseData} from "./BaseResponse";
-import Workspace, {WorkspaceData} from "./Workspace";
+import {BaseResponse, BaseResponseData} from "./BaseResponse.js";
+import {Workspace, WorkspaceData} from "./Workspace.js";
 
 export type WorkspaceListResponseData = BaseResponseData & {
     workspaces: WorkspaceData[] | null;

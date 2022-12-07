@@ -1,5 +1,7 @@
 {
   "name": "@elr0berto/robert-learns-shared",
+  "type": "module",
+  "exports": "./dist/index.js",
   "version": "1.0.0",
   "packageManager": "yarn@3.2.0",
   "dependencies": {

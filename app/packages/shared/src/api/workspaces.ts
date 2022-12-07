@@ -1,9 +1,9 @@
-import {apiClient} from './ApiClient';
-import {BaseResponse} from "./models/BaseResponse";
-import {WorkspaceListResponse} from "./models/WorkspaceListResponse";
-import Workspace from "./models/Workspace";
-import {WorkspaceCardSetListResponse} from "./models/WorkspaceCardSetListResponse";
-import {WorkspaceCardSetCreateResponse} from "./models/WorkspaceCardSetCreateResponse";
+import {apiClient} from './ApiClient.js';
+import {BaseResponse} from "./models/BaseResponse.js";
+import {WorkspaceListResponse} from "./models/WorkspaceListResponse.js";
+import {Workspace} from "./models/Workspace.js";
+import {WorkspaceCardSetListResponse} from "./models/WorkspaceCardSetListResponse.js";
+import {WorkspaceCardSetCreateResponse} from "./models/WorkspaceCardSetCreateResponse.js";
 
 export type WorkspaceCreateRequest = {
     name: string;

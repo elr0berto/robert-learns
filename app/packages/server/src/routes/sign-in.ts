@@ -1,12 +1,10 @@
 import {Request, Router} from 'express';
-import prisma from "../db/prisma";
-import {
-    BaseResponseData,
-    ResponseStatus
-} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {getSignedInUser, getUserData, TypedResponse} from "../common";
-import {SignInRequest, validateSignInRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
+import prisma from "../db/prisma.js";
+
+import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
+import {BaseResponseData, ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
+import {SignInRequest, validateSignInRequest} from "../../../shared/src/api/sign-in.js";
 
 const signIn = Router();
 

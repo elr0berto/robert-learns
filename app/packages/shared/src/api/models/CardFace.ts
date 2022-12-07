@@ -1,4 +1,4 @@
-import Media, {MediaData} from "./Media";
+import {Media,MediaData} from "./Media.js";
 
 const CardSide = {
     FRONT: 'FRONT',
@@ -13,7 +13,7 @@ export type CardFaceData = {
     media: MediaData | null;
 }
 
-export default class CardFace {
+export class CardFace {
     content: string | null;
     side: CardSide;
     media: Media | null;

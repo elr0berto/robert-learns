@@ -1,5 +1,5 @@
-import {BaseResponse, BaseResponseData} from "./BaseResponse";
-import Card, {CardData} from "./Card";
+import {BaseResponse, BaseResponseData} from "./BaseResponse.js";
+import { Card, CardData} from "./Card.js";
 
 export type CardSetCardListResponseData = BaseResponseData & {
     cards: CardData[] | null;

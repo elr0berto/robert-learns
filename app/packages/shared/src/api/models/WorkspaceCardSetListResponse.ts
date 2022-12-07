@@ -1,5 +1,5 @@
-import {BaseResponse, BaseResponseData} from "./BaseResponse";
-import CardSet, {CardSetData} from "./CardSet";
+import {BaseResponse, BaseResponseData} from "./BaseResponse.js";
+import {CardSet, CardSetData} from "./CardSet.js";
 
 export type WorkspaceCardSetListResponseData = BaseResponseData & {
     cardSets: CardSetData[] | null;

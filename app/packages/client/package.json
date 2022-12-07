@@ -1,5 +1,7 @@
 {
   "name": "@elr0berto/robert-learns-client",
+  "type": "module",
+  "exports": "./build/index.js",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -8,6 +10,7 @@
     "@types/node": "^18.11.9",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.9",
+    "bootstrap": "^5.2.3",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "html-to-draftjs": "^1.5.0",
@@ -16,6 +19,7 @@
     "page": "^1.11.6",
     "query-string": "^7.1.1",
     "react": "^18.2.0",
+    "react-bootstrap": "^2.6.0",
     "react-dom": "^18.2.0",
     "react-draft-wysiwyg": "^1.15.0",
     "react-scripts": "5.0.1",

@@ -1,22 +1,18 @@
 import {Request, Router} from 'express';
-import prisma from "../db/prisma";
-import {
-    BaseResponseData,
-    ResponseStatus
-} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {getSignedInUser, getUserData, TypedResponse, userCanWriteToWorkspace} from "../common";
+import prisma from "../db/prisma.js";
+
+import {getSignedInUser, getUserData, TypedResponse, userCanWriteToWorkspace} from "../common.js";
 import {
     validateWorkspaceCardSetCreateRequest,
     validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
     WorkspaceCreateRequest
-} from "../../../shared/src/api/workspaces";
+} from "../../../shared/src/api/workspaces.js";
 import { UserRole } from '@prisma/client';
-import {WorkspaceListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceListResponse";
-import {
-    WorkspaceCardSetListResponse,
-    WorkspaceCardSetListResponseData
-} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceCardSetListResponse";
-import {WorkspaceCardSetCreateResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/WorkspaceCardSetCreateResponse";
+import {WorkspaceListResponseData} from "../../../shared/src/api/models/WorkspaceListResponse.js";
+import {BaseResponseData, ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
+import {WorkspaceCardSetListResponseData} from "../../../shared/src/api/models/WorkspaceCardSetListResponse.js";
+import {WorkspaceCardSetCreateResponseData} from "../../../shared/src/api/models/WorkspaceCardSetCreateResponse.js";
+
 
 const workspaces = Router();
 

@@ -1,18 +1,16 @@
 import {Router} from 'express';
-import prisma from "../db/prisma";
-import {
-    ResponseStatus
-} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {getSignedInUser, getUserData, TypedResponse} from "../common";
+import prisma from "../db/prisma.js";
+
+import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia, MediaType } from '@prisma/client';
-import {CardSetCardListResponseData} from "@elr0berto/robert-learns-shared/dist/api/models/CardSetCardListResponse";
-import {CardFaceData} from "@elr0berto/robert-learns-shared/dist/api/models/CardFace";
-import {MediaData} from "@elr0berto/robert-learns-shared/dist/api/models/Media";
-import {upload} from "../multer";
-import {
-    CardSetUploadFileResponseData
-} from "@elr0berto/robert-learns-shared/dist/api/models/CardSetUploadFileResponse";
+import {upload} from "../multer.js";
+
 import { fileTypeFromFile } from 'file-type';
+import {CardSetCardListResponseData} from "../../../shared/src/api/models/CardSetCardListResponse.js";
+import {MediaData} from "../../../shared/src/api/models/Media.js";
+import {CardFaceData} from "../../../shared/src/api/models/CardFace.js";
+import {ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
+import {CardSetUploadFileResponseData} from "../../../shared/src/api/models/CardSetUploadFileResponse.js";
 
 const cardSets = Router();
 

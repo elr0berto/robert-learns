@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "module": "commonjs",
+    "module": "ESNext",
     "lib": ["esnext", "dom"],
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "allowJs": true,
     "strict": true,
     "allowSyntheticDefaultImports": true,
@@ -11,7 +11,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
-    "outDir": "dist",
+    "outDir": "./dist",
     "noErrorTruncation": true,
     "noUnusedParameters": true,
     "removeComments": false,
@@ -26,8 +26,9 @@
     "baseUrl": "./",
     "paths": {
       "*": ["types/*"]
-    }
+    },
   },
   "include": ["src/**/*.ts"],
-  "exclude": ["./types/", "./node_modules", "../../node_modules"]
+  "exclude": ["./types/", "./node_modules", "../../node_modules"],
+  "esm": true
 }

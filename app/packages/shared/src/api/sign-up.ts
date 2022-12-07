@@ -1,6 +1,6 @@
-import {BaseResponse} from "./models/BaseResponse";
-import {apiClient} from "./ApiClient";
-import {validateEmail} from "../validation";
+import {BaseResponse} from "./models/BaseResponse.js";
+import {apiClient} from "./ApiClient.js";
+import {validateEmail} from "../validation/index.js";
 
 export type SignUpRequest = {
     firstName: string;

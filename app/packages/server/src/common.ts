@@ -1,8 +1,9 @@
 import { Send } from 'express-serve-static-core';
-import prisma from "./db/prisma";
+import prisma from "./db/prisma.js";
 import {Session, SessionData} from "express-session";
 import { User, UserRole } from '@prisma/client';
-import {UserData} from "@elr0berto/robert-learns-shared/dist/api/models/User";
+import {UserData} from "../../shared/src/api/models/User.js";
+
 
 
 export interface TypedResponse<ResBody> extends Express.Response {

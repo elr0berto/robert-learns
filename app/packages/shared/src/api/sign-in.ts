@@ -1,6 +1,6 @@
-import {apiClient} from './ApiClient';
-import {BaseResponse} from "./models/BaseResponse";
-import {validateEmail} from "../validation";
+import {apiClient} from './ApiClient.js';
+import {BaseResponse} from "./models/BaseResponse.js";
+import {validateEmail} from "../validation/index.js";
 
 export const SignInCheck = async () : Promise<BaseResponse> => {
     return await apiClient.get(BaseResponse, '/sign-in/check');

@@ -1,9 +1,9 @@
-import {Context} from '.';
+import {Context} from './index.js';
 
-import {pageUrls} from '../page-urls';
-import {UnexpectedSignOutError} from "./sign-in/sign-in-state";
-import {BaseResponse, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
-import {Payload} from "./page/page-actions";
+import {pageUrls} from '../page-urls/index.js';
+import {UnexpectedSignOutError} from "./sign-in/sign-in-state.js";
+import {Payload} from "./page/page-actions.js";
+import {BaseResponse, ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
 
 
 export const onInitializeOvermind = async ({ actions, effects, state }: Context) => {

@@ -3,7 +3,7 @@ export type CardSetData = {
     name: string;
 }
 
-export default class CardSet {
+export class CardSet {
     id: number;
     name: string;
 

@@ -4,7 +4,7 @@ export type WorkspaceData = {
     description: string;
 }
 
-export default class Workspace {
+export class Workspace {
     id: number;
     name: string;
     description: string;

@@ -1,11 +1,8 @@
 import {Router} from 'express';
-import prisma from "../db/prisma";
-import {
-    BaseResponse,
-    BaseResponseData,
-    ResponseStatus
-} from "@elr0berto/robert-learns-shared/src/api/models/BaseResponse";
-import {getSignedInUser, getUserData, TypedResponse} from "../common";
+import prisma from "../db/prisma.js";
+
+import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {BaseResponseData, ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
 
 const signOut = Router();
 

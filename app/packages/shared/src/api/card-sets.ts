@@ -1,7 +1,7 @@
-import {apiClient} from './ApiClient';
-import CardSet from "./models/CardSet";
-import {CardSetCardListResponse} from "./models/CardSetCardListResponse";
-import {CardSetUploadFileResponse} from "./models/CardSetUploadFileResponse";
+import {apiClient} from './ApiClient.js';
+import {CardSet} from "./models/index.js";
+import {CardSetCardListResponse} from "./models/index.js";
+import {CardSetUploadFileResponse} from "./models/index.js";
 
 export const cardSetCardList = async(cardSet : CardSet) : Promise<CardSetCardListResponse> => {
     return await apiClient.get(CardSetCardListResponse, '/card-sets/'+cardSet.id+'/cards/');

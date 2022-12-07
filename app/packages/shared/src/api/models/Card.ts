@@ -1,5 +1,5 @@
-import Media, {MediaData} from "./Media";
-import CardFace, {CardFaceData} from "./CardFace";
+import {Media,MediaData} from "./Media.js";
+import {CardFace,CardFaceData} from "./CardFace.js";
 
 export type CardData = {
     id: number;
@@ -8,7 +8,7 @@ export type CardData = {
     audio: MediaData | null;
 }
 
-export default class Card {
+export class Card {
     id: number;
     front: CardFace;
     back: CardFace | null;

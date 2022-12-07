@@ -1,1 +1,1 @@
-export { UserType } from "./UserType";
+export { UserType } from "./UserType.js";

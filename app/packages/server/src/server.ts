@@ -1,12 +1,12 @@
 import express from 'express';
 
-import signIn from './routes/sign-in';
-import signOut from "./routes/sign-out";
-import signUp from './routes/sign-up';
-import workspaces from './routes/workspaces';
-import cardSets from './routes/card-sets';
+import signIn from './routes/sign-in.js';
+import signOut from "./routes/sign-out.js";
+import signUp from './routes/sign-up.js';
+import workspaces from './routes/workspaces.js';
+import cardSets from './routes/card-sets.js';
 
-import session from './session';
+import session from './session.js';
 
 class Server {
     public express;

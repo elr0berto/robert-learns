@@ -1,4 +1,4 @@
-import {BaseResponse, BaseResponseData} from "./BaseResponse";
+import {BaseResponse, BaseResponseData} from "./BaseResponse.js";
 
 export type CardSetUploadFileResponseData = BaseResponseData & {
     url: string;

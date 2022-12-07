@@ -4,7 +4,7 @@ export type MediaData = {
     name: string;
 }
 
-export default class Media {
+export class Media {
     id: number;
     path: string;
     name: string;
