@@ -1,9 +1,56 @@
 {
   "name": "@elr0berto/robert-learns-shared",
   "type": "module",
+  "main": "./dist/index.js",
   "exports": {
-    ".": "./dist/index.js",
-    "./api": "./dist/api/index.js"
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./dist": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api/index.js",
+      "types": "./dist/api/index.d.ts"
+    },
+    "./dist/api": {
+      "import": "./dist/api/index.js",
+      "types": "./dist/api/index.d.ts"
+    },
+    "./api/models": {
+      "import": "./dist/api/models/index.js",
+      "types": "./dist/api/models/index.d.ts"
+    },
+    "./dist/api/models": {
+      "import": "./dist/api/models/index.js",
+      "types": "./dist/api/models/index.d.ts"
+    },
+    "./api/workspaces": {
+      "import": "./dist/api/workspaces.js",
+      "types": "./dist/api/workspaces.d.ts"
+    },
+    "./dist/api/workspaces": {
+      "import": "./dist/api/workspaces.js",
+      "types": "./dist/api/workspaces.d.ts"
+    },
+    "./api/sign-up": {
+      "import": "./dist/api/sign-up.js",
+      "types": "./dist/api/sign-up.d.ts"
+    },
+    "./dist/api/sign-up": {
+      "import": "./dist/api/sign-up.js",
+      "types": "./dist/api/sign-up.d.ts"
+    },
+    "./api/sign-in": {
+      "import": "./dist/api/sign-in.js",
+      "types": "./dist/api/sign-in.d.ts"
+    },
+    "./dist/api/sign-in": {
+      "import": "./dist/api/sign-in.js",
+      "types": "./dist/api/sign-in.d.ts"
+    }
   },
   "types": "./dist/index.d.ts",
   "engines": {

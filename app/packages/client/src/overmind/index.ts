@@ -1,18 +1,18 @@
 import {createStateHook, createActionsHook, createEffectsHook} from 'overmind-react';
-import { merge, namespaced } from 'overmind/config';
 import * as actions from './actions';
 import { IContext } from 'overmind';
 import * as error from './error';
 import * as page from './page';
 import * as api from './api';
 import * as signIn from './sign-in';
-import * as signUp from './sign-up';
-import * as workspaceCreate from './workspace-create';
-import * as workspaceCardSetCreate from './workspace-card-set-create';
-import * as workspaces from './workspaces';
-import * as workspace from './workspace';
-import * as workspaceCardSet from './workspace-card-set';
-import * as createCardModal from './create-card-modal';
+import * as signUp from './sign-up/';
+import * as workspaceCreate from './workspace-create/';
+import * as workspaceCardSetCreate from './workspace-card-set-create/';
+import * as workspaces from './workspaces/';
+import * as workspace from './workspace/';
+import * as workspaceCardSet from './workspace-card-set/';
+import * as createCardModal from './create-card-modal/';
+import {merge, namespaced} from "overmind/es/config";
 
 export const config = merge(
     {

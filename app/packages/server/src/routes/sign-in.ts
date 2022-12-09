@@ -3,8 +3,9 @@ import prisma from "../db/prisma.js";
 
 import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
-import {BaseResponseData, ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
-import {SignInRequest, validateSignInRequest} from "../../../shared/src/api/sign-in.js";
+import { BaseResponseData, ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
+import { SignInRequest, validateSignInRequest } from '@elr0berto/robert-learns-shared/api/sign-in';
+
 
 const signIn = Router();
 

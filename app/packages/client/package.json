@@ -1,7 +1,7 @@
 {
   "name": "@elr0berto/robert-learns-client",
-  "type": "module",
-  "exports": "./build/index.js",
+  "type": "commonjs",
+  "main": "./build/index.js",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

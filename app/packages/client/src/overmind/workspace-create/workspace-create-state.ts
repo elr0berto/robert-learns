@@ -1,5 +1,5 @@
+import { validateWorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/dist/api/workspaces';
 import {derived} from 'overmind'
-import {validateWorkspaceCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
 
 type WorkspaceCreateFormState = {
     name: string;

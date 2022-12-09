@@ -6,17 +6,13 @@ import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia, MediaType }
 import {upload} from "../multer.js";
 
 import { fileTypeFromFile } from 'file-type';
-import {CardSetCardListResponseData} from "../../../shared/src/api/models/CardSetCardListResponse.js";
-import {MediaData} from "../../../shared/src/api/models/Media.js";
-import {CardFaceData} from "../../../shared/src/api/models/CardFace.js";
-import {ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
-import {CardSetUploadFileResponseData} from "../../../shared/src/api/models/CardSetUploadFileResponse.js";
+import {CardSetCardListResponseData, MediaData, CardFaceData, ResponseStatus, CardSetUploadFileResponseData} from "@elr0berto/robert-learns-shared/api/models";
+
 
 const cardSets = Router();
 
 cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardListResponseData>) => {
     let user = await getSignedInUser(req.session);
-
     const cardSetCards = await prisma.cardSetCard.findMany({
         where: {
             cardSetId: {

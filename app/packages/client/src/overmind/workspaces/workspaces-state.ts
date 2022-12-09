@@ -1,4 +1,4 @@
-import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
+import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type WorkspacesState = {
     loading: boolean;

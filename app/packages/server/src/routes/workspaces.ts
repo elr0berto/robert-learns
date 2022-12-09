@@ -2,16 +2,12 @@ import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 
 import {getSignedInUser, getUserData, TypedResponse, userCanWriteToWorkspace} from "../common.js";
-import {
-    validateWorkspaceCardSetCreateRequest,
-    validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
-    WorkspaceCreateRequest
-} from "../../../shared/src/api/workspaces.js";
+
 import { UserRole } from '@prisma/client';
-import {WorkspaceListResponseData} from "../../../shared/src/api/models/WorkspaceListResponse.js";
-import {BaseResponseData, ResponseStatus} from "../../../shared/src/api/models/BaseResponse.js";
-import {WorkspaceCardSetListResponseData} from "../../../shared/src/api/models/WorkspaceCardSetListResponse.js";
-import {WorkspaceCardSetCreateResponseData} from "../../../shared/src/api/models/WorkspaceCardSetCreateResponse.js";
+import {BaseResponseData, ResponseStatus,
+    WorkspaceCardSetCreateResponseData, WorkspaceCardSetListResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/models';
+import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest, WorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/api/workspaces';
+
 
 
 const workspaces = Router();

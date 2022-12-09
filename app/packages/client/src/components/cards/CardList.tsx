@@ -1,5 +1,5 @@
 import React from 'react';
-import Card from "@elr0berto/robert-learns-shared/dist/api/models/Card";
+import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type Props = {
     cards: Card[];

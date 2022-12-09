@@ -1,12 +1,11 @@
-import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
-import {overmind} from "../index";
+import {overmind} from "..";
 import SignUp from "../components/sign-up/SignUp";
 import SignIn from "../components/sign-in/SignIn";
 import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
 import WorkspacePage from "../components/workspace/WorkspacePage";
-import CardSet from "@elr0berto/robert-learns-shared/dist/api/models/CardSet";
 import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
 import WorkspaceCardSetPage from "../components/workspace/WorkspaceCardSetPage";
+import {CardSet, Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export enum Pages {
     Front = "front",

@@ -1,4 +1,4 @@
-import {Context} from "../index";
+import {Context} from "..";
 import {getInitialCreateCardModalState} from "./create-card-modal-state";
 
 export const openCreateCardModal = ({ state }: Context, cardSetId: number) => {

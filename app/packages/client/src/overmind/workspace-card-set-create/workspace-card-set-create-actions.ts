@@ -1,5 +1,5 @@
 import {Context} from '..';
-import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models/BaseResponse";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Pages, pageUrls} from "../../page-urls";
 
 export const changeFormName = ({ state }: Context, name: string) => {

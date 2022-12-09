@@ -1,10 +1,9 @@
-import { Context } from '../index.js';
+import { Context } from '..';
 import {
     getInitialSignInState,
     SignInStatus,
-} from "./sign-in-state.js";
-import {ResponseStatus} from "../../../../shared/src/api/models/BaseResponse.js";
-import {User} from "../../../../shared/src/api/models/User.js";
+} from "./sign-in-state";
+import {ResponseStatus, User} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 
 export const check = async ({ state, effects }: Context) => {

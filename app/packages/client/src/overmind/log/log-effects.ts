@@ -1,5 +1,5 @@
 import {ErrorInfo} from "react";
-import {overmind} from "../../index";
+import {overmind} from "../..";
 
 export enum ErrorLevel {
     Info = "Info",

@@ -1,4 +1,4 @@
-import {Context} from "../index";
+import {Context} from "..";
 
 export const _loadCards = async ({ state, effects }: Context) => {
     if (state.workspaceCardSet.cardSet === null) {

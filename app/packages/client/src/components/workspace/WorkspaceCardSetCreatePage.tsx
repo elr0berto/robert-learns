@@ -20,7 +20,7 @@ function WorkspaceCardSetCreatePage() {
                 <Form.Label>Card Set Name</Form.Label>
                 <Form.Control type="text" placeholder="Enter card set name" value={state.workspaceCardSetCreate.form.name} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCardSetCreate.changeFormName(event.currentTarget.value)}/>
             </Form.Group>
-            {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err,i) => <p key={i}>{err}</p>)}</Alert> : null}
+            {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCardSetCreate.form.submitDisabled} onClick={() => actions.workspaceCardSetCreate.formSubmit()}>Create Card Set!</Button>
         </Form>
     </Container>;

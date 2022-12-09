@@ -1,6 +1,6 @@
 import {derived} from 'overmind'
 import {validateWorkspaceCardSetCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
-import {config} from "../index";
+import {config} from "..";
 
 type WorkspaceCardSetCreateFormState = {
     name: string;

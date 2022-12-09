@@ -10,7 +10,9 @@ function MainContent() {
         return null;
     }
 
+    // @ts-ignore
     if (typeof pageUrls[state.page.current!] === 'object') {
+        // @ts-ignore
         const PageComponent = pageUrls[state.page.current!].getPageComponent();
         if (PageComponent === null) {
             return null;

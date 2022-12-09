@@ -1,7 +1,5 @@
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
 import {useActions, useAppState} from "../../overmind";
-import {Alert, Container, Form, Tab, Tabs} from "react-bootstrap";
+import {Alert, Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
 import React from "react";
 import CardFaceEditor from "./CardFaceEditor";
 
@@ -24,7 +22,7 @@ function CreateCardModal() {
                     <Form>
                         <Tabs
                             activeKey={state.createCardModal.activeTab ?? 'front'}
-                            onSelect={k => actions.createCardModal.setActiveTab(k)}
+                            onSelect={(k: any) => actions.createCardModal.setActiveTab(k)}
                             className="mb-3"
                         >
                             <Tab eventKey="front" title="Front">
@@ -40,7 +38,7 @@ function CreateCardModal() {
                                 Audio
                             </Tab>
                         </Tabs>
-                        {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err,i) => <p key={i}>{err}</p>)}</Alert> : null}
+                        {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
                     </Form>
                 </Container>
             </Modal.Body>

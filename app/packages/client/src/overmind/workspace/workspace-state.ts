@@ -1,7 +1,6 @@
-import Workspace from "@elr0berto/robert-learns-shared/dist/api/models/Workspace";
+import {Workspace, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
-import {config} from "../index";
-import CardSet from "@elr0berto/robert-learns-shared/dist/api/models/CardSet";
+import {config} from "..";
 
 type WorkspaceState = {
     workspaceId: number | null;

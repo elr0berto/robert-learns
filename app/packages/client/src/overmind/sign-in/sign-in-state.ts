@@ -1,5 +1,5 @@
 import {derived} from 'overmind'
-import User from "@elr0berto/robert-learns-shared/dist/api/models/User";
+import {User} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {validateSignInRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
 
 export const UnexpectedSignOutError = "UNEXPECTED_SIGN_OUT_ERROR";

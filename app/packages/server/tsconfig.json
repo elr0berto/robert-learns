@@ -22,13 +22,13 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "declaration": true,
-    "typeRoots": ["./types", "./node_modules/@types"],
+    //"typeRoots": ["./types", "./node_modules/@types"],
     "baseUrl": "./",
-    "paths": {
+    /*"paths": {
       "*": ["types/*"]
-    },
+    },*/
   },
-  "include": ["src/**/*.ts", "../shared/dist/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["./types/", "./node_modules", "../../node_modules"],
   "esm": true
 }
