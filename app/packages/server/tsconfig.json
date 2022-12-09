@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "ESNext",
+    "target": "es2020",
+    "module": "node16",
     "lib": ["esnext", "dom"],
     "moduleResolution": "node16",
     "allowJs": true,
@@ -11,7 +11,7 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noUnusedLocals": false,
-    "outDir": "./dist",
+    //"outDir": "./dist",
     "noErrorTruncation": true,
     "noUnusedParameters": true,
     "removeComments": false,
@@ -28,7 +28,7 @@
       "*": ["types/*"]
     },
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../shared/dist/*"],
   "exclude": ["./types/", "./node_modules", "../../node_modules"],
   "esm": true
 }

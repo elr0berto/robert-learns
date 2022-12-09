@@ -2,8 +2,8 @@ import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
 import {Session, SessionData} from "express-session";
 import { User, UserRole } from '@prisma/client';
-import {UserData} from "../../shared/src/api/models/User.js";
-
+import * as robShared from "@elr0berto/robert-learns-shared/api";
+//import {UserData} from "../../shared/src/api/models/User";
 
 
 export interface TypedResponse<ResBody> extends Express.Response {
@@ -55,7 +55,7 @@ export const getSignedInUser = async (session: Session & Partial<SessionData>) :
 }
 
 
-export const getUserData = (user: UserData) : UserData => {
+export const getUserData = (user: robShared.api.models.UserData) : robShared.api.models.UserData => {
     return {
         id: user.id,
         email: user.email,
@@ -66,7 +66,7 @@ export const getUserData = (user: UserData) : UserData => {
     };
 }
 
-export const userCanWriteToWorkspace = async (user: UserData, workspaceId: number) : Promise<boolean> => {
+export const userCanWriteToWorkspace = async (user: robShared.api.models.UserData, workspaceId: number) : Promise<boolean> => {
     const workspaceUser = await prisma.workspaceUser.findFirst({
         where: {
             workspaceId: workspaceId,
