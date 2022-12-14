@@ -2,7 +2,7 @@ import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
 import {Session, SessionData} from "express-session";
 import { User, UserRole } from '@prisma/client';
-import {UserData} from "@elr0berto/robert-learns-shared/api/models";
+import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 
 
 export interface TypedResponse<ResBody> extends Express.Response {
@@ -78,4 +78,8 @@ export const userCanWriteToWorkspace = async (user: UserData, workspaceId: numbe
     });
 
     return workspaceUser !== null;
+}
+
+export const getUrlFromMedia = (media: MediaData) : string => {
+    return '/media/'+media.id+'/'+media.name;
 }

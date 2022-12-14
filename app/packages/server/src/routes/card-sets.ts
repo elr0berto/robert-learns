@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import prisma from "../db/prisma.js";
 
-import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
 import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia, MediaType } from '@prisma/client';
 import {upload} from "../multer.js";
 
@@ -107,7 +107,7 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
         status: ResponseStatus.Success,
         user: getUserData(user),
         errorMessage: null,
-        url: req.file!.path,
+        url: getUrlFromMedia(newMedia)
     });
 });
 
