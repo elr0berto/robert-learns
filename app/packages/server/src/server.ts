@@ -5,6 +5,7 @@ import signOut from "./routes/sign-out.js";
 import signUp from './routes/sign-up.js';
 import workspaces from './routes/workspaces.js';
 import cardSets from './routes/card-sets.js';
+import media from './routes/media.js';
 
 import session from './session.js';
 
@@ -29,6 +30,7 @@ class Server {
         this.express.use('/api/sign-up', signUp);
         this.express.use('/api/workspaces', workspaces);
         this.express.use('/api/card-sets', cardSets);
+        this.express.use('/api/media', media);
     }
 }
 

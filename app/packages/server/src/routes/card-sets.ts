@@ -98,7 +98,7 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
         data: {
             path: req.file.path,
             name: req.file.originalname,
-            cardSetId: req.body.cardSetId,
+            cardSetId: parseInt(req.params.cardSetId),
             type: MediaType.IMAGE
         }
     });

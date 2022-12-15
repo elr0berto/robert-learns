@@ -81,5 +81,5 @@ export const userCanWriteToWorkspace = async (user: UserData, workspaceId: numbe
 }
 
 export const getUrlFromMedia = (media: MediaData) : string => {
-    return '/media/'+media.id+'/'+media.name;
+    return '/api/media/'+media.id+'/'+media.name;
 }
