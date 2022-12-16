@@ -2,6 +2,8 @@ import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
 import React from "react";
 import CardFaceEditor from "./CardFaceEditor";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
 
 function CreateCardModal() {
     const state = useAppState();
@@ -26,13 +28,30 @@ function CreateCardModal() {
                             className="mb-3"
                         >
                             <Tab eventKey="front" title="Front">
-                                <CardFaceEditor
-                                    onHtmlChange={html => actions.createCardModal.setFrontHtml(html)}
-                                    uploadCallback={file => actions.createCardModal.uploadFile(file)}
-                                />
+                                <Tabs
+                                    activeKey={state.createCardModal.activeTabFront ?? 'editor'}
+                                    onSelect={(k: any) => actions.createCardModal.setActiveTabFront(k)}
+                                    className="mb-3"
+                                >
+                                    <Tab eventKey="editor" title="Editor">
+                                        <CardFaceEditor
+                                            onHtmlChange={html => actions.createCardModal.setFrontHtml(html)}
+                                            uploadCallback={file => actions.createCardModal.uploadFile(file)}
+                                        />
+                                    </Tab>
+                                    <Tab eventKey="image" title="Image">
+                                        <Form.Group controlId="formFileLg" className="mb-3">
+                                            <Form.Label>Upload image</Form.Label>
+                                            <Form.Control type="file" size="lg" />
+                                        </Form.Group>
+                                    </Tab>
+                                </Tabs>
                             </Tab>
                             <Tab eventKey="back" title="Back">
-                                Back
+                                <CardFaceEditor
+                                    onHtmlChange={html => actions.createCardModal.setBackHtml(html)}
+                                    uploadCallback={file => actions.createCardModal.uploadFile(file)}
+                                />
                             </Tab>
                             <Tab eventKey="audio" title="Audio">
                                 Audio

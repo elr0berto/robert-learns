@@ -1720,6 +1720,7 @@ __metadata:
     query-string: ^7.1.1
     react: ^18.2.0
     react-bootstrap: ^2.6.0
+    react-cropper: ^2.1.8
     react-dom: ^18.2.0
     react-draft-wysiwyg: ^1.15.0
     react-scripts: 5.0.1
@@ -4843,6 +4844,13 @@ __metadata:
   version: 1.1.1
   resolution: "create-require@npm:1.1.1"
   checksum: a9a1503d4390d8b59ad86f4607de7870b39cad43d929813599a23714831e81c520bddf61bcdd1f8e30f05fd3a2b71ae8538e946eb2786dc65c2bbc520f692eff
+  languageName: node
+  linkType: hard
+
+"cropperjs@npm:^1.5.12":
+  version: 1.5.13
+  resolution: "cropperjs@npm:1.5.13"
+  checksum: 5a3d0f8b2aa41eb711371696ccbac040d7ef81a5fc9cc0304aaf5691f9aa5c243b539c3d8aec0f938e8fa11e73507ae082875b262ff7fd069892acfcd5d5b567
   languageName: node
   linkType: hard
 
@@ -10923,6 +10931,17 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 950a2afc4def2c989be74fa4093f94b289da8c73e3bac5a842aac19690730d6ffdb3959b219fc87a01ae006a08bdf636361738d839bae88c24946c0bf001b341
+  languageName: node
+  linkType: hard
+
+"react-cropper@npm:^2.1.8":
+  version: 2.1.8
+  resolution: "react-cropper@npm:2.1.8"
+  dependencies:
+    cropperjs: ^1.5.12
+  peerDependencies:
+    react: ">=16.0.0"
+  checksum: f2961a871f0e641f72dcd6e21b74ad10c6d06f0fa24da790b32b6e47ab601cc1b163750952f405ef14ee983750afe8923c8ffd0f7f8bf661096996b43e52a2b2
   languageName: node
   linkType: hard
 
