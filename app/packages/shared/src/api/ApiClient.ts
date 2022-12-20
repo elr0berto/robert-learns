@@ -5,7 +5,7 @@ import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 class ApiClient {
     onBeforeRequest: () => void = () => {};
     onAfterRequest: (response: BaseResponse) => void = () => {};
-    axiosInstance: AxiosInstance = axios.default.create({
+    axiosInstance: AxiosInstance = axios.create({
         baseURL: '/api',
         withCredentials: true,
         headers: {
