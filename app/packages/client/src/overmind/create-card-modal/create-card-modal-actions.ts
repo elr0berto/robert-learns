@@ -14,14 +14,6 @@ export const setActiveTab = ({state}: Context, activeTab: string | null) => {
     state.createCardModal.activeTab = activeTab;
 }
 
-export const setActiveTabFront = ({state}: Context, activeTab: string | null) => {
-    state.createCardModal.activeTabFront = activeTab;
-}
-
-export const setActiveTabBack = ({state}: Context, activeTab: string | null) => {
-    state.createCardModal.activeTabBack = activeTab;
-}
-
 export const setFrontHtml = ({ state }: Context, html: string) => {
     state.createCardModal.frontHtml = html;
 }
@@ -33,4 +25,8 @@ export const setBackHtml = ({ state }: Context, html: string) => {
 export const uploadFile = async ({ state, effects }: Context, file: File) => {
     const resp = await effects.api.cardSets.cardSetUploadFile(state.createCardModal.cardSetId!, file);
     return resp.url;
+}
+
+export const setAudioFile = async ({ state, effects }: Context, file: File|null) => {
+    state.createCardModal.audioFile = file === null ? null : URL.createObjectURL(file);
 }

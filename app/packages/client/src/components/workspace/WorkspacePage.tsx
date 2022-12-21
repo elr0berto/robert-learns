@@ -1,4 +1,4 @@
-import {useActions, useAppState} from "../../overmind";
+import {useAppState} from "../../overmind";
 import {Container} from "react-bootstrap";
 import React from "react";
 

@@ -1,23 +1,20 @@
 import {derived} from "overmind";
-import {EditorState} from "draft-js";
 
 type CreateCardModalState = {
     cardSetId: number | null;
     activeTab: string | null;
-    activeTabFront: string | null;
-    activeTabBack: string | null;
     frontHtml: string;
     backHtml: string;
+    audioFile: string | null;
     readonly isOpen: boolean;
 }
 
 export const getInitialCreateCardModalState = (): CreateCardModalState => ({
     cardSetId: null,
     activeTab: 'front',
-    activeTabFront: 'editor',
-    activeTabBack: 'editor',
     frontHtml: '',
     backHtml: '',
+    audioFile: null,
     isOpen: derived((state: CreateCardModalState) => {
         return state.cardSetId !== null;
     }),

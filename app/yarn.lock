@@ -1786,6 +1786,7 @@ __metadata:
     react-bootstrap: ^2.7.0
     react-dom: ^18.2.0
     react-draft-wysiwyg: ^1.15.0
+    react-h5-audio-player: ^3.8.6
     react-scripts: 5.0.1
     sass: ^1.57.1
     typescript: ^4.9.4
@@ -1875,6 +1876,22 @@ __metadata:
   version: 1.2.1
   resolution: "@humanwhocodes/object-schema@npm:1.2.1"
   checksum: a824a1ec31591231e4bad5787641f59e9633827d0a2eaae131a288d33c9ef0290bd16fda8da6f7c0fcb014147865d12118df10db57f27f41e20da92369fcb3f1
+  languageName: node
+  linkType: hard
+
+"@iconify/icons-mdi@npm:~1.1.0":
+  version: 1.1.47
+  resolution: "@iconify/icons-mdi@npm:1.1.47"
+  checksum: 2f4ff9448a78cf6b866cfed4651d6df8385047b5e9c438f3af89e4f5b0a932434fe372789f235ae2bbe94176660429303b3fe9d2bc86bc8cfdc31fe0557e506e
+  languageName: node
+  linkType: hard
+
+"@iconify/react@npm:^3.1.3":
+  version: 3.2.2
+  resolution: "@iconify/react@npm:3.2.2"
+  peerDependencies:
+    react: ">=16"
+  checksum: 8b52e1291d7e6c9422ab49eabd6c3bbb29cb852578c08616dd66a2b0e64aad4579ea3e8a6a3881d9d25d363eada16940e78477806fa36cfd98c0cd79778d7d0f
   languageName: node
   linkType: hard
 
@@ -11086,6 +11103,20 @@ __metadata:
   version: 6.0.11
   resolution: "react-error-overlay@npm:6.0.11"
   checksum: ce7b44c38fadba9cedd7c095cf39192e632daeccf1d0747292ed524f17dcb056d16bc197ddee5723f9dd888f0b9b19c3b486c430319e30504289b9296f2d2c42
+  languageName: node
+  linkType: hard
+
+"react-h5-audio-player@npm:^3.8.6":
+  version: 3.8.6
+  resolution: "react-h5-audio-player@npm:3.8.6"
+  dependencies:
+    "@babel/runtime": ^7.10.2
+    "@iconify/icons-mdi": ~1.1.0
+    "@iconify/react": ^3.1.3
+  peerDependencies:
+    react: ^16.3.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.3.0 || ^17.0.0 || ^18.0.0
+  checksum: 4c6ebfc4dd1fba7cfa5eda97377d6640924184282854698104a1016a4b030fc5511aa157da8dafcea42820552c053589f82892f080e2ca868923ee1b56a58fa2
   languageName: node
   linkType: hard
 
