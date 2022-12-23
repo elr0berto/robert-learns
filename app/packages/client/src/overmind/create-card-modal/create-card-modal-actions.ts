@@ -27,6 +27,36 @@ export const uploadFile = async ({ state, effects }: Context, file: File) => {
     return resp.url;
 }
 
+function readFileAsync(file: File) : Promise<ArrayBuffer | null> {
+    return new Promise((resolve, reject) => {
+        let reader = new FileReader();
+
+        reader.onload = () => {
+            resolve(typeof reader.result === 'string' ? null : reader.result);
+        };
+
+        reader.onerror = reject;
+
+        reader.rea
+        reader.readAsArrayBuffer(file);
+    })
+}
+
 export const setAudioFile = async ({ state, effects }: Context, file: File|null) => {
-    state.createCardModal.audioFile = file === null ? null : URL.createObjectURL(file);
+    if (file === null) {
+        state.createCardModal.audioFile = null;
+    } else {
+        state.createCardModal.audioFile = await readFileAsync(file);
+    }
+}
+
+export const submit = async ({ state, effects }: Context) => {
+    state.createCardModal.submitting = true;
+    const resp = await effects.api.cards.cardCreate({
+        cardSetId: state.createCardModal.cardSetId!,
+        front: state.createCardModal.frontHtml,
+        back: state.createCardModal.backHtml,
+        audio: state.createCardModal.audioFile
+    });
+
 }
