@@ -47,8 +47,8 @@ function CreateCardModal() {
                                         console.log('objUrl', URL.createObjectURL(e.target.files![0]));
                                         actions.createCardModal.setAudioFile((e.target?.files?.length ?? 0) > 0 ? e.target!.files![0] : null); }} accept=".mp3,.aac,.m4a"/>
                                 </Form.Group>
-                                {state.createCardModal.audioFileSrc !== null ? <AudioPlayer
-                                    src={state.createCardModal.audioFileSrc}
+                                {state.createCardModal.audioFileDataURL !== null ? <AudioPlayer
+                                    src={state.createCardModal.audioFileDataURL}
                                     onPlay={e => console.log("onPlay")}
                                 /> : null}
                             </Tab>
@@ -60,7 +60,7 @@ function CreateCardModal() {
 
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => actions.createCardModal.closeCreateCardModal()}>Close</Button>
-                <Button variant="primary" onClick={() => actions.createCardModal.submit()}>Save changes</Button>
+                <Button variant="primary" onClick={() => actions.createCardModal.submit()}>Save card!</Button>
             </Modal.Footer>
         </Modal>
     );

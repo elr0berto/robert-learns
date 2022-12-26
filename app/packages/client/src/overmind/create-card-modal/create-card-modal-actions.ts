@@ -27,26 +27,27 @@ export const uploadFile = async ({ state, effects }: Context, file: File) => {
     return resp.url;
 }
 
-function readFileAsync(file: File) : Promise<ArrayBuffer | null> {
+function readFileAsDataURLAsync(file: File) : Promise<string | null> {
     return new Promise((resolve, reject) => {
         let reader = new FileReader();
 
         reader.onload = () => {
-            resolve(typeof reader.result === 'string' ? null : reader.result);
+            resolve(typeof reader.result !== 'string' ? null : reader.result);
         };
 
         reader.onerror = reject;
 
-        reader.rea
-        reader.readAsArrayBuffer(file);
+        reader.readAsDataURL(file);
     })
 }
 
 export const setAudioFile = async ({ state, effects }: Context, file: File|null) => {
     if (file === null) {
         state.createCardModal.audioFile = null;
+        state.createCardModal.audioFileDataURL = null;
     } else {
-        state.createCardModal.audioFile = await readFileAsync(file);
+        state.createCardModal.audioFile = file;
+        state.createCardModal.audioFileDataURL = await readFileAsDataURLAsync(file);
     }
 }
 

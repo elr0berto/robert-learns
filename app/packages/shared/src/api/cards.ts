@@ -6,7 +6,7 @@ export type WorkspaceCardSetCreateRequest = {
     name: string;
 }
 
-type CardCreateRequest = {
+export type CardCreateRequest = {
     cardSetId: number,
     front: string | null;
     back: string | null;

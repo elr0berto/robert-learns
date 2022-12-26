@@ -50,6 +50,14 @@
     "./dist/api/sign-in": {
       "import": "./dist/api/sign-in.js",
       "types": "./dist/api/sign-in.d.ts"
+    },
+    "./api/cards": {
+      "import": "./dist/api/cards.js",
+      "types": "./dist/api/cards.d.ts"
+    },
+    "./dist/api/cards": {
+      "import": "./dist/api/cards.js",
+      "types": "./dist/api/cards.d.ts"
     }
   },
   "types": "./dist/index.d.ts",

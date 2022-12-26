@@ -10,3 +10,4 @@ export * from './Workspace.js';
 export * from './WorkspaceCardSetCreateResponse.js';
 export * from './WorkspaceCardSetListResponse.js';
 export * from './WorkspaceListResponse.js';
+export * from './CardCreateResponse.js';
