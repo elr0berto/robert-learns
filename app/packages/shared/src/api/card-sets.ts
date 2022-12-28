@@ -10,5 +10,9 @@ export const cardSetCardList = async(cardSet : CardSet) : Promise<CardSetCardLis
 export const cardSetUploadFile = async(cardSetId : number, file: File) : Promise<CardSetUploadFileResponse> => {
     const formData = new FormData();
     formData.append('file', file);
-    return await apiClient.post(CardSetUploadFileResponse, '/card-sets/'+cardSetId+'/uploadFile', formData);
+    return await apiClient.post(CardSetUploadFileResponse, '/card-sets/'+cardSetId+'/uploadFile', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 }

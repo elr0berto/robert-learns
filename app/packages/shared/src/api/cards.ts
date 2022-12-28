@@ -20,5 +20,9 @@ export const cardCreate = async(params: CardCreateRequest) : Promise<CardCreateR
     formData.append('front', params.front ?? '');
     formData.append('back', params.back ?? '');
     formData.append('audio', params.audio ?? '');
-    return await apiClient.post(CardCreateResponse, '/cards/card-create', formData);
+    return await apiClient.post(CardCreateResponse, '/cards/card-create', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 }
