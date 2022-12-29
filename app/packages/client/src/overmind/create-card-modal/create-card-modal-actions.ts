@@ -41,24 +41,26 @@ function readFileAsDataURLAsync(file: File) : Promise<string | null> {
     })
 }
 
-export const setAudioFile = async ({ state, effects }: Context, file: File|null) => {
-    if (file === null) {
+export const setAudioFile = async ({ state, effects }: Context, file: FileList|null) => {
+    if (file === null || file.length === 0) {
         state.createCardModal.audioFile = null;
         state.createCardModal.audioFileDataURL = null;
     } else {
         state.createCardModal.audioFile = file;
-        state.createCardModal.audioFileDataURL = await readFileAsDataURLAsync(file);
+        state.createCardModal.audioFileDataURL = await readFileAsDataURLAsync(file[0]);
     }
 }
 
 export const submit = async ({ state, effects }: Context) => {
     state.createCardModal.submitting = true;
     console.log('state.createCardModal.audioFile', state.createCardModal.audioFile);
+    console.log('state.createCardModal.audioFile instanceof File', state.createCardModal.audioFile instanceof File);
+    console.log('state.createCardModal.audioFile instanceof Array', state.createCardModal.audioFile instanceof Array);
     const resp = await effects.api.cards.cardCreate({
         cardSetId: state.createCardModal.cardSetId!,
         front: state.createCardModal.frontHtml,
         back: state.createCardModal.backHtml,
-        audio: state.createCardModal.audioFile
+        audio: state.createCardModal.audioFile === null ? null : state.createCardModal.audioFile[0]
     });
 
 }

@@ -2,17 +2,21 @@ import {Request, Router} from 'express';
 import {getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from '../common.js';
 import prisma from "../db/prisma.js";
 import {upload} from "../multer.js";
-import {CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
+import {BaseResponseData, CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import {CardCreateRequest} from "@elr0berto/robert-learns-shared/api/cards";
 import {fileTypeFromFile} from "file-type";
+import {UserRole} from "@prisma/client";
+import {validateWorkspaceCreateRequest, WorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/api/workspaces';
 
 
 const cards = Router();
 
-cards.post('/card-create',  upload.single('audio'), async (req: Request<{}, {}, CardCreateRequest>, res: TypedResponse<CardCreateResponseData>) => {
+cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, CardCreateRequest>, res: TypedResponse<CardCreateResponseData>) => {
     const user = await getSignedInUser(req.session);
 
-    console.log('req', req);
+    console.log('req.file', req.file);
+    // @ts-ignore
+    console.log('req.audio', req.audio);
     if (req.file === null || typeof req.file === 'undefined' || req.file.size === 0 || req.file.size > 10000000) {
         throw new Error('file missing or too large or something. file size: ' + (req.file?.size ?? 'undefined'));
     }

@@ -5,7 +5,7 @@ type CreateCardModalState = {
     activeTab: string | null;
     frontHtml: string;
     backHtml: string;
-    audioFile: File | null;
+    audioFile: FileList | null;
     audioFileDataURL: string | null;
     submitting: boolean;
     readonly isOpen: boolean;

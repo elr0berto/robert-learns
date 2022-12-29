@@ -42,10 +42,16 @@ function CreateCardModal() {
                             <Tab eventKey="audio" title="Audio">
                                 <Form.Group controlId="formFileLg" className="mb-3">
                                     <Form.Label>Upload audio</Form.Label>
-                                    <Form.Control type="file" size="lg" onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                                        console.log('e', e);
-                                        console.log('objUrl', URL.createObjectURL(e.target.files![0]));
-                                        actions.createCardModal.setAudioFile((e.target?.files?.length ?? 0) > 0 ? e.target!.files![0] : null); }} accept=".mp3,.aac,.m4a"/>
+                                    <input type="file" onChange={e => {
+                                        console.log('e.target.files', e.target.files);
+                                        // @ts-ignore
+                                        window['whatever'] = e.target.files;
+                                        if (e.target.files && e.target.files.length === 1) {
+                                            actions.createCardModal.setAudioFile(e.target.files)
+                                        } else {
+                                            actions.createCardModal.setAudioFile(null)
+                                        }
+                                    }} accept=".mp3,.aac,.m4a"/>
                                 </Form.Group>
                                 {state.createCardModal.audioFileDataURL !== null ? <AudioPlayer
                                     src={state.createCardModal.audioFileDataURL}
