@@ -15,8 +15,6 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
     const user = await getSignedInUser(req.session);
 
     console.log('req.file', req.file);
-    // @ts-ignore
-    console.log('req.audio', req.audio);
     if (req.file === null || typeof req.file === 'undefined' || req.file.size === 0 || req.file.size > 10000000) {
         throw new Error('file missing or too large or something. file size: ' + (req.file?.size ?? 'undefined'));
     }

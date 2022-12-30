@@ -5,7 +5,6 @@ type CreateCardModalState = {
     activeTab: string | null;
     frontHtml: string;
     backHtml: string;
-    audioFile: FileList | null;
     audioFileDataURL: string | null;
     submitting: boolean;
     readonly isOpen: boolean;
@@ -16,7 +15,6 @@ export const getInitialCreateCardModalState = (): CreateCardModalState => ({
     activeTab: 'front',
     frontHtml: '',
     backHtml: '',
-    audioFile: null,
     audioFileDataURL: null,
     submitting: false,
     isOpen: derived((state: CreateCardModalState) => {

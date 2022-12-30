@@ -9,6 +9,14 @@ import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";
 import App from "./components/App";
 import {createRoot} from "react-dom/client";
 
+declare global {
+    interface Window {
+        audioFile?: File | null;
+    }
+}
+
+window.audioFile = null;
+
 export const overmind = createOvermind(config, {
     devtools: true /*process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',*/
 });

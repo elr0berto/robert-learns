@@ -43,11 +43,8 @@ function CreateCardModal() {
                                 <Form.Group controlId="formFileLg" className="mb-3">
                                     <Form.Label>Upload audio</Form.Label>
                                     <input type="file" onChange={e => {
-                                        console.log('e.target.files', e.target.files);
-                                        // @ts-ignore
-                                        window['whatever'] = e.target.files;
                                         if (e.target.files && e.target.files.length === 1) {
-                                            actions.createCardModal.setAudioFile(e.target.files)
+                                            actions.createCardModal.setAudioFile(e.target.files[0])
                                         } else {
                                             actions.createCardModal.setAudioFile(null)
                                         }
