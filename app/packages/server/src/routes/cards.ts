@@ -1,13 +1,9 @@
 import {Request, Router} from 'express';
-import {getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from '../common.js';
-import prisma from "../db/prisma.js";
+import {awaitExec, getSignedInUser, getUserData, TypedResponse} from '../common.js';
 import {upload} from "../multer.js";
-import {BaseResponseData, CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
+import {CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import {CardCreateRequest} from "@elr0berto/robert-learns-shared/api/cards";
-import {fileTypeFromFile} from "file-type";
-import {UserRole} from "@prisma/client";
-import {validateWorkspaceCreateRequest, WorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/api/workspaces';
-
+import * as fs from "fs";
 
 const cards = Router();
 
@@ -19,17 +15,32 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
         throw new Error('file missing or too large or something. file size: ' + (req.file?.size ?? 'undefined'));
     }
 
-    const whitelist = [
-        'image/png',
-        'image/jpeg',
-        'image/jpg',
-        'image/webp'
-    ];
+    const outPath = req.file.path+'.mp3';
 
-    const meta = await fileTypeFromFile(req.file.path);
+    try {
+        await awaitExec('ffmpeg -i ' + req.file.path + ' ' + outPath);
 
-    if (typeof meta === 'undefined' || !whitelist.includes(meta.mime)) {
-        throw new Error('bad file mime: ' + (meta?.mime ?? 'undefined'));
+        if (!fs.existsSync(outPath)) {
+            return res.json({
+                status: ResponseStatus.UnexpectedError,
+                user: getUserData(user),
+                errorMessage: 'failed to process audio file! err: exists',
+            });
+        }
+        var stats = fs.statSync(outPath);
+        if (stats.size <= 0) {
+            return res.json({
+                status: ResponseStatus.UnexpectedError,
+                user: getUserData(user),
+                errorMessage: 'failed to process audio file! err: size',
+            });
+        }
+    } catch (ex) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            user: getUserData(user),
+            errorMessage: 'failed to process audio file! err: ex',
+        });
     }
 
     return res.json({

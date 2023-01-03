@@ -12,6 +12,7 @@ function ErrorPage() {
                     <div className="error-text">Please wait while page reloads...</div> :
                     <>
                         <Alert variant="danger">Unexpected error.</Alert>
+                        {(state.error.error?.message?.length ?? 0) > 0 ? <Alert variant="danger">{state.error.error!.message}</Alert> : null}
                         <Button onClick={() => actions.error.reloadPage()}>Reload page</Button>
                     </>
                 }

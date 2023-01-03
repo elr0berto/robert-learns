@@ -3,6 +3,7 @@ import prisma from "./db/prisma.js";
 import {Session, SessionData} from "express-session";
 import { User, UserRole } from '@prisma/client';
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
+import {exec} from "child_process";
 
 
 export interface TypedResponse<ResBody> extends Express.Response {
@@ -82,4 +83,17 @@ export const userCanWriteToWorkspace = async (user: UserData, workspaceId: numbe
 
 export const getUrlFromMedia = (media: MediaData) : string => {
     return '/api/media/'+media.id+'/'+media.name;
+}
+
+export const awaitExec = (cmd: string) : Promise<void> => {
+    return new Promise((done, failed) => {
+        exec(cmd, (err) => {
+            if (err) {
+                failed(err)
+                return;
+            }
+
+            done();
+        });
+    });
 }
