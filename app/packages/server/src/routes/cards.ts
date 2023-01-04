@@ -4,44 +4,86 @@ import {upload} from "../multer.js";
 import {CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import {CardCreateRequest} from "@elr0berto/robert-learns-shared/api/cards";
 import * as fs from "fs";
+import prisma from "../db/prisma.js";
+import {CardSide, MediaType} from "@prisma/client";
 
 const cards = Router();
 
 cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, CardCreateRequest>, res: TypedResponse<CardCreateResponseData>) => {
     const user = await getSignedInUser(req.session);
 
-    console.log('req.file', req.file);
-    if (req.file === null || typeof req.file === 'undefined' || req.file.size === 0 || req.file.size > 10000000) {
-        throw new Error('file missing or too large or something. file size: ' + (req.file?.size ?? 'undefined'));
-    }
+    let audioMedia = null;
+    if (req.file !== null && typeof req.file !== 'undefined') {
+        if (req.file.size === 0 || req.file.size > 10000000) {
+            throw new Error('audio file too large or something. file size: ' + (req.file?.size ?? 'undefined'));
+        }
 
-    const outPath = req.file.path+'.mp3';
+        const outPath = req.file.path + '.mp3';
 
-    try {
-        await awaitExec('ffmpeg -i ' + req.file.path + ' ' + outPath);
+        try {
+            await awaitExec('ffmpeg -i ' + req.file.path + ' ' + outPath);
 
-        if (!fs.existsSync(outPath)) {
+            if (!fs.existsSync(outPath)) {
+                return res.json({
+                    status: ResponseStatus.UnexpectedError,
+                    user: getUserData(user),
+                    errorMessage: 'failed to process audio file! err: exists',
+                });
+            }
+            var stats = fs.statSync(outPath);
+            if (stats.size <= 0) {
+                return res.json({
+                    status: ResponseStatus.UnexpectedError,
+                    user: getUserData(user),
+                    errorMessage: 'failed to process audio file! err: size',
+                });
+            }
+
+            audioMedia = await prisma.media.create({
+                data: {
+                    path: outPath,
+                    name: req.file.originalname+'.mp3',
+                    cardSetId: req.body.cardSetId,
+                    type: MediaType.AUDIO
+                }
+            });
+        } catch (ex) {
             return res.json({
                 status: ResponseStatus.UnexpectedError,
                 user: getUserData(user),
-                errorMessage: 'failed to process audio file! err: exists',
+                errorMessage: 'failed to process audio file! err: ex',
             });
         }
-        var stats = fs.statSync(outPath);
-        if (stats.size <= 0) {
-            return res.json({
-                status: ResponseStatus.UnexpectedError,
-                user: getUserData(user),
-                errorMessage: 'failed to process audio file! err: size',
-            });
-        }
-    } catch (ex) {
-        return res.json({
-            status: ResponseStatus.UnexpectedError,
-            user: getUserData(user),
-            errorMessage: 'failed to process audio file! err: ex',
-        });
     }
+
+    const newCard = await prisma.card.create({
+        data: {
+            audioId: audioMedia?.id
+        }
+    });
+
+    const newCardSetCard = await prisma.cardSetCard.create({
+        data: {
+            cardSetId: req.body.cardSetId,
+            cardId: newCard.id,
+        }
+    });
+
+    const faceFront = await prisma.cardFace.create({
+        data: {
+            content: req.body.front ?? '',
+            cardId: newCard.id,
+            side: CardSide.FRONT,
+        }
+    });
+
+    const faceBack = await prisma.cardFace.create({
+        data: {
+            content: req.body.back ?? '',
+            cardId: newCard.id,
+            side: CardSide.BACK,
+        }
+    });
 
     return res.json({
         status: ResponseStatus.Success,

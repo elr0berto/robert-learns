@@ -22,11 +22,7 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
         include: {
             card : {
                 include: {
-                    faces: {
-                        include: {
-                            media: true,
-                        }
-                    },
+                    faces: true,
                     audio: true,
                 },
             },
@@ -44,14 +40,10 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
         };
     }
 
-    function getFaceData(face: PrismaCardFace & { media : PrismaMedia} | null) : CardFaceData | null {
-        if (face === null) {
-            return null;
-        }
+    function getFaceData(face: PrismaCardFace) : CardFaceData {
         return {
             content: face.content,
-            side: face.side,
-            media: getMediaData(face.media),
+            side: face.side
         };
     }
 
@@ -61,11 +53,10 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
         errorMessage: null,
         cards: cardSetCards.map(csc => {
             const front = csc.card.faces.filter(f => f.side === CardSide.FRONT)[0];
-            const backs = csc.card.faces.filter(f => f.side === CardSide.BACK);
-            const back = backs.length === 1 ? backs[0] : null;
+            const back = csc.card.faces.filter(f => f.side === CardSide.BACK)[0];
             return {
                 id: csc.card.id,
-                front: getFaceData(front)!,
+                front: getFaceData(front),
                 back: getFaceData(back),
                 audio: getMediaData(csc.card.audio)
             };

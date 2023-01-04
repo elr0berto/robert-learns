@@ -63,7 +63,6 @@ model Media {
   path      String
   name      String
   type      MediaType
-  cardFaces CardFace[]
   cards     Card[]
   cardSet   CardSet? @relation(fields: [cardSetId], references: [id])
   cardSetId Int?
@@ -88,8 +87,6 @@ model CardFace {
   card    Card     @relation(fields: [cardId], references: [id])
   cardId  Int
   side    CardSide
-  media   Media    @relation(fields: [mediaId], references: [id])
-  mediaId Int
 }
 
 model CardSetUser {
