@@ -51,7 +51,7 @@ export const setAudioFile = async ({ state, effects }: Context, file: File|null)
     }
 }
 
-export const submit = async ({ state, effects }: Context) => {
+export const submit = async ({ state, effects, actions }: Context) => {
     state.createCardModal.submitting = true;
     const resp = await effects.api.cards.cardCreate({
         cardSetId: state.createCardModal.cardSetId!,
@@ -60,4 +60,8 @@ export const submit = async ({ state, effects }: Context) => {
         audio: window.audioFile ?? null,
     });
 
+    state.workspaceCardSet.cards.push(resp.card!);
+
+    actions.createCardModal.closeCreateCardModal();
+    state.createCardModal.submitting = false;
 }

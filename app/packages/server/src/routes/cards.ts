@@ -1,5 +1,5 @@
 import {Request, Router} from 'express';
-import {awaitExec, getSignedInUser, getUserData, TypedResponse} from '../common.js';
+import {awaitExec, getCardData, getSignedInUser, getUserData, TypedResponse} from '../common.js';
 import {upload} from "../multer.js";
 import {CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import {CardCreateRequest} from "@elr0berto/robert-learns-shared/api/cards";
@@ -9,7 +9,7 @@ import {CardSide, MediaType} from "@prisma/client";
 
 const cards = Router();
 
-cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, CardCreateRequest>, res: TypedResponse<CardCreateResponseData>) => {
+cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse<CardCreateResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     let audioMedia = null;
@@ -28,6 +28,7 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
                     status: ResponseStatus.UnexpectedError,
                     user: getUserData(user),
                     errorMessage: 'failed to process audio file! err: exists',
+                    card: null,
                 });
             }
             var stats = fs.statSync(outPath);
@@ -36,6 +37,7 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
                     status: ResponseStatus.UnexpectedError,
                     user: getUserData(user),
                     errorMessage: 'failed to process audio file! err: size',
+                    card: null,
                 });
             }
 
@@ -43,7 +45,7 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
                 data: {
                     path: outPath,
                     name: req.file.originalname+'.mp3',
-                    cardSetId: req.body.cardSetId,
+                    cardSetId: parseInt(req.body.cardSetId),
                     type: MediaType.AUDIO
                 }
             });
@@ -51,7 +53,8 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
             return res.json({
                 status: ResponseStatus.UnexpectedError,
                 user: getUserData(user),
-                errorMessage: 'failed to process audio file! err: ex',
+                errorMessage: 'failed to process audio file! err: ex' + (ex?.toString()),
+                card: null,
             });
         }
     }
@@ -64,7 +67,7 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
 
     const newCardSetCard = await prisma.cardSetCard.create({
         data: {
-            cardSetId: req.body.cardSetId,
+            cardSetId: parseInt(req.body.cardSetId),
             cardId: newCard.id,
         }
     });
@@ -85,10 +88,21 @@ cards.post('/card-create', upload.single('audio'),async (req: Request<{}, {}, Ca
         }
     });
 
+    const card = await prisma.card.findUnique({
+        where: {
+            id: newCard.id,
+        },
+        include: {
+            faces: true,
+            audio: true,
+        },
+    });
+
     return res.json({
         status: ResponseStatus.Success,
         user: getUserData(user),
         errorMessage: null,
+        card: getCardData(card!)
     });
 });
 

@@ -1,9 +1,11 @@
 import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
 import {Session, SessionData} from "express-session";
-import { User, UserRole } from '@prisma/client';
+import {Card as PrismaCard, CardFace as PrismaCardFace, CardSide, Media as PrismaMedia, User, UserRole} from '@prisma/client';
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
+import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
+
 
 
 export interface TypedResponse<ResBody> extends Express.Response {
@@ -96,4 +98,33 @@ export const awaitExec = (cmd: string) : Promise<void> => {
             done();
         });
     });
+}
+
+function getMediaData(media: PrismaMedia | null) : MediaData | null {
+    if (media === null) {
+        return null;
+    }
+    return {
+        id: media.id,
+        path: media.path,
+        name: media.name,
+    };
+}
+
+function getFaceData(face: PrismaCardFace) : CardFaceData {
+    return {
+        content: face.content,
+        side: face.side
+    };
+}
+
+export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: PrismaMedia | null}) : CardData {
+    const front = card.faces.filter(f => f.side === CardSide.FRONT)[0];
+    const back = card.faces.filter(f => f.side === CardSide.BACK)[0];
+    return {
+        id: card.id,
+        front: getFaceData(front),
+        back: getFaceData(back),
+        audio: getMediaData(card.audio)
+    };
 }

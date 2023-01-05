@@ -1,7 +1,7 @@
 import {Router} from 'express';
 import prisma from "../db/prisma.js";
 
-import {getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
+import {getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
 import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia, MediaType } from '@prisma/client';
 import {upload} from "../multer.js";
 
@@ -29,39 +29,12 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
         },
     });
 
-    function getMediaData(media: PrismaMedia | null) : MediaData | null {
-        if (media === null) {
-            return null;
-        }
-        return {
-            id: media.id,
-            path: media.path,
-            name: media.name,
-        };
-    }
-
-    function getFaceData(face: PrismaCardFace) : CardFaceData {
-        return {
-            content: face.content,
-            side: face.side
-        };
-    }
-
     return res.json({
         status: ResponseStatus.Success,
         user: getUserData(user),
         errorMessage: null,
-        cards: cardSetCards.map(csc => {
-            const front = csc.card.faces.filter(f => f.side === CardSide.FRONT)[0];
-            const back = csc.card.faces.filter(f => f.side === CardSide.BACK)[0];
-            return {
-                id: csc.card.id,
-                front: getFaceData(front),
-                back: getFaceData(back),
-                audio: getMediaData(csc.card.audio)
-            };
-        })
-    })
+        cards: cardSetCards.map(csc => getCardData(csc.card))
+    });
 });
 
 cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res : TypedResponse<CardSetUploadFileResponseData>) => {
