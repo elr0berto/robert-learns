@@ -14,4 +14,8 @@ export class Media {
         this.path = data.path;
         this.name = data.name;
     }
+
+    public getUrl() : string {
+        return this.path;
+    }
 }
