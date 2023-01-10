@@ -106,7 +106,6 @@ function getMediaData(media: PrismaMedia | null) : MediaData | null {
     }
     return {
         id: media.id,
-        path: media.path,
         name: media.name,
     };
 }

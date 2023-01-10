@@ -1784,6 +1784,7 @@ __metadata:
     query-string: ^8.0.3
     react: ^18.2.0
     react-bootstrap: ^2.7.0
+    react-bootstrap-icons: ^1.10.2
     react-dom: ^18.2.0
     react-draft-wysiwyg: ^1.15.0
     react-h5-audio-player: ^3.8.6
@@ -11007,6 +11008,17 @@ __metadata:
     regenerator-runtime: ^0.13.9
     whatwg-fetch: ^3.6.2
   checksum: 1bb031080af15397d6eb9c69a0c2e93799991f7197a086e4409ba719398f1256b542a3d6c9a34673d516c684eef3e8226c99b335982593851f58f65f6e43571b
+  languageName: node
+  linkType: hard
+
+"react-bootstrap-icons@npm:^1.10.2":
+  version: 1.10.2
+  resolution: "react-bootstrap-icons@npm:1.10.2"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: ">=16.8.6"
+  checksum: eead5ae023a4b1d880fc1b33101fdd64a13b0411e62c4387c0443662be1c7c65f9c1d6ddcf7dc6ba5ee9f5d6a871f4f6b24073c2080e3a3ad901f1140f46abe4
   languageName: node
   linkType: hard
 

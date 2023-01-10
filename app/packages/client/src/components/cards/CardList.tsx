@@ -14,7 +14,7 @@ function CardList(props: Props) {
 
     return <Container className="card-preview-list">
         <Row className="row-cols-auto">
-            {props.cards.map(card => <Col><CardPreview card={card}/></Col>)}
+            {props.cards.map(card => <Col className="col-lg-3"><CardPreview card={card}/></Col>)}
         </Row>
     </Container>;
 }
