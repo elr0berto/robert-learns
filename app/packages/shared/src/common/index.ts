@@ -4,3 +4,11 @@ export const objectMap = <TObject extends {}, TRet>(obj : TObject, fn : (v: any,
             ([k, v], i) => [k, fn(v, k, i)]
         )
     );
+
+export function removeItem<T>(arr: Array<T>, value: T): Array<T> {
+    const index = arr.indexOf(value);
+    if (index > -1) {
+        arr.splice(index, 1);
+    }
+    return arr;
+}

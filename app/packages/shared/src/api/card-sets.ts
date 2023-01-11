@@ -16,3 +16,7 @@ export const cardSetUploadFile = async(cardSetId : number, file: File) : Promise
         }
     });
 }
+
+export const cardSetDeleteCard = async(cardSet: CardSet) : Promise<CardSetDeleteCardResponse> => {
+
+}

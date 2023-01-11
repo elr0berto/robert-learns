@@ -3,10 +3,11 @@ import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import AudioPlayer from "react-h5-audio-player";
 import CardPreviewFace from "./CardPreviewFace";
 import {Button} from "react-bootstrap";
-import {DashCircle} from "react-bootstrap-icons";
+import {DashCircle, PencilSquare} from "react-bootstrap-icons";
 
 type Props = {
     card: Card;
+    onDeleteCard: (card: Card) => void;
 }
 
 function CardPreview(props: Props) {
@@ -18,8 +19,8 @@ function CardPreview(props: Props) {
             src={props.card.audio.getUrl()}
             onPlay={e => console.log("onPlay")}
         /> : null}
-        <Button size="sm" variant="outline-primary" className="mt-2">Edit</Button>
-        <Button size="sm" variant="outline-danger" className="mt-2 ms-1"><DashCircle/> Delete</Button>
+        <Button size="sm" variant="outline-primary" className="mt-2"><PencilSquare/> Edit</Button>
+        <Button size="sm" variant="outline-danger" className="mt-2 ms-1" onClick={() => props.onDeleteCard(props.card)}><DashCircle/> Delete</Button>
     </div>;
 }
 
