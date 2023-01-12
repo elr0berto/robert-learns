@@ -1,7 +1,6 @@
 import {apiClient} from './ApiClient.js';
-import {CardSet} from "./models/index.js";
-import {CardSetCardListResponse} from "./models/index.js";
-import {CardSetUploadFileResponse} from "./models/index.js";
+import {BaseResponse, CardSet, CardSetCardListResponse, CardSetUploadFileResponse} from "./models/index.js";
+
 
 export const cardSetCardList = async(cardSet : CardSet) : Promise<CardSetCardListResponse> => {
     return await apiClient.get(CardSetCardListResponse, '/card-sets/'+cardSet.id+'/cards/');
@@ -17,6 +16,11 @@ export const cardSetUploadFile = async(cardSetId : number, file: File) : Promise
     });
 }
 
-export const cardSetDeleteCard = async(cardSet: CardSet) : Promise<CardSetDeleteCardResponse> => {
+export type CardSetDeleteCardRequest = {
+    cardSetId: number,
+    cardId: number
+}
 
+export const cardSetDeleteCard = async(params: CardSetDeleteCardRequest) : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/card-sets/delete-card/', params);
 }

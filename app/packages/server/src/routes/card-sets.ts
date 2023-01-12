@@ -1,12 +1,15 @@
-import {Router} from 'express';
+import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 
 import {getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
-import { CardSide, CardFace as PrismaCardFace, Media as PrismaMedia, MediaType } from '@prisma/client';
+import { MediaType } from '@prisma/client';
 import {upload} from "../multer.js";
 
 import { fileTypeFromFile } from 'file-type';
-import {CardSetCardListResponseData, MediaData, CardFaceData, ResponseStatus, CardSetUploadFileResponseData} from "@elr0berto/robert-learns-shared/api/models";
+import {CardSetCardListResponseData, ResponseStatus, CardSetUploadFileResponseData} from "@elr0berto/robert-learns-shared/api/models";
+import bcrypt from "bcryptjs";
+import {CardSetDeleteCardRequest} from "@elr0berto/robert-learns-shared/api/cardSets";
+import {BaseResponseData} from "@elr0berto/robert-learns-shared/api/models";
 
 
 const cardSets = Router();
@@ -74,5 +77,56 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
         url: getUrlFromMedia(newMedia)
     });
 });
+
+cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardRequest>, res : TypedResponse<BaseResponseData>) => {
+    const user = await getSignedInUser(req.session);
+
+    if (user.isGuest) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "guest cannot delete cards",
+            user: getUserData(user),
+        });
+    }
+
+    const card = await prisma.card.findFirst({
+        where: { id: req.body.cardId }
+    });
+
+    if (card === null) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "card not found, id: " + req.body.cardId,
+            user: getUserData(user),
+        });
+    }
+
+    const cardSet = await prisma.cardSet.findFirst({
+        where: { id: req.body.cardSetId }
+    });
+
+    if (cardSet === null) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "card set not found, id: " + req.body.cardSetId,
+            user: getUserData(user),
+        });
+    }
+
+    if (!canUserDeleteCardSetCard(user, cardSet, card)) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + card.id + " in card set id: " + cardSet.id,
+            user: getUserData(user),
+        });
+    }
+
+    return res.json({
+        status: ResponseStatus.Success,
+        errorMessage: null,
+        user: getUserData(user),
+    });
+});
+
 
 export default cardSets;
