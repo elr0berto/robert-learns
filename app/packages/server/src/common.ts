@@ -1,7 +1,16 @@
 import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
 import {Session, SessionData} from "express-session";
-import {Card as PrismaCard, CardFace as PrismaCardFace, CardSide, Media as PrismaMedia, User, UserRole} from '@prisma/client';
+import {
+    Card as PrismaCard,
+    CardFace as PrismaCardFace,
+    CardSet as PrismaCardSet,
+    CardSide,
+    Media as PrismaMedia,
+    User as PrismaUser,
+    UserRole,
+    Workspace as PrismaWorkspace
+} from '@prisma/client';
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
@@ -12,7 +21,7 @@ export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
 }
 
-export const getSignedInUser = async (session: Session & Partial<SessionData>) : Promise<User> => {
+export const getSignedInUser = async (session: Session & Partial<SessionData>) : Promise<PrismaUser> => {
     if (!session.userId) {
         let guestUser = await prisma.user.findFirst({
             where: {
@@ -68,20 +77,6 @@ export const getUserData = (user: UserData) : UserData => {
     };
 }
 
-export const userCanWriteToWorkspace = async (user: UserData, workspaceId: number) : Promise<boolean> => {
-    const workspaceUser = await prisma.workspaceUser.findFirst({
-        where: {
-            workspaceId: workspaceId,
-            userId: user.id,
-            OR: [
-                {role: UserRole.OWNER},
-                {role: UserRole.CONTRIBUTOR}
-            ]
-        }
-    });
-
-    return workspaceUser !== null;
-}
 
 export const getUrlFromMedia = (media: MediaData) : string => {
     return '/api/media/'+media.id+'/'+media.name;
@@ -126,4 +121,9 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
         back: getFaceData(back),
         audio: getMediaData(card.audio)
     };
+}
+
+
+export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard) : Promise<void> => {
+
 }

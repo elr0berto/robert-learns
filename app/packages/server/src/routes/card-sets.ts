@@ -1,15 +1,12 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-
-import {getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
+import {deleteCard, getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
 import { MediaType } from '@prisma/client';
 import {upload} from "../multer.js";
-
 import { fileTypeFromFile } from 'file-type';
-import {CardSetCardListResponseData, ResponseStatus, CardSetUploadFileResponseData} from "@elr0berto/robert-learns-shared/api/models";
-import bcrypt from "bcryptjs";
+import {CardSetCardListResponseData, ResponseStatus, CardSetUploadFileResponseData, BaseResponseData} from "@elr0berto/robert-learns-shared/api/models";
 import {CardSetDeleteCardRequest} from "@elr0berto/robert-learns-shared/api/cardSets";
-import {BaseResponseData} from "@elr0berto/robert-learns-shared/api/models";
+import {canUserDeleteCardsFromCardSet} from "../security.js";
 
 
 const cardSets = Router();
@@ -102,7 +99,10 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
     }
 
     const cardSet = await prisma.cardSet.findFirst({
-        where: { id: req.body.cardSetId }
+        where: { id: req.body.cardSetId },
+        include: {
+            workspace: true
+        }
     });
 
     if (cardSet === null) {
@@ -113,7 +113,8 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         });
     }
 
-    if (!canUserDeleteCardSetCard(user, cardSet, card)) {
+    const allowed = await canUserDeleteCardsFromCardSet(user, cardSet);
+    if (!allowed) {
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + card.id + " in card set id: " + cardSet.id,
@@ -121,6 +122,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         });
     }
 
+    await deleteCard(card);
     return res.json({
         status: ResponseStatus.Success,
         errorMessage: null,
