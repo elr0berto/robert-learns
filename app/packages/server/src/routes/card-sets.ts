@@ -1,6 +1,6 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {deleteCard, getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
+import {deleteCardSetCard, getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
 import { MediaType } from '@prisma/client';
 import {upload} from "../multer.js";
 import { fileTypeFromFile } from 'file-type';
@@ -87,7 +87,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
     }
 
     const card = await prisma.card.findFirst({
-        where: { id: req.body.cardId }
+        where: { id: req.body.cardId },
     });
 
     if (card === null) {
@@ -122,7 +122,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         });
     }
 
-    await deleteCard(card);
+    await deleteCardSetCard(cardSet, card);
     return res.json({
         status: ResponseStatus.Success,
         errorMessage: null,

@@ -66,6 +66,14 @@
     "./dist/api/cardSets": {
       "import": "./dist/api/card-sets.js",
       "types": "./dist/api/card-sets.d.ts"
+    },
+    "./common": {
+      "import": "./dist/common/index.js",
+      "types": "./dist/common/index.d.ts"
+    },
+    "./dist/common": {
+      "import": "./dist/common/index.js",
+      "types": "./dist/common/index.d.ts"
     }
   },
   "types": "./dist/index.d.ts",

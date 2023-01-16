@@ -125,5 +125,36 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
 
 
 export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard) : Promise<void> => {
+    await prisma.$transaction(async (tx) => {
+        await tx.cardFace.deleteMany({
+            where: {
+                cardId: card.id
+            }
+        });
+        await tx.cardSetCard.delete({
+            where: {
+                cardId_cardSetId: {
+                    cardId: card.id,
+                    cardSetId: cardSet.id
+                }
+            }
+        });
+        const cardSetCardsRemaining = await tx.cardSetCard.findMany({
+            where: {
+                cardId: card.id
+            }
+        });
 
+        console.log('cardSetCardsRemaining: ', cardSetCardsRemaining);
+
+        if (cardSetCardsRemaining.length === 0) {
+            await tx.card.delete({
+                where: {
+                    id: card.id
+                }
+            });
+        }
+
+        // NOTE: Media will be deleted in a separate cronjob...
+    })
 }

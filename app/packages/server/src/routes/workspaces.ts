@@ -1,12 +1,13 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 
-import {getSignedInUser, getUserData, TypedResponse, userCanWriteToWorkspace} from "../common.js";
+import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 
 import { UserRole } from '@prisma/client';
 import {BaseResponseData, ResponseStatus,
     WorkspaceCardSetCreateResponseData, WorkspaceCardSetListResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/models';
 import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest, WorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/api/workspaces';
+import {canUserWriteToWorkspaceId} from "../security.js";
 
 
 
@@ -128,7 +129,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
         });
     }
 
-    const hasRights = userCanWriteToWorkspace(user,req.body.workspaceId);
+    const hasRights = canUserWriteToWorkspaceId(user,req.body.workspaceId);
     if (!hasRights) {
         return res.json({
             status: ResponseStatus.UnexpectedError,

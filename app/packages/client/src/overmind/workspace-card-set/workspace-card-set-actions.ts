@@ -14,7 +14,7 @@ export const _loadCards = async ({ state, effects }: Context) => {
 
 export const deleteCard = async ({ state, effects }: Context, card: Card) => {
     state.workspaceCardSet.cardsBeingDeleted.push(card);
-    const resp = await effects.api.cardSets.deleteCard(state.workspaceCardSet, card);
+    const resp = await effects.api.cardSets.cardSetDeleteCard({cardId: card.id, cardSetId: state.workspaceCardSet.cardSetId!});
     state.workspaceCardSet.cards = removeItem(state.workspaceCardSet.cards, card);
     state.workspaceCardSet.cardsBeingDeleted = removeItem(state.workspaceCardSet.cardsBeingDeleted, card);
 }
