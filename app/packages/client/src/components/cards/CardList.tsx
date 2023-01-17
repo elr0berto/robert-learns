@@ -6,6 +6,7 @@ import {Col, Container, Row} from "react-bootstrap";
 type Props = {
     cards: Card[];
     onDeleteCard: (card: Card) => void;
+    cardIdsBeingDeleted: number[];
 }
 
 function CardList(props: Props) {
@@ -15,7 +16,12 @@ function CardList(props: Props) {
 
     return <Container className="card-preview-list">
         <Row className="row-cols-auto">
-            {props.cards.map(card => <Col className="col-lg-3"><CardPreview onDeleteCard={props.onDeleteCard} card={card}/></Col>)}
+            {props.cards.map(card => <Col className="col-lg-3">
+                <CardPreview
+                    beingDeleted={props.cardIdsBeingDeleted.includes(card.id)}
+                    onDeleteCard={props.onDeleteCard}
+                    card={card}/>
+            </Col>)}
         </Row>
     </Container>;
 }

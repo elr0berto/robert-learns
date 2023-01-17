@@ -31,3 +31,16 @@ export const canUserWriteToWorkspace = async (user: PrismaUser, workspace: Prism
 export const canUserDeleteCardsFromCardSet = async (user: PrismaUser, cardSet: PrismaCardSet & {workspace: PrismaWorkspace}) : Promise<boolean> => {
     return await canUserWriteToWorkspace(user, cardSet.workspace);
 }
+
+export const canUserDeleteCardsFromCardSetId = async (user: PrismaUser, cardSetId: number) : Promise<boolean> => {
+    const cardSet = await prisma.cardSet.findFirst({
+        where: { id: cardSetId },
+        include: {
+            workspace: true
+        }
+    });
+    if (cardSet === null) {
+        throw new Error('cardSetId: ' + cardSetId + ' not found!');
+    }
+    return await canUserDeleteCardsFromCardSet(user, cardSet);
+}

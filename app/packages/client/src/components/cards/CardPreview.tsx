@@ -8,6 +8,7 @@ import {DashCircle, PencilSquare} from "react-bootstrap-icons";
 type Props = {
     card: Card;
     onDeleteCard: (card: Card) => void;
+    beingDeleted: boolean;
 }
 
 function CardPreview(props: Props) {
@@ -20,7 +21,7 @@ function CardPreview(props: Props) {
             onPlay={e => console.log("onPlay")}
         /> : null}
         <Button size="sm" variant="outline-primary" className="mt-2"><PencilSquare/> Edit</Button>
-        <Button size="sm" variant="outline-danger" className="mt-2 ms-1" onClick={() => props.onDeleteCard(props.card)}><DashCircle/> Delete</Button>
+        <Button disabled={props.beingDeleted} size="sm" variant="outline-danger" className="mt-2 ms-1" onClick={() => props.onDeleteCard(props.card)}><DashCircle/> Delete</Button>
     </div>;
 }
 

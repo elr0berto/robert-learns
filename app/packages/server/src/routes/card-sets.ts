@@ -6,13 +6,15 @@ import {upload} from "../multer.js";
 import { fileTypeFromFile } from 'file-type';
 import {CardSetCardListResponseData, ResponseStatus, CardSetUploadFileResponseData, BaseResponseData} from "@elr0berto/robert-learns-shared/api/models";
 import {CardSetDeleteCardRequest} from "@elr0berto/robert-learns-shared/api/cardSets";
-import {canUserDeleteCardsFromCardSet} from "../security.js";
+import {canUserDeleteCardsFromCardSet, canUserDeleteCardsFromCardSetId} from "../security.js";
+import {CardSetDeleteCardResponseData} from "@elr0berto/robert-learns-shared/api/models";
 
 
 const cardSets = Router();
 
 cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardListResponseData>) => {
     let user = await getSignedInUser(req.session);
+
     const cardSetCards = await prisma.cardSetCard.findMany({
         where: {
             cardSetId: {
@@ -75,7 +77,7 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
     });
 });
 
-cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardRequest>, res : TypedResponse<BaseResponseData>) => {
+cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardRequest>, res : TypedResponse<CardSetDeleteCardResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     if (user.isGuest) {
@@ -83,6 +85,35 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
             status: ResponseStatus.UnexpectedError,
             errorMessage: "guest cannot delete cards",
             user: getUserData(user),
+            cardExistsInOtherCardSets: null,
+        });
+    }
+
+    const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
+    if (!allowed) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
+            user: getUserData(user),
+            cardExistsInOtherCardSets: null,
+        });
+    }
+
+    if (!req.body.confirm) {
+        const cardSetCards = await prisma.cardSetCard.findMany({
+           where: {
+               cardSetId: req.body.cardSetId
+           },
+           include: {
+               cardSet: true
+           }
+        });
+
+        return res.json({
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            user: getUserData(user),
+            cardExistsInOtherCardSets: cardSetCards.map(csc => ({id: csc.cardSet.id, name: csc.cardSet.name})),
         });
     }
 
@@ -95,6 +126,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card not found, id: " + req.body.cardId,
             user: getUserData(user),
+            cardExistsInOtherCardSets: null,
         });
     }
 
@@ -110,15 +142,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card set not found, id: " + req.body.cardSetId,
             user: getUserData(user),
-        });
-    }
-
-    const allowed = await canUserDeleteCardsFromCardSet(user, cardSet);
-    if (!allowed) {
-        return res.json({
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + card.id + " in card set id: " + cardSet.id,
-            user: getUserData(user),
+            cardExistsInOtherCardSets: null,
         });
     }
 
@@ -127,6 +151,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         status: ResponseStatus.Success,
         errorMessage: null,
         user: getUserData(user),
+        cardExistsInOtherCardSets: null,
     });
 });
 

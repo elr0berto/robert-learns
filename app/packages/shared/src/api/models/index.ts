@@ -4,6 +4,7 @@ export * from './CardFace.js';
 export * from './CardSet.js';
 export * from './CardSetCardListResponse.js';
 export * from './CardSetUploadFileResponse.js';
+export * from './CardSetDeleteCardResponse.js';
 export * from './Media.js';
 export * from './User.js';
 export * from './Workspace.js';
