@@ -6,7 +6,7 @@ import {Col, Container, Row} from "react-bootstrap";
 type Props = {
     cards: Card[];
     onDeleteCard: (card: Card) => void;
-    cardIdsBeingDeleted: number[];
+    cardBeingDeleted: Card | null;
 }
 
 function CardList(props: Props) {
@@ -18,7 +18,7 @@ function CardList(props: Props) {
         <Row className="row-cols-auto">
             {props.cards.map(card => <Col className="col-lg-3">
                 <CardPreview
-                    beingDeleted={props.cardIdsBeingDeleted.includes(card.id)}
+                    beingDeleted={props.cardBeingDeleted?.id === card.id}
                     onDeleteCard={props.onDeleteCard}
                     card={card}/>
             </Col>)}

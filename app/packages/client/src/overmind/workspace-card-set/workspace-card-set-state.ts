@@ -6,7 +6,10 @@ type WorkspaceCardSetState = {
     cardSetId: number | null;
     cardsLoading: boolean;
     cards: Card[];
-    cardIdsBeingDeleted: number[];
+    cardBeingDeleted: Card | null;
+    cardBeingDeletedExistsInOtherCardSets: CardSet[] | null;
+    confirmingDeleteCard: boolean;
+    readonly showConfirmDeleteModal: boolean;
     readonly cardSet: CardSet | null;
 }
 
@@ -14,7 +17,12 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
     cardSetId: null,
     cardsLoading: false,
     cards: [],
-    cardIdsBeingDeleted: [],
+    cardBeingDeleted: null,
+    cardBeingDeletedExistsInOtherCardSets: null,
+    confirmingDeleteCard: false,
+    showConfirmDeleteModal: derived((state: WorkspaceCardSetState) => {
+        return state.cardBeingDeletedExistsInOtherCardSets !== null;
+    }),
     cardSet: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {
             return null;

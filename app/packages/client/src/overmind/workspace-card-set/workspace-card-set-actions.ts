@@ -12,9 +12,19 @@ export const _loadCards = async ({ state, effects }: Context) => {
     state.workspaceCardSet.cardsLoading = false;
 }
 
-export const deleteCard = async ({ state, effects }: Context, card: Card) => {
-    state.workspaceCardSet.cardsBeingDeleted.push(card);
-    const resp = await effects.api.cardSets.cardSetDeleteCard({cardId: card.id, cardSetId: state.workspaceCardSet.cardSetId!});
-    state.workspaceCardSet.cards = removeItem(state.workspaceCardSet.cards, card);
-    state.workspaceCardSet.cardsBeingDeleted = removeItem(state.workspaceCardSet.cardsBeingDeleted, card);
+export const deleteCardStart = async ({ state, effects }: Context, card: Card) => {
+    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = null;
+    state.workspaceCardSet.cardBeingDeleted = card;
+    const resp = await effects.api.cardSets.cardSetDeleteCard({cardId: card.id, cardSetId: state.workspaceCardSet.cardSetId!, confirm: false});
+    state.workspaceCardSet.confirmingDeleteCard = false;
+    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = resp.cardExistsInOtherCardSets;
+}
+
+export const deleteCardConfirm = async ({ state, effects }: Context,) => {
+    state.workspaceCardSet.confirmingDeleteCard = true;
+    const resp = await effects.api.cardSets.cardSetDeleteCard({cardId: state.workspaceCardSet.cardBeingDeleted!.id, cardSetId: state.workspaceCardSet.cardSetId!, confirm: true});
+    state.workspaceCardSet.cards = removeItem(state.workspaceCardSet.cards, state.workspaceCardSet.cardBeingDeleted!);
+    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = null;
+    state.workspaceCardSet.cardBeingDeleted = null;
+    state.workspaceCardSet.confirmingDeleteCard = false;
 }
