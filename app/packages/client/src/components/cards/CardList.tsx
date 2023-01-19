@@ -20,6 +20,7 @@ function CardList(props: Props) {
                 <CardPreview
                     beingDeleted={props.cardBeingDeleted?.id === card.id}
                     onDeleteCard={props.onDeleteCard}
+                    showActionButtons={true}
                     card={card}/>
             </Col>)}
         </Row>

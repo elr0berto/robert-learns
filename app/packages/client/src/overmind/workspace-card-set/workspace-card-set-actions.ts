@@ -28,3 +28,12 @@ export const deleteCardConfirm = async ({ state, effects }: Context,) => {
     state.workspaceCardSet.cardBeingDeleted = null;
     state.workspaceCardSet.confirmingDeleteCard = false;
 }
+
+export const deleteCardCancel = async ({ state }: Context,) => {
+    if (state.workspaceCardSet.confirmingDeleteCard) {
+        return;
+    }
+    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = null;
+    state.workspaceCardSet.cardBeingDeleted = null;
+    state.workspaceCardSet.confirmingDeleteCard = false;
+}

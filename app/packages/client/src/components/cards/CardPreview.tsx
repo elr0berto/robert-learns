@@ -9,6 +9,7 @@ type Props = {
     card: Card;
     onDeleteCard: (card: Card) => void;
     beingDeleted: boolean;
+    showActionButtons: boolean;
 }
 
 function CardPreview(props: Props) {
@@ -20,8 +21,8 @@ function CardPreview(props: Props) {
             src={props.card.audio.getUrl()}
             onPlay={e => console.log("onPlay")}
         /> : null}
-        <Button size="sm" variant="outline-primary" className="mt-2"><PencilSquare/> Edit</Button>
-        <Button disabled={props.beingDeleted} size="sm" variant="outline-danger" className="mt-2 ms-1" onClick={() => props.onDeleteCard(props.card)}><DashCircle/> Delete</Button>
+        {props.showActionButtons ? <Button size="sm" variant="outline-primary" className="mt-2"><PencilSquare/> Edit</Button> : null}
+        {props.showActionButtons ? <Button disabled={props.beingDeleted} size="sm" variant="outline-danger" className="mt-2 ms-1" onClick={() => props.onDeleteCard(props.card)}><DashCircle/> Delete</Button> : null}
     </div>;
 }
 

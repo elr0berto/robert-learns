@@ -2,6 +2,7 @@ import {useActions, useAppState} from "../../overmind";
 import {Button, Container} from "react-bootstrap";
 import React from "react";
 import CardList from "../cards/CardList";
+import DeleteCardModal from "../cards/DeleteCardModal";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -26,6 +27,13 @@ function WorkspaceCardSetPage() {
         <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i></h1>
         {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted} onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)} cards={state.workspaceCardSet.cards}/>}
         <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal(state.workspaceCardSet.cardSetId!)}>+ Create card</Button>
+        {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
+            cardSet={state.workspaceCardSet.cardSet}
+            onClose={() => actions.workspaceCardSet.deleteCardCancel()}
+            onConfirm={() => actions.workspaceCardSet.deleteCardConfirm()}
+            confirming={state.workspaceCardSet.confirmingDeleteCard}
+            cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets!}
+            card={state.workspaceCardSet.cardBeingDeleted!}/> : null}
     </Container>;
 }
 
