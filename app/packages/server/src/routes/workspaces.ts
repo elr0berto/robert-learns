@@ -21,6 +21,7 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
             users: {
                 some: {
                     userId: user.id,
+                    OR userId: guestUser.id
                 }
             }
         },
