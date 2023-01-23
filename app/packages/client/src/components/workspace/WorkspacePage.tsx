@@ -1,9 +1,10 @@
-import {useAppState} from "../../overmind";
-import {Container} from "react-bootstrap";
+import {useActions, useAppState} from "../../overmind";
+import {Button, Container} from "react-bootstrap";
 import React from "react";
 
 function WorkspacePage() {
     const state = useAppState();
+    const actions = useActions();
 
     if (state.workspace.workspace === null) {
         if (state.workspaces.loading) {
@@ -14,6 +15,7 @@ function WorkspacePage() {
     }
     return <Container>
         <h1 className="my-5">Workspace {state.workspace.workspace.name}</h1>
+        <Button onClick={() => actions.workspace.editWorkspace(state.workspace)}>Edit workspace</Button>
     </Container>;
 }
 

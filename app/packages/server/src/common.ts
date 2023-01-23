@@ -21,26 +21,31 @@ export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
 }
 
-export const getSignedInUser = async (session: Session & Partial<SessionData>) : Promise<PrismaUser> => {
-    if (!session.userId) {
-        let guestUser = await prisma.user.findFirst({
-            where: {
-                isGuest: true
+export const getGuestUser = async () : Promise<PrismaUser> => {
+    let guestUser = await prisma.user.findFirst({
+        where: {
+            isGuest: true
+        }
+    });
+
+    if (guestUser === null) {
+        guestUser = await prisma.user.create({
+            data: {
+                firstName: 'Guest',
+                lastName: '',
+                username: 'guest',
+                password: '25uihdsfoi2345esfdoij23t',
+                email: 'guest@robert-learns.com',
+                isGuest: true,
             }
         });
+    }
+    return guestUser;
+}
 
-        if (guestUser === null) {
-            guestUser = await prisma.user.create({
-                data: {
-                    firstName: 'Guest',
-                    lastName: '',
-                    username: 'guest',
-                    password: '25uihdsfoi2345esfdoij23t',
-                    email: 'guest@robert-learns.com',
-                    isGuest: true,
-                }
-            });
-        }
+export const getSignedInUser = async (session: Session & Partial<SessionData>) : Promise<PrismaUser> => {
+    if (!session.userId) {
+        const guestUser = await getGuestUser();
 
         session.userId = guestUser.id;
     }

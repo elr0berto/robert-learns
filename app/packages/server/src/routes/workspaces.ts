@@ -1,7 +1,7 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 
-import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {getGuestUser, getSignedInUser, getUserData, TypedResponse} from "../common.js";
 
 import { UserRole } from '@prisma/client';
 import {BaseResponseData, ResponseStatus,
@@ -14,14 +14,19 @@ import {canUserWriteToWorkspaceId} from "../security.js";
 const workspaces = Router();
 
 workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) => {
-    let user = await getSignedInUser(req.session);
+    const user = await getSignedInUser(req.session);
+
+    const userIds = [user.id];
+    if (!user.isGuest) {
+        const guestUser = await getGuestUser();
+        userIds.push(guestUser.id);
+    }
 
     const workspaces = await prisma.workspace.findMany({
         where: {
             users: {
                 some: {
-                    userId: user.id,
-                    OR userId: guestUser.id
+                    userId: { in: userIds }
                 }
             }
         },
@@ -87,6 +92,8 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
 workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<WorkspaceCardSetListResponseData>) => {
     let user = await getSignedInUser(req.session);
+
+    // TODO : security check
 
     const cardSets = await prisma.cardSet.findMany({
         where: {

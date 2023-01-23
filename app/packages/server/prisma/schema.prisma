@@ -31,6 +31,7 @@ model User {
 
 enum UserRole {
   OWNER
+  ADMINISTRATOR
   CONTRIBUTOR
   USER
 }
