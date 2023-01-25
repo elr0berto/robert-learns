@@ -21,7 +21,7 @@ function WorkspaceCreate() {
                 <Form.Control type="text" placeholder="Please provide a short description for your workspace" value={state.workspaceCreate.form.description} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCreate.changeFormDescription(event.currentTarget.value)}/>
             </Form.Group>
             <Form.Group className="mb-3" controlId="workspaceAllowGuests">
-                <Form.Check type="checkbox" label="Allow anyone to view this workspace" value={state.workspaceCreate.form.allowGuests}/>
+                <Form.Check type="checkbox" label="Allow anyone to view this workspace" checked={state.workspaceCreate.form.allowGuests} onChange={evt => actions.workspaceCreate.changeAllowGuests(evt.currentTarget.checked)}/>
             </Form.Group>
             {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit()}>Create Workspace!</Button>

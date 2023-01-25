@@ -9,6 +9,10 @@ export const changeFormDescription = ({ state }: Context, desc: string) => {
     state.workspaceCreate.form.description = desc;
 };
 
+export const changeAllowGuests = ({ state }: Context, allowGuests: boolean) => {
+    state.workspaceCreate.form.allowGuests = allowGuests;
+};
+
 export const formSubmit = async ({state,effects,actions} : Context) => {
     state.workspaceCreate.form.submitAttempted = true;
 

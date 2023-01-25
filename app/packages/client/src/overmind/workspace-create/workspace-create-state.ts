@@ -4,6 +4,7 @@ import {derived} from 'overmind'
 type WorkspaceCreateFormState = {
     name: string;
     description: string;
+    allowGuests: boolean;
     submitting: boolean;
     submitAttempted: boolean;
     submissionError: string;
@@ -21,6 +22,7 @@ export const getInitialWorkspaceCreateState = (): WorkspaceCreateState => ({
     form: {
         name: '',
         description: '',
+        allowGuests: false,
         submitting: false,
         submitAttempted: false,
         submissionError: '',

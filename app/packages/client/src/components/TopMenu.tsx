@@ -8,6 +8,8 @@ function TopMenu() {
     const state = useAppState();
     const actions = useActions();
 
+    console.log('TopMenu page: ' + state.page.current);
+
     return <Navbar bg="light" expand="lg">
         <Container>
             <Navbar.Brand href="/">Robert Learns</Navbar.Brand>
@@ -28,7 +30,6 @@ function TopMenu() {
                     </NavDropdown>
                     {state.page.current === Pages.Workspace ||
                     state.page.current === Pages.WorkspaceCardSetCreate ||
-                    state.page.current === Pages.WorkspaceCreate ||
                     state.page.current === Pages.WorkspaceCardSet ?
                         <NavDropdown title={
                                 state.page.current === Pages.WorkspaceCardSet && state.workspaceCardSet.cardSet !== null ?
