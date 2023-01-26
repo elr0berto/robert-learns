@@ -13,7 +13,7 @@ export const changeAllowGuests = ({ state }: Context, allowGuests: boolean) => {
     state.workspaceCreate.form.allowGuests = allowGuests;
 };
 
-export const formSubmit = async ({state,effects,actions} : Context) => {
+export const formSubmit = async ({state, effects, actions} : Context) => {
     state.workspaceCreate.form.submitAttempted = true;
 
     state.workspaceCreate.form.submissionError = '';
@@ -25,6 +25,8 @@ export const formSubmit = async ({state,effects,actions} : Context) => {
     const resp = await effects.api.workspaces.workspaceCreate({
         name: state.workspaceCreate.form.name,
         description: state.workspaceCreate.form.description,
+        allowGuests: state.workspaceCreate.form.allowGuests,
+        workspaceUsers: state.workspaceCreate.form.selectedUsers.map(u => ({userId: u.userId, role: u.role})),
     });
 
     state.workspaceCreate.form.submitting = false;

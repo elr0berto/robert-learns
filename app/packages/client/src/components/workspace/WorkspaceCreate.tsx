@@ -1,4 +1,4 @@
-import {Alert, Button, Container, Form} from "react-bootstrap";
+import {Alert, Button, Col, Container, Form, Row} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
 
@@ -23,6 +23,22 @@ function WorkspaceCreate() {
             <Form.Group className="mb-3" controlId="workspaceAllowGuests">
                 <Form.Check type="checkbox" label="Allow anyone to view this workspace" checked={state.workspaceCreate.form.allowGuests} onChange={evt => actions.workspaceCreate.changeAllowGuests(evt.currentTarget.checked)}/>
             </Form.Group>
+            <h2>Users</h2>
+            <p>Add additional users for your workspace</p>
+            {state.workspaceCreate.form.selectedUsers.length > 0 ?
+                state.workspaceCreate.form.selectedUsers.map(u => <Row>
+                    <Col>{u.name}</Col>
+                    <Col>
+                        <Form.Select value={u.role} onChange={evt => actions.workspaceCreate.changeUserRole(u, evt.target.value)}>
+                            <option>Select role</option>
+                            {state.workspaceCreate.form.availableRoles.map(role => <option value={role.name}>{role.name}</option>)}
+                        </Form.Select>
+                    </Col>
+                    <Col>
+                        <Button type="button" variant="outline-danger" onClick={() => actions.workspaceCreate.removeUser(u.id)}>Remove</Button>
+                    </Col>
+                </Row>) : null}
+            <Button type="button" onClick={() => actions.workspaceCreate.addUser()}>Add user</Button>
             {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit()}>Create Workspace!</Button>
         </Form>
