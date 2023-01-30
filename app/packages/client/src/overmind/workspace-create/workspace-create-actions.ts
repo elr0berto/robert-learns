@@ -1,5 +1,6 @@
 import { Context } from '..';
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCreate.form.name = name;
@@ -12,6 +13,28 @@ export const changeFormDescription = ({ state }: Context, desc: string) => {
 export const changeAllowGuests = ({ state }: Context, allowGuests: boolean) => {
     state.workspaceCreate.form.allowGuests = allowGuests;
 };
+
+export const removeUser = ({ state }: Context, userId: number) => {
+    state.workspaceCreate.form.selectedUsers = state.workspaceCreate.form.selectedUsers.filter(u => u.userId !== userId);
+}
+
+export const addUser = ({ state }: Context) => {
+    state.workspaceCreate.form.addUserOpen = true;
+}
+
+export const changeUserRole = ({ state }: Context, {user, role}: {user: {userId: number}, role: string}) => {
+    switch(role) {
+        case UserRole.USER:
+        case UserRole.OWNER:
+        case UserRole.CONTRIBUTOR:
+        case UserRole.ADMINISTRATOR:
+            state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId)[0].role = role;
+            break;
+        default:
+            throw new Error('unexpected role: ' + role);
+    }
+
+}
 
 export const formSubmit = async ({state, effects, actions} : Context) => {
     state.workspaceCreate.form.submitAttempted = true;

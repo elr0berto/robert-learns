@@ -74,6 +74,14 @@
     "./dist/common": {
       "import": "./dist/common/index.js",
       "types": "./dist/common/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./dist/types": {
+      "import": "./dist/types/index.js",
+      "types": "./dist/types/index.d.ts"
     }
   },
   "types": "./dist/index.d.ts",
