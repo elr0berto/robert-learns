@@ -4,13 +4,13 @@ import {WorkspaceListResponse} from "./models/WorkspaceListResponse.js";
 import {Workspace} from "./models/Workspace.js";
 import {WorkspaceCardSetListResponse} from "./models/WorkspaceCardSetListResponse.js";
 import {WorkspaceCardSetCreateResponse} from "./models/WorkspaceCardSetCreateResponse.js";
-import {UserRole} from "../types/index.js";
+import {PermissionUser, UserRole} from "../types/index.js";
 
 export type WorkspaceCreateRequest = {
     name: string;
     description: string;
     allowGuests: boolean;
-    workspaceUsers: {userId: number, role: UserRole}[]
+    workspaceUsers: PermissionUser[]
 }
 
 export const validateWorkspaceCreateRequest = (req: WorkspaceCreateRequest) : string[] => {

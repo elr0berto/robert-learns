@@ -1,12 +1,12 @@
 import { validateWorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/dist/api/workspaces';
 import {derived} from 'overmind'
-import {UserRole} from "@elr0berto/robert-learns-shared/dist/types";
+import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 
 type WorkspaceCreateFormState = {
     name: string;
     description: string;
     allowGuests: boolean;
-    selectedUsers: {userId: number, name: string, role: UserRole}[];
+    selectedUsers: PermissionUser[];
     submitting: boolean;
     submitAttempted: boolean;
     submissionError: string;
