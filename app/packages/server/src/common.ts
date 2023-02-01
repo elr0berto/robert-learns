@@ -7,9 +7,7 @@ import {
     CardSet as PrismaCardSet,
     CardSide,
     Media as PrismaMedia,
-    User as PrismaUser,
-    UserRole,
-    Workspace as PrismaWorkspace
+    User as PrismaUser
 } from '@prisma/client';
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";

@@ -1,11 +1,9 @@
 import {apiClient} from './ApiClient.js';
 import {BaseResponse} from "./models/BaseResponse.js";
-import {validateEmail} from "../validation/index.js";
 
 export const SignInCheck = async () : Promise<BaseResponse> => {
     return await apiClient.get(BaseResponse, '/sign-in/check');
 };
-
 
 export type SignInRequest = {
     username: string;
@@ -25,6 +23,5 @@ export const validateSignInRequest = (req: SignInRequest) : string[] => {
 }
 
 export const signIn = async(params: SignInRequest) : Promise<BaseResponse> => {
-    console.log('SignInSubmit');
     return await apiClient.post(BaseResponse, '/sign-in', params);
 }

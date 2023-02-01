@@ -1,11 +1,11 @@
-import {Request, Router} from 'express';
+import {Router} from 'express';
 import {awaitExec, getCardData, getSignedInUser, getUserData, TypedResponse} from '../common.js';
 import {upload} from "../multer.js";
-import {CardCreateResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
-import {CardCreateRequest} from "@elr0berto/robert-learns-shared/api/cards";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
 import {CardSide, MediaType} from "@prisma/client";
+import { CardCreateResponseData } from '@elr0berto/robert-learns-shared/api/cards';
 
 const cards = Router();
 

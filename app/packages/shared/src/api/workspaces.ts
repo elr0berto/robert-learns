@@ -1,10 +1,20 @@
 import {apiClient} from './ApiClient.js';
-import {BaseResponse} from "./models/BaseResponse.js";
-import {WorkspaceListResponse} from "./models/WorkspaceListResponse.js";
-import {Workspace} from "./models/Workspace.js";
-import {WorkspaceCardSetListResponse} from "./models/WorkspaceCardSetListResponse.js";
-import {WorkspaceCardSetCreateResponse} from "./models/WorkspaceCardSetCreateResponse.js";
+import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 import {PermissionUser, UserRole} from "../types/index.js";
+import {CardSet, CardSetData} from "./models/CardSet.js";
+import {Workspace, WorkspaceData} from "./models/Workspace.js";
+
+export type WorkspaceCardSetCreateResponseData = BaseResponseData & {
+    cardSetId: number | null;
+}
+
+export class WorkspaceCardSetCreateResponse extends BaseResponse {
+    cardSetId: number | null;
+    constructor(data: WorkspaceCardSetCreateResponseData) {
+        super(data);
+        this.cardSetId = data.cardSetId;
+    }
+}
 
 export type WorkspaceCreateRequest = {
     name: string;
@@ -29,8 +39,32 @@ export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<B
     return await apiClient.post(BaseResponse, '/workspaces/create', params);
 }
 
+export type WorkspaceListResponseData = BaseResponseData & {
+    workspaces: WorkspaceData[] | null;
+}
+
+export class WorkspaceListResponse extends BaseResponse {
+    workspaces: Workspace[];
+    constructor(data: WorkspaceListResponseData) {
+        super(data);
+        this.workspaces = data.workspaces?.map(wd => new Workspace(wd)) ?? [];
+    }
+}
+
 export const workspaceList = async() : Promise<WorkspaceListResponse> => {
     return await apiClient.get(WorkspaceListResponse, '/workspaces');
+}
+
+export type WorkspaceCardSetListResponseData = BaseResponseData & {
+    cardSets: CardSetData[] | null;
+}
+
+export class WorkspaceCardSetListResponse extends BaseResponse {
+    cardSets: CardSet[];
+    constructor(data: WorkspaceCardSetListResponseData) {
+        super(data);
+        this.cardSets = data.cardSets?.map(csd => new CardSet(csd)) ?? [];
+    }
 }
 
 export const workspaceCardSetList = async(workspace : Workspace) : Promise<WorkspaceCardSetListResponse> => {

@@ -1,6 +1,4 @@
 import {Router} from 'express';
-import prisma from "../db/prisma.js";
-
 import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import { BaseResponseData, ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 
