@@ -26,7 +26,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
             if (!fs.existsSync(outPath)) {
                 return res.json({
                     status: ResponseStatus.UnexpectedError,
-                    user: getUserData(user),
+                    signedInUser: getUserData(user),
                     errorMessage: 'failed to process audio file! err: exists',
                     card: null,
                 });
@@ -35,7 +35,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
             if (stats.size <= 0) {
                 return res.json({
                     status: ResponseStatus.UnexpectedError,
-                    user: getUserData(user),
+                    signedInUser: getUserData(user),
                     errorMessage: 'failed to process audio file! err: size',
                     card: null,
                 });
@@ -52,7 +52,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
         } catch (ex) {
             return res.json({
                 status: ResponseStatus.UnexpectedError,
-                user: getUserData(user),
+                signedInUser: getUserData(user),
                 errorMessage: 'failed to process audio file! err: ex' + (ex?.toString()),
                 card: null,
             });
@@ -100,7 +100,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
         card: getCardData(card!)
     });

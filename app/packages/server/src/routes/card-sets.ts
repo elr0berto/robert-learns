@@ -31,7 +31,7 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
         cards: cardSetCards.map(csc => getCardData(csc.card))
     });
@@ -69,7 +69,7 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
         url: getUrlFromMedia(newMedia)
     });
@@ -82,7 +82,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: "guest cannot delete cards",
-            user: getUserData(user),
+            signedInUser: getUserData(user),
             cardExistsInOtherCardSets: null,
         });
     }
@@ -92,7 +92,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
-            user: getUserData(user),
+            signedInUser: getUserData(user),
             cardExistsInOtherCardSets: null,
         });
     }
@@ -110,7 +110,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         return res.json({
             status: ResponseStatus.Success,
             errorMessage: null,
-            user: getUserData(user),
+            signedInUser: getUserData(user),
             cardExistsInOtherCardSets: cardSetCards.map(csc => ({id: csc.cardSet.id, name: csc.cardSet.name})),
         });
     }
@@ -123,7 +123,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card not found, id: " + req.body.cardId,
-            user: getUserData(user),
+            signedInUser: getUserData(user),
             cardExistsInOtherCardSets: null,
         });
     }
@@ -139,7 +139,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card set not found, id: " + req.body.cardSetId,
-            user: getUserData(user),
+            signedInUser: getUserData(user),
             cardExistsInOtherCardSets: null,
         });
     }
@@ -148,7 +148,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
     return res.json({
         status: ResponseStatus.Success,
         errorMessage: null,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         cardExistsInOtherCardSets: null,
     });
 });

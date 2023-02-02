@@ -8,8 +8,6 @@ import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, W
     WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
 import {canUserWriteToWorkspaceId} from "../security.js";
 
-
-
 const workspaces = Router();
 
 workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) => {
@@ -34,15 +32,16 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
         workspaces: workspaces.map(w => ({
             id: w.id,
             name: w.name,
             description: w.description
         }))
-    })
+    });
 });
+
 workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<BaseResponseData>) => {
     let user = await getSignedInUser(req.session);
 
@@ -50,7 +49,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create workspaces. please sign in first!',
-            user: null,
+            signedInUser: null,
         });
     }
 
@@ -60,7 +59,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            user: null,
+            signedInUser: null,
         });
     }
 
@@ -84,7 +83,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
     });
 });
@@ -104,13 +103,13 @@ workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<Worksp
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
         cardSets: cardSets.map(cs => ({
             id: cs.id,
             name: cs.name,
         }))
-    })
+    });
 });
 
 workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSetCreateRequest>, res : TypedResponse<WorkspaceCardSetCreateResponseData>) => {
@@ -120,7 +119,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create card sets. please sign in first!',
-            user: null,
+            signedInUser: null,
             cardSetId: null,
         });
     }
@@ -131,7 +130,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            user: null,
+            signedInUser: null,
             cardSetId: null,
         });
     }
@@ -141,7 +140,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not allowed to create card sets in this workspace.',
-            user: null,
+            signedInUser: null,
             cardSetId: null,
         });
     }
@@ -165,7 +164,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
 
     return res.json({
         status: ResponseStatus.Success,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
         errorMessage: null,
         cardSetId: newCardSet.id,
     });

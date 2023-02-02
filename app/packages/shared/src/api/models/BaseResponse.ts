@@ -11,17 +11,17 @@ export enum ResponseStatus {
 export type BaseResponseData = {
     errorMessage: string | null;
     status: ResponseStatus;
-    user: UserData | null;
+    signedInUser: UserData | null;
 }
 
 export class BaseResponse {
     errorMessage: string | null;
     status: ResponseStatus;
-    user: User | null; // only set when user was logged out etc.
+    signedInUser: User | null; // only set when user was logged out etc.
 
     constructor(data: BaseResponseData) {
         this.errorMessage = data.errorMessage;
         this.status = data.status;
-        this.user = data.user === null ? null : new User(data.user);
+        this.signedInUser = data.signedInUser === null ? null : new User(data.signedInUser);
     }
 }

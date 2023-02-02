@@ -15,7 +15,7 @@ signIn.get('/check', async (req, res : TypedResponse<BaseResponseData>) => {
     return res.json({
         status: ResponseStatus.Success,
         errorMessage: null,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
     });
 });
 
@@ -26,7 +26,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            user: null,
+            signedInUser: null,
         });
     }
 
@@ -43,7 +43,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
         return res.json({
             status: ResponseStatus.UserError,
             errorMessage: 'Login/password is wrong!!',
-            user: null,
+            signedInUser: null,
         });
     }
 
@@ -51,7 +51,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
         return res.json({
             status: ResponseStatus.UserError,
             errorMessage: 'Login/password is wrong!',
-            user: null,
+            signedInUser: null,
         });
     }
 
@@ -62,7 +62,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
     return res.json({
         status: ResponseStatus.Success,
         errorMessage: null,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
     });
 });
 

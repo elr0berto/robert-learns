@@ -33,6 +33,7 @@ export const userGetByEmail = async(req: UserGetByEmailRequest) : Promise<UserGe
     if (errors.length > 0) {
         return new UserGetByEmailResponse({
             user: null,
+            signedInUser: null,
             errorMessage: errors.join('.'),
             status: ResponseStatus.UserError,
         });

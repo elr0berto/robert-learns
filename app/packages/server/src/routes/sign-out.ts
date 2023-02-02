@@ -11,7 +11,7 @@ signOut.post('/', async (req, res : TypedResponse<BaseResponseData>) => {
     return res.json({
         status: ResponseStatus.Success,
         errorMessage: null,
-        user: getUserData(user),
+        signedInUser: getUserData(user),
     });
 });
 
