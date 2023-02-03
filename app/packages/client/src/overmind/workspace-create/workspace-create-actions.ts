@@ -1,6 +1,7 @@
 import { Context } from '..';
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
+import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCreate.form.name = name;
@@ -19,6 +20,7 @@ export const removeUser = ({ state }: Context, userId: number) => {
 }
 
 export const addUserModalOpen = ({ state }: Context) => {
+    state.addUserModal = getInitialAddUserModalState();
     state.workspaceCreate.form.addUserOpen = true;
 }
 
@@ -26,11 +28,12 @@ export const addUserModalClose = ({ state }: Context) => {
     state.workspaceCreate.form.addUserOpen = false;
 }
 
-export const addUser = ({ state }: Context, user: PermissionUser) => {
+export const addUser = ({ state, actions }: Context, user: PermissionUser) => {
     const exists = state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId).length === 1;
     if (!exists) {
         state.workspaceCreate.form.selectedUsers.push(user);
     }
+    actions.workspaceCreate.addUserModalClose();
 }
 
 export const changeUserRole = ({ state }: Context, {user, role}: {user: {userId: number}, role: string}) => {
@@ -71,5 +74,6 @@ export const formSubmit = async ({state, effects, actions} : Context) => {
 
     actions.workspaces.getWorkspaceList();
 
-    effects.page.router.goTo('/');
+    //effects.page.router.goTo('/');
+    effects.page.router.goTo(the new workspace);
 }

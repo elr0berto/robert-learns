@@ -42,10 +42,10 @@ export const submit = async ({state,effects} : Context) => {
         return;
     }
 
-    if (resp.user === null) {
+    if (resp.signedInUser === null) {
         state.signUp.submissionError = "Unexpected error. Please refresh the page and try again later."
         return;
     }
-    state.signIn.user = resp.user;
+    state.signIn.user = resp.signedInUser;
     effects.page.router.goTo('/');
 }

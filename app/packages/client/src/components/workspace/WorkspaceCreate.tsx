@@ -48,12 +48,12 @@ function WorkspaceCreate() {
                                 </Form.Select>
                             </td>
                             <td>
-                                <Button type="button" variant="outline-danger" onClick={() => actions.workspaceCreate.removeUser(u.userId)}>Remove</Button>
+                                <Button type="button" size='sm' variant="outline-danger" onClick={() => actions.workspaceCreate.removeUser(u.userId)}>Remove</Button>
                             </td>
                         </tr>) : null}
                 </tbody>
             </Table>
-            <Button type="button" onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button>
+            <Button type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button>
             <hr/>
             {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit()}>Create Workspace!</Button>

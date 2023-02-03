@@ -5,9 +5,9 @@ import {UserGetByEmailRequest, UserGetByEmailResponseData, validateUserGetByEmai
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 const users = Router();
 
-users.get('/getByEmail', async (req : Request<UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
+users.get('/getByEmail', async (req : Request<{},{},{},UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
-    if (!signedInUser.isGuest) {
+    if (signedInUser.isGuest) {
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Not signed in.',
@@ -16,11 +16,11 @@ users.get('/getByEmail', async (req : Request<UserGetByEmailRequest>, res : Type
         });
     }
 
-    const errors = validateUserGetByEmailRequest(req.params);
+    const errors = validateUserGetByEmailRequest(req.query);
     if (errors.length > 0) {
         return res.json({
             status: ResponseStatus.UserError,
-            errorMessage: 'Invalid email',
+            errorMessage: 'Invalid email: ' + errors.join(', ') + ' ' + JSON.stringify(req.params),
             signedInUser: getUserData(signedInUser),
             user: null,
         });
@@ -28,7 +28,7 @@ users.get('/getByEmail', async (req : Request<UserGetByEmailRequest>, res : Type
 
     const user = await prisma.user.findUnique({
         where: {
-            email: req.params.email
+            email: req.query.email
         },
     });
 

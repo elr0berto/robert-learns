@@ -1,4 +1,4 @@
-import {Button, Form, Modal} from "react-bootstrap";
+import {Alert, Button, Form, Modal} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import {PermissionUser} from "@elr0berto/robert-learns-shared/dist/types";
@@ -22,13 +22,17 @@ function AddUserModal(props: Props) {
         </Modal.Header>
         <Modal.Body>
             <Form className="col-lg-5">
-                <Form.Group className="mb-3" controlId="workspaceName">
+                <Form.Group className="mb-3" controlId="workspaceName" >
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Enter users email"
                         value={state.addUserModal.email}
+                        isInvalid={state.addUserModal.errorMessage !== null}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.addUserModal.changeEmail(event.currentTarget.value)}/>
+                    {state.addUserModal.errorMessage !== null ? <Form.Control.Feedback type="invalid">
+                        {state.addUserModal.errorMessage.length > 0 ? state.addUserModal.errorMessage : 'Unexpected error! Please try again later.'}
+                    </Form.Control.Feedback> : null}
                 </Form.Group>
             </Form>
         </Modal.Body>

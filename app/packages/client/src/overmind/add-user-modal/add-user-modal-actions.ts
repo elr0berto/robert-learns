@@ -7,6 +7,7 @@ export const changeEmail = ({ state }: Context, email: string) => {
 };
 
 export const submit = async ({ state, effects }: Context, onAdd: (user: PermissionUser) => void) => {
+    state.addUserModal.errorMessage = null;
     state.addUserModal.submitting = true;
     const response = await effects.api.users.userGetByEmail({email: state.addUserModal.email});
     state.addUserModal.submitting = false;
@@ -15,7 +16,7 @@ export const submit = async ({ state, effects }: Context, onAdd: (user: Permissi
         return;
     }
     if (response.user === null) {
-        state.addUserModal.errorMessage = 'Could not find user!';
+        state.addUserModal.errorMessage = 'Could not find user with this email! Maybe they did not register with this email yet.';
         return;
     }
     onAdd({

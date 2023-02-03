@@ -1,15 +1,13 @@
-import {derived} from "overmind";
-import {config} from "..";
-import {UserData} from "@elr0berto/robert-learns-shared/dist/api/models";
-
 type AddUserModalState = {
     email: string,
     submitting: boolean,
+    errorMessage: string | null,
 }
 
 export const getInitialAddUserModalState = (): AddUserModalState => ({
     email: '',
     submitting: false,
+    errorMessage: null,
 });
 
 export const state: AddUserModalState = getInitialAddUserModalState();

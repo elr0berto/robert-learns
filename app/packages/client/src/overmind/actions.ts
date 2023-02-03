@@ -13,7 +13,7 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         if (resp.status !== ResponseStatus.Success) {
             switch(resp.status) {
                 case ResponseStatus.LoggedOut:
-                    actions.signIn.unexpectedlySignedOut(resp.user!);
+                    actions.signIn.unexpectedlySignedOut(resp.signedInUser!);
                     throw UnexpectedSignOutError;
                 case ResponseStatus.UserError:
                     break;
