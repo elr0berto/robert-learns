@@ -2,6 +2,7 @@ import { Context } from '..';
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
+import {pageUrls, Pages} from "../../page-urls";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCreate.form.name = name;
@@ -67,7 +68,7 @@ export const formSubmit = async ({state, effects, actions} : Context) => {
     });
 
     state.workspaceCreate.form.submitting = false;
-    if (resp.status !== ResponseStatus.Success) {
+    if (resp.status !== ResponseStatus.Success || resp.workspace === null) {
         state.workspaceCreate.form.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
         return;
     }
@@ -75,5 +76,5 @@ export const formSubmit = async ({state, effects, actions} : Context) => {
     actions.workspaces.getWorkspaceList();
 
     //effects.page.router.goTo('/');
-    effects.page.router.goTo(the new workspace);
+    effects.page.router.goTo(pageUrls[Pages.Workspace].url(resp.workspace));
 }

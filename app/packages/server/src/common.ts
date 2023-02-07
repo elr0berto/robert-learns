@@ -5,13 +5,16 @@ import {
     Card as PrismaCard,
     CardFace as PrismaCardFace,
     CardSet as PrismaCardSet,
-    CardSide,
+    CardSide as PrismaCardSide,
     Media as PrismaMedia,
-    User as PrismaUser
+    User as PrismaUser,
+    Workspace as PrismaWorkspace,
+    WorkspaceUser as PrismaWorkspaceUser
 } from '@prisma/client';
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
+import { PermissionUser } from '@elr0berto/robert-learns-shared/types';
 
 
 
@@ -116,8 +119,8 @@ function getFaceData(face: PrismaCardFace) : CardFaceData {
 }
 
 export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: PrismaMedia | null}) : CardData {
-    const front = card.faces.filter(f => f.side === CardSide.FRONT)[0];
-    const back = card.faces.filter(f => f.side === CardSide.BACK)[0];
+    const front = card.faces.filter(f => f.side === PrismaCardSide.FRONT)[0];
+    const back = card.faces.filter(f => f.side === PrismaCardSide.BACK)[0];
     return {
         id: card.id,
         front: getFaceData(front),
@@ -160,4 +163,8 @@ export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard
 
         // NOTE: Media will be deleted in a separate cronjob...
     })
+}
+
+export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}) : PermissionUser[] => {
+    return workspace.users.map(u => ({userId: u.userId, name: u.user.firstName + " " + u.user.lastName, email: u.user.email, role: u.role}));
 }

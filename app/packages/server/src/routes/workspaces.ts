@@ -1,11 +1,11 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getGuestUser, getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {getGuestUser, getPermissionUsersFromWorkspace, getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import { UserRole } from '@prisma/client';
-import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
     WorkspaceCardSetCreateResponseData,
-    WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
+    WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceCreateResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
 import {canUserWriteToWorkspaceId} from "../security.js";
 
 const workspaces = Router();
@@ -27,7 +27,13 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
                 }
             }
         },
-        include: { users : true },
+        include: {
+            users : {
+                include: {
+                    user: true
+                }
+            }
+        },
     });
 
     return res.json({
@@ -37,12 +43,13 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
         workspaces: workspaces.map(w => ({
             id: w.id,
             name: w.name,
-            description: w.description
+            description: w.description,
+            users: getPermissionUsersFromWorkspace(w),
         }))
     });
 });
 
-workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<BaseResponseData>) => {
+workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<WorkspaceCreateResponseData>) => {
     let user = await getSignedInUser(req.session);
 
     if (user.isGuest) {
@@ -50,6 +57,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create workspaces. please sign in first!',
             signedInUser: null,
+            workspaceData: null,
         });
     }
 
@@ -60,10 +68,11 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
             signedInUser: null,
+            workspaceData: null,
         });
     }
 
-    const newWorkspace = await prisma.workspace.create({
+    let newWorkspace = await prisma.workspace.create({
         data: {
             name: req.body.name,
             description: req.body.description,
@@ -78,13 +87,29 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         }
     });
 
+    if (req.body.allowGuests) {
+        const guest = await getGuestUser();
+        await prisma.workspaceUser.create({
+            data: {
+                workspaceId: newWorkspace.id,
+                userId: guest.id,
+                role: UserRole.USER,
+            }
+        });
+    }
+
     user = await getSignedInUser(req.session);
-    console.log('user', user);
 
     return res.json({
         status: ResponseStatus.Success,
         signedInUser: getUserData(user),
         errorMessage: null,
+        workspaceData: {
+            id: newWorkspace.id,
+            name: newWorkspace.name,
+            description: newWorkspace.description,
+            users: getPermissionUsersFromWorkspace(newWorkspace), // TODO: Make a function to get workspace data from workspace.id including fetching from DB and use above too when geting workspace list
+        }
     });
 });
 

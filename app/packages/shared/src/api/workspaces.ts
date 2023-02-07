@@ -4,15 +4,15 @@ import {PermissionUser, UserRole} from "../types/index.js";
 import {CardSet, CardSetData} from "./models/CardSet.js";
 import {Workspace, WorkspaceData} from "./models/Workspace.js";
 
-export type WorkspaceCardSetCreateResponseData = BaseResponseData & {
-    cardSetId: number | null;
+export type WorkspaceCreateResponseData = BaseResponseData & {
+    workspaceData: WorkspaceData | null;
 }
 
-export class WorkspaceCardSetCreateResponse extends BaseResponse {
-    cardSetId: number | null;
-    constructor(data: WorkspaceCardSetCreateResponseData) {
+export class WorkspaceCreateResponse extends BaseResponse {
+    workspace: Workspace | null;
+    constructor(data: WorkspaceCreateResponseData) {
         super(data);
-        this.cardSetId = data.cardSetId;
+        this.workspace = data.workspaceData === null ? null : new Workspace(data.workspaceData);
     }
 }
 
@@ -35,8 +35,8 @@ export const validateWorkspaceCreateRequest = (req: WorkspaceCreateRequest) : st
     return errs;
 }
 
-export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<BaseResponse> => {
-    return await apiClient.post(BaseResponse, '/workspaces/create', params);
+export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<WorkspaceCreateResponse> => {
+    return await apiClient.post(WorkspaceCreateResponse, '/workspaces/create', params);
 }
 
 export type WorkspaceListResponseData = BaseResponseData & {
@@ -72,6 +72,18 @@ export const workspaceCardSetList = async(workspace : Workspace) : Promise<Works
     return await apiClient.get(WorkspaceCardSetListResponse, '/workspaces/'+workspace.id+'/card-sets/');
 }
 
+export type WorkspaceCardSetCreateResponseData = BaseResponseData & {
+    cardSetId: number | null;
+}
+
+export class WorkspaceCardSetCreateResponse extends BaseResponse {
+    cardSetId: number | null;
+    constructor(data: WorkspaceCardSetCreateResponseData) {
+        super(data);
+        this.cardSetId = data.cardSetId;
+    }
+}
+
 export type WorkspaceCardSetCreateRequest = {
     workspaceId: number;
     name: string;
@@ -88,6 +100,7 @@ export const validateWorkspaceCardSetCreateRequest = (req: WorkspaceCardSetCreat
 
     return errs;
 }
+
 
 export const workspaceCardSetCreate = async(params: WorkspaceCardSetCreateRequest) : Promise<WorkspaceCardSetCreateResponse> => {
     return await apiClient.post(WorkspaceCardSetCreateResponse, '/workspaces/card-set-create', params);
