@@ -12,3 +12,7 @@ export function removeItem<T>(arr: Array<T>, value: T): Array<T> {
     }
     return arr;
 }
+
+export function arrayUnique<T>(a: T[]) : T[] {
+    return [...new Set(a)];
+}

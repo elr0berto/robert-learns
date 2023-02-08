@@ -7,6 +7,7 @@ import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, W
     WorkspaceCardSetCreateResponseData,
     WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceCreateResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
 import {canUserWriteToWorkspaceId} from "../security.js";
+import { arrayUnique } from '@elr0berto/robert-learns-shared/common';
 
 const workspaces = Router();
 
@@ -72,7 +73,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         });
     }
 
-    let newWorkspace = await prisma.workspace.create({
+    const newWorkspace = await prisma.workspace.create({
         data: {
             name: req.body.name,
             description: req.body.description,
@@ -98,17 +99,53 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         });
     }
 
+    const userIds = req.body.workspaceUsers.map(u => u.userId);
+    if (arrayUnique(userIds).length !== userIds.length) {
+        throw new Error('userIds are not unique: ' + userIds.join(', '));
+    }
+
+    for(const permissionUser of req.body.workspaceUsers) {
+        if (!Object.values(UserRole).includes(permissionUser.role)) {
+            throw new Error('invalid role: ' + permissionUser.role);
+        }
+
+        await prisma.user.findUniqueOrThrow({
+            where: { id: permissionUser.userId }
+        });
+
+        await prisma.workspaceUser.create({
+            data: {
+                workspaceId: newWorkspace.id,
+                userId: permissionUser.userId,
+                role: permissionUser.role,
+            }
+        });
+    }
+
     user = await getSignedInUser(req.session);
+
+    const workspace = await prisma.workspace.findUniqueOrThrow({
+        where: {
+            id: newWorkspace.id
+        },
+        include: {
+            users : {
+                include: {
+                    user: true
+                }
+            }
+        },
+    });
 
     return res.json({
         status: ResponseStatus.Success,
         signedInUser: getUserData(user),
         errorMessage: null,
         workspaceData: {
-            id: newWorkspace.id,
-            name: newWorkspace.name,
-            description: newWorkspace.description,
-            users: getPermissionUsersFromWorkspace(newWorkspace), // TODO: Make a function to get workspace data from workspace.id including fetching from DB and use above too when geting workspace list
+            id: workspace.id,
+            name: workspace.name,
+            description: workspace.description,
+            users: getPermissionUsersFromWorkspace(workspace),
         }
     });
 });

@@ -40,6 +40,7 @@ export const showSignUpPage = async ({ state, effects, actions }: Context) => {
 export const _setWorkspacePage = async ({state, effects, actions}: Context, {payload, page} : {payload: Payload, page: Pages}) => {
     state.page.current = page;
     if (payload.params?.workspaceId) {
+        console.log('payload.params?.workspaceId', payload.params?.workspaceId);
         state.workspace.workspaceId = +payload.params.workspaceId;
         await actions.workspace._loadCardSets();
         if (payload.params?.cardSetId) {
@@ -51,7 +52,7 @@ export const _setWorkspacePage = async ({state, effects, actions}: Context, {pay
 }
 
 export const showWorkspacePage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    actions.page._loadAllData();
+    AWAITS??! actions.page._loadAllData();
     state.workspaceCardSet.cardSetId = null;
     actions.page._setWorkspacePage({payload, page: Pages.Workspace});
 }

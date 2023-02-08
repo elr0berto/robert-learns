@@ -29,9 +29,11 @@ function WorkspaceCreate() {
             <p>Add additional users for your workspace</p>
             <Table striped bordered hover>
                 <thead>
-                    <th>Name</th>
-                    <th>Role</th>
-                    <th>&nbsp;</th>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>&nbsp;</th>
+                    </tr>
                 </thead>
                 <tbody>
                     <tr>
@@ -39,7 +41,7 @@ function WorkspaceCreate() {
                         <td colSpan={2}>OWNER</td>
                     </tr>
                     {state.workspaceCreate.form.selectedUsers.length > 0 ?
-                        state.workspaceCreate.form.selectedUsers.map(u => <tr>
+                        state.workspaceCreate.form.selectedUsers.map(u => <tr key={u.userId}>
                             <td>{u.name}</td>
                             <td>
                                 <Form.Select value={u.role} onChange={evt => actions.workspaceCreate.changeUserRole({user: u, role: evt.target.value})}>
