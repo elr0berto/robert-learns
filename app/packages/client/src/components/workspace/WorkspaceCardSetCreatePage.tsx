@@ -6,6 +6,10 @@ function WorkspaceCardSetCreatePage() {
     const state = useAppState();
     const actions = useActions();
 
+    if (state.signIn.user!.isGuest) {
+        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to create card sets</Alert></Container>;
+    }
+
     if (state.workspace.workspace === null) {
         if (state.workspaces.loading) {
             return <Container>Loading...</Container>;

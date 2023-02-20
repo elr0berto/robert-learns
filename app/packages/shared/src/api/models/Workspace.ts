@@ -12,10 +12,15 @@ export class Workspace {
     name: string;
     description: string;
     users: PermissionUser[];
+
     constructor(data: WorkspaceData) {
         this.id = data.id;
         this.name = data.name;
         this.description = data.description;
         this.users = data.users;
+    }
+
+    allowGuests() : boolean {
+        return this.users.filter(u => u.isGuest).length > 0;
     }
 }

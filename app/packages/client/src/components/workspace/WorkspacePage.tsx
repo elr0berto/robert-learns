@@ -1,6 +1,7 @@
 import {useActions, useAppState} from "../../overmind";
 import {Button, Container} from "react-bootstrap";
 import React from "react";
+import {pageUrls} from "../../page-urls";
 
 function WorkspacePage() {
     const state = useAppState();
@@ -15,7 +16,7 @@ function WorkspacePage() {
     }
     return <Container>
         <h1 className="my-5">Workspace {state.workspace.workspace.name}</h1>
-        <Button onClick={() => {}/*actions.workspace.editWorkspace(state.workspace)*/}>Edit workspace</Button>
+        <Button href={pageUrls.workspaceEdit.url(state.workspace.workspace)}>Edit workspace</Button>
     </Container>;
 }
 

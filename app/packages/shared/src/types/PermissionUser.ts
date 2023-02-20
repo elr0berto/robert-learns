@@ -5,4 +5,5 @@ export type PermissionUser = {
     name: string,
     email: string,
     role: UserRole,
+    isGuest: boolean;
 }

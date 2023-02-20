@@ -6,6 +6,7 @@ import WorkspacePage from "../components/workspace/WorkspacePage";
 import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
 import WorkspaceCardSetPage from "../components/workspace/WorkspaceCardSetPage";
 import {CardSet, Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
+import WorkspaceEdit from "../components/workspace/WorkspaceEdit";
 
 export enum Pages {
     Front = "front",
@@ -15,6 +16,7 @@ export enum Pages {
     WorkspaceCardSetCreate = "workspaceCardSetCreate",
     WorkspaceCardSet = "workspaceCardSet",
     WorkspaceCreate = "workspaceCreate",
+    WorkspaceEdit = "workspaceEdit",
 }
 
 const pageUrls = {
@@ -66,6 +68,13 @@ const pageUrls = {
         //page: Pages.WorkspaceCreate,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCreatePage,
         getPageComponent: () => WorkspaceCreate,
+    },
+    [Pages.WorkspaceEdit]: {
+        route: '/workspace-edit/:workspaceId',
+        url: (workspace: Workspace) => '/workspace-edit/'+workspace.id,
+        //page: Pages.WorkspaceCreate,
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceEditPage,
+        getPageComponent: () => WorkspaceEdit,
     }
 }
 

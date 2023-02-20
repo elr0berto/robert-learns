@@ -39,6 +39,41 @@ export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<W
     return await apiClient.post(WorkspaceCreateResponse, '/workspaces/create', params);
 }
 
+export type WorkspaceEditResponseData = BaseResponseData & {
+    workspaceData: WorkspaceData | null;
+}
+
+export class WorkspaceEditResponse extends BaseResponse {
+    workspace: Workspace | null;
+    constructor(data: WorkspaceEditResponseData) {
+        super(data);
+        this.workspace = data.workspaceData === null ? null : new Workspace(data.workspaceData);
+    }
+}
+
+export type WorkspaceEditRequest = {
+    name: string;
+    description: string;
+    allowGuests: boolean;
+    workspaceUsers: PermissionUser[]
+}
+
+export const validateWorkspaceEditRequest = (req: WorkspaceEditRequest) : string[] => {
+    let errs : string[] = [];
+    if (req.name.trim().length === 0) {
+        errs.push('You must enter a name');
+    }
+    if (req.description.trim().length === 0) {
+        errs.push('Please provide a description');
+    }
+
+    return errs;
+}
+
+export const workspaceEdit = async(params: WorkspaceEditRequest) : Promise<WorkspaceEditResponse> => {
+    return await apiClient.post(WorkspaceEditResponse, '/workspaces/edit', params);
+}
+
 export type WorkspaceListResponseData = BaseResponseData & {
     workspaces: WorkspaceData[] | null;
 }
