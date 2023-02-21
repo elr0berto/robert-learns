@@ -45,7 +45,7 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
             id: w.id,
             name: w.name,
             description: w.description,
-            users: getPermissionUsersFromWorkspace(w),
+            users: getPermissionUsersFromWorkspace(w, user),
         }))
     });
 });
@@ -145,7 +145,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             id: workspace.id,
             name: workspace.name,
             description: workspace.description,
-            users: getPermissionUsersFromWorkspace(workspace),
+            users: getPermissionUsersFromWorkspace(workspace, user),
         }
     });
 });

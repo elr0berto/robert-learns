@@ -6,4 +6,7 @@ export type PermissionUser = {
     email: string,
     role: UserRole,
     isGuest: boolean;
+    canBeRemoved: boolean;
+    canRoleBeChanged: boolean;
+    availableRoles: UserRole[];
 }

@@ -14,13 +14,10 @@ export const getInitialWorkspaceState = (): WorkspaceState => ({
     cardSetsLoading: false,
     cardSets: [],
     workspace: derived((state: WorkspaceState, rootState: typeof config.state) => {
-        console.log('workspace derived', state.workspaceId);
         if (state.workspaceId === null) {
-            console.log('workspace derived returned null', state.workspaceId);
             return null;
         }
         const found = rootState.workspaces.list.filter(w => w.id === state.workspaceId);
-        console.log('workspace derived found', found);
         if (found.length !== 1) {
             return null;
         }

@@ -14,7 +14,7 @@ import {
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
-import { PermissionUser } from '@elr0berto/robert-learns-shared/types';
+import { PermissionUser, UserRole } from '@elr0berto/robert-learns-shared/types';
 
 
 
@@ -165,6 +165,53 @@ export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard
     })
 }
 
-export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}) : PermissionUser[] => {
-    return workspace.users.map(u => ({userId: u.userId, name: u.user.firstName + " " + u.user.lastName, email: u.user.email, role: u.role}));
+export const canUserRemoveUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
+    if (user1 === null) {
+        return false;
+    }
+
+    switch(user1.role) {
+        case UserRole.OWNER:
+            return true;
+        case UserRole.ADMINISTRATOR:
+            return user2.role !== UserRole.OWNER;
+        default:
+            return false;
+    }
+}
+
+export const getRolesUserCanChangeUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
+    if (user1 === null) {
+        return [user2.role];
+    }
+
+    switch(user1.role) {
+        case UserRole.OWNER:
+            return Object.values(UserRole);
+        case UserRole.ADMINISTRATOR:
+            return user2.role === UserRole.OWNER ? [user2.role] : Object.values(UserRole).filter(role => role !== UserRole.OWNER);
+        default:
+            return [user2.role];
+    }
+}
+
+export const canUserChangeUserRole = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
+    return getRolesUserCanChangeUser(user1, user2).length > 1;
+}
+
+
+export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PermissionUser[] => {
+    const workspaceUsers = workspace.users.filter(u => u.userId === user.id);
+    const workspaceUser = workspaceUsers.length === 1 ? workspaceUsers[0] : null;
+
+    return workspace.users.map(u => ({
+        userId: u.userId,
+        name: u.user.firstName + " " + u.user.lastName,
+        email: u.user.email,
+        role: u.role,
+        isGuest: u.user.isGuest,
+        canBeRemoved: canUserRemoveUser(workspaceUser, u),
+        canRoleBeChanged: canUserChangeUserRole(workspaceUser, u),
+        availableRoles: getRolesUserCanChangeUser(workspaceUser, u),
+    }));
 }

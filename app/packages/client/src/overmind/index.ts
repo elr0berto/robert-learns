@@ -7,7 +7,6 @@ import * as api from './api';
 import * as signIn from './sign-in';
 import * as signUp from './sign-up/';
 import * as workspaceCreate from './workspace-create/';
-import * as workspaceEdit from './workspace-edit/';
 import * as workspaceCardSetCreate from './workspace-card-set-create/';
 import * as workspaces from './workspaces/';
 import * as workspace from './workspace/';
@@ -28,7 +27,6 @@ export const config = merge(
         signIn,
         signUp,
         workspaceCreate,
-        workspaceEdit,
         workspaceCardSetCreate,
         workspaces,
         workspace,

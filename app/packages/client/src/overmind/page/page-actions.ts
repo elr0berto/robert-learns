@@ -4,7 +4,6 @@ import queryString from "query-string";
 import {getInitialSignUpState} from "../sign-up/sign-up-state";
 import {getInitialSignInState} from "../sign-in/sign-in-state";
 import {getInitialWorkspaceCreateState} from "../workspace-create/workspace-create-state";
-import {getInitialWorkspaceEditState} from "../workspace-edit/workspace-edit-state";
 
 export type Payload = {
     params: any,
@@ -70,13 +69,13 @@ export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Cont
 
 export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {
     actions.page._loadAllData();
-    state.workspaceCreate = getInitialWorkspaceCreateState();
+    state.workspaceCreate = getInitialWorkspaceCreateState(null);
     state.page.current = Pages.WorkspaceCreate;
 }
 
 export const showWorkspaceEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
     await actions.page._loadAllData();
-    state.workspace.workspaceId = payload.params?.workspaceId;
-    state.workspaceEdit = getInitialWorkspaceEditState(state.workspace.workspace);
+    state.workspace.workspaceId = parseInt(payload.params?.workspaceId);
+    state.workspaceCreate = getInitialWorkspaceCreateState(state.workspace.workspace);
     state.page.current = Pages.WorkspaceEdit;
 }

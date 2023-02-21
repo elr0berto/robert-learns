@@ -29,6 +29,10 @@ export const submit = async ({ state, effects }: Context, onAdd: (user: Permissi
         userId: response.user.id,
         name: response.user.name(),
         email: response.user.email,
+        isGuest: response.user.isGuest,
         role: UserRole.USER,
+        canRoleBeChanged: true,
+        canBeRemoved: true,
+        availableRoles: Object.values(UserRole).filter()
     });
 };

@@ -1,6 +1,7 @@
 import { validateWorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/dist/api/workspaces';
 import {derived} from 'overmind'
-import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
+import {PermissionUser} from "@elr0berto/robert-learns-shared/dist/types";
+import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type WorkspaceCreateFormState = {
     name: string;
@@ -11,7 +12,6 @@ type WorkspaceCreateFormState = {
     submitAttempted: boolean;
     submissionError: string;
     addUserOpen: boolean;
-    readonly availableRoles: UserRole[];
     readonly submitDisabled: boolean;
     readonly validationErrors: string[];
     readonly isValid: boolean;
@@ -22,19 +22,16 @@ type WorkspaceCreateState = {
     form: WorkspaceCreateFormState;
 }
 
-export const getInitialWorkspaceCreateState = (): WorkspaceCreateState => ({
+export const getInitialWorkspaceCreateState = (workspace: Workspace | null): WorkspaceCreateState => ({
     form: {
-        name: '',
-        description: '',
-        allowGuests: false,
-        selectedUsers: [],
+        name: workspace?.name ?? '',
+        description: workspace?.description ?? '',
+        allowGuests: workspace?.allowGuests() ?? false,
+        selectedUsers: workspace?.users.filter(u => !u.isGuest) ?? [],
         submitting: false,
         submitAttempted: false,
         submissionError: '',
         addUserOpen: false,
-        availableRoles: derived((state: WorkspaceCreateFormState) => {
-            return Object.values(UserRole);
-        }),
         submitDisabled: derived((state: WorkspaceCreateFormState) => {
             return state.submitting;
         }),
@@ -63,4 +60,4 @@ export const getInitialWorkspaceCreateState = (): WorkspaceCreateState => ({
     },
 });
 
-export const state: WorkspaceCreateState = getInitialWorkspaceCreateState();
+export const state: WorkspaceCreateState = getInitialWorkspaceCreateState(null);

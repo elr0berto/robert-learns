@@ -1,17 +1,31 @@
-import {Alert, Button, Col, Container, Form, Row, Table} from "react-bootstrap";
+import {Alert, Button, Container, Form, Table} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import AddUserModal from "./AddUserModal";
+import {Pages} from "../../page-urls";
 
 function WorkspaceCreate() {
     const state = useAppState();
     const actions = useActions();
 
+    const scope = state.page.current === Pages.WorkspaceCreate ? 'create' : 'edit';
+
     if (state.signIn.user!.isGuest) {
-        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to create workspaces</Alert></Container>;
+        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to {scope} workspaces</Alert></Container>;
     }
+
+
+    if (scope === 'edit' && state.workspace.workspace === null) {
+        if (state.workspaces.loading) {
+            return <Container>Loading...</Container>;
+        } else {
+            return <Container>Workspace not found.</Container>
+        }
+    }
+
+
     return <Container>
-        <h1 className="my-5">Create a workspace</h1>
+        <h1 className="my-5">{scope === 'create' ? 'Create a workspace' : 'Edit workspace ' + state.workspace.workspace!.name}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="workspaceName">
                 <Form.Label>Workspace Name</Form.Label>
@@ -36,21 +50,30 @@ function WorkspaceCreate() {
                     </tr>
                 </thead>
                 <tbody>
+                    {scope === 'create' ?
                     <tr>
                         <td>{state.signIn.user!.name()}</td>
                         <td colSpan={2}>OWNER</td>
-                    </tr>
+                    </tr> : null}
                     {state.workspaceCreate.form.selectedUsers.length > 0 ?
                         state.workspaceCreate.form.selectedUsers.map(u => <tr key={u.userId}>
                             <td>{u.name}</td>
                             <td>
-                                <Form.Select value={u.role} onChange={evt => actions.workspaceCreate.changeUserRole({user: u, role: evt.target.value})}>
+                                <Form.Select
+                                    disabled={!u.canRoleBeChanged}
+                                    value={u.role}
+                                    onChange={evt => actions.workspaceCreate.changeUserRole({user: u, role: evt.target.value})}>
                                     <option>Select role</option>
-                                    {state.workspaceCreate.form.availableRoles.map(role => <option value={role}>{role}</option>)}
+                                    {u.availableRoles.map(role => <option key={role} value={role}>{role}</option>)}
                                 </Form.Select>
                             </td>
                             <td>
-                                <Button type="button" size='sm' variant="outline-danger" onClick={() => actions.workspaceCreate.removeUser(u.userId)}>Remove</Button>
+                                <Button
+                                    disabled={!u.canBeRemoved}
+                                    type="button"
+                                    size='sm'
+                                    variant="outline-danger"
+                                    onClick={() => actions.workspaceCreate.removeUser(u.userId)}>Remove</Button>
                             </td>
                         </tr>) : null}
                 </tbody>
