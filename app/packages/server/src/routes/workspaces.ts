@@ -46,6 +46,7 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
             name: w.name,
             description: w.description,
             users: getPermissionUsersFromWorkspace(w, user),
+            myRole:
         }))
     });
 });

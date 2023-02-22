@@ -1,3 +1,5 @@
+import { UserRole } from "../types/index.js";
+
 export const objectMap = <TObject extends {}, TRet>(obj : TObject, fn : (v: any, k: string, i: number) => TRet) =>
     Object.fromEntries(
         Object.entries(obj).map(
@@ -15,4 +17,11 @@ export function removeItem<T>(arr: Array<T>, value: T): Array<T> {
 
 export function arrayUnique<T>(a: T[]) : T[] {
     return [...new Set(a)];
+}
+
+export function role1IsAtLeastRole2(role1: UserRole, role2: UserRole) {
+    const allRoles = Object.values(UserRole);
+    const role1Index = allRoles.indexOf(role1);
+    const role2Index = allRoles.indexOf(role2);
+    return role1Index <= role2Index;
 }

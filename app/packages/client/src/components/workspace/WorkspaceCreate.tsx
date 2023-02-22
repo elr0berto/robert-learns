@@ -3,6 +3,7 @@ import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import AddUserModal from "./AddUserModal";
 import {Pages} from "../../page-urls";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 
 function WorkspaceCreate() {
     const state = useAppState();
@@ -78,7 +79,7 @@ function WorkspaceCreate() {
                         </tr>) : null}
                 </tbody>
             </Table>
-            <Button type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button>
+            {scope === 'create' || state.workspace.workspace!.myRoleIsAtLeast(UserRole.ADMINISTRATOR) ? <Button type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button> : null}
             <hr/>
             {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit()}>Create Workspace!</Button>
