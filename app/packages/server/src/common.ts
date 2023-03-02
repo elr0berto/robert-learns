@@ -9,7 +9,8 @@ import {
     Media as PrismaMedia,
     User as PrismaUser,
     Workspace as PrismaWorkspace,
-    WorkspaceUser as PrismaWorkspaceUser
+    WorkspaceUser as PrismaWorkspaceUser,
+    UserRole as PrismaUserRole
 } from '@prisma/client';
 import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
@@ -170,6 +171,10 @@ export const canUserRemoveUser = (user1: PrismaWorkspaceUser & {user: PrismaUser
         return false;
     }
 
+    if (user1.user.id === user2.user.id) {
+        return false;
+    }
+
     switch(user1.role) {
         case UserRole.OWNER:
             return true;
@@ -182,6 +187,10 @@ export const canUserRemoveUser = (user1: PrismaWorkspaceUser & {user: PrismaUser
 
 export const getRolesUserCanChangeUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
     if (user1 === null) {
+        return [user2.role];
+    }
+
+    if (user1.user.id === user2.user.id) {
         return [user2.role];
     }
 
@@ -214,4 +223,15 @@ export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { u
         canRoleBeChanged: canUserChangeUserRole(workspaceUser, u),
         availableRoles: getRolesUserCanChangeUser(workspaceUser, u),
     }));
+}
+
+export const getUsersMyRoleForWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PrismaUserRole => {
+    const workspaceUsers = workspace.users.filter(u => u.userId === user.id);
+    const workspaceUser = workspaceUsers.length === 1 ? workspaceUsers[0] : null;
+
+    if (workspaceUser === null) {
+        throw new Error('user: ' + user.id + ' does not have a workspace-user in workspace: ' + workspace.id);
+    }
+
+    return workspaceUser.role;
 }

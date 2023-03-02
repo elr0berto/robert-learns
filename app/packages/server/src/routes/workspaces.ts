@@ -1,6 +1,13 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getGuestUser, getPermissionUsersFromWorkspace, getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {
+    getGuestUser,
+    getPermissionUsersFromWorkspace,
+    getSignedInUser,
+    getUserData,
+    getUsersMyRoleForWorkspace,
+    TypedResponse
+} from "../common.js";
 import { UserRole } from '@prisma/client';
 import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
@@ -46,7 +53,7 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
             name: w.name,
             description: w.description,
             users: getPermissionUsersFromWorkspace(w, user),
-            myRole:
+            myRole: getUsersMyRoleForWorkspace(w, user),
         }))
     });
 });
@@ -147,6 +154,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             name: workspace.name,
             description: workspace.description,
             users: getPermissionUsersFromWorkspace(workspace, user),
+            myRole: getUsersMyRoleForWorkspace(workspace, user)
         }
     });
 });
