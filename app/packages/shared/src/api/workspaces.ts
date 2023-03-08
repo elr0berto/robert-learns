@@ -17,6 +17,7 @@ export class WorkspaceCreateResponse extends BaseResponse {
 }
 
 export type WorkspaceCreateRequest = {
+    workspaceId?: number;
     name: string;
     description: string;
     allowGuests: boolean;

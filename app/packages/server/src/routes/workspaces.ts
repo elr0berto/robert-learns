@@ -13,7 +13,7 @@ import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
     WorkspaceCardSetCreateResponseData,
     WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceCreateResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
-import {canUserWriteToWorkspaceId} from "../security.js";
+import {canUserAdministerWorkspace, canUserContributeToWorkspaceId} from "../security.js";
 import { arrayUnique } from '@elr0berto/robert-learns-shared/common';
 
 const workspaces = Router();
@@ -65,7 +65,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create workspaces. please sign in first!',
-            signedInUser: null,
+            signedInUser: user,
             workspaceData: null,
         });
     }
@@ -76,36 +76,95 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUser: null,
+            signedInUser: user,
             workspaceData: null,
         });
     }
 
-    const newWorkspace = await prisma.workspace.create({
-        data: {
-            name: req.body.name,
-            description: req.body.description,
-        }
-    });
+    const scope = req.body.workspaceId ? 'edit' : 'create';
 
-    const workspaceUser = await prisma.workspaceUser.create({
-        data: {
-            workspaceId: newWorkspace.id,
-            userId: user.id,
-            role: UserRole.OWNER,
-        }
-    });
-
-    if (req.body.allowGuests) {
-        const guest = await getGuestUser();
-        await prisma.workspaceUser.create({
+    if (scope === 'create') {
+        const newWorkspace = await prisma.workspace.create({
             data: {
-                workspaceId: newWorkspace.id,
-                userId: guest.id,
-                role: UserRole.USER,
+                name: req.body.name,
+                description: req.body.description,
             }
         });
+
+        const workspaceUser = await prisma.workspaceUser.create({
+            data: {
+                workspaceId: newWorkspace.id,
+                userId: user.id,
+                role: UserRole.OWNER,
+            }
+        });
+
+        if (req.body.allowGuests) {
+            const guest = await getGuestUser();
+            await prisma.workspaceUser.create({
+                data: {
+                    workspaceId: newWorkspace.id,
+                    userId: guest.id,
+                    role: UserRole.USER,
+                }
+            });
+        }
+    } else {
+        const existingWorkspace = await prisma.workspace.findUniqueOrThrow({
+            where: { id: req.body.workspaceId }
+        });
+
+        const access = await canUserAdministerWorkspace(user, existingWorkspace);
+        if (!access) {
+            return res.json({
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Access denied',
+                signedInUser: user,
+                workspaceData: null,
+            });
+        }
+        await prisma.workspace.update({
+            where: {
+                id: req.body.workspaceId,
+            },
+            data: {
+                name: req.body.name,
+                description: req.body.description,
+            }
+        });
+
+        const existingWorkspaceUsers = await prisma.workspaceUser.findMany({
+            where: {
+                workspaceId: req.body.workspaceId
+            },
+            include: {
+                user: true,
+            }
+        });
+
+        if (req.body.allowGuests && existingWorkspaceUsers.findIndex(wu => wu.user.isGuest) === -1) {
+            const guest = await getGuestUser();
+            await prisma.workspaceUser.create({
+                data: {
+                    workspaceId: existingWorkspace.id,
+                    userId: guest.id,
+                    role: UserRole.USER,
+                }
+            });
+        } else if (!req.body.allowGuests && existingWorkspaceUsers.findIndex(wu => wu.user.isGuest) !== -1) {
+            const guest = await getGuestUser();
+            await prisma.workspaceUser.delete({
+                where: {
+                    workspaceId_userId: {
+                        workspaceId: existingWorkspace.id,
+                        userId: guest.id,
+                    },
+                }
+            })
+        }
     }
+
+
 
     const userIds = req.body.workspaceUsers.map(u => u.userId);
     if (arrayUnique(userIds).length !== userIds.length) {
@@ -206,7 +265,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
         });
     }
 
-    const hasRights = canUserWriteToWorkspaceId(user,req.body.workspaceId);
+    const hasRights = canUserContributeToWorkspaceId(user,req.body.workspaceId);
     if (!hasRights) {
         return res.json({
             status: ResponseStatus.UnexpectedError,

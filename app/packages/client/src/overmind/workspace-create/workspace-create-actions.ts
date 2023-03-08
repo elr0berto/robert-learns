@@ -3,6 +3,7 @@ import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
 import {pageUrls, Pages} from "../../page-urls";
+import {WorkspaceCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCreate.form.name = name;
@@ -51,7 +52,7 @@ export const changeUserRole = ({ state }: Context, {user, role}: {user: {userId:
 
 }
 
-export const formSubmit = async ({state, effects, actions} : Context) => {
+export const formSubmit = async ({state, effects, actions} : Context, scope: string) => {
     state.workspaceCreate.form.submitAttempted = true;
 
     state.workspaceCreate.form.submissionError = '';
@@ -60,12 +61,16 @@ export const formSubmit = async ({state, effects, actions} : Context) => {
     }
 
     state.workspaceCreate.form.submitting = true;
-    const resp = await effects.api.workspaces.workspaceCreate({
+    const request : WorkspaceCreateRequest = {
         name: state.workspaceCreate.form.name,
         description: state.workspaceCreate.form.description,
         allowGuests: state.workspaceCreate.form.allowGuests,
         workspaceUsers: state.workspaceCreate.form.selectedUsers,
-    });
+    };
+    if (scope === 'edit') {
+        request.workspaceId = state.workspace.workspaceId!;
+    }
+    const resp = await effects.api.workspaces.workspaceCreate(request);
 
     state.workspaceCreate.form.submitting = false;
     if (resp.status !== ResponseStatus.Success || resp.workspace === null) {
