@@ -1,6 +1,7 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {
+    canUserChangeUserRoleRole,
     getGuestUser,
     getPermissionUsersFromWorkspace,
     getSignedInUser,
@@ -59,13 +60,13 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
 });
 
 workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, res : TypedResponse<WorkspaceCreateResponseData>) => {
-    let user = await getSignedInUser(req.session);
+    let signedInUser = await getSignedInUser(req.session);
 
-    if (user.isGuest) {
+    if (signedInUser.isGuest) {
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create workspaces. please sign in first!',
-            signedInUser: user,
+            signedInUser: signedInUser,
             workspaceData: null,
         });
     }
@@ -76,12 +77,33 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         return res.json({
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUser: user,
+            signedInUser: signedInUser,
+            workspaceData: null,
+        });
+    }
+
+    const userIds = req.body.workspaceUsers.map(u => u.userId);
+    if (arrayUnique(userIds).length !== userIds.length) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: 'userIds are not unique: ' + userIds.join(', '),
+            signedInUser: getUserData(signedInUser),
             workspaceData: null,
         });
     }
 
     const scope = req.body.workspaceId ? 'edit' : 'create';
+
+    let workspaceId = req.body.workspaceId;
+
+    const existingWorkspaceUsers = await prisma.workspaceUser.findMany({
+        where: {
+            workspaceId: req.body.workspaceId
+        },
+        include: {
+            user: true,
+        }
+    });
 
     if (scope === 'create') {
         const newWorkspace = await prisma.workspace.create({
@@ -91,10 +113,12 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             }
         });
 
+        workspaceId = newWorkspace.id;
+
         const workspaceUser = await prisma.workspaceUser.create({
             data: {
                 workspaceId: newWorkspace.id,
-                userId: user.id,
+                userId: signedInUser.id,
                 role: UserRole.OWNER,
             }
         });
@@ -114,33 +138,27 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             where: { id: req.body.workspaceId }
         });
 
-        const access = await canUserAdministerWorkspace(user, existingWorkspace);
+        const access = await canUserAdministerWorkspace(signedInUser, existingWorkspace);
         if (!access) {
             return res.json({
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Access denied',
-                signedInUser: user,
+                signedInUser: getUserData(signedInUser),
                 workspaceData: null,
             });
         }
-        await prisma.workspace.update({
-            where: {
-                id: req.body.workspaceId,
-            },
-            data: {
-                name: req.body.name,
-                description: req.body.description,
-            }
-        });
 
-        const existingWorkspaceUsers = await prisma.workspaceUser.findMany({
-            where: {
-                workspaceId: req.body.workspaceId
-            },
-            include: {
-                user: true,
-            }
-        });
+        if (existingWorkspace.name !== req.body.name || existingWorkspace.description !== req.body.description) {
+            await prisma.workspace.update({
+                where: {
+                    id: req.body.workspaceId,
+                },
+                data: {
+                    name: req.body.name,
+                    description: req.body.description,
+                }
+            });
+        }
 
         if (req.body.allowGuests && existingWorkspaceUsers.findIndex(wu => wu.user.isGuest) === -1) {
             const guest = await getGuestUser();
@@ -162,14 +180,26 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
                 }
             })
         }
+
+        for (const existingWorkspaceUser of existingWorkspaceUsers) {
+            const matches = req.body.workspaceUsers.filter(wu => wu.userId === existingWorkspaceUser.user.id);
+            if (matches.length === 1) {
+                const newWorkspaceUser = matches[0];
+                if (existingWorkspaceUser.role !== newWorkspaceUser.role) {
+                    if (!canUserChangeUserRoleRole(signedInUser, existingWorkspaceUser.user, newWorkspaceUser.role)) {
+                        return res.json({
+                            status: ResponseStatus.UnexpectedError,
+                            errorMessage: 'Access denied',
+                            signedInUser: signedInUser,
+                            workspaceData: null,
+                        });
+                    }
+                }
+            }
+        }
     }
 
 
-
-    const userIds = req.body.workspaceUsers.map(u => u.userId);
-    if (arrayUnique(userIds).length !== userIds.length) {
-        throw new Error('userIds are not unique: ' + userIds.join(', '));
-    }
 
     for(const permissionUser of req.body.workspaceUsers) {
         if (!Object.values(UserRole).includes(permissionUser.role)) {
@@ -182,18 +212,18 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
         await prisma.workspaceUser.create({
             data: {
-                workspaceId: newWorkspace.id,
+                workspaceId: workspaceId!,
                 userId: permissionUser.userId,
                 role: permissionUser.role,
             }
         });
     }
 
-    user = await getSignedInUser(req.session);
+    signedInUser = await getSignedInUser(req.session);
 
     const workspace = await prisma.workspace.findUniqueOrThrow({
         where: {
-            id: newWorkspace.id
+            id: workspaceId
         },
         include: {
             users : {
@@ -206,7 +236,7 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
     return res.json({
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUser: getUserData(signedInUser),
         errorMessage: null,
         workspaceData: {
             id: workspace.id,

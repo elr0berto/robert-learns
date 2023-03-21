@@ -5,6 +5,7 @@ export type UserData = {
     firstName: string;
     lastName: string;
     isGuest: boolean;
+    dataType: boolean;
 }
 
 export class User {

@@ -80,7 +80,8 @@ export const getUserData = (user: UserData) : UserData => {
         firstName : user.firstName,
         lastName:user.lastName,
         username: user.username,
-        isGuest : user.isGuest
+        isGuest : user.isGuest,
+        dataType: true, // to force the type ... too easy to send the Prisma user otherwise. the user class...
     };
 }
 
@@ -185,7 +186,7 @@ export const canUserRemoveUser = (user1: PrismaWorkspaceUser & {user: PrismaUser
     }
 }
 
-export const getRolesUserCanChangeUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
+export const getRolesUserCanChangeUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) : UserRole[] => {
     if (user1 === null) {
         return [user2.role];
     }
@@ -208,6 +209,10 @@ export const canUserChangeUserRole = (user1: PrismaWorkspaceUser & {user: Prisma
     return getRolesUserCanChangeUser(user1, user2).length > 1;
 }
 
+export const canUserChangeUserRoleRole = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}, wantedRole: UserRole) => {
+    const possibleRoles = getRolesUserCanChangeUser(user1, user2);
+    return possibleRoles.filter(r => r === wantedRole).length > 0;
+}
 
 export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PermissionUser[] => {
     const workspaceUsers = workspace.users.filter(u => u.userId === user.id);
