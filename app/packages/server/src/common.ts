@@ -73,7 +73,7 @@ export const getSignedInUser = async (session: Session & Partial<SessionData>) :
 }
 
 
-export const getUserData = (user: UserData) : UserData => {
+export const getUserData = (user: PrismaUser) : UserData => {
     return {
         id: user.id,
         email: user.email,
