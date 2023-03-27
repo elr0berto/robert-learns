@@ -2,6 +2,7 @@ import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {
     canUserChangeUserRoleRole,
+    canUserDeleteWorkspaceUser,
     getGuestUser,
     getPermissionUsersFromWorkspace,
     getSignedInUser,
@@ -185,8 +186,17 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         const signedInWorkspaceUser = await getWorkspaceUser(signedInUser, existingWorkspace);
 
         for (const existingWorkspaceUser of existingWorkspaceUsers) {
+            if (existingWorkspaceUser.user.isGuest) {
+                continue;
+            }
             const matches = req.body.workspaceUsers.filter(wu => wu.userId === existingWorkspaceUser.user.id);
+
+            if (matches.length > 1) {
+                throw new Error('found ' + matches.length + ' matches for workspace user id: ' + existingWorkspaceUser.user.id);
+            }
+
             if (matches.length === 1) {
+                // update existing
                 const newWorkspaceUser = matches[0];
                 if (existingWorkspaceUser.role !== newWorkspaceUser.role) {
                     if (!canUserChangeUserRoleRole(signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser.role)) {
@@ -197,7 +207,36 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
                             workspaceData: null,
                         });
                     }
+                    await prisma.workspaceUser.update({
+                        where: {
+                            workspaceId_userId: {
+                                workspaceId: existingWorkspace.id,
+                                userId: existingWorkspaceUser.userId,
+                            },
+                        },
+                        data: {
+                            role: newWorkspaceUser.role,
+                        }
+                    });
                 }
+            } else if (matches.length === 0) {
+                // delete existing
+                if (!canUserDeleteWorkspaceUser(signedInWorkspaceUser, existingWorkspaceUser)) {
+                    return res.json({
+                        status: ResponseStatus.UnexpectedError,
+                        errorMessage: 'Access denied',
+                        signedInUser: getUserData(signedInUser),
+                        workspaceData: null,
+                    });
+                }
+                await prisma.workspaceUser.delete({
+                    where: {
+                        workspaceId_userId: {
+                            workspaceId: existingWorkspace.id,
+                            userId: existingWorkspaceUser.userId,
+                        },
+                    }
+                });
             }
         }
     }
@@ -205,6 +244,17 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
 
     for(const permissionUser of req.body.workspaceUsers) {
+        const existing = existingWorkspaceUsers.filter(wu => wu.userId === permissionUser.userId);
+        if (existing.length > 0) {
+            if (scope === 'create') {
+                throw new Error('user already exists. userid: ' + permissionUser.userId);
+            } else if (scope === 'edit') {
+                continue;
+            } else {
+                throw new Error('invalid scope: ' + scope);
+            }
+        }
+
         if (!Object.values(UserRole).includes(permissionUser.role)) {
             throw new Error('invalid role: ' + permissionUser.role);
         }

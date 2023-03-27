@@ -214,6 +214,19 @@ export const canUserChangeUserRoleRole = (user1: PrismaWorkspaceUser & {user: Pr
     return possibleRoles.filter(r => r === wantedRole).length > 0;
 }
 
+export const canUserDeleteWorkspaceUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
+    if (user1 === null) {
+        return false;
+    }
+    if (user1.role === UserRole.OWNER) {
+        return true;
+    }
+    if (user1.role === UserRole.ADMINISTRATOR && user2.role !== UserRole.OWNER) {
+        return true;
+    }
+    return false;
+}
+
 export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PermissionUser[] => {
     const workspaceUsers = workspace.users.filter(u => u.userId === user.id);
     const workspaceUser = workspaceUsers.length === 1 ? workspaceUsers[0] : null;
