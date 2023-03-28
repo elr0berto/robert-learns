@@ -1,12 +1,14 @@
 import {Workspace, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "..";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 
 type WorkspaceState = {
     workspaceId: number | null;
     cardSetsLoading: boolean;
     cardSets: CardSet[];
     readonly workspace: Workspace | null;
+    readonly currentUserCanEdit: boolean | null;
 }
 
 export const getInitialWorkspaceState = (): WorkspaceState => ({
@@ -22,6 +24,12 @@ export const getInitialWorkspaceState = (): WorkspaceState => ({
             return null;
         }
         return found[0];
+    }),
+    currentUserCanEdit: derived((state: WorkspaceState) => {
+        if (state.workspace === null) {
+            return null;
+        }
+        return state.workspace.myRoleIsAtLeast(UserRole.ADMINISTRATOR);
     }),
 });
 

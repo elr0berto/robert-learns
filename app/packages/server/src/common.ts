@@ -244,12 +244,12 @@ export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { u
 }
 
 export const getUsersMyRoleForWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PrismaUserRole => {
-    const workspaceUsers = workspace.users.filter(u => u.userId === user.id);
-    const workspaceUser = workspaceUsers.length === 1 ? workspaceUsers[0] : null;
+    const workspaceUser = workspace.users.filter(u => u.userId === user.id)?.[0] ?? null;
+    const guestWorkspaceUser = workspace.users.filter(u => u.user.isGuest)?.[0] ?? null;
 
-    if (workspaceUser === null) {
+    if (workspaceUser === null && guestWorkspaceUser === null) {
         throw new Error('user: ' + user.id + ' does not have a workspace-user in workspace: ' + workspace.id);
     }
 
-    return workspaceUser.role;
+    return workspaceUser?.role ?? guestWorkspaceUser?.role;
 }

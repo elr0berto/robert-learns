@@ -15,13 +15,16 @@ function WorkspaceCreate() {
         return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to {scope} workspaces</Alert></Container>;
     }
 
-
     if (scope === 'edit' && state.workspace.workspace === null) {
         if (state.workspaces.loading) {
             return <Container>Loading...</Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }
+    }
+
+    if (scope === 'edit' && !state.workspace.currentUserCanEdit) {
+        return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this workspace</Alert></Container>;
     }
 
 
