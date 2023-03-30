@@ -15,7 +15,7 @@ export const submit = async ({ state, effects }: Context, onAdd: (user: Permissi
     state.addUserModal.submitting = true;
     if (state.addUserModal.email === state.signIn.user!.email) {
         state.addUserModal.submitting = false;
-        state.addUserModal.errorMessage = 'You cannot add your self, you will be the OWNER automatically.';
+        state.addUserModal.errorMessage = 'You cannot add your self.';
         return;
     }
     const response = await effects.api.users.userGetByEmail({email: state.addUserModal.email});
