@@ -36,7 +36,7 @@ export const submit = async ({ state, effects }: Context, onAdd: (user: Permissi
             case UserRole.OWNER:
                 break;
             case UserRole.ADMINISTRATOR:
-                availableRoles = availableRoles.filter(role => role != UserRole.OWNER);
+                availableRoles = availableRoles.filter(role => role !== UserRole.OWNER);
                 break;
             default:
                 throw new Error('myRole has to be owner or admin to add users');

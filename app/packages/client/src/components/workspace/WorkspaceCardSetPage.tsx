@@ -3,6 +3,7 @@ import {Button, Container} from "react-bootstrap";
 import React from "react";
 import CardList from "../cards/CardList";
 import DeleteCardModal from "../cards/DeleteCardModal";
+import {pageUrls} from "../../page-urls";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -24,9 +25,11 @@ function WorkspaceCardSetPage() {
     }
 
     return <Container>
-        <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i></h1>
+        <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i> {state.workspaceCardSet.currentUserCanEdit ? <Button href={pageUrls.workspaceCardSetEdit.url(state.workspace.workspace, state.workspaceCardSet.cardSet)}>Edit card set</Button> : null}</h1>
         {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted} onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)} cards={state.workspaceCardSet.cards}/>}
         <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal(state.workspaceCardSet.cardSetId!)}>+ Create card</Button>
+
+
         {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
             cardSet={state.workspaceCardSet.cardSet}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}

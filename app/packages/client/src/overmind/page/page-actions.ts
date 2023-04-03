@@ -57,16 +57,6 @@ export const showWorkspacePage = async ({ state, effects, actions }: Context, pa
     actions.page._setWorkspacePage({payload, page: Pages.Workspace});
 }
 
-export const showWorkspaceCardSetCreatePage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    actions.page._loadAllData();
-    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetCreate});
-}
-
-export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    actions.page._loadAllData();
-    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSet});
-}
-
 export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {
     actions.page._loadAllData();
     state.workspaceCreate = getInitialWorkspaceCreateState(null);
@@ -78,4 +68,19 @@ export const showWorkspaceEditPage = async ({ state, effects, actions }: Context
     state.workspace.workspaceId = parseInt(payload.params?.workspaceId);
     state.workspaceCreate = getInitialWorkspaceCreateState(state.workspace.workspace);
     state.page.current = Pages.WorkspaceEdit;
+}
+
+export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Context, payload: Payload) => {
+    actions.page._loadAllData();
+    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSet});
+}
+
+export const showWorkspaceCardSetCreatePage = async ({ state, effects, actions }: Context, payload: Payload) => {
+    actions.page._loadAllData();
+    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetCreate});
+}
+
+export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
+    actions.page._loadAllData();
+    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetEdit});
 }

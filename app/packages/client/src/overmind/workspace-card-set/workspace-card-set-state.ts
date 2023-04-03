@@ -1,6 +1,7 @@
 import {derived} from "overmind";
 import {config} from "../index.js";
 import {CardSet, Card } from "@elr0berto/robert-learns-shared/dist/api/models";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 
 type WorkspaceCardSetState = {
     cardSetId: number | null;
@@ -11,6 +12,7 @@ type WorkspaceCardSetState = {
     confirmingDeleteCard: boolean;
     readonly showConfirmDeleteModal: boolean;
     readonly cardSet: CardSet | null;
+    readonly currentUserCanEdit: boolean | null;
 }
 
 export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
@@ -33,6 +35,12 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
             return null;
         }
         return found[0];
+    }),
+    currentUserCanEdit: derived((state: WorkspaceCardSetState) => {
+        if (state.cardSet === null) {
+            return null;
+        }
+        return state.cardSet.myRoleIsAtLeast(UserRole.ADMINISTRATOR);
     }),
 });
 

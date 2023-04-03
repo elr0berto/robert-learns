@@ -5,7 +5,7 @@ import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
 import WorkspacePage from "../components/workspace/WorkspacePage";
 import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
 import WorkspaceCardSetPage from "../components/workspace/WorkspaceCardSetPage";
-import {CardSet, Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export enum Pages {
     Front = "front",
@@ -13,6 +13,7 @@ export enum Pages {
     SignUp = "signUp",
     Workspace = "workspace",
     WorkspaceCardSetCreate = "workspaceCardSetCreate",
+    WorkspaceCardSetEdit = "workspaceCardSetEdit",
     WorkspaceCardSet = "workspaceCardSet",
     WorkspaceCreate = "workspaceCreate",
     WorkspaceEdit = "workspaceEdit",
@@ -54,9 +55,16 @@ const pageUrls = {
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetCreatePage,
         getPageComponent: () => WorkspaceCardSetCreatePage,
     },
+    [Pages.WorkspaceCardSetEdit]: {
+        route: '/workspace/:workspaceId/card-set-edit/:cardSetId',
+        url: (workspace: Workspace, cardSet: {id: number}) => '/workspace/'+workspace.id+'/card-set-edit/'+cardSet.id,
+        //page: Pages.Workspace,
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetEditPage,
+        getPageComponent: () => WorkspaceCardSetCreatePage,
+    },
     [Pages.WorkspaceCardSet]: {
         route: '/workspace/:workspaceId/card-set/:cardSetId',
-        url: (workspace: Workspace, cardSet: CardSet) => '/workspace/'+workspace.id+'/card-set/'+cardSet.id,
+        url: (workspace: Workspace, cardSet: {id: number, name: string}) => '/workspace/'+workspace.id+'/card-set/'+cardSet.id,
         //page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetPage,
         getPageComponent: () => WorkspaceCardSetPage,
