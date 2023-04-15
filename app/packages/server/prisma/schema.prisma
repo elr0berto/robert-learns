@@ -103,6 +103,7 @@ model CardSetUser {
 model CardSet {
   id      Int      @id @default(autoincrement())
   name    String
+  description String @default("")
   cards   CardSetCard[]
   users   CardSetUser[]
   medias  Media[]

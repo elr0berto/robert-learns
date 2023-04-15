@@ -111,7 +111,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
             status: ResponseStatus.Success,
             errorMessage: null,
             signedInUser: getUserData(user),
-            cardExistsInOtherCardSets: cardSetCards.map(csc => ({id: csc.cardSet.id, name: csc.cardSet.name})),
+            cardExistsInOtherCardSets: cardSetCards.map(csc => ({id: csc.cardSet.id, name: csc.cardSet.name, description: csc.cardSet.description}))
         });
     }
 

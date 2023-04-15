@@ -4,6 +4,7 @@ import {config} from "..";
 
 type WorkspaceCardSetCreateFormState = {
     name: string;
+    description: string;
     submitting: boolean;
     submitAttempted: boolean;
     submissionError: string;
@@ -20,6 +21,7 @@ type WorkspaceCardSetCreateState = {
 export const getInitialWorkspaceCardSetCreateState = (): WorkspaceCardSetCreateState => ({
     form: {
         name: '',
+        description: '',
         submitting: false,
         submitAttempted: false,
         submissionError: '',

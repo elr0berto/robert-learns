@@ -123,6 +123,7 @@ export class WorkspaceCardSetCreateResponse extends BaseResponse {
 export type WorkspaceCardSetCreateRequest = {
     workspaceId: number;
     name: string;
+    description: string;
 }
 
 export const validateWorkspaceCardSetCreateRequest = (req: WorkspaceCardSetCreateRequest) : string[] => {
@@ -132,6 +133,9 @@ export const validateWorkspaceCardSetCreateRequest = (req: WorkspaceCardSetCreat
     }
     if (req.name.trim().length === 0) {
         errs.push('You must enter a name');
+    }
+    if (req.description.trim().length === 0) {
+        errs.push('Please provide a description');
     }
 
     return errs;

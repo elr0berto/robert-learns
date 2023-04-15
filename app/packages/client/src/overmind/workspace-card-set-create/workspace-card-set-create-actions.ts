@@ -6,6 +6,9 @@ export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCardSetCreate.form.name = name;
 };
 
+export const changeFormDescription = ({ state }: Context, description: string) => {
+    state.workspaceCardSetCreate.form.description = description;
+};
 
 export const formSubmit = async ({state,effects,actions} : Context) => {
     state.workspaceCardSetCreate.form.submitAttempted = true;

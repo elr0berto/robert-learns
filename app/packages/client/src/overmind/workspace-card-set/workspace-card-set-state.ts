@@ -13,6 +13,7 @@ type WorkspaceCardSetState = {
     readonly showConfirmDeleteModal: boolean;
     readonly cardSet: CardSet | null;
     readonly currentUserCanEdit: boolean | null;
+    readonly currentUserCanCreateCards: boolean | null;
 }
 
 export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
@@ -36,11 +37,17 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
         }
         return found[0];
     }),
-    currentUserCanEdit: derived((state: WorkspaceCardSetState) => {
-        if (state.cardSet === null) {
+    currentUserCanEdit: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
+        if (state.cardSet === null || rootState.workspace.workspace === null) {
             return null;
         }
-        return state.cardSet.myRoleIsAtLeast(UserRole.ADMINISTRATOR);
+        return rootState.workspace.workspace.myRoleIsAtLeast(UserRole.ADMINISTRATOR);
+    }),
+    currentUserCanCreateCards: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
+        if (state.cardSet === null || rootState.workspace.workspace === null) {
+            return null;
+        }
+        return rootState.workspace.workspace.myRoleIsAtLeast(UserRole.CONTRIBUTOR);
     }),
 });
 

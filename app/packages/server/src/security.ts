@@ -2,6 +2,29 @@ import prisma from "./db/prisma.js";
 import {UserRole, User as PrismaUser, CardSet as PrismaCardSet, Workspace as PrismaWorkspace} from "@prisma/client";
 import { getWorkspaceUser } from "./db/helpers/workspace-users.js";
 
+export const canUserViewWorkspaceId = async (user: PrismaUser, workspaceId: number) : Promise<boolean> => {
+    const workspace = await prisma.workspace.findFirst({
+        where: {
+            id: workspaceId
+        }
+    });
+    if (workspace === null) {
+        throw new Error('workspaceId: ' + workspaceId + ' not found in canUserContributeToWorkspaceId');
+    }
+    return await canUserViewWorkspace(user, workspace);
+}
+
+export const canUserViewWorkspace = async (user: PrismaUser, workspace: PrismaWorkspace) : Promise<boolean> => {
+    const workspaceUser = await prisma.workspaceUser.findFirst({
+        where: {
+            workspaceId: workspace.id,
+            userId: user.id
+        }
+    });
+
+    return workspaceUser !== null;
+}
+
 export const canUserContributeToWorkspaceId = async (user: PrismaUser, workspaceId: number) : Promise<boolean> => {
     const workspace = await prisma.workspace.findFirst({
         where: {

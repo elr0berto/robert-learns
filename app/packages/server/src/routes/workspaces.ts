@@ -15,7 +15,7 @@ import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
     WorkspaceCardSetCreateResponseData,
     WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceCreateResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
-import {canUserAdministerWorkspace, canUserContributeToWorkspaceId} from "../security.js";
+import {canUserAdministerWorkspace, canUserContributeToWorkspaceId, canUserViewWorkspaceId} from "../security.js";
 import { arrayUnique } from '@elr0berto/robert-learns-shared/common';
 import {getWorkspaceUser} from "../db/helpers/workspace-users.js";
 
@@ -304,7 +304,15 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<WorkspaceCardSetListResponseData>) => {
     let user = await getSignedInUser(req.session);
 
-    // TODO : security check
+    const hasRights = canUserViewWorkspaceId(user,req.body.workspaceId);
+    if (!hasRights) {
+        return res.json({
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: 'You are not allowed to view this workspace.',
+            signedInUser: null,
+            cardSets: null,
+        });
+    }
 
     const cardSets = await prisma.cardSet.findMany({
         where: {
@@ -321,6 +329,7 @@ workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<Worksp
         cardSets: cardSets.map(cs => ({
             id: cs.id,
             name: cs.name,
+            description: cs.description,
         }))
     });
 });
@@ -361,6 +370,7 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
     const newCardSet = await prisma.cardSet.create({
         data: {
             name: req.body.name,
+            description: req.body.description,
             workspaceId: req.body.workspaceId,
         }
     });
