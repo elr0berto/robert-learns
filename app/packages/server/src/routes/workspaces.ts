@@ -2,16 +2,16 @@ import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {
     canUserChangeUserRoleRole,
-    canUserDeleteWorkspaceUser,
+    canUserDeleteWorkspaceUser, getCardSetData,
     getGuestUser,
     getPermissionUsersFromWorkspace,
     getSignedInUser,
     getUserData,
-    getUsersMyRoleForWorkspace,
+    getUsersMyRoleForWorkspace, getWorkspaceData,
     TypedResponse
 } from "../common.js";
 import { UserRole } from '@prisma/client';
-import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {CardSet, CardSetData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {validateWorkspaceCardSetCreateRequest, validateWorkspaceCreateRequest, WorkspaceCardSetCreateRequest,
     WorkspaceCardSetCreateResponseData,
     WorkspaceCardSetListResponseData, WorkspaceCreateRequest, WorkspaceCreateResponseData, WorkspaceListResponseData } from '@elr0berto/robert-learns-shared/api/workspaces';
@@ -48,16 +48,11 @@ workspaces.get('/', async (req, res : TypedResponse<WorkspaceListResponseData>) 
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
         errorMessage: null,
-        workspaces: workspaces.map(w => ({
-            id: w.id,
-            name: w.name,
-            description: w.description,
-            users: getPermissionUsersFromWorkspace(w, user),
-            myRole: getUsersMyRoleForWorkspace(w, user),
-        }))
+        workspaceDatas: workspaces.map(w => getWorkspaceData(w, user)),
     });
 });
 
@@ -66,9 +61,10 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
     if (signedInUser.isGuest) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create workspaces. please sign in first!',
-            signedInUser: getUserData(signedInUser),
+            signedInUserData: getUserData(signedInUser),
             workspaceData: null,
         });
     }
@@ -77,9 +73,10 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
 
     if (errors.length !== 0) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUser: getUserData(signedInUser),
+            signedInUserData: getUserData(signedInUser),
             workspaceData: null,
         });
     }
@@ -87,9 +84,10 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
     const userIds = req.body.workspaceUsers.map(u => u.userId);
     if (arrayUnique(userIds).length !== userIds.length) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'userIds are not unique: ' + userIds.join(', '),
-            signedInUser: getUserData(signedInUser),
+            signedInUserData: getUserData(signedInUser),
             workspaceData: null,
         });
     }
@@ -143,9 +141,10 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
         const access = await canUserAdministerWorkspace(signedInUser, existingWorkspace);
         if (!access) {
             return res.json({
+                dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Access denied',
-                signedInUser: getUserData(signedInUser),
+                signedInUserData: getUserData(signedInUser),
                 workspaceData: null,
             });
         }
@@ -201,9 +200,10 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
                 if (existingWorkspaceUser.role !== newWorkspaceUser.role) {
                     if (!canUserChangeUserRoleRole(signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser.role)) {
                         return res.json({
+                            dataType: true,
                             status: ResponseStatus.UnexpectedError,
                             errorMessage: 'Access denied',
-                            signedInUser: getUserData(signedInUser),
+                            signedInUserData: getUserData(signedInUser),
                             workspaceData: null,
                         });
                     }
@@ -223,9 +223,10 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
                 // delete existing
                 if (!canUserDeleteWorkspaceUser(signedInWorkspaceUser, existingWorkspaceUser)) {
                     return res.json({
+                        dataType: true,
                         status: ResponseStatus.UnexpectedError,
                         errorMessage: 'Access denied',
-                        signedInUser: getUserData(signedInUser),
+                        signedInUserData: getUserData(signedInUser),
                         workspaceData: null,
                     });
                 }
@@ -240,8 +241,6 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
             }
         }
     }
-
-
 
     for(const permissionUser of req.body.workspaceUsers) {
         const existing = existingWorkspaceUsers.filter(wu => wu.userId === permissionUser.userId);
@@ -288,16 +287,11 @@ workspaces.post('/create', async (req: Request<{}, {}, WorkspaceCreateRequest>, 
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(signedInUser),
+        signedInUserData: getUserData(signedInUser),
         errorMessage: null,
-        workspaceData: {
-            id: workspace.id,
-            name: workspace.name,
-            description: workspace.description,
-            users: getPermissionUsersFromWorkspace(workspace, signedInUser),
-            myRole: getUsersMyRoleForWorkspace(workspace, signedInUser)
-        }
+        workspaceData: getWorkspaceData(workspace, signedInUser),
     });
 });
 
@@ -307,10 +301,11 @@ workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<Worksp
     const hasRights = canUserViewWorkspaceId(user,req.body.workspaceId);
     if (!hasRights) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not allowed to view this workspace.',
-            signedInUser: null,
-            cardSets: null,
+            signedInUserData: null,
+            cardSetDatas: null,
         });
     }
 
@@ -323,14 +318,11 @@ workspaces.get('/:workspaceId/card-sets', async (req, res : TypedResponse<Worksp
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
         errorMessage: null,
-        cardSets: cardSets.map(cs => ({
-            id: cs.id,
-            name: cs.name,
-            description: cs.description,
-        }))
+        cardSetDatas: cardSets.map(cs => getCardSetData(cs))
     });
 });
 
@@ -339,10 +331,11 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
 
     if (user.isGuest) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Guest users are not allowed to create card sets. please sign in first!',
-            signedInUser: null,
-            cardSetId: null,
+            signedInUserData: null,
+            cardSetData: null,
         });
     }
 
@@ -350,46 +343,85 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
 
     if (errors.length !== 0) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUser: null,
-            cardSetId: null,
+            signedInUserData: null,
+            cardSetData: null,
         });
     }
 
     const hasRights = canUserContributeToWorkspaceId(user,req.body.workspaceId);
     if (!hasRights) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not allowed to create card sets in this workspace.',
-            signedInUser: null,
-            cardSetId: null,
+            signedInUserData: null,
+            cardSetData: null,
         });
     }
 
-    const newCardSet = await prisma.cardSet.create({
-        data: {
-            name: req.body.name,
-            description: req.body.description,
-            workspaceId: req.body.workspaceId,
-        }
-    });
+    const scope = req.body.cardSetId ? 'edit' : 'create';
 
-    const cardSetUser = await prisma.cardSetUser.create({
-        data: {
-            cardSetId: newCardSet.id,
-            userId: user.id,
-            role: UserRole.OWNER,
+    let returnCardSetId : number;
+    if (scope === 'create') {
+        const returnCardSet = await prisma.cardSet.create({
+            data: {
+                name: req.body.name,
+                description: req.body.description,
+                workspaceId: req.body.workspaceId,
+            }
+        });
+        returnCardSetId = returnCardSet.id;
+    } else {
+        const existingCardSet = await prisma.cardSet.findUniqueOrThrow({
+            where: {
+                id: req.body.cardSetId,
+            }
+        });
+
+        if (existingCardSet.workspaceId !== req.body.workspaceId) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Access denied',
+                signedInUserData: null,
+                cardSetData: null,
+            });
         }
-    });
+
+        if (existingCardSet.name !== req.body.name || existingCardSet.description !== req.body.description) {
+            await prisma.cardSet.update({
+                where: {
+                    id: req.body.cardSetId,
+                },
+                data: {
+                    name: req.body.name,
+                    description: req.body.description,
+                }
+            });
+        }
+        returnCardSetId = existingCardSet.id;
+    }
 
     user = await getSignedInUser(req.session);
 
+    // TODO PREVENT TWO CARD SETS WITH SAME NAME IN SAME WORKSPACE
+    asdasdsaasdasd
+
+    const returnCardSet = await prisma.cardSet.findUniqueOrThrow({
+        where: {
+            id: returnCardSetId
+        }
+    });
+
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
         errorMessage: null,
-        cardSetId: newCardSet.id,
+        cardSetData: getCardSetData(returnCardSet),
     });
 });
 

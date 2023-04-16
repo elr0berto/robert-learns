@@ -1,4 +1,6 @@
-export type CardSetData = {
+import { DataType } from "./BaseResponse.js";
+
+export type CardSetData = DataType & {
     id: number;
     name: string;
     description: string;

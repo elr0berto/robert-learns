@@ -12,12 +12,10 @@ import {
     WorkspaceUser as PrismaWorkspaceUser,
     UserRole as PrismaUserRole
 } from '@prisma/client';
-import {MediaData, UserData} from "@elr0berto/robert-learns-shared/api/models";
+import {CardSetData, MediaData, UserData, WorkspaceData} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
 import { PermissionUser, UserRole } from '@elr0berto/robert-learns-shared/types';
-
-
 
 export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
@@ -85,8 +83,7 @@ export const getUserData = (user: PrismaUser) : UserData => {
     };
 }
 
-
-export const getUrlFromMedia = (media: MediaData) : string => {
+export const getUrlFromMediaData = (media: MediaData) : string => {
     return '/api/media/'+media.id+'/'+media.name;
 }
 
@@ -103,11 +100,9 @@ export const awaitExec = (cmd: string) : Promise<void> => {
     });
 }
 
-function getMediaData(media: PrismaMedia | null) : MediaData | null {
-    if (media === null) {
-        return null;
-    }
+export const getMediaData = (media: PrismaMedia) : MediaData => {
     return {
+        dataType: true,
         id: media.id,
         name: media.name,
     };
@@ -115,6 +110,7 @@ function getMediaData(media: PrismaMedia | null) : MediaData | null {
 
 function getFaceData(face: PrismaCardFace) : CardFaceData {
     return {
+        dataType: true,
         content: face.content,
         side: face.side
     };
@@ -124,10 +120,11 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
     const front = card.faces.filter(f => f.side === PrismaCardSide.FRONT)[0];
     const back = card.faces.filter(f => f.side === PrismaCardSide.BACK)[0];
     return {
+        dataType: true,
         id: card.id,
         front: getFaceData(front),
         back: getFaceData(back),
-        audio: getMediaData(card.audio)
+        audioData: card.audio === null ? null : getMediaData(card.audio)
     };
 }
 
@@ -252,4 +249,24 @@ export const getUsersMyRoleForWorkspace = (workspace: PrismaWorkspace & { users 
     }
 
     return workspaceUser?.role ?? guestWorkspaceUser?.role;
+}
+
+export const getWorkspaceData = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : WorkspaceData => {
+    return {
+        dataType: true,
+        id: workspace.id,
+        name: workspace.name,
+        description: workspace.description,
+        users: getPermissionUsersFromWorkspace(workspace, user),
+        myRole: getUsersMyRoleForWorkspace(workspace, user)
+    };
+}
+
+export const getCardSetData = (cardSet: PrismaCardSet) : CardSetData => {
+    return {
+        dataType: true,
+        id: cardSet.id,
+        name: cardSet.name,
+        description: cardSet.description,
+    };
 }

@@ -1,3 +1,5 @@
+import { DataType } from "./BaseResponse.js";
+
 const CardSide = {
     FRONT: 'FRONT',
     BACK: 'BACK'
@@ -5,7 +7,7 @@ const CardSide = {
 
 type CardSide = (typeof CardSide)[keyof typeof CardSide]
 
-export type CardFaceData = {
+export type CardFaceData = DataType & {
     content: string | null;
     side: CardSide;
 }

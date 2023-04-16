@@ -1,7 +1,8 @@
 import { role1IsAtLeastRole2 } from "../../common/index.js";
 import {PermissionUser, UserRole} from "../../types/index.js";
+import { DataType } from "./BaseResponse.js";
 
-export type WorkspaceData = {
+export type WorkspaceData = DataType & {
     id: number;
     name: string;
     description: string;

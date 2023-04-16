@@ -9,9 +9,10 @@ signOut.post('/', async (req, res : TypedResponse<BaseResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
     });
 });
 

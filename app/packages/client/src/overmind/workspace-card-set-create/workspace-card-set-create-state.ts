@@ -1,6 +1,7 @@
 import {derived} from 'overmind'
 import {validateWorkspaceCardSetCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
 import {config} from "..";
+import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type WorkspaceCardSetCreateFormState = {
     name: string;
@@ -18,10 +19,10 @@ type WorkspaceCardSetCreateState = {
     form: WorkspaceCardSetCreateFormState;
 }
 
-export const getInitialWorkspaceCardSetCreateState = (): WorkspaceCardSetCreateState => ({
+export const getInitialWorkspaceCardSetCreateState = (cardSet: CardSet | null): WorkspaceCardSetCreateState => ({
     form: {
-        name: '',
-        description: '',
+        name: cardSet?.name ?? '',
+        description: cardSet?.description ?? '',
         submitting: false,
         submitAttempted: false,
         submissionError: '',
@@ -31,6 +32,7 @@ export const getInitialWorkspaceCardSetCreateState = (): WorkspaceCardSetCreateS
         validationErrors: derived((state: WorkspaceCardSetCreateFormState, rootState: typeof config.state) => {
             let errors = validateWorkspaceCardSetCreateRequest({
                 name: state.name.trim(),
+                description: state.description.trim(),
                 workspaceId: rootState.workspace.workspaceId!,
             });
             return errors;
@@ -51,4 +53,4 @@ export const getInitialWorkspaceCardSetCreateState = (): WorkspaceCardSetCreateS
     },
 });
 
-export const state: WorkspaceCardSetCreateState = getInitialWorkspaceCardSetCreateState();
+export const state: WorkspaceCardSetCreateState = getInitialWorkspaceCardSetCreateState(null);

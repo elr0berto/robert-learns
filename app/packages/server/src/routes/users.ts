@@ -9,20 +9,22 @@ users.get('/getByEmail', async (req : Request<{},{},{},UserGetByEmailRequest>, r
     const signedInUser = await getSignedInUser(req.session);
     if (signedInUser.isGuest) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Not signed in.',
-            signedInUser: null,
-            user: null,
+            signedInUserData: null,
+            userData: null,
         });
     }
 
     const errors = validateUserGetByEmailRequest(req.query);
     if (errors.length > 0) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: 'Invalid email: ' + errors.join(', ') + ' ' + JSON.stringify(req.params),
-            signedInUser: getUserData(signedInUser),
-            user: null,
+            signedInUserData: getUserData(signedInUser),
+            userData: null,
         });
     }
 
@@ -33,10 +35,11 @@ users.get('/getByEmail', async (req : Request<{},{},{},UserGetByEmailRequest>, r
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUser: getUserData(signedInUser),
-        user: user === null || user.isGuest ? null : getUserData(user),
+        signedInUserData: getUserData(signedInUser),
+        userData: user === null || user.isGuest ? null : getUserData(user),
     });
 });
 

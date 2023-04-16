@@ -1,4 +1,6 @@
-export type UserData = {
+import { DataType } from "./BaseResponse.js";
+
+export type UserData = DataType & {
     id: number;
     email: string;
     username: string;

@@ -40,50 +40,15 @@ export const workspaceCreate = async(params: WorkspaceCreateRequest) : Promise<W
     return await apiClient.post(WorkspaceCreateResponse, '/workspaces/create', params);
 }
 
-export type WorkspaceEditResponseData = BaseResponseData & {
-    workspaceData: WorkspaceData | null;
-}
-
-export class WorkspaceEditResponse extends BaseResponse {
-    workspace: Workspace | null;
-    constructor(data: WorkspaceEditResponseData) {
-        super(data);
-        this.workspace = data.workspaceData === null ? null : new Workspace(data.workspaceData);
-    }
-}
-
-export type WorkspaceEditRequest = {
-    name: string;
-    description: string;
-    allowGuests: boolean;
-    workspaceUsers: PermissionUser[]
-}
-
-export const validateWorkspaceEditRequest = (req: WorkspaceEditRequest) : string[] => {
-    let errs : string[] = [];
-    if (req.name.trim().length === 0) {
-        errs.push('You must enter a name');
-    }
-    if (req.description.trim().length === 0) {
-        errs.push('Please provide a description');
-    }
-
-    return errs;
-}
-
-export const workspaceEdit = async(params: WorkspaceEditRequest) : Promise<WorkspaceEditResponse> => {
-    return await apiClient.post(WorkspaceEditResponse, '/workspaces/edit', params);
-}
-
 export type WorkspaceListResponseData = BaseResponseData & {
-    workspaces: WorkspaceData[] | null;
+    workspaceDatas: WorkspaceData[] | null;
 }
 
 export class WorkspaceListResponse extends BaseResponse {
     workspaces: Workspace[];
     constructor(data: WorkspaceListResponseData) {
         super(data);
-        this.workspaces = data.workspaces?.map(wd => new Workspace(wd)) ?? [];
+        this.workspaces = data.workspaceDatas?.map(wd => new Workspace(wd)) ?? [];
     }
 }
 
@@ -92,35 +57,35 @@ export const workspaceList = async() : Promise<WorkspaceListResponse> => {
 }
 
 export type WorkspaceCardSetListResponseData = BaseResponseData & {
-    cardSets: CardSetData[] | null;
+    cardSetDatas: CardSetData[] | null;
 }
 
 export class WorkspaceCardSetListResponse extends BaseResponse {
     cardSets: CardSet[];
     constructor(data: WorkspaceCardSetListResponseData) {
         super(data);
-        this.cardSets = data.cardSets?.map(csd => new CardSet(csd)) ?? [];
+        this.cardSets = data.cardSetDatas?.map(csd => new CardSet(csd)) ?? [];
     }
 }
 
 export const workspaceCardSetList = async(workspace : Workspace) : Promise<WorkspaceCardSetListResponse> => {
-    console.log('workspaceCardSetList ', '/workspace/'+workspace.id+'/card-sets/');
     return await apiClient.get(WorkspaceCardSetListResponse, '/workspaces/'+workspace.id+'/card-sets/');
 }
 
 export type WorkspaceCardSetCreateResponseData = BaseResponseData & {
-    cardSetId: number | null;
+    cardSetData: CardSetData | null;
 }
 
 export class WorkspaceCardSetCreateResponse extends BaseResponse {
-    cardSetId: number | null;
+    cardSet: CardSet | null;
     constructor(data: WorkspaceCardSetCreateResponseData) {
         super(data);
-        this.cardSetId = data.cardSetId;
+        this.cardSet = data.cardSetData === null ? null : new CardSet(data.cardSetData);
     }
 }
 
 export type WorkspaceCardSetCreateRequest = {
+    cardSetId?: number;
     workspaceId: number;
     name: string;
     description: string;

@@ -25,19 +25,21 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
 
             if (!fs.existsSync(outPath)) {
                 return res.json({
+                    dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    signedInUser: getUserData(user),
+                    signedInUserData: getUserData(user),
                     errorMessage: 'failed to process audio file! err: exists',
-                    card: null,
+                    cardData: null,
                 });
             }
             var stats = fs.statSync(outPath);
             if (stats.size <= 0) {
                 return res.json({
+                    dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    signedInUser: getUserData(user),
+                    signedInUserData: getUserData(user),
                     errorMessage: 'failed to process audio file! err: size',
-                    card: null,
+                    cardData: null,
                 });
             }
 
@@ -51,10 +53,11 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
             });
         } catch (ex) {
             return res.json({
+                dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUser: getUserData(user),
+                signedInUserData: getUserData(user),
                 errorMessage: 'failed to process audio file! err: ex' + (ex?.toString()),
-                card: null,
+                cardData: null,
             });
         }
     }
@@ -99,10 +102,11 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
         errorMessage: null,
-        card: getCardData(card!)
+        cardData: getCardData(card!)
     });
 });
 

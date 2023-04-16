@@ -32,6 +32,5 @@ export const validateSignUpRequest = (req: SignUpRequest) : string[] => {
 }
 
 export const signUp = async(params: SignUpRequest) : Promise<BaseResponse> => {
-    console.log('SignUp');
     return await apiClient.post(BaseResponse, '/sign-up', params);
 }

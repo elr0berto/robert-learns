@@ -1,4 +1,6 @@
-export type MediaData = {
+import { DataType } from "./BaseResponse.js";
+
+export type MediaData = DataType & {
     id: number;
     name: string;
 }

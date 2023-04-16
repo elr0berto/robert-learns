@@ -13,9 +13,10 @@ signIn.get('/check', async (req, res : TypedResponse<BaseResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
     });
 });
 
@@ -24,9 +25,10 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
 
     if (errors.length !== 0) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
@@ -41,17 +43,19 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
 
     if (u1 === null) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: 'Login/password is wrong!!',
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
     if (!bcrypt.compareSync(req.body.password, u1.password)) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: 'Login/password is wrong!',
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
@@ -60,9 +64,10 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
     const user = await getSignedInUser(req.session);
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
     });
 });
 

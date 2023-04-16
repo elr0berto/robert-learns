@@ -2,17 +2,15 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData, CardSet, CardSetData} from "./models/index.js";
 import { Card, CardData} from "./models/Card.js";
 
-
-
 export type CardSetCardListResponseData = BaseResponseData & {
-    cards: CardData[] | null;
+    cardDatas: CardData[] | null;
 }
 
 export class CardSetCardListResponse extends BaseResponse {
     cards: Card[];
     constructor(data: CardSetCardListResponseData) {
         super(data);
-        this.cards = data.cards?.map(cd => new Card(cd)) ?? [];
+        this.cards = data.cardDatas?.map(cd => new Card(cd)) ?? [];
     }
 }
 
@@ -49,14 +47,14 @@ export type CardSetDeleteCardRequest = {
 }
 
 export type CardSetDeleteCardResponseData = BaseResponseData & {
-    cardExistsInOtherCardSets: CardSetData[] | null;
+    cardExistsInOtherCardSetDatas: CardSetData[] | null;
 }
 
 export class CardSetDeleteCardResponse extends BaseResponse {
     cardExistsInOtherCardSets: CardSet[];
     constructor(data: CardSetDeleteCardResponseData) {
         super(data);
-        this.cardExistsInOtherCardSets = data.cardExistsInOtherCardSets?.map(cs => new CardSet(cs)) ?? [];
+        this.cardExistsInOtherCardSets = data.cardExistsInOtherCardSetDatas?.map(cs => new CardSet(cs)) ?? [];
     }
 }
 

@@ -1,11 +1,13 @@
 import {Media,MediaData} from "./Media.js";
 import {CardFace,CardFaceData} from "./CardFace.js";
+import { DataType } from "./BaseResponse.js";
 
-export type CardData = {
+
+export type CardData = DataType & {
     id: number;
     front: CardFaceData;
     back: CardFaceData;
-    audio: MediaData | null;
+    audioData: MediaData | null;
 }
 
 export class Card {
@@ -18,6 +20,6 @@ export class Card {
         this.id = data.id;
         this.front = new CardFace(data.front);
         this.back = new CardFace(data.back);
-        this.audio = data.audio === null ? null : new Media(data.audio);
+        this.audio = data.audioData === null ? null : new Media(data.audioData);
     }
 }

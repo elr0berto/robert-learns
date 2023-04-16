@@ -1,6 +1,9 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {deleteCardSetCard, getCardData, getSignedInUser, getUrlFromMedia, getUserData, TypedResponse} from "../common.js";
+import {
+    deleteCardSetCard, getCardData, getCardSetData, getMediaData, getSignedInUser,
+    getUrlFromMediaData, getUserData, TypedResponse
+} from "../common.js";
 import { MediaType } from '@prisma/client';
 import {upload} from "../multer.js";
 import { fileTypeFromFile } from 'file-type';
@@ -30,10 +33,11 @@ cardSets.get('/:cardSetId/cards', async (req, res : TypedResponse<CardSetCardLis
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
         errorMessage: null,
-        cards: cardSetCards.map(csc => getCardData(csc.card))
+        cardDatas: cardSetCards.map(csc => getCardData(csc.card))
     });
 });
 
@@ -68,10 +72,11 @@ cardSets.post('/:cardSetId/uploadFile', upload.single('file'), async (req, res :
     });
 
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(user),
+        signedInUserData: getUserData(user),
         errorMessage: null,
-        url: getUrlFromMedia(newMedia)
+        url: getUrlFromMediaData(getMediaData(newMedia))
     });
 });
 
@@ -80,20 +85,22 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
 
     if (user.isGuest) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "guest cannot delete cards",
-            signedInUser: getUserData(user),
-            cardExistsInOtherCardSets: null,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
         });
     }
 
     const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
     if (!allowed) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
-            signedInUser: getUserData(user),
-            cardExistsInOtherCardSets: null,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
         });
     }
 
@@ -108,10 +115,11 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
         });
 
         return res.json({
+            dataType: true,
             status: ResponseStatus.Success,
             errorMessage: null,
-            signedInUser: getUserData(user),
-            cardExistsInOtherCardSets: cardSetCards.map(csc => ({id: csc.cardSet.id, name: csc.cardSet.name, description: csc.cardSet.description}))
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: cardSetCards.map(csc => getCardSetData(csc.cardSet))
         });
     }
 
@@ -121,10 +129,11 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
 
     if (card === null) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card not found, id: " + req.body.cardId,
-            signedInUser: getUserData(user),
-            cardExistsInOtherCardSets: null,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
         });
     }
 
@@ -137,19 +146,21 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
 
     if (cardSet === null) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card set not found, id: " + req.body.cardSetId,
-            signedInUser: getUserData(user),
-            cardExistsInOtherCardSets: null,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
         });
     }
 
     await deleteCardSetCard(cardSet, card);
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUser: getUserData(user),
-        cardExistsInOtherCardSets: null,
+        signedInUserData: getUserData(user),
+        cardExistsInOtherCardSetDatas: null,
     });
 });
 

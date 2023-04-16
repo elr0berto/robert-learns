@@ -11,9 +11,10 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
 
     if (!signedInUser.isGuest) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'already signed in, please sign out first.',
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
@@ -21,9 +22,10 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
 
     if (errors.length > 0) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: errors.join('. '),
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
@@ -35,9 +37,10 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
 
     if (existingUser !== null) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: "User with email " + req.body.email + " already exists.",
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
@@ -49,9 +52,10 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
 
     if (existingUser !== null) {
         return res.json({
+            dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: "User with email " + req.body.email + " already exists.",
-            signedInUser: null,
+            signedInUserData: null,
         });
     }
 
@@ -68,8 +72,9 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
 
     req.session.userId = newUser.id;
     return res.json({
+        dataType: true,
         status: ResponseStatus.Success,
-        signedInUser: getUserData(newUser),
+        signedInUserData: getUserData(newUser),
         errorMessage: null,
     });
 });

@@ -4,6 +4,7 @@ import queryString from "query-string";
 import {getInitialSignUpState} from "../sign-up/sign-up-state";
 import {getInitialSignInState} from "../sign-in/sign-in-state";
 import {getInitialWorkspaceCreateState} from "../workspace-create/workspace-create-state";
+import {getInitialWorkspaceCardSetCreateState} from "../workspace-card-set-create/workspace-card-set-create-state";
 
 export type Payload = {
     params: any,
@@ -48,7 +49,6 @@ export const _setWorkspacePage = async ({state, effects, actions}: Context, {pay
             await actions.workspaceCardSet._loadCards();
         }
     }
-
 }
 
 export const showWorkspacePage = async ({ state, effects, actions }: Context, payload: Payload) => {
@@ -76,11 +76,13 @@ export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Cont
 }
 
 export const showWorkspaceCardSetCreatePage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    actions.page._loadAllData();
-    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetCreate});
+    await actions.page._loadAllData();
+    await actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetCreate});
+    state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(null);
 }
 
 export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    actions.page._loadAllData();
-    actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetEdit});
+    await actions.page._loadAllData();
+    await actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetEdit});
+    state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(state.workspaceCardSet.cardSet);
 }

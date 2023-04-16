@@ -7,14 +7,14 @@ export type UserGetByEmailRequest = {
 }
 
 export type UserGetByEmailResponseData = BaseResponseData & {
-    user: UserData | null;
+    userData: UserData | null;
 }
 
 export class UserGetByEmailResponse extends BaseResponse {
     user: User | null;
     constructor(data: UserGetByEmailResponseData) {
         super(data);
-        this.user = data.user === null ? null : new User(data.user);
+        this.user = data.userData === null ? null : new User(data.userData);
     }
 }
 
@@ -32,8 +32,9 @@ export const userGetByEmail = async(req: UserGetByEmailRequest) : Promise<UserGe
     const errors = validateUserGetByEmailRequest(req);
     if (errors.length > 0) {
         return new UserGetByEmailResponse({
-            user: null,
-            signedInUser: null,
+            dataType: true,
+            userData: null,
+            signedInUserData: null,
             errorMessage: errors.join('.'),
             status: ResponseStatus.UserError,
         });

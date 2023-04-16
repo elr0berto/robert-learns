@@ -8,10 +8,14 @@ export enum ResponseStatus {
     UnexpectedError = "UnexpectedError",
 }
 
-export type BaseResponseData = {
+export type DataType = {
+    dataType: true;
+}
+
+export type BaseResponseData = DataType & {
     errorMessage: string | null;
     status: ResponseStatus;
-    signedInUser: UserData | null;
+    signedInUserData: UserData | null;
 }
 
 export class BaseResponse {
@@ -22,6 +26,6 @@ export class BaseResponse {
     constructor(data: BaseResponseData) {
         this.errorMessage = data.errorMessage;
         this.status = data.status;
-        this.signedInUser = data.signedInUser === null ? null : new User(data.signedInUser);
+        this.signedInUser = data.signedInUserData === null ? null : new User(data.signedInUserData);
     }
 }

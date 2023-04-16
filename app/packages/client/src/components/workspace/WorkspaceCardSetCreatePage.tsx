@@ -1,13 +1,16 @@
 import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Container, Form} from "react-bootstrap";
 import React from "react";
+import {Pages} from "../../page-urls";
 
 function WorkspaceCardSetCreatePage() {
     const state = useAppState();
     const actions = useActions();
 
+    const scope = state.page.current === Pages.WorkspaceCardSetCreate ? 'create' : 'edit';
+
     if (state.signIn.user!.isGuest) {
-        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to create card sets</Alert></Container>;
+        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to {scope} Card Sets</Alert></Container>;
     }
 
     if (state.workspace.workspace === null) {
@@ -17,8 +20,25 @@ function WorkspaceCardSetCreatePage() {
             return <Container>Workspace not found.</Container>
         }
     }
+
+    if (scope === 'edit' && state.workspaceCardSet.cardSet === null) {
+        if (state.workspace.cardSetsLoading) {
+            return <Container>Loading...</Container>;
+        } else {
+            return <Container>Card Set not found.</Container>
+        }
+    }
+
+    if (scope === 'edit' && !state.workspaceCardSet.currentUserCanEdit) {
+        return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this Card Set</Alert></Container>;
+    }
+
+    if (scope === 'create' && !state.workspace.currentUserCanEdit) {
+        return <Container className="my-5"><Alert variant="danger">You are not allowed to create Card Sets in this workspace</Alert></Container>;
+    }
+
     return <Container>
-        <h1 className="my-5">Create card set in workspace {state.workspace.workspace.name}</h1>
+        <h1 className="my-5">{scope === 'create' ? 'Create a Card Set ' : 'Edit Card Set ' + state.workspaceCardSet.cardSet!.name} in workspace {state.workspace.workspace.name}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="cardSetName">
                 <Form.Label>Card Set Name</Form.Label>
@@ -29,7 +49,7 @@ function WorkspaceCardSetCreatePage() {
                 <Form.Control type="text" placeholder="Please provide a short description for your card set" value={state.workspaceCardSetCreate.form.description} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.workspaceCardSetCreate.changeFormDescription(event.currentTarget.value)}/>
             </Form.Group>
             {state.workspaceCardSetCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCardSetCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
-            <Button disabled={state.workspaceCardSetCreate.form.submitDisabled} onClick={() => actions.workspaceCardSetCreate.formSubmit()}>Create Card Set!</Button>
+            <Button disabled={state.workspaceCardSetCreate.form.submitDisabled} onClick={() => actions.workspaceCardSetCreate.formSubmit(scope)}>{scope === 'create' ? 'Create Card Set!' : 'Save Card Set!'}</Button>
         </Form>
     </Container>;
 }

@@ -31,9 +31,10 @@ function TopMenu() {
                     {!state.workspaces.loading && (
                         state.page.current === Pages.Workspace ||
                         state.page.current === Pages.WorkspaceCardSetCreate ||
+                        state.page.current === Pages.WorkspaceCardSetEdit ||
                         state.page.current === Pages.WorkspaceCardSet) ?
                         <NavDropdown title={
-                                state.page.current === Pages.WorkspaceCardSet && state.workspaceCardSet.cardSet !== null ?
+                                (state.page.current === Pages.WorkspaceCardSet || state.page.current === Pages.WorkspaceCardSetEdit) && state.workspaceCardSet.cardSet !== null ?
                                 state.workspaceCardSet.cardSet.name :
                                 (state.workspace.cardSetsLoading ? 'Loading card sets...' : ('Card sets ('+ state.workspace.cardSets.length +')' ))}>
                             {state.workspace.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.workspace.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}

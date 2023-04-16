@@ -2,11 +2,6 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
 
-export type WorkspaceCardSetCreateRequest = {
-    workspaceId: number;
-    name: string;
-}
-
 export type CardCreateRequest = {
     cardSetId: number,
     front: string | null;
@@ -14,16 +9,15 @@ export type CardCreateRequest = {
     audio: File | null;
 };
 
-
 export type CardCreateResponseData = BaseResponseData & {
-    card: CardData | null;
+    cardData: CardData | null;
 }
 
 export class CardCreateResponse extends BaseResponse {
     card: Card | null;
     constructor(data: CardCreateResponseData) {
         super(data);
-        this.card = data.card === null ? null : new Card(data.card);
+        this.card = data.cardData === null ? null : new Card(data.cardData);
     }
 }
 
