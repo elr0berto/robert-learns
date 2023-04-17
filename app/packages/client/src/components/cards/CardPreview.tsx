@@ -14,9 +14,9 @@ type Props = {
 
 function CardPreview(props: Props) {
     return <div className="card-preview border p-2">
-        <CardPreviewFace content={props.card.front.content}/>
+        <CardPreviewFace content={props.card.front?.content ?? ''}/>
         <hr/>
-        <CardPreviewFace content={props.card.back.content}/>
+        <CardPreviewFace content={props.card.back?.content ?? ''}/>
         {props.card.audio !== null ? <AudioPlayer
             src={props.card.audio.getUrl()}
             onPlay={e => console.log("onPlay")}

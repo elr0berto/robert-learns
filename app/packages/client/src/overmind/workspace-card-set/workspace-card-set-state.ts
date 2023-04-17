@@ -7,7 +7,8 @@ type WorkspaceCardSetState = {
     cardSetId: number | null;
     cardsLoading: boolean;
     cards: Card[];
-    cardBeingDeleted: Card | null;
+    cardIdBeingDeleted: number | null;
+    readonly cardBeingDeleted: Card | null;
     cardBeingDeletedExistsInOtherCardSets: CardSet[] | null;
     confirmingDeleteCard: boolean;
     readonly showConfirmDeleteModal: boolean;
@@ -20,7 +21,17 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
     cardSetId: null,
     cardsLoading: false,
     cards: [],
-    cardBeingDeleted: null,
+    cardIdBeingDeleted: null,
+    cardBeingDeleted: derived((state: WorkspaceCardSetState) => {
+        if (state.cardIdBeingDeleted === null) {
+            return null;
+        }
+        const found = state.cards.filter(c => c.id === state.cardIdBeingDeleted);
+        if (found.length !== 1) {
+            return null;
+        }
+        return found[0];
+    }),
     cardBeingDeletedExistsInOtherCardSets: null,
     confirmingDeleteCard: false,
     showConfirmDeleteModal: derived((state: WorkspaceCardSetState) => {

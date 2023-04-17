@@ -8,7 +8,9 @@ export const objectMap = <TObject extends {}, TRet>(obj : TObject, fn : (v: any,
     );
 
 export function removeItem<T>(arr: Array<T>, value: T): Array<T> {
+    console.log('removeItem');
     const index = arr.indexOf(value);
+    console.log('removeItem index', index);
     if (index > -1) {
         arr.splice(index, 1);
     }

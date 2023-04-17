@@ -131,11 +131,8 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
 
 export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard) : Promise<void> => {
     await prisma.$transaction(async (tx) => {
-        await tx.cardFace.deleteMany({
-            where: {
-                cardId: card.id
-            }
-        });
+
+        // remove the link to the current card set
         await tx.cardSetCard.delete({
             where: {
                 cardId_cardSetId: {
@@ -144,15 +141,22 @@ export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard
                 }
             }
         });
+
+        // check if card still exists in other card sets
         const cardSetCardsRemaining = await tx.cardSetCard.findMany({
             where: {
                 cardId: card.id
             }
         });
 
-        console.log('cardSetCardsRemaining: ', cardSetCardsRemaining);
-
+        // if not, delete the card
         if (cardSetCardsRemaining.length === 0) {
+            await tx.cardFace.deleteMany({
+                where: {
+                    cardId: card.id
+                }
+            });
+
             await tx.card.delete({
                 where: {
                     id: card.id

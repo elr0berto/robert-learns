@@ -26,9 +26,15 @@ function WorkspaceCardSetPage() {
 
     return <Container>
         <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i> {state.workspaceCardSet.currentUserCanEdit ? <Button href={pageUrls.workspaceCardSetEdit.url(state.workspace.workspace, state.workspaceCardSet.cardSet)}>Edit card set</Button> : null}</h1>
-        {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted} onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)} cards={state.workspaceCardSet.cards}/>}
+        {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList
+            showActionButtons={state.workspace.currentUserCanContribute!}
+            cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted}
+            onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
+            cards={state.workspaceCardSet.cards}/>}
 
         {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal(state.workspaceCardSet.cardSetId!)}>+ Create card</Button> : null}
+        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.addCardsFromOtherCardSetsModal.openAddCardsFromOtherCardSetsModal(state.workspaceCardSet.cardSetId!)}>+ Add cards from other card sets</Button> : null}
+
 
         {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
             cardSet={state.workspaceCardSet.cardSet}

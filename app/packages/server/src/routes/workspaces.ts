@@ -366,6 +366,23 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
 
     let returnCardSetId : number;
     if (scope === 'create') {
+        const existingCardSetWithSameName = await prisma.cardSet.findFirst({
+            where: {
+                name: req.body.name,
+                workspaceId: req.body.workspaceId,
+            }
+        });
+
+        if (existingCardSetWithSameName) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UserError,
+                errorMessage: 'A card set with the same name already exists in this workspace.',
+                signedInUserData: null,
+                cardSetData: null,
+            });
+        }
+
         const returnCardSet = await prisma.cardSet.create({
             data: {
                 name: req.body.name,
@@ -392,6 +409,25 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
         }
 
         if (existingCardSet.name !== req.body.name || existingCardSet.description !== req.body.description) {
+            if (existingCardSet.name !== req.body.name) {
+                const existingCardSetWithSameName = await prisma.cardSet.findFirst({
+                    where: {
+                        name: req.body.name,
+                        workspaceId: req.body.workspaceId,
+                    }
+                });
+
+                if (existingCardSetWithSameName) {
+                    return res.json({
+                        dataType: true,
+                        status: ResponseStatus.UserError,
+                        errorMessage: 'A card set with the same name already exists in this workspace.',
+                        signedInUserData: null,
+                        cardSetData: null,
+                    });
+                }
+            }
+
             await prisma.cardSet.update({
                 where: {
                     id: req.body.cardSetId,
@@ -406,9 +442,6 @@ workspaces.post('/card-set-create', async (req: Request<{}, {}, WorkspaceCardSet
     }
 
     user = await getSignedInUser(req.session);
-
-    // TODO PREVENT TWO CARD SETS WITH SAME NAME IN SAME WORKSPACE
-    asdasdsaasdasd
 
     const returnCardSet = await prisma.cardSet.findUniqueOrThrow({
         where: {

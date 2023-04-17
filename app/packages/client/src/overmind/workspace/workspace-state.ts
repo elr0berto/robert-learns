@@ -9,6 +9,7 @@ type WorkspaceState = {
     cardSets: CardSet[];
     readonly workspace: Workspace | null;
     readonly currentUserCanEdit: boolean | null;
+    readonly currentUserCanContribute: boolean | null;
 }
 
 export const getInitialWorkspaceState = (): WorkspaceState => ({
@@ -30,6 +31,12 @@ export const getInitialWorkspaceState = (): WorkspaceState => ({
             return null;
         }
         return state.workspace.myRoleIsAtLeast(UserRole.ADMINISTRATOR);
+    }),
+    currentUserCanContribute: derived((state: WorkspaceState) => {
+        if (state.workspace === null) {
+            return null;
+        }
+        return state.workspace.myRoleIsAtLeast(UserRole.CONTRIBUTOR);
     }),
 });
 

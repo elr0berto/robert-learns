@@ -107,7 +107,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
     if (!req.body.confirm) {
         const cardSetCards = await prisma.cardSetCard.findMany({
            where: {
-               cardSetId: req.body.cardSetId
+               cardId: req.body.cardId
            },
            include: {
                cardSet: true
@@ -119,7 +119,7 @@ cardSets.post('/delete-card', async (req: Request<{}, {}, CardSetDeleteCardReque
             status: ResponseStatus.Success,
             errorMessage: null,
             signedInUserData: getUserData(user),
-            cardExistsInOtherCardSetDatas: cardSetCards.map(csc => getCardSetData(csc.cardSet))
+            cardExistsInOtherCardSetDatas: cardSetCards.filter(csc => csc.cardSetId !== req.body.cardSetId).map(csc => getCardSetData(csc.cardSet))
         });
     }
 
