@@ -33,7 +33,7 @@ function WorkspaceCardSetPage() {
             cards={state.workspaceCardSet.cards}/>}
 
         {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal(state.workspaceCardSet.cardSetId!)}>+ Create card</Button> : null}
-        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.addCardsFromOtherCardSetsModal.openAddCardsFromOtherCardSetsModal(state.workspaceCardSet.cardSetId!)}>+ Add cards from other card sets</Button> : null}
+        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.workspaceCardSet.cardSetId!)}>+ Add cards from other card sets</Button> : null}
 
 
         {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
@@ -43,6 +43,7 @@ function WorkspaceCardSetPage() {
             confirming={state.workspaceCardSet.confirmingDeleteCard}
             cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets!}
             card={state.workspaceCardSet.cardBeingDeleted!}/> : null}
+        <AddCardsFromOtherCardSetsModal/>
     </Container>;
 }
 
