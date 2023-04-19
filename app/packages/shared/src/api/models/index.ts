@@ -5,3 +5,4 @@ export * from './CardSet.js';
 export * from './Media.js';
 export * from './User.js';
 export * from './Workspace.js';
+export * from './CardSetCards.js';
