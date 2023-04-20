@@ -75,6 +75,14 @@
       "import": "./dist/api/users.js",
       "types": "./dist/api/users.d.ts"
     },
+    "./api/media": {
+      "import": "./dist/api/media.js",
+      "types": "./dist/api/media.d.ts"
+    },
+    "./dist/api/media": {
+      "import": "./dist/api/media.js",
+      "types": "./dist/api/media.d.ts"
+    },
     "./common": {
       "import": "./dist/common/index.js",
       "types": "./dist/common/index.d.ts"

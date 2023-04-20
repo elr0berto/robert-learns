@@ -52,6 +52,7 @@ model Workspace {
   description String
   users   WorkspaceUser[]
   cardSets CardSet[]
+  medias  Media[]
 }
 
 enum MediaType {
@@ -65,8 +66,8 @@ model Media {
   name      String
   type      MediaType
   cards     Card[]
-  cardSet   CardSet? @relation(fields: [cardSetId], references: [id])
-  cardSetId Int?
+  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
 }
 
 model Card {
@@ -106,7 +107,6 @@ model CardSet {
   description String @default("")
   cards   CardSetCard[]
   users   CardSetUser[]
-  medias  Media[]
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId Int
 }

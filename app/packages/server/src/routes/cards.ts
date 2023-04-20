@@ -1,13 +1,54 @@
-import {Router} from 'express';
-import {awaitExec, getCardData, getSignedInUser, getUserData, TypedResponse} from '../common.js';
+import {Request, Router} from 'express';
+import {
+    awaitExec,
+    deleteCardSetCard,
+    getCardData,
+    getCardSetData,
+    getSignedInUser,
+    getUserData,
+    TypedResponse
+} from '../common.js';
 import {upload} from "../multer.js";
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
 import {CardSide, MediaType} from "@prisma/client";
-import { CardCreateResponseData } from '@elr0berto/robert-learns-shared/api/cards';
+import { CardCreateResponseData, DeleteCardFromCardSetRequest, DeleteCardFromCardSetResponseData } from '@elr0berto/robert-learns-shared/api/cards';
+import { canUserDeleteCardsFromCardSetId } from '../security.js';
+import { GetCardsForCardSetResponseData } from "@elr0berto/robert-learns-shared/api/cards";
 
 const cards = Router();
+
+cards.get('/getCardsForCardSet/:cardSetId', async (req, res : TypedResponse<GetCardsForCardSetResponseData>) => {
+    let user = await getSignedInUser(req.session);
+
+    // TODO: Check that signedInUser can view this card set
+
+
+    const cardSetCards = await prisma.cardSetCard.findMany({
+        where: {
+            cardSetId: {
+                equals: parseInt(req.params.cardSetId)
+            }
+        },
+        include: {
+            card : {
+                include: {
+                    faces: true,
+                    audio: true,
+                },
+            },
+        },
+    });
+
+    return res.json({
+        dataType: true,
+        status: ResponseStatus.Success,
+        signedInUserData: getUserData(user),
+        errorMessage: null,
+        cardDatas: cardSetCards.map(csc => getCardData(csc.card))
+    });
+});
 
 cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse<CardCreateResponseData>) => {
     const user = await getSignedInUser(req.session);
@@ -47,7 +88,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
                 data: {
                     path: outPath,
                     name: req.file.originalname+'.mp3',
-                    cardSetId: parseInt(req.body.cardSetId),
+                    workspaceId: parseInt(req.body.workspaceId),
                     type: MediaType.AUDIO
                 }
             });
@@ -107,6 +148,91 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
         signedInUserData: getUserData(user),
         errorMessage: null,
         cardData: getCardData(card!)
+    });
+});
+
+
+cards.post('/delete-card-from-card-set/', async (req: Request<{}, {}, DeleteCardFromCardSetRequest>, res : TypedResponse<DeleteCardFromCardSetResponseData>) => {
+    const user = await getSignedInUser(req.session);
+
+    if (user.isGuest) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "guest cannot delete cards",
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
+        });
+    }
+
+    const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
+    if (!allowed) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
+        });
+    }
+
+    if (!req.body.confirm) {
+        const cardSetCards = await prisma.cardSetCard.findMany({
+            where: {
+                cardId: req.body.cardId
+            },
+            include: {
+                cardSet: true
+            }
+        });
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: cardSetCards.filter(csc => csc.cardSetId !== req.body.cardSetId).map(csc => getCardSetData(csc.cardSet))
+        });
+    }
+
+    const card = await prisma.card.findFirst({
+        where: { id: req.body.cardId },
+    });
+
+    if (card === null) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "card not found, id: " + req.body.cardId,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
+        });
+    }
+
+    const cardSet = await prisma.cardSet.findFirst({
+        where: { id: req.body.cardSetId },
+        include: {
+            workspace: true
+        }
+    });
+
+    if (cardSet === null) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: "card set not found, id: " + req.body.cardSetId,
+            signedInUserData: getUserData(user),
+            cardExistsInOtherCardSetDatas: null,
+        });
+    }
+
+    await deleteCardSetCard(cardSet, card);
+    return res.json({
+        dataType: true,
+        status: ResponseStatus.Success,
+        errorMessage: null,
+        signedInUserData: getUserData(user),
+        cardExistsInOtherCardSetDatas: null,
     });
 });
 

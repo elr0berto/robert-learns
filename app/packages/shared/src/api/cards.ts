@@ -1,6 +1,21 @@
 import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
+import {CardSet, CardSetData} from "./models/CardSet.js";
+export type GetCardsForCardSetResponseData = BaseResponseData & {
+    cardDatas: CardData[] | null;
+}
+
+export class GetCardsForCardSetResponse extends BaseResponse {
+    cards: Card[];
+    constructor(data: GetCardsForCardSetResponseData) {
+        super(data);
+        this.cards = data.cardDatas?.map(cd => new Card(cd)) ?? [];
+    }
+}
+export const getCardsForCardSet = async(cardSetId : number) : Promise<GetCardsForCardSetResponse> => {
+    return await apiClient.get(GetCardsForCardSetResponse, '/cards/getCardsForCardSet/'+cardSetId);
+}
 
 export type CardCreateRequest = {
     cardSetId: number,
@@ -32,4 +47,28 @@ export const cardCreate = async(params: CardCreateRequest) : Promise<CardCreateR
             'Content-Type': 'multipart/form-data'
         }
     });
+}
+
+
+
+export type DeleteCardFromCardSetRequest = {
+    cardSetId: number,
+    cardId: number,
+    confirm: boolean,
+}
+
+export type DeleteCardFromCardSetResponseData = BaseResponseData & {
+    cardExistsInOtherCardSetDatas: CardSetData[] | null;
+}
+
+export class DeleteCardFromCardSetResponse extends BaseResponse {
+    cardExistsInOtherCardSets: CardSet[];
+    constructor(data: DeleteCardFromCardSetResponseData) {
+        super(data);
+        this.cardExistsInOtherCardSets = data.cardExistsInOtherCardSetDatas?.map(cs => new CardSet(cs)) ?? [];
+    }
+}
+
+export const deleteCardFromCardSet = async(params: DeleteCardFromCardSetRequest) : Promise<DeleteCardFromCardSetResponse> => {
+    return await apiClient.post(DeleteCardFromCardSetResponse, '/delete-card-from-card-set/', params);
 }

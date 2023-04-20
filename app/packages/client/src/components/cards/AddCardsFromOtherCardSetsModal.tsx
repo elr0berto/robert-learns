@@ -1,6 +1,7 @@
 import {useActions, useAppState} from "../../overmind";
 import {Accordion, Alert, Button, Modal } from "react-bootstrap";
 import React from "react";
+import CardPreview from "./CardPreview";
 
 function AddCardsFromOtherCardSetsModal() {
     const state = useAppState();
@@ -13,13 +14,13 @@ function AddCardsFromOtherCardSetsModal() {
         <Modal.Body>
             {state.addCardsFromOtherCardSetsModal.loading ?
                 <Alert variant={'info'}>Loading...</Alert> :
-                (state.addCardsFromOtherCardSetsModal.otherCardSets.length === 0 ?
+                (state.addCardsFromOtherCardSetsModal.otherCardSetsWithCards.length === 0 ?
                     <Alert variant={'info'}>No other card sets found.</Alert> :
-                    <Accordion>{state.addCardsFromOtherCardSetsModal.otherCardSets.map(cardSet =>
-                        <Accordion.Item eventKey={cardSet.id.toString()}>
-                            <Accordion.Header>{cardSet.name}</Accordion.Header>
+                    <Accordion>{state.addCardsFromOtherCardSetsModal.otherCardSetsWithCards.map(cardSetWithCards =>
+                        <Accordion.Item eventKey={cardSetWithCards.id.toString()}>
+                            <Accordion.Header>{cardSetWithCards.name}</Accordion.Header>
                             <Accordion.Body>
-                                {cardSet.cards.map(card => <CardPreview card={card} showActionButtons={false} onDeleteCard={() => {}} beingDeleted={false}/>)}
+                                {cardSetWithCards.cards.map(card => <CardPreview card={card} showActionButtons={false} onDeleteCard={() => {}} beingDeleted={false}/>)}
                             </Accordion.Body>
                         </Accordion.Item>)}
                     </Accordion>

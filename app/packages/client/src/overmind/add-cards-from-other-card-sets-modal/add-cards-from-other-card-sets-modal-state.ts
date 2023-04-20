@@ -9,23 +9,28 @@ type CardSetWithCards = CardSet & {
 type AddCardsFromOtherCardSetsModalState = {
     loading: boolean;
     cardSetId: number | null;
+    cardSets: CardSet[];
     cardSetCards: CardSetCard[];
     cards: Card[];
+    submitting: boolean;
     readonly otherCardSetsWithCards: CardSetWithCards[];
     readonly cardSet: CardSet | null;
     readonly open: boolean;
+    readonly disabled: boolean;
 }
 
 export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOtherCardSetsModalState => ({
     loading: false,
     cardSetId: null,
+    cardSets: [],
     cardSetCards: [],
     cards: [],
-    otherCardSetsWithCards: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
+    submitting: false,
+    otherCardSetsWithCards: derived((state: AddCardsFromOtherCardSetsModalState) => {
         if (state.cardSetId === null) {
             return [];
         }
-        return rootState.workspace.cardSets.filter(cs => cs.id !== state.cardSetId).map(cs => {
+        return state.cardSets.map(cs => {
             return {
                 ...cs,
                 cards: state.cardSetCards.filter(c => c.cardSetId === cs.id).map(csc => state.cards.filter(c => c.id === csc.cardId)[0]),
@@ -44,6 +49,9 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
     }),
     open: derived((state: AddCardsFromOtherCardSetsModalState) => {
         return state.cardSetId !== null;
+    }),
+    disabled: derived((state: AddCardsFromOtherCardSetsModalState) => {
+        return state.loading || state.submitting;
     }),
 });
 
