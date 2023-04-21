@@ -13,22 +13,38 @@ import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
 import {CardSide, MediaType} from "@prisma/client";
-import { CardCreateResponseData, DeleteCardFromCardSetRequest, DeleteCardFromCardSetResponseData } from '@elr0berto/robert-learns-shared/api/cards';
-import { canUserDeleteCardsFromCardSetId } from '../security.js';
-import { GetCardsForCardSetResponseData } from "@elr0berto/robert-learns-shared/api/cards";
+import {
+    canUserCreateCardsForCardSet,
+    canUserCreateCardsForCardSetId,
+    canUserDeleteCardsFromCardSetId,
+    canUserViewCardSetId
+} from '../security.js';
+import {
+    CreateCardRequest,
+    CreateCardResponseData, DeleteCardRequest, DeleteCardResponseData,
+    GetCardsRequest,
+    GetCardsResponseData
+} from '@elr0berto/robert-learns-shared/api/cards';
 
 const cards = Router();
 
-cards.get('/getCardsForCardSet/:cardSetId', async (req, res : TypedResponse<GetCardsForCardSetResponseData>) => {
+cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>) => {
     let user = await getSignedInUser(req.session);
 
-    // TODO: Check that signedInUser can view this card set
-
+    if (!await canUserViewCardSetId(user, req.body.cardSetId)) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'You are not authorized to view this card set',
+            cardDatas: [],
+        });
+    }
 
     const cardSetCards = await prisma.cardSetCard.findMany({
         where: {
             cardSetId: {
-                equals: parseInt(req.params.cardSetId)
+                equals: req.body.cardSetId
             }
         },
         include: {
@@ -50,8 +66,40 @@ cards.get('/getCardsForCardSet/:cardSetId', async (req, res : TypedResponse<GetC
     });
 });
 
-cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse<CardCreateResponseData>) => {
+cards.post('/create', upload.single('audio'),async (req : Request<{}, {}, CreateCardRequest>, res: TypedResponse<CreateCardResponseData>) => {
     const user = await getSignedInUser(req.session);
+
+
+
+    // load the card set from db including the workspace
+    const cardSet = await prisma.cardSet.findUnique({
+        where: {
+            id: req.body.cardSetId,
+        },
+        include: {
+            workspace: true,
+        }
+    });
+
+    if (cardSet === null) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'Card set not found',
+            cardData: null,
+        });
+    }
+
+    if (!await canUserCreateCardsForCardSet(user, cardSet)) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'You are not authorized to create cards in this card set',
+            cardData: null,
+        });
+    }
 
     let audioMedia = null;
     if (req.file !== null && typeof req.file !== 'undefined') {
@@ -88,7 +136,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
                 data: {
                     path: outPath,
                     name: req.file.originalname+'.mp3',
-                    workspaceId: parseInt(req.body.workspaceId),
+                    workspaceId: cardSet.workspaceId,
                     type: MediaType.AUDIO
                 }
             });
@@ -111,7 +159,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
 
     const newCardSetCard = await prisma.cardSetCard.create({
         data: {
-            cardSetId: parseInt(req.body.cardSetId),
+            cardSetId: req.body.cardSetId,
             cardId: newCard.id,
         }
     });
@@ -152,7 +200,7 @@ cards.post('/card-create', upload.single('audio'),async (req, res: TypedResponse
 });
 
 
-cards.post('/delete-card-from-card-set/', async (req: Request<{}, {}, DeleteCardFromCardSetRequest>, res : TypedResponse<DeleteCardFromCardSetResponseData>) => {
+cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : TypedResponse<DeleteCardResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     if (user.isGuest) {

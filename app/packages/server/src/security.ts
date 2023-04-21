@@ -89,3 +89,37 @@ export const canUserDeleteCardsFromCardSetId = async (user: PrismaUser, cardSetI
     }
     return await canUserDeleteCardsFromCardSet(user, cardSet);
 }
+
+export const canUserViewCardSet = async (user: PrismaUser, cardSet: PrismaCardSet & {workspace: PrismaWorkspace}) : Promise<boolean> => {
+    return await canUserViewWorkspace(user, cardSet.workspace);
+}
+
+export const canUserViewCardSetId = async (user: PrismaUser, cardSetId: number) : Promise<boolean> => {
+    const cardSet = await prisma.cardSet.findFirst({
+        where: { id: cardSetId },
+        include: {
+            workspace: true
+        }
+    });
+    if (cardSet === null) {
+        throw new Error('cardSetId: ' + cardSetId + ' not found!');
+    }
+    return await canUserViewCardSet(user, cardSet);
+}
+
+export const canUserCreateCardsForCardSet = async (user: PrismaUser, cardSet: PrismaCardSet & {workspace: PrismaWorkspace}) : Promise<boolean> => {
+    return await canUserContributeToWorkspace(user, cardSet.workspace);
+}
+
+export const canUserCreateCardsForCardSetId = async (user: PrismaUser, cardSetId: number) : Promise<boolean> => {
+    const cardSet = await prisma.cardSet.findFirst({
+        where: { id: cardSetId },
+        include: {
+            workspace: true
+        }
+    });
+    if (cardSet === null) {
+        throw new Error('cardSetId: ' + cardSetId + ' not found!');
+    }
+    return await canUserCreateCardsForCardSet(user, cardSet);
+}
