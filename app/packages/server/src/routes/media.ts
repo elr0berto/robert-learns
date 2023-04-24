@@ -6,6 +6,7 @@ import {fileTypeFromFile} from "file-type";
 import {MediaType} from "@prisma/client";
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 import {MediaUploadFileResponseData} from "@elr0berto/robert-learns-shared/api/media";
+import {canUserContributeToWorkspaceId} from "../security.js";
 
 const media = Router();
 
@@ -13,6 +14,9 @@ media.post('/uploadFile/:workspaceId', upload.single('file'), async (req, res : 
     let user = await getSignedInUser(req.session);
 
     // TODO: Check if signed in user can contribute to workspace
+    if (!await canUserContributeToWorkspaceId(user, parseInt(req.params.workspaceId))) {
+        throw new Error('user cannot contribute to workspace: ' + req.params.workspaceId);
+    }
 
     if (req.file === null || typeof req.file === 'undefined' || req.file.size === 0 || req.file.size > 10000000) {
         throw new Error('file missing or too large or something. file size: ' + (req.file?.size ?? 'undefined'));

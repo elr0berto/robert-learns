@@ -66,15 +66,14 @@ cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedRes
     });
 });
 
-cards.post('/create', upload.single('audio'),async (req : Request<{}, {}, CreateCardRequest>, res: TypedResponse<CreateCardResponseData>) => {
+cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<CreateCardResponseData>) => {
     const user = await getSignedInUser(req.session);
-
 
 
     // load the card set from db including the workspace
     const cardSet = await prisma.cardSet.findUnique({
         where: {
-            id: req.body.cardSetId,
+            id: parseInt(req.params.cardSetId),
         },
         include: {
             workspace: true,
@@ -159,14 +158,14 @@ cards.post('/create', upload.single('audio'),async (req : Request<{}, {}, Create
 
     const newCardSetCard = await prisma.cardSetCard.create({
         data: {
-            cardSetId: req.body.cardSetId,
+            cardSetId: parseInt(req.params.cardSetId),
             cardId: newCard.id,
         }
     });
 
     const faceFront = await prisma.cardFace.create({
         data: {
-            content: req.body.front ?? '',
+            content: req.params.front ?? '',
             cardId: newCard.id,
             side: CardSide.FRONT,
         }
@@ -174,7 +173,7 @@ cards.post('/create', upload.single('audio'),async (req : Request<{}, {}, Create
 
     const faceBack = await prisma.cardFace.create({
         data: {
-            content: req.body.back ?? '',
+            content: req.params.back ?? '',
             cardId: newCard.id,
             side: CardSide.BACK,
         }

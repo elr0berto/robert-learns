@@ -5,7 +5,7 @@ import {UserGetByEmailRequest, UserGetByEmailResponseData, validateUserGetByEmai
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 const users = Router();
 
-users.get('/getByEmail', async (req : Request<{},{},{},UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
+users.post('/getByEmail', async (req : Request<{},{},UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
     if (signedInUser.isGuest) {
         return res.json({
@@ -17,7 +17,8 @@ users.get('/getByEmail', async (req : Request<{},{},{},UserGetByEmailRequest>, r
         });
     }
 
-    const errors = validateUserGetByEmailRequest(req.query);
+    const errors = validateUserGetByEmailRequest(req.body);
+
     if (errors.length > 0) {
         return res.json({
             dataType: true,
@@ -30,7 +31,7 @@ users.get('/getByEmail', async (req : Request<{},{},{},UserGetByEmailRequest>, r
 
     const user = await prisma.user.findUnique({
         where: {
-            email: req.query.email
+            email: req.body.email
         },
     });
 
