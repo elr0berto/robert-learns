@@ -7,7 +7,7 @@ import {
     CreateCardSetRequest, CreateCardSetResponseData,
     GetCardSetsRequest,
     GetCardSetsResponseData, validateCreateCardSetRequest
-} from '@elr0berto/robert-learns-shared/api/cardSets';
+} from '@elr0berto/robert-learns-shared/api/card-sets';
 
 
 const cardSets = Router();

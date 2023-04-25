@@ -4,6 +4,7 @@ import React from "react";
 import CardList from "../cards/CardList";
 import DeleteCardModal from "../cards/DeleteCardModal";
 import {pageUrls} from "../../page-urls";
+import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsModal";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();

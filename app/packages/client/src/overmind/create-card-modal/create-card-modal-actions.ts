@@ -23,7 +23,7 @@ export const setBackHtml = ({ state }: Context, html: string) => {
 }
 
 export const uploadFile = async ({ state, effects }: Context, file: File) => {
-    const resp = await effects.api.cardSets.cardSetUploadFile(state.createCardModal.cardSetId!, file);
+    const resp = await effects.api.media.uploadFile(state.workspace.workspaceId!, file);
     return resp.url;
 }
 
@@ -53,7 +53,7 @@ export const setAudioFile = async ({ state, effects }: Context, file: File|null)
 
 export const submit = async ({ state, effects, actions }: Context) => {
     state.createCardModal.submitting = true;
-    const resp = await effects.api.cards.cardCreate({
+    const resp = await effects.api.cards.createCard({
         cardSetId: state.createCardModal.cardSetId!,
         front: state.createCardModal.frontHtml,
         back: state.createCardModal.backHtml,

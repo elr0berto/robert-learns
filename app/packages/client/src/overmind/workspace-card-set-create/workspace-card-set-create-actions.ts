@@ -1,7 +1,7 @@
 import {Context} from '..';
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Pages, pageUrls} from "../../page-urls";
-import {WorkspaceCardSetCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
+import {CreateCardSetRequest} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCardSetCreate.form.name = name;
@@ -21,7 +21,7 @@ export const formSubmit = async ({state,effects,actions} : Context, scope: strin
 
     state.workspaceCardSetCreate.form.submitting = true;
 
-    let request : WorkspaceCardSetCreateRequest = {
+    let request : CreateCardSetRequest = {
         name: state.workspaceCardSetCreate.form.name,
         description: state.workspaceCardSetCreate.form.description,
         workspaceId: state.workspace.workspaceId!,
@@ -31,7 +31,7 @@ export const formSubmit = async ({state,effects,actions} : Context, scope: strin
         request.cardSetId = state.workspaceCardSet.cardSetId!;
     }
 
-    const resp = await effects.api.workspaces.workspaceCardSetCreate(request);
+    const resp = await effects.api.cardSets.createCardSet(request);
 
     if (resp.status !== ResponseStatus.Success || resp.cardSet === null) {
         state.workspaceCardSetCreate.form.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";

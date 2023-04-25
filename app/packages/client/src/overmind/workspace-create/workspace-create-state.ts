@@ -1,4 +1,4 @@
-import { validateWorkspaceCreateRequest } from '@elr0berto/robert-learns-shared/dist/api/workspaces';
+import { validateCreateWorkspaceRequest } from '@elr0berto/robert-learns-shared/dist/api/workspaces';
 import {derived} from 'overmind'
 import {PermissionUser} from "@elr0berto/robert-learns-shared/dist/types";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
@@ -36,7 +36,7 @@ export const getInitialWorkspaceCreateState = (workspace: Workspace | null): Wor
             return state.submitting;
         }),
         validationErrors: derived((state: WorkspaceCreateFormState) => {
-            let errors = validateWorkspaceCreateRequest({
+            let errors = validateCreateWorkspaceRequest({
                 name: state.name.trim(),
                 description: state.description.trim(),
                 allowGuests: state.allowGuests,

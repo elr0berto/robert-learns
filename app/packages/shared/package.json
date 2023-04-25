@@ -59,11 +59,11 @@
       "import": "./dist/api/cards.js",
       "types": "./dist/api/cards.d.ts"
     },
-    "./api/cardSets": {
+    "./api/card-sets": {
       "import": "./dist/api/card-sets.js",
       "types": "./dist/api/card-sets.d.ts"
     },
-    "./dist/api/cardSets": {
+    "./dist/api/card-sets": {
       "import": "./dist/api/card-sets.js",
       "types": "./dist/api/card-sets.d.ts"
     },

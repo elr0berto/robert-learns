@@ -3,7 +3,7 @@ import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
 import {pageUrls, Pages} from "../../page-urls";
-import {WorkspaceCreateRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
+import {CreateWorkspaceRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCreate.form.name = name;
@@ -61,7 +61,7 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
     }
 
     state.workspaceCreate.form.submitting = true;
-    const request : WorkspaceCreateRequest = {
+    const request : CreateWorkspaceRequest = {
         name: state.workspaceCreate.form.name,
         description: state.workspaceCreate.form.description,
         allowGuests: state.workspaceCreate.form.allowGuests,
@@ -70,7 +70,7 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
     if (scope === 'edit') {
         request.workspaceId = state.workspace.workspaceId!;
     }
-    const resp = await effects.api.workspaces.workspaceCreate(request);
+    const resp = await effects.api.workspaces.createWorkspace(request);
 
     state.workspaceCreate.form.submitting = false;
     if (resp.status !== ResponseStatus.Success || resp.workspace === null) {
