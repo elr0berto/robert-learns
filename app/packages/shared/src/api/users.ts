@@ -39,5 +39,5 @@ export const userGetByEmail = async(req: UserGetByEmailRequest) : Promise<UserGe
             status: ResponseStatus.UserError,
         });
     }
-    return await apiClient.get(UserGetByEmailResponse, '/users/getByEmail?email='+req.email);
+    return await apiClient.post(UserGetByEmailResponse, '/users/getByEmail', req);
 }

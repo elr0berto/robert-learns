@@ -2,7 +2,7 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse} from "./models/BaseResponse.js";
 
 export const SignInCheck = async () : Promise<BaseResponse> => {
-    return await apiClient.get(BaseResponse, '/sign-in/check');
+    return await apiClient.post(BaseResponse, '/sign-in/check');
 };
 
 export type SignInRequest = {

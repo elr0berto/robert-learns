@@ -52,5 +52,5 @@ export class GetWorkspacesResponse extends BaseResponse {
 }
 
 export const getWorkspaces = async() : Promise<GetWorkspacesResponse> => {
-    return await apiClient.get(GetWorkspacesResponse, '/workspaces/get');
+    return await apiClient.post(GetWorkspacesResponse, '/workspaces/get');
 }

@@ -58,5 +58,5 @@ export const validateCreateCardSetRequest = (req: CreateCardSetRequest) : string
 
 
 export const createCardSet = async(req: CreateCardSetRequest) : Promise<CreateCardSetResponse> => {
-    return await apiClient.post(CreateCardSetResponse, '/card-set/create', req);
+    return await apiClient.post(CreateCardSetResponse, '/card-sets/create', req);
 }

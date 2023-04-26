@@ -9,7 +9,7 @@ import { SignInRequest, validateSignInRequest } from '@elr0berto/robert-learns-s
 
 const signIn = Router();
 
-signIn.get('/check', async (req, res : TypedResponse<BaseResponseData>) => {
+signIn.post('/check', async (req, res : TypedResponse<BaseResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     return res.json({

@@ -33,7 +33,7 @@ function WorkspaceCardSetCreatePage() {
         return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this Card Set</Alert></Container>;
     }
 
-    if (scope === 'create' && !state.workspace.currentUserCanEdit) {
+    if (scope === 'create' && !state.workspace.currentUserCanContribute) {
         return <Container className="my-5"><Alert variant="danger">You are not allowed to create Card Sets in this workspace</Alert></Container>;
     }
 
