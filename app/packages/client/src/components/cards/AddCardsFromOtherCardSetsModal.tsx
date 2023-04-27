@@ -2,6 +2,7 @@ import {useActions, useAppState} from "../../overmind";
 import {Accordion, Alert, Button, Modal } from "react-bootstrap";
 import React from "react";
 import CardPreview from "./CardPreview";
+import CardPreviewSelectable from "./CardPreviewSelectable";
 
 function AddCardsFromOtherCardSetsModal() {
     const state = useAppState();
@@ -20,7 +21,14 @@ function AddCardsFromOtherCardSetsModal() {
                         <Accordion.Item eventKey={cardSetWithCards.id.toString()}>
                             <Accordion.Header>{cardSetWithCards.name}</Accordion.Header>
                             <Accordion.Body>
-                                {cardSetWithCards.cards.map(card => <CardPreview card={card} showActionButtons={false} onDeleteCard={() => {}} beingDeleted={false}/>)}
+                                {cardSetWithCards.cards.map(card => <CardPreviewSelectable
+                                    disabled={card.alreadyInCurrentCardSet}
+                                    selected={card.alreadyInCurrentCardSet || card.selected}
+                                    card={card.card}
+                                    showActionButtons={false}
+                                    onDeleteCard={() => {}}
+                                    beingDeleted={false}
+                                    onChange={(selected => actions.addCardsFromOtherCardSetsModal.setSelected({cardId: card.card.id, selected: selected}))}/>)}
                             </Accordion.Body>
                         </Accordion.Item>)}
                     </Accordion>
@@ -31,8 +39,8 @@ function AddCardsFromOtherCardSetsModal() {
             <Button variant="secondary" onClick={() => actions.addCardsFromOtherCardSetsModal.close()} disabled={state.addCardsFromOtherCardSetsModal.disabled}>
                 Cancel
             </Button>
-            <Button variant="primary" onClick={() => actions.addCardsFromOtherCardSetsModal.close()} disabled={state.addCardsFromOtherCardSetsModal.disabled}>
-                Yes, I am sure
+            <Button variant="primary" onClick={() => actions.addCardsFromOtherCardSetsModal.save()} disabled={state.addCardsFromOtherCardSetsModal.disabled}>
+                Save
             </Button>
         </Modal.Footer>
     </Modal> : null;

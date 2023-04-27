@@ -6,9 +6,20 @@ export const open = async ({ state, effects }: Context, cardSetId: number) => {
     state.addCardsFromOtherCardSetsModal.loading = true;
     state.addCardsFromOtherCardSetsModal.cardSetId = cardSetId;
 
-    const cardSetsResp = await effects.api
+    const cardSetsResp = await effects.api.cardSets.getCardSets({workspaceId: state.workspace.workspaceId!});
+    state.addCardsFromOtherCardSetsModal.cardSets = cardSetsResp.cardSets;
+    const cardsResp = await effects.api.cards.getCards({cardSetId: state.workspaceCardSet.cardSetId!});
+    state.addCardsFromOtherCardSetsModal.cards = cardsResp.cards;
+    const cardSetCardsResp = await effects.api.cardSets.getCardSetCards({cardSetId: state.workspaceCardSet.cardSetId!});
 }
-
 export const close = async ({ state }: Context) => {
     state.addCardsFromOtherCardSetsModal.cardSetId = null;
+}
+
+export const setSelected = async ({ state }: Context, {cardId, selected}: {cardId: number, selected: boolean}) => {
+    if (selected) {
+        state.addCardsFromOtherCardSetsModal.selectedCardIds.push(cardId);
+    } else {
+        state.addCardsFromOtherCardSetsModal.selectedCardIds = state.addCardsFromOtherCardSetsModal.selectedCardIds.filter(id => id !== cardId);
+    }
 }

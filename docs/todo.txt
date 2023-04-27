@@ -1,0 +1,5 @@
+add cards from other card sets modal
+card-set-cards api
+edit card
+add card to other card sets
+centralize the permission stuff in shared

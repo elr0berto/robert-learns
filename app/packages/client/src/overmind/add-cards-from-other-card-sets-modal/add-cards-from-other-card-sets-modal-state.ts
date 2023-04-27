@@ -2,8 +2,14 @@ import {Card, CardSet, CardSetCard} from "@elr0berto/robert-learns-shared/dist/a
 import {derived} from "overmind";
 import {config} from "../index";
 
+type CardFromOtherCardSet = {
+    card: Card;
+    selected: boolean;
+    alreadyInCurrentCardSet: boolean;
+}
+
 type CardSetWithCards = CardSet & {
-    cards: Card[];
+    cards: CardFromOtherCardSet[];
 }
 
 type AddCardsFromOtherCardSetsModalState = {
@@ -13,6 +19,8 @@ type AddCardsFromOtherCardSetsModalState = {
     cardSetCards: CardSetCard[];
     cards: Card[];
     submitting: boolean;
+    selectedCardIds: number[];
+    readonly cardIdsInCurrentCardSet: number[];
     readonly otherCardSetsWithCards: CardSetWithCards[];
     readonly cardSet: CardSet | null;
     readonly open: boolean;
@@ -26,6 +34,13 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
     cardSetCards: [],
     cards: [],
     submitting: false,
+    selectedCardIds: [],
+    cardIdsInCurrentCardSet: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
+        if (state.cardSetId === null) {
+            return [];
+        }
+        return rootState.workspaceCardSet.cards.map(c => c.id);
+    }),
     otherCardSetsWithCards: derived((state: AddCardsFromOtherCardSetsModalState) => {
         if (state.cardSetId === null) {
             return [];
@@ -33,7 +48,14 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
         return state.cardSets.map(cs => {
             return {
                 ...cs,
-                cards: state.cardSetCards.filter(c => c.cardSetId === cs.id).map(csc => state.cards.filter(c => c.id === csc.cardId)[0]),
+                cards: state.cardSetCards.filter(c => c.cardSetId === cs.id).map(csc => {
+                    const card = state.cards.filter(c => c.id === csc.cardId)[0];
+                    return {
+                        card,
+                        selected: state.selectedCardIds.includes(card.id),
+                        alreadyInCurrentCardSet: state.cardIdsInCurrentCardSet.includes(card.id),
+                    }
+                }),
             };
         });
     }),
