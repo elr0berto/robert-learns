@@ -6,7 +6,7 @@ export const _loadCards = async ({ state, effects }: Context) => {
         return;
     }
     state.workspaceCardSet.cardsLoading = true;
-    const resp = await effects.api.cards.getCards({cardSetId: state.workspaceCardSet.cardSet.id});
+    const resp = await effects.api.cards.getCards({cardSetIds: [state.workspaceCardSet.cardSet.id]});
     state.workspaceCardSet.cards = resp.cards;
     state.workspaceCardSet.cardsLoading = false;
 }

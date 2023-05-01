@@ -109,6 +109,7 @@ model CardSet {
   users   CardSetUser[]
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId Int
+  order Int @default(0)
 }
 
 model CardSetCard {
@@ -116,6 +117,6 @@ model CardSetCard {
   cardId Int
   cardSet CardSet @relation(fields: [cardSetId], references: [id])
   cardSetId Int
-
+  order Int @default(0)
   @@id([cardId, cardSetId])
 }

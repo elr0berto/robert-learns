@@ -8,9 +8,11 @@ export const open = async ({ state, effects }: Context, cardSetId: number) => {
 
     const cardSetsResp = await effects.api.cardSets.getCardSets({workspaceId: state.workspace.workspaceId!});
     state.addCardsFromOtherCardSetsModal.cardSets = cardSetsResp.cardSets;
-    const cardsResp = await effects.api.cards.getCards({cardSetId: state.workspaceCardSet.cardSetId!});
+    const cardsResp = await effects.api.cards.getCards({cardSetIds: cardSetsResp.cardSets.map(cs => cs.id)});
     state.addCardsFromOtherCardSetsModal.cards = cardsResp.cards;
-    const cardSetCardsResp = await effects.api.cardSets.getCardSetCards({cardSetId: state.workspaceCardSet.cardSetId!});
+    const cardSetCardsResp = await effects.api.cardSetCards.getCardSetCards({cardSetIds: cardSetsResp.cardSets.map(cs => cs.id)});
+    state.addCardsFromOtherCardSetsModal.cardSetCards = cardSetCardsResp.cardSetCards;
+    state.addCardsFromOtherCardSetsModal.loading = false;
 }
 export const close = async ({ state }: Context) => {
     state.addCardsFromOtherCardSetsModal.cardSetId = null;

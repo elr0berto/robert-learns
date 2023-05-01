@@ -5,6 +5,7 @@ import {
     Card as PrismaCard,
     CardFace as PrismaCardFace,
     CardSet as PrismaCardSet,
+    CardSetCard as PrismaCardSetCard,
     CardSide as PrismaCardSide,
     Media as PrismaMedia,
     User as PrismaUser,
@@ -12,7 +13,13 @@ import {
     WorkspaceUser as PrismaWorkspaceUser,
     UserRole as PrismaUserRole
 } from '@prisma/client';
-import {CardSetData, MediaData, UserData, WorkspaceData} from "@elr0berto/robert-learns-shared/api/models";
+import {
+    CardSetCardData,
+    CardSetData,
+    MediaData,
+    UserData,
+    WorkspaceData
+} from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
 import { PermissionUser, UserRole } from '@elr0berto/robert-learns-shared/types';
@@ -272,5 +279,14 @@ export const getCardSetData = (cardSet: PrismaCardSet) : CardSetData => {
         id: cardSet.id,
         name: cardSet.name,
         description: cardSet.description,
+    };
+}
+
+export const getCardSetCardData = (cardSetCard: PrismaCardSetCard) : CardSetCardData => {
+    return {
+        dataType: true,
+        cardId: cardSetCard.cardId,
+        cardSetId: cardSetCard.cardSetId,
+        order: cardSetCard.order
     };
 }

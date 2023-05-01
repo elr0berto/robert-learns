@@ -2,6 +2,7 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
 import {CardSet, CardSetData} from "./models/CardSet.js";
+import {CreateCardSetRequest} from "api/card-sets.js";
 
 export type GetCardsResponseData = BaseResponseData & {
     cardDatas: CardData[] | null;
@@ -16,7 +17,7 @@ export class GetCardsResponse extends BaseResponse {
 }
 
 export type GetCardsRequest = {
-    cardSetId: number,
+    cardSetIds: number[],
 }
 
 export const getCards = async(getCardsRequest : GetCardsRequest) : Promise<GetCardsResponse> => {
