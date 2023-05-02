@@ -1,7 +1,6 @@
 import {useActions, useAppState} from "../../overmind";
 import {Accordion, Alert, Button, Modal } from "react-bootstrap";
 import React from "react";
-import CardPreview from "./CardPreview";
 import CardPreviewSelectable from "./CardPreviewSelectable";
 
 function AddCardsFromOtherCardSetsModal() {
@@ -42,6 +41,7 @@ function AddCardsFromOtherCardSetsModal() {
             <Button variant="primary" onClick={() => actions.addCardsFromOtherCardSetsModal.save()} disabled={state.addCardsFromOtherCardSetsModal.disabled}>
                 Save
             </Button>
+            {state.addCardsFromOtherCardSetsModal.submitError ? <Alert variant={'danger'}>{state.addCardsFromOtherCardSetsModal.submitError}</Alert> : null}
         </Modal.Footer>
     </Modal> : null;
 }

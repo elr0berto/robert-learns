@@ -19,6 +19,7 @@ type AddCardsFromOtherCardSetsModalState = {
     cardSetCards: CardSetCard[];
     cards: Card[];
     submitting: boolean;
+    submitError: string | null;
     selectedCardIds: number[];
     readonly cardIdsInCurrentCardSet: number[];
     readonly otherCardSetsWithCards: CardSetWithCards[];
@@ -34,6 +35,7 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
     cardSetCards: [],
     cards: [],
     submitting: false,
+    submitError: null,
     selectedCardIds: [],
     cardIdsInCurrentCardSet: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {

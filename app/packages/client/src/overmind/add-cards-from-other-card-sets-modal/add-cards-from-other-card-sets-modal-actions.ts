@@ -25,3 +25,16 @@ export const setSelected = async ({ state }: Context, {cardId, selected}: {cardI
         state.addCardsFromOtherCardSetsModal.selectedCardIds = state.addCardsFromOtherCardSetsModal.selectedCardIds.filter(id => id !== cardId);
     }
 }
+
+export const save = async ({ state, effects }: Context,) => {
+    if (state.addCardsFromOtherCardSetsModal.selectedCardIds.length === 0) {
+        state.addCardsFromOtherCardSetsModal.submitError = "Please select at least one card to add.";
+        return;
+    }
+    state.addCardsFromOtherCardSetsModal.submitError = null;
+    state.addCardsFromOtherCardSetsModal.submitting = true;
+
+    const cardSetId = state.addCardsFromOtherCardSetsModal.cardSetId!;
+    const cardIds = state.addCardsFromOtherCardSetsModal.selectedCardIds;
+    await effects.api.cardSetCards.createCardSetCards({cardSetId, cardIds});
+}
