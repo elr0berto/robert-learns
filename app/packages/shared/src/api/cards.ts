@@ -49,7 +49,7 @@ export const createCard = async(params: CreateCardRequest) : Promise<CreateCardR
     formData.append('front', params.front ?? '');
     formData.append('back', params.back ?? '');
     formData.append('audio', params.audio ?? '');
-    return await apiClient.post(CreateCardResponse, '/cards/card-create', formData, {
+    return await apiClient.post(CreateCardResponse, '/cards/create', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -76,5 +76,5 @@ export class DeleteCardResponse extends BaseResponse {
 }
 
 export const deleteCard = async(params: DeleteCardRequest) : Promise<DeleteCardResponse> => {
-    return await apiClient.post(DeleteCardResponse, '/delete', params);
+    return await apiClient.post(DeleteCardResponse, '/cards/delete', params);
 }

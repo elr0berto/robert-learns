@@ -47,7 +47,7 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
         if (state.cardSetId === null) {
             return [];
         }
-        return state.cardSets.map(cs => {
+        return state.cardSets.filter(cs => cs.id !== state.cardSetId).map(cs => {
             return {
                 ...cs,
                 cards: state.cardSetCards.filter(c => c.cardSetId === cs.id).map(csc => {
@@ -59,7 +59,7 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
                     }
                 }),
             };
-        });
+        }).filter(cs => cs.cards.length > 0)
     }),
     cardSet: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {

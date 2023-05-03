@@ -9,13 +9,13 @@ function AddCardsFromOtherCardSetsModal() {
 
     return state.addCardsFromOtherCardSetsModal.open ? <Modal show={true} onHide={() => actions.addCardsFromOtherCardSetsModal.close()}>
         <Modal.Header closeButton>
-            <Modal.Title>Add cards from other card sets into this card set <i>{state.addCardsFromOtherCardSetsModal.cardSet!.name}</i></Modal.Title>
+            <Modal.Title>Add cards from other card sets into <i>{state.addCardsFromOtherCardSetsModal.cardSet!.name}</i></Modal.Title>
         </Modal.Header>
         <Modal.Body>
             {state.addCardsFromOtherCardSetsModal.loading ?
                 <Alert variant={'info'}>Loading...</Alert> :
                 (state.addCardsFromOtherCardSetsModal.otherCardSetsWithCards.length === 0 ?
-                    <Alert variant={'info'}>No other card sets found.</Alert> :
+                    <Alert variant={'info'}>No other card sets with cards found.</Alert> :
                     <Accordion>{state.addCardsFromOtherCardSetsModal.otherCardSetsWithCards.map(cardSetWithCards =>
                         <Accordion.Item eventKey={cardSetWithCards.id.toString()}>
                             <Accordion.Header>{cardSetWithCards.name}</Accordion.Header>
