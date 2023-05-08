@@ -37,4 +37,6 @@ export const save = async ({ state, effects }: Context,) => {
     const cardSetId = state.addCardsFromOtherCardSetsModal.cardSetId!;
     const cardIds = state.addCardsFromOtherCardSetsModal.selectedCardIds;
     await effects.api.cardSetCards.createCardSetCards({cardSetId, cardIds});
+
+    effects.page.reloadPage();
 }

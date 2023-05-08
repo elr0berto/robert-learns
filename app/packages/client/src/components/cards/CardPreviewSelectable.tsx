@@ -17,7 +17,7 @@ function CardPreviewSelectable(props: Props) {
     return <div className={"card-preview-selectable" + (props.selected ? ' card-preview-selected' : '') + (props.disabled ? ' card-preview-disabled' : '')}>
         <CardPreview card={props.card} showActionButtons={props.showActionButtons} onDeleteCard={props.onDeleteCard} beingDeleted={props.beingDeleted}/>
         <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check type="checkbox" label="Add card" checked={props.selected} onChange={event=> props.onChange(event.target.checked)}/>
+            <Form.Check type="checkbox" label={"Add card" + (props.disabled ? " (already in current card set)" : '')} checked={props.selected} disabled={props.disabled} onChange={event=> props.onChange(event.target.checked)}/>
         </Form.Group>
     </div>;
 }

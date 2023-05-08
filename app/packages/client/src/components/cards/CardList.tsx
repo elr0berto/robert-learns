@@ -17,7 +17,7 @@ function CardList(props: Props) {
 
     return <Container className="card-preview-list">
         <Row className="row-cols-auto">
-            {props.cards.map(card => <Col className="col-lg-3" key={card.id}>
+            {props.cards.map(card => <Col className="col-lg-3 mb-2" key={card.id}>
                 <CardPreview
                     beingDeleted={props.cardBeingDeleted?.id === card.id}
                     onDeleteCard={props.onDeleteCard}

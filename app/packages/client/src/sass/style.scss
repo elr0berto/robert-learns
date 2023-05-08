@@ -66,3 +66,14 @@ code {
     max-width: 100%;
   }
 }
+
+.add-cards-from-other-card-sets-modal {
+  .accordion-body {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    .card-preview-selectable {
+      width: 48%;
+    }
+  }
+}

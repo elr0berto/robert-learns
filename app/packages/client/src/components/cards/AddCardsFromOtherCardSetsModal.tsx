@@ -1,5 +1,5 @@
 import {useActions, useAppState} from "../../overmind";
-import {Accordion, Alert, Button, Modal } from "react-bootstrap";
+import {Accordion, Alert, Button, Modal, Stack} from "react-bootstrap";
 import React from "react";
 import CardPreviewSelectable from "./CardPreviewSelectable";
 
@@ -7,7 +7,7 @@ function AddCardsFromOtherCardSetsModal() {
     const state = useAppState();
     const actions = useActions();
 
-    return state.addCardsFromOtherCardSetsModal.open ? <Modal show={true} onHide={() => actions.addCardsFromOtherCardSetsModal.close()}>
+    return state.addCardsFromOtherCardSetsModal.open ? <Modal className="add-cards-from-other-card-sets-modal" show={true} size="lg" onHide={() => actions.addCardsFromOtherCardSetsModal.close()}>
         <Modal.Header closeButton>
             <Modal.Title>Add cards from other card sets into <i>{state.addCardsFromOtherCardSetsModal.cardSet!.name}</i></Modal.Title>
         </Modal.Header>
@@ -21,6 +21,7 @@ function AddCardsFromOtherCardSetsModal() {
                             <Accordion.Header>{cardSetWithCards.name}</Accordion.Header>
                             <Accordion.Body>
                                 {cardSetWithCards.cards.map(card => <CardPreviewSelectable
+                                    key={card.card.id}
                                     disabled={card.alreadyInCurrentCardSet}
                                     selected={card.alreadyInCurrentCardSet || card.selected}
                                     card={card.card}
