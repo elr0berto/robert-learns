@@ -31,9 +31,10 @@ function WorkspaceCardSetPage() {
             showActionButtons={state.workspace.currentUserCanContribute!}
             cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted}
             onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
+            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.workspaceCardSet.cardSetId!, cardId: card.id})}
             cards={state.workspaceCardSet.cards}/>}
 
-        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal(state.workspaceCardSet.cardSetId!)}>+ Create card</Button> : null}
+        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.workspaceCardSet.cardSetId!, cardId: null})}>+ Create card</Button> : null}
         {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.workspaceCardSet.cardSetId!)}>+ Add cards from other card sets</Button> : null}
 
 

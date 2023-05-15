@@ -6,6 +6,7 @@ import {Col, Container, Row} from "react-bootstrap";
 type Props = {
     cards: Card[];
     onDeleteCard: (card: Card) => void;
+    onEditCard: (card: Card) => void;
     cardBeingDeleted: Card | null;
     showActionButtons: boolean;
 }
@@ -21,6 +22,7 @@ function CardList(props: Props) {
                 <CardPreview
                     beingDeleted={props.cardBeingDeleted?.id === card.id}
                     onDeleteCard={props.onDeleteCard}
+                    onEditCard={props.onEditCard}
                     showActionButtons={props.showActionButtons}
                     card={card}/>
             </Col>)}

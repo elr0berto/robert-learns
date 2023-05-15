@@ -1,13 +1,15 @@
 import {Context} from "..";
 import {getInitialCreateCardModalState} from "./create-card-modal-state";
 
-export const openCreateCardModal = ({ state }: Context, cardSetId: number) => {
+export const openCreateCardModal = ({ state }: Context, {cardSetId, cardId}: {cardSetId: number, cardId: number|null}) => {
     state.createCardModal = getInitialCreateCardModalState();
     state.createCardModal.cardSetId = cardSetId;
+    state.createCardModal.cardId = cardId;
 }
 
 export const closeCreateCardModal = ({ state }: Context) => {
     state.createCardModal.cardSetId = null;
+    state.createCardModal.cardId = null;
 }
 
 export const setActiveTab = ({state}: Context, activeTab: string | null) => {

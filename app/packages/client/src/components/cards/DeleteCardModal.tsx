@@ -1,5 +1,4 @@
-import {useActions, useAppState} from "../../overmind";
-import {Alert, Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
+import {Alert, Button, Modal} from "react-bootstrap";
 import React from "react";
 import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import CardPreview from "./CardPreview";
@@ -18,7 +17,7 @@ function DeleteCardModal(props: Props) {
             <Modal.Title>Delete card from card set <i>{props.cardSet.name}</i></Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <CardPreview card={props.card} showActionButtons={false} onDeleteCard={() => {}} beingDeleted={false}/>
+            <CardPreview card={props.card} showActionButtons={false} onDeleteCard={() => {}} onEditCard={() => {}} beingDeleted={false}/>
             <hr/>
             {props.cardBeingDeletedExistsInOtherCardSets.length === 0 ?
                 <Alert variant={'danger'}>This card does not exists in any other card-sets! Deleting it means it will be permanently gone! Are you sure?</Alert> :
