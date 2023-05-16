@@ -1,10 +1,27 @@
 import {Context} from "..";
 import {getInitialCreateCardModalState} from "./create-card-modal-state";
+import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {ContentState, EditorState} from "draft-js";
+import htmlToDraft from "html-to-draftjs";
 
-export const openCreateCardModal = ({ state }: Context, {cardSetId, cardId}: {cardSetId: number, cardId: number|null}) => {
+function htmlStringToEditorState(html: string) : EditorState {
+    const blocksFromHtml = htmlToDraft(html);
+    const { contentBlocks, entityMap } = blocksFromHtml;
+    const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+    return EditorState.createWithContent(contentState);
+}
+export const openCreateCardModal = ({ state }: Context, {cardSetId, card}: {cardSetId: number, card: Card|null}) => {
     state.createCardModal = getInitialCreateCardModalState();
     state.createCardModal.cardSetId = cardSetId;
-    state.createCardModal.cardId = cardId;
+    if (card === null) {
+        state.createCardModal.cardId = null;
+        state.createCardModal.frontEditorState = EditorState.createEmpty();
+        state.createCardModal.backEditorState = EditorState.createEmpty();
+    } else {
+        state.createCardModal.cardId = card.id;
+        state.createCardModal.frontEditorState = htmlStringToEditorState(card.front.content ?? '');
+        state.createCardModal.backEditorState = htmlStringToEditorState(card.back.content ?? '');
+    }
 }
 
 export const closeCreateCardModal = ({ state }: Context) => {
@@ -16,12 +33,12 @@ export const setActiveTab = ({state}: Context, activeTab: string | null) => {
     state.createCardModal.activeTab = activeTab;
 }
 
-export const setFrontHtml = ({ state }: Context, html: string) => {
-    state.createCardModal.frontHtml = html;
+export const setFrontEditorState = ({ state }: Context, editorState: EditorState) => {
+    state.createCardModal.frontEditorState = editorState;
 }
 
-export const setBackHtml = ({ state }: Context, html: string) => {
-    state.createCardModal.backHtml = html;
+export const setBackEditorState = ({ state }: Context, editorState: EditorState) => {
+    state.createCardModal.backEditorState = editorState;
 }
 
 export const uploadFile = async ({ state, effects }: Context, file: File) => {

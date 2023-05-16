@@ -1,30 +1,25 @@
 import {Editor} from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import draftToHtml from 'draftjs-to-html';
 import React from "react";
-import htmlToDraft from "html-to-draftjs";
-import {ContentState, EditorState} from "draft-js";
-
-const htmlToDraftBlocks = (html: string) => {
-    const blocksFromHtml = htmlToDraft(html);
-    const { contentBlocks, entityMap } = blocksFromHtml;
-    const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
-    return EditorState.createWithContent(contentState);
-}
+import {EditorState, convertFromRaw, RawDraftContentState} from "draft-js";
 
 type Props = {
-    onHtmlChange: (html: string) => void;
+    onEditorStateChange: (editorState: EditorState) => void;
     uploadCallback: (file: File) => Promise<string>;
-    initialHtml: string | null;
+    editorState: EditorState;
 };
 
 function CardFaceEditor(props: Props) {
+    const onContentStateChange = (contentState : RawDraftContentState) => {
+        const newEditorState = EditorState.push(props.editorState, convertFromRaw(contentState), 'apply-entity');
+        props.onEditorStateChange(newEditorState);
+    };
     return <Editor
-        editorState={props.initialHtml === null ? EditorState.createEmpty() : htmlToDraftBlocks(props.initialHtml)}
+        editorState={props.editorState}
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
         editorClassName="editorClassName"
-        onContentStateChange={contentState => props.onHtmlChange(draftToHtml(contentState))}
+        onContentStateChange={onContentStateChange}
         toolbar={{
             image: {
                 uploadEnabled: true,

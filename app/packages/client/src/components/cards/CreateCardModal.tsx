@@ -31,13 +31,15 @@ function CreateCardModal() {
                         >
                             <Tab eventKey="front" title="Front">
                                 <CardFaceEditor
-                                    onHtmlChange={html => actions.createCardModal.setFrontHtml(html)}
+                                    editorState={state.createCardModal.frontEditorState}
+                                    onEditorStateChange={editorState => actions.createCardModal.setFrontEditorState(editorState)}
                                     uploadCallback={file => actions.createCardModal.uploadFile(file)}
                                 />
                             </Tab>
                             <Tab eventKey="back" title="Back">
                                 <CardFaceEditor
-                                    onHtmlChange={html => actions.createCardModal.setBackHtml(html)}
+                                    editorState={state.createCardModal.backEditorState}
+                                    onEditorStateChange={editorState => actions.createCardModal.setBackEditorState(editorState)}
                                     uploadCallback={file => actions.createCardModal.uploadFile(file)}
                                 />
                             </Tab>
