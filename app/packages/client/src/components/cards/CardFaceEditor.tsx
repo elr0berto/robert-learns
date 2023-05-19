@@ -1,7 +1,7 @@
-import {Editor} from "react-draft-wysiwyg";
+import React from 'react';
+import {Editor} from 'react-draft-wysiwyg';
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import React from "react";
-import {EditorState, convertFromRaw, RawDraftContentState} from "draft-js";
+import { EditorState } from 'draft-js';
 
 type Props = {
     onEditorStateChange: (editorState: EditorState) => void;
@@ -9,21 +9,17 @@ type Props = {
     editorState: EditorState;
 };
 
-function CardFaceEditor(props: Props) {
-    const onContentStateChange = (contentState : RawDraftContentState) => {
-        const newEditorState = EditorState.push(props.editorState, convertFromRaw(contentState), 'apply-entity');
-        props.onEditorStateChange(newEditorState);
-    };
+function CardFaceEditor({ editorState, onEditorStateChange, uploadCallback }: Props) {
     return <Editor
-        editorState={props.editorState}
+        defaultEditorState={editorState}
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
         editorClassName="editorClassName"
-        onContentStateChange={onContentStateChange}
+        onEditorStateChange={onEditorStateChange}
         toolbar={{
             image: {
                 uploadEnabled: true,
-                uploadCallback: async (file: File) => { const url = await props.uploadCallback(file); return {data:{link:url}}; }
+                uploadCallback: async (file: File) => { const url = await uploadCallback(file); return {data:{link:url}}; }
             }
         }}
     />;

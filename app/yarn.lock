@@ -1777,6 +1777,7 @@ __metadata:
     "@types/react-draft-wysiwyg": ^1.13.4
     bootstrap: ^5.2.3
     draft-js: ^0.11.7
+    draft-js-export-html: ^1.4.1
     draftjs-to-html: ^0.9.1
     overmind: ^28.0.2
     overmind-react: ^29.0.2
@@ -5636,6 +5637,28 @@ __metadata:
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
   checksum: f412c5fe8c24fbe313d302d2500e247ba8a1946492db405a4de4d30dd0eb186a88a43f13c958c5a7de303938949c4231c56994f97d05c4bc1f22478d631b4005
+  languageName: node
+  linkType: hard
+
+"draft-js-export-html@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "draft-js-export-html@npm:1.4.1"
+  dependencies:
+    draft-js-utils: ^1.4.0
+  peerDependencies:
+    draft-js: ">=0.10.0"
+    immutable: 3.x.x
+  checksum: 41a95522abcd3f12933ef2656fc25356f6d7e5e67689dc3ae50a3927cc129e17d45ac648fc20723f335a08f6e696de04a73db61013920692486a5f99398e3af1
+  languageName: node
+  linkType: hard
+
+"draft-js-utils@npm:^1.4.0":
+  version: 1.4.1
+  resolution: "draft-js-utils@npm:1.4.1"
+  peerDependencies:
+    draft-js: ">=0.10.0"
+    immutable: 3.x.x
+  checksum: 0b261e8bf9267089ca31962a288ffa755c14c22436f4962b6fea2261555c12a5fe8df91982e0f96fd9b8d8c7c0514c69cf6299dbcdea41c6e8d53e2b74f411de
   languageName: node
   linkType: hard
 

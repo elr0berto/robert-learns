@@ -1,8 +1,10 @@
 import {derived} from "overmind";
 import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {config} from "../index";
-import {convertToRaw, EditorState} from "draft-js";
+import {ContentState, EditorState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
+import {stateToHTML} from 'draft-js-export-html';
 
 type CreateCardModalState = {
     cardId: number | null;
@@ -19,40 +21,49 @@ type CreateCardModalState = {
     readonly backHtml: string;
 }
 
-export const getInitialCreateCardModalState = (): CreateCardModalState => ({
-    cardId: null,
-    cardSetId: null,
-    activeTab: 'front',
-    frontEditorState: EditorState.createEmpty(),
-    backEditorState: EditorState.createEmpty(),
-    audioFileDataURL: null,
-    submitting: false,
-    isOpen: derived((state: CreateCardModalState) => {
-        return state.cardSetId !== null;
-    }),
-    edit: derived((state: CreateCardModalState) => {
-        return state.cardId !== null;
-    }),
-    card: derived((state: CreateCardModalState, rootState: typeof config.state) => {
-        if (state.cardId === null) {
-            return null;
-        }
-        const card = rootState.workspaceCardSet.cards.find(card => card.id === state.cardId);
-        if (card === undefined || card === null) {
-            throw new Error(`Card with id ${state.cardId} not found`);
-        }
-        return card;
-    }),
-    frontHtml: derived((state: CreateCardModalState) => {
-        const contentState = state.frontEditorState.getCurrentContent();
-        const rawContentState = convertToRaw(contentState);
-        return draftToHtml(rawContentState);
-    }),
-    backHtml: derived((state: CreateCardModalState) => {
-        const contentState = state.backEditorState.getCurrentContent();
-        const rawContentState = convertToRaw(contentState);
-        return draftToHtml(rawContentState);
-    }),
-});
+function getEditorStateFromHtmlString(html: string) : EditorState {
+    const contentBlock = htmlToDraft(html);
+    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks, contentBlock.entityMap);
+    return EditorState.createWithContent(contentState);
+}
 
-export const state: CreateCardModalState = getInitialCreateCardModalState();
+function getHtmlStringFromEditorState(editorState: EditorState) : string {
+    let contentState = editorState.getCurrentContent();
+    return stateToHTML(contentState);
+}
+
+export const getInitialCreateCardModalState = (cardSetId: number | null, card: Card | null) : CreateCardModalState => {
+    return {
+        cardId: card?.id ?? null,
+        cardSetId: cardSetId,
+        activeTab: 'front',
+        frontEditorState: getEditorStateFromHtmlString(card?.front.content ?? ''),
+        backEditorState: getEditorStateFromHtmlString(card?.back.content ?? ''),
+        audioFileDataURL: null,
+        submitting: false,
+        isOpen: derived((state: CreateCardModalState) => {
+            return state.cardSetId !== null;
+        }),
+        edit: derived((state: CreateCardModalState) => {
+            return state.cardId !== null;
+        }),
+        card: derived((state: CreateCardModalState, rootState: typeof config.state) => {
+            if (state.cardId === null) {
+                return null;
+            }
+            const card = rootState.workspaceCardSet.cards.find(card => card.id === state.cardId);
+            if (card === undefined || card === null) {
+                throw new Error(`Card with id ${state.cardId} not found`);
+            }
+            return card;
+        }),
+        frontHtml: derived((state: CreateCardModalState) => {
+            return getHtmlStringFromEditorState(state.frontEditorState);
+        }),
+        backHtml: derived((state: CreateCardModalState) => {
+            return getHtmlStringFromEditorState(state.backEditorState);
+        }),
+    };
+}
+
+export const state: CreateCardModalState = getInitialCreateCardModalState(null, null);
