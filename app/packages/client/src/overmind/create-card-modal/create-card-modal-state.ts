@@ -39,7 +39,7 @@ export const getInitialCreateCardModalState = (cardSetId: number | null, card: C
         activeTab: 'front',
         frontEditorState: getEditorStateFromHtmlString(card?.front.content ?? ''),
         backEditorState: getEditorStateFromHtmlString(card?.back.content ?? ''),
-        audioFileDataURL: null,
+        audioFileDataURL: card?.audio?.getUrl() ?? null,
         submitting: false,
         isOpen: derived((state: CreateCardModalState) => {
             return state.cardSetId !== null;

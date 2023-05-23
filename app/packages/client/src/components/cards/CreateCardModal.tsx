@@ -1,6 +1,6 @@
 import {useActions, useAppState} from "../../overmind";
 import {Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
-import React from "react";
+import React, {useRef} from "react";
 import CardFaceEditor from "./CardFaceEditor";
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
@@ -8,6 +8,16 @@ import 'react-h5-audio-player/lib/styles.css';
 function CreateCardModal() {
     const state = useAppState();
     const actions = useActions();
+
+    // 👇️ create a ref for the file input
+    const inputRef = useRef<HTMLInputElement>(null);
+    const resetFileInput = () => {
+        if (inputRef?.current !== null) {
+            // 👇️ reset input value
+            console.log('resetting input');
+            inputRef.current.value = '';
+        }
+    };
 
     if (!state.createCardModal.isOpen) {
         return null;
@@ -46,7 +56,7 @@ function CreateCardModal() {
                             <Tab eventKey="audio" title="Audio">
                                 <Form.Group controlId="formFileLg" className="mb-3">
                                     <Form.Label>Upload audio</Form.Label>
-                                    <input type="file" onChange={e => {
+                                    <input className={state.createCardModal.audioFileDataURL !== null ? 'd-none' : ''} ref={inputRef} type="file" onChange={e => {
                                         if (e.target.files && e.target.files.length === 1) {
                                             actions.createCardModal.setAudioFile(e.target.files[0])
                                         } else {
@@ -54,10 +64,13 @@ function CreateCardModal() {
                                         }
                                     }} accept=".mp3,.aac,.m4a"/>
                                 </Form.Group>
-                                {state.createCardModal.audioFileDataURL !== null ? <AudioPlayer
-                                    src={state.createCardModal.audioFileDataURL}
-                                    onPlay={e => console.log("onPlay")}
-                                /> : null}
+                                {state.createCardModal.audioFileDataURL !== null ? <>
+                                    <AudioPlayer
+                                        src={state.createCardModal.audioFileDataURL}
+                                        onPlay={e => console.log("onPlay")}
+                                    />
+                                    <Button variant={"danger"} onClick={() => { resetFileInput(); actions.createCardModal.setAudioFile(null); }}>Remove audio</Button>
+                                </> : null}
                             </Tab>
                         </Tabs>
                     </Form>
