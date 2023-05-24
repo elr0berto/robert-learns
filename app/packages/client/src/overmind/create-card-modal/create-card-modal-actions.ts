@@ -12,6 +12,7 @@ function htmlStringToEditorState(html: string) : EditorState {
 }
 export const openCreateCardModal = ({ state }: Context, {cardSetId, card}: {cardSetId: number, card: Card|null}) => {
     console.log('openCreateCardModal', cardSetId, card);
+    window.audioFile = null;
     state.createCardModal = getInitialCreateCardModalState(cardSetId, card);
 }
 
@@ -63,11 +64,37 @@ export const setAudioFile = async ({ state, effects }: Context, file: File|null)
 
 export const submit = async ({ state, effects, actions }: Context) => {
     state.createCardModal.submitting = true;
+
+
+    let audioUpdateStatus : 'new-card' | 'new-audio' | 'delete-audio' | 'no-change' = 'new-card';
+    if (state.createCardModal.cardId !== null) {
+        const card = state.workspaceCardSet.cards.find(c => c.id === state.createCardModal.cardId);
+        if (card === undefined) {
+            throw new Error('Card not found, id: ' + state.createCardModal.cardId);
+        }
+
+        const cardHadAudio = card.audio !== null;
+        const cardHasNewAudio = window.audioFile !== null;
+        const cardHasAudio = state.createCardModal.audioFileDataURL !== null;
+
+        if (cardHasNewAudio) {
+            audioUpdateStatus = 'new-audio';
+        } else {
+            if (cardHadAudio && !cardHasAudio) {
+                audioUpdateStatus = 'delete-audio';
+            } else {
+                audioUpdateStatus = 'no-change';
+            }
+        }
+    }
+
     const resp = await effects.api.cards.createCard({
+        cardId: state.createCardModal.cardId,
         cardSetId: state.createCardModal.cardSetId!,
         front: state.createCardModal.frontHtml,
         back: state.createCardModal.backHtml,
         audio: window.audioFile ?? null,
+        audioUpdateStatus: audioUpdateStatus,
     });
 
     state.workspaceCardSet.cards.push(resp.card!);

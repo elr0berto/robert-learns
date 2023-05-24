@@ -75,7 +75,42 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
 
     // TODO: remove dangerous html from req.body.front and req.body.back
 
+    let cardId : number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
 
+    const create : boolean = cardId === null;
+
+    let existingCard = create ? null : await prisma.card.findUnique({
+        where: {
+            id: cardId!,
+        },
+        include: {
+            faces: true,
+            audio: true,
+            sets: true,
+        }
+    });
+
+    if (!create && existingCard === null) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'Card not found',
+            cardData: null,
+        });
+    }
+
+    if (existingCard !== null) {
+        if (existingCard.sets.find(s => s.cardSetId === parseInt(req.body.cardSetId)) === undefined) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                signedInUserData: getUserData(user),
+                errorMessage: 'Card id '+ existingCard.id + ' does not belong to cardSetId: ' + req.body.cardSetId,
+                cardData: null,
+            });
+        }
+    }
 
     // load the card set from db including the workspace
     const cardSet = await prisma.cardSet.findUnique({

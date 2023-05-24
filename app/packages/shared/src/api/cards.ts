@@ -25,10 +25,12 @@ export const getCards = async(getCardsRequest : GetCardsRequest) : Promise<GetCa
 }
 
 export type CreateCardRequest = {
+    cardId: number | null;
     cardSetId: number,
     front: string | null;
     back: string | null;
     audio: File | null;
+    audioUpdateStatus: 'new-card' | 'new-audio' | 'delete-audio' | 'no-change';
 };
 
 export type CreateCardResponseData = BaseResponseData & {
@@ -45,10 +47,14 @@ export class CreateCardResponse extends BaseResponse {
 
 export const createCard = async(params: CreateCardRequest) : Promise<CreateCardResponse> => {
     const formData = new FormData();
+    if (params.cardId !== null) {
+        formData.append('cardId', params.cardId.toString());
+    }
     formData.append('cardSetId', params.cardSetId.toString());
     formData.append('front', params.front ?? '');
     formData.append('back', params.back ?? '');
     formData.append('audio', params.audio ?? '');
+    formData.append('audioUpdateStatus', params.audioUpdateStatus);
     return await apiClient.post(CreateCardResponse, '/cards/create', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
