@@ -97,7 +97,22 @@ export const submit = async ({ state, effects, actions }: Context) => {
         audioUpdateStatus: audioUpdateStatus,
     });
 
-    state.workspaceCardSet.cards.push(resp.card!);
+    if (state.createCardModal.cardId === null) {
+        state.workspaceCardSet.cards.push(resp.card!);
+    } else {
+        const card = state.workspaceCardSet.cards.find(c => c.id === state.createCardModal.cardId);
+        if (card === undefined) {
+            throw new Error('Card not found, id: ' + state.createCardModal.cardId);
+        }
+
+        // replace the card in state.workspaceCardSet.cards with the new card
+        const index = state.workspaceCardSet.cards.indexOf(card);
+        // check that index is valid
+        if (index === -1) {
+            throw new Error('Card not found, id: ' + state.createCardModal.cardId);
+        }
+        state.workspaceCardSet.cards[index] = resp.card!;
+    }
 
     actions.createCardModal.closeCreateCardModal();
     state.createCardModal.submitting = false;

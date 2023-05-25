@@ -77,6 +77,18 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
 
     let cardId : number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
 
+    const audioUpdateStatus = req.body.audioUpdateStatus;
+    // check that audioUpdateStatus is a string with one of the following values: 'new-card' | 'new-audio' | 'delete-audio' | 'no-change';
+    if (typeof audioUpdateStatus !== 'string' || !['new-card', 'new-audio', 'delete-audio', 'no-change'].includes(audioUpdateStatus)) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'invalid audioUpdateStatus',
+            cardData: null,
+        });
+    }
+
     const create : boolean = cardId === null;
 
     let existingCard = create ? null : await prisma.card.findUnique({
@@ -137,7 +149,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             signedInUserData: getUserData(user),
-            errorMessage: 'You are not authorized to create cards in this card set',
+            errorMessage: 'You are not authorized to create/edit cards in this card set',
             cardData: null,
         });
     }
@@ -191,45 +203,110 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             });
         }
     }
+    let card = null;
+    if (create) {
+        const newCard = await prisma.card.create({
+            data: {
+                audioId: audioMedia?.id
+            }
+        });
 
-    const newCard = await prisma.card.create({
-        data: {
-            audioId: audioMedia?.id
+        const newCardSetCard = await prisma.cardSetCard.create({
+            data: {
+                cardSetId: parseInt(req.body.cardSetId),
+                cardId: newCard.id,
+            }
+        });
+
+        const faceFront = await prisma.cardFace.create({
+            data: {
+                content: req.body.front ?? '',
+                cardId: newCard.id,
+                side: CardSide.FRONT,
+            }
+        });
+
+        const faceBack = await prisma.cardFace.create({
+            data: {
+                content: req.body.back ?? '',
+                cardId: newCard.id,
+                side: CardSide.BACK,
+            }
+        });
+
+        card = await prisma.card.findUnique({
+            where: {
+                id: newCard.id,
+            },
+            include: {
+                faces: true,
+                audio: true,
+            },
+        });
+    } else {
+        // 'new-audio' | 'delete-audio' | 'no-change'
+        if (audioUpdateStatus === 'new-audio') {
+            if (audioMedia === null) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    signedInUserData: getUserData(user),
+                    errorMessage: 'missing audio media when audioUpdateStatus is new-audio',
+                    cardData: null,
+                });
+            }
+            existingCard!.audioId = audioMedia.id;
+        } else if (audioUpdateStatus === 'delete-audio') {
+            existingCard!.audioId = null;
+        } else if (audioUpdateStatus === 'no-change') {
+            // do nothing
+        } else {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                signedInUserData: getUserData(user),
+                errorMessage: 'unexpected audioUpdateStatus: ' + audioUpdateStatus,
+                cardData: null,
+            });
         }
-    });
 
-    const newCardSetCard = await prisma.cardSetCard.create({
-        data: {
-            cardSetId: parseInt(req.body.cardSetId),
-            cardId: newCard.id,
-        }
-    });
+        const existingFaceFront = existingCard!.faces.find(f => f.side === CardSide.FRONT);
+        const existingFaceBack = existingCard!.faces.find(f => f.side === CardSide.BACK);
 
-    const faceFront = await prisma.cardFace.create({
-        data: {
-            content: req.body.front ?? '',
-            cardId: newCard.id,
-            side: CardSide.FRONT,
-        }
-    });
-
-    const faceBack = await prisma.cardFace.create({
-        data: {
-            content: req.body.back ?? '',
-            cardId: newCard.id,
-            side: CardSide.BACK,
-        }
-    });
-
-    const card = await prisma.card.findUnique({
-        where: {
-            id: newCard.id,
-        },
-        include: {
-            faces: true,
-            audio: true,
-        },
-    });
+        // save existingCard and its face
+        card = await prisma.card.update({
+            where: {
+                id: existingCard!.id,
+            },
+            data: {
+                audioId: existingCard!.audioId,
+                faces: {
+                    update: [
+                        {
+                            where: {
+                                id: existingFaceFront!.id,
+                            },
+                            data: {
+                                content: req.body.front ?? '',
+                            }
+                        },
+                        {
+                            where: {
+                                id: existingFaceBack!.id,
+                            },
+                            data: {
+                                content: req.body.back ?? '',
+                            }
+                        }
+                    ]
+                }
+            },
+            include: {
+                faces: true,
+                audio: true,
+            },
+        });
+    }
 
     return res.json({
         dataType: true,
