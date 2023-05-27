@@ -1,5 +1,5 @@
 import {apiClient} from './ApiClient.js';
-import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
+import {BaseResponse, BaseResponseData, ResponseStatus} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
 import {CardSet, CardSetData} from "./models/CardSet.js";
 import {CreateCardSetRequest} from "api/card-sets.js";
@@ -45,7 +45,47 @@ export class CreateCardResponse extends BaseResponse {
     }
 }
 
+export const validateCreateCardRequest = (params: CreateCardRequest) : string[] => {
+    let errors : string[] = [];
+
+    if (params.cardSetId === null) {
+        errors.push('cardSetId is required');
+    }
+    if (params.front === null) {
+        errors.push('front is required');
+    }
+    if (params.back === null) {
+        errors.push('back is required');
+    }
+    if (params.audioUpdateStatus === 'new-audio' && params.audio === null) {
+        errors.push('audio is required');
+    }
+    if (params.audioUpdateStatus === 'delete-audio' && params.audio !== null) {
+        errors.push('audio must be null');
+    }
+    // check that front and back is max 65,535 characters
+    if (params.front !== null && params.front.length > 65535) {
+        errors.push('front must be less than 65,535 characters');
+    }
+    if (params.back !== null && params.back.length > 65535) {
+        errors.push('back must be less than 65,535 characters');
+    }
+
+    return errors;
+}
+
 export const createCard = async(params: CreateCardRequest) : Promise<CreateCardResponse> => {
+    const errors = validateCreateCardRequest(params);
+    if (errors.length > 0) {
+        return new CreateCardResponse({
+            dataType: true,
+            errorMessage: errors.join(', '),
+            status: ResponseStatus.UserError,
+            cardData: null,
+            signedInUserData: null,
+        });
+    }
+
     const formData = new FormData();
     if (params.cardId !== null) {
         formData.append('cardId', params.cardId.toString());

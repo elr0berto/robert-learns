@@ -1,46 +1,33 @@
 import {derived} from "overmind";
 import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {config} from "../index";
-import {ContentState, EditorState } from "draft-js";
-import draftToHtml from "draftjs-to-html";
-import htmlToDraft from "html-to-draftjs";
-import {stateToHTML} from 'draft-js-export-html';
 
 type CreateCardModalState = {
     cardId: number | null;
     cardSetId: number | null;
     activeTab: string | null;
-    frontEditorState: EditorState;
-    backEditorState: EditorState;
+    frontHtml: string;
+    backHtml: string;
     audioFileDataURL: string | null;
     submitting: boolean;
+    submitError: string | null;
     readonly isOpen: boolean;
     readonly edit: boolean;
     readonly card: Card | null;
-    readonly frontHtml: string;
-    readonly backHtml: string;
 }
 
-function getEditorStateFromHtmlString(html: string) : EditorState {
-    const contentBlock = htmlToDraft(html);
-    const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks, contentBlock.entityMap);
-    return EditorState.createWithContent(contentState);
-}
 
-function getHtmlStringFromEditorState(editorState: EditorState) : string {
-    let contentState = editorState.getCurrentContent();
-    return stateToHTML(contentState);
-}
 
 export const getInitialCreateCardModalState = (cardSetId: number | null, card: Card | null) : CreateCardModalState => {
     return {
         cardId: card?.id ?? null,
         cardSetId: cardSetId,
         activeTab: 'front',
-        frontEditorState: getEditorStateFromHtmlString(card?.front.content ?? ''),
-        backEditorState: getEditorStateFromHtmlString(card?.back.content ?? ''),
+        frontHtml: card?.front.content ?? '',
+        backHtml: card?.back.content ?? '',
         audioFileDataURL: card?.audio?.getUrl() ?? null,
         submitting: false,
+        submitError: null,
         isOpen: derived((state: CreateCardModalState) => {
             return state.cardSetId !== null;
         }),
@@ -56,12 +43,6 @@ export const getInitialCreateCardModalState = (cardSetId: number | null, card: C
                 throw new Error(`Card with id ${state.cardId} not found`);
             }
             return card;
-        }),
-        frontHtml: derived((state: CreateCardModalState) => {
-            return getHtmlStringFromEditorState(state.frontEditorState);
-        }),
-        backHtml: derived((state: CreateCardModalState) => {
-            return getHtmlStringFromEditorState(state.backEditorState);
         }),
     };
 }

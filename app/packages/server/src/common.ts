@@ -123,7 +123,7 @@ function getFaceData(face: PrismaCardFace) : CardFaceData {
     };
 }
 
-export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: PrismaMedia | null}) : CardData {
+export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: PrismaMedia | null, cardSetCards: (PrismaCardSetCard & {cardSet: PrismaCardSet})[]}) : CardData {
     const front = card.faces.filter(f => f.side === PrismaCardSide.FRONT)[0];
     const back = card.faces.filter(f => f.side === PrismaCardSide.BACK)[0];
     return {
@@ -131,7 +131,8 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
         id: card.id,
         front: getFaceData(front),
         back: getFaceData(back),
-        audioData: card.audio === null ? null : getMediaData(card.audio)
+        audioData: card.audio === null ? null : getMediaData(card.audio),
+        cardSetDatas: card.cardSetCards.map(s => getCardSetData(s.cardSet)),
     };
 }
 

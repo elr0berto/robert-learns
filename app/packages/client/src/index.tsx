@@ -5,6 +5,9 @@ import {config} from './overmind';
 import {Provider} from "overmind-react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'quill/dist/quill.snow.css'; // Add css for snow theme
+// or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
+
 import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";
 import App from "./components/App";
 import {createRoot} from "react-dom/client";

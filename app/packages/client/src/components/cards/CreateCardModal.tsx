@@ -1,5 +1,5 @@
 import {useActions, useAppState} from "../../overmind";
-import {Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
+import {Alert, Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
 import React, {useRef} from "react";
 import CardFaceEditor from "./CardFaceEditor";
 import AudioPlayer from 'react-h5-audio-player';
@@ -41,15 +41,15 @@ function CreateCardModal() {
                         >
                             <Tab eventKey="front" title="Front">
                                 <CardFaceEditor
-                                    editorState={state.createCardModal.frontEditorState}
-                                    onEditorStateChange={editorState => actions.createCardModal.setFrontEditorState(editorState)}
+                                    value={state.createCardModal.frontHtml}
+                                    onChange={html => actions.createCardModal.setFrontHtml(html)}
                                     uploadCallback={file => actions.createCardModal.uploadFile(file)}
                                 />
                             </Tab>
                             <Tab eventKey="back" title="Back">
                                 <CardFaceEditor
-                                    editorState={state.createCardModal.backEditorState}
-                                    onEditorStateChange={editorState => actions.createCardModal.setBackEditorState(editorState)}
+                                    value={state.createCardModal.backHtml}
+                                    onChange={html => actions.createCardModal.setBackHtml(html)}
                                     uploadCallback={file => actions.createCardModal.uploadFile(file)}
                                 />
                             </Tab>
@@ -73,6 +73,7 @@ function CreateCardModal() {
                                 </> : null}
                             </Tab>
                         </Tabs>
+                        {state.createCardModal.submitError !== null ? <Alert variant={'danger'}>{state.createCardModal.submitError}</Alert> : null}
                     </Form>
                 </Container>
             </Modal.Body>

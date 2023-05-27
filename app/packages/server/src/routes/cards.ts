@@ -56,6 +56,11 @@ cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedRes
                 include: {
                     faces: true,
                     audio: true,
+                    cardSetCards: {
+                        include: {
+                            cardSet: true
+                        }
+                    },
                 },
             },
         },
@@ -98,7 +103,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
         include: {
             faces: true,
             audio: true,
-            sets: true,
+            cardSetCards: true,
         }
     });
 
@@ -113,7 +118,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
     }
 
     if (existingCard !== null) {
-        if (existingCard.sets.find(s => s.cardSetId === parseInt(req.body.cardSetId)) === undefined) {
+        if (existingCard.cardSetCards.find(s => s.cardSetId === parseInt(req.body.cardSetId)) === undefined) {
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -241,6 +246,11 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             include: {
                 faces: true,
                 audio: true,
+                cardSetCards: {
+                    include: {
+                        cardSet: true,
+                    }
+                }
             },
         });
     } else {
@@ -304,6 +314,11 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             include: {
                 faces: true,
                 audio: true,
+                cardSetCards: {
+                    include: {
+                        cardSet: true,
+                    }
+                },
             },
         });
     }

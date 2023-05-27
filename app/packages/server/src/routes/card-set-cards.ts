@@ -81,7 +81,7 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
             }
         },
         include: {
-            sets: {
+            cardSetCards: {
                 include: {
                     cardSet: true
                 }
@@ -113,8 +113,8 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
     for(const key in cards) {
         const card = cards[key];
 
-        if (card.sets.length > 0) {
-            if (cardSetWorkspaceId !== card.sets[0].cardSet.workspaceId) {
+        if (card.cardSetCards.length > 0) {
+            if (cardSetWorkspaceId !== card.cardSetCards[0].cardSet.workspaceId) {
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,

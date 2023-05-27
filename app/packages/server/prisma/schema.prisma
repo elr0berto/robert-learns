@@ -71,11 +71,11 @@ model Media {
 }
 
 model Card {
-  id      Int      @id @default(autoincrement())
-  faces   CardFace[]
-  sets    CardSetCard[]
-  audio   Media?   @relation(fields: [audioId], references: [id])
-  audioId Int?
+  id           Int           @id @default(autoincrement())
+  faces        CardFace[]
+  cardSetCards CardSetCard[]
+  audio        Media?        @relation(fields: [audioId], references: [id])
+  audioId      Int?
 }
 
 enum CardSide {
@@ -85,7 +85,7 @@ enum CardSide {
 
 model CardFace {
   id      Int      @id @default(autoincrement())
-  content String
+  content String   @db.Text
   card    Card     @relation(fields: [cardId], references: [id])
   cardId  Int
   side    CardSide

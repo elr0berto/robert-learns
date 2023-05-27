@@ -28,6 +28,7 @@ function WorkspaceCardSetPage() {
     return <Container>
         <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i> {state.workspaceCardSet.currentUserCanEdit ? <Button href={pageUrls.workspaceCardSetEdit.url(state.workspace.workspace, state.workspaceCardSet.cardSet)}>Edit card set</Button> : null}</h1>
         {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList
+            thisCardSetId={state.workspaceCardSet.cardSetId!}
             showActionButtons={state.workspace.currentUserCanContribute!}
             cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted}
             onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
@@ -46,6 +47,7 @@ function WorkspaceCardSetPage() {
             cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets!}
             card={state.workspaceCardSet.cardBeingDeleted!}/> : null}
         <AddCardsFromOtherCardSetsModal/>
+        <EditCardCardSetsModal/>
     </Container>;
 }
 

@@ -1,15 +1,8 @@
 import {Context} from "..";
 import {getInitialCreateCardModalState} from "./create-card-modal-state";
-import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
-import {ContentState, EditorState, RawDraftContentState} from "draft-js";
-import htmlToDraft from "html-to-draftjs";
+import {Card, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 
-function htmlStringToEditorState(html: string) : EditorState {
-    const blocksFromHtml = htmlToDraft(html);
-    const { contentBlocks, entityMap } = blocksFromHtml;
-    const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
-    return EditorState.createWithContent(contentState);
-}
+
 export const openCreateCardModal = ({ state }: Context, {cardSetId, card}: {cardSetId: number, card: Card|null}) => {
     console.log('openCreateCardModal', cardSetId, card);
     window.audioFile = null;
@@ -25,12 +18,12 @@ export const setActiveTab = ({state}: Context, activeTab: string | null) => {
     state.createCardModal.activeTab = activeTab;
 }
 
-export const setFrontEditorState = ({ state }: Context, editorState: EditorState) => {
-    state.createCardModal.frontEditorState = editorState;
+export const setFrontHtml = ({ state }: Context, html: string) => {
+    state.createCardModal.frontHtml = html;
 }
 
-export const setBackEditorState = ({ state }: Context, editorState: EditorState) => {
-    state.createCardModal.backEditorState = editorState;
+export const setBackHtml = ({ state }: Context, html: string) => {
+    state.createCardModal.backHtml = html;
 }
 
 export const uploadFile = async ({ state, effects }: Context, file: File) => {
@@ -64,7 +57,7 @@ export const setAudioFile = async ({ state, effects }: Context, file: File|null)
 
 export const submit = async ({ state, effects, actions }: Context) => {
     state.createCardModal.submitting = true;
-
+    state.createCardModal.submitError = null;
 
     let audioUpdateStatus : 'new-card' | 'new-audio' | 'delete-audio' | 'no-change' = 'new-card';
     if (state.createCardModal.cardId !== null) {
@@ -96,6 +89,12 @@ export const submit = async ({ state, effects, actions }: Context) => {
         audio: window.audioFile ?? null,
         audioUpdateStatus: audioUpdateStatus,
     });
+
+    if (resp.status !== ResponseStatus.Success) {
+        state.createCardModal.submitting = false;
+        state.createCardModal.submitError = resp.errorMessage ?? 'Unexpected error. Please try again later.';
+        return;
+    }
 
     if (state.createCardModal.cardId === null) {
         state.workspaceCardSet.cards.push(resp.card!);
