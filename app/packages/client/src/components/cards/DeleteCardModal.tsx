@@ -17,7 +17,15 @@ function DeleteCardModal(props: Props) {
             <Modal.Title>Delete card from card set <i>{props.cardSet.name}</i></Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <CardPreview thisCardSetId={props.cardSet.id} card={props.card} showActionButtons={false} onDeleteCard={() => {}} onEditCard={() => {}} beingDeleted={false}/>
+            <CardPreview
+                thisCardSetId={props.cardSet.id}
+                card={props.card}
+                showActionButtons={false}
+                onDeleteCard={() => {}}
+                onEditCard={() => {}}
+                beingDeleted={false}
+                showCardSetsPreview={true}
+                onEditCardSets={() => {}}/>
             <hr/>
             {props.cardBeingDeletedExistsInOtherCardSets.length === 0 ?
                 <Alert variant={'danger'}>This card does not exists in any other card-sets! Deleting it means it will be permanently gone! Are you sure?</Alert> :

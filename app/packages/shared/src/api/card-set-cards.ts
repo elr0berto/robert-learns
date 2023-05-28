@@ -1,4 +1,11 @@
-import {BaseResponse, BaseResponseData, CardSetCard, CardSetCardData, ResponseStatus} from "./models/index.js";
+import {
+    BaseResponse,
+    BaseResponseData, Card, CardData, CardSet,
+    CardSetCard,
+    CardSetCardData,
+    CardSetData,
+    ResponseStatus
+} from "./models/index.js";
 import {apiClient} from "./ApiClient.js";
 
 export type GetCardSetCardsResponseData = BaseResponseData & {
@@ -53,4 +60,25 @@ export const createCardSetCards = async(req : CreateCardSetCardsRequest) : Promi
     }
 
     return await apiClient.post(BaseResponse, '/card-set-cards/create', req);
+}
+
+export type UpdateCardCardSetsResponseData = BaseResponseData & {
+    cardData: CardData | null;
+}
+
+export class UpdateCardCardSetsResponse extends BaseResponse {
+    card: Card | null;
+    constructor(data: UpdateCardCardSetsResponseData) {
+        super(data);
+        this.card = data.cardData === null ? null : new Card(data.cardData);
+    }
+}
+
+export type UpdateCardCardSetsRequest = {
+    cardId: number;
+    selectedCardSetIds: number[];
+}
+
+export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promise<UpdateCardCardSetsResponse> => {
+    return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/updateCardCardSets', req);
 }

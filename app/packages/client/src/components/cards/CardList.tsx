@@ -7,6 +7,7 @@ type Props = {
     cards: Card[];
     onDeleteCard: (card: Card) => void;
     onEditCard: (card: Card) => void;
+    onEditCardCardSets: (card: Card) => void;
     cardBeingDeleted: Card | null;
     showActionButtons: boolean;
     thisCardSetId: number;
@@ -26,7 +27,10 @@ function CardList(props: Props) {
                     onDeleteCard={props.onDeleteCard}
                     onEditCard={props.onEditCard}
                     showActionButtons={props.showActionButtons}
-                    card={card}/>
+                    card={card}
+                    showCardSetsPreview={true}
+                    onEditCardSets={props.onEditCardCardSets}
+                />
             </Col>)}
         </Row>
     </Container>;

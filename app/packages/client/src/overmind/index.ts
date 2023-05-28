@@ -14,6 +14,7 @@ import * as workspaceCardSet from './workspace-card-set/';
 import * as createCardModal from './create-card-modal/';
 import * as addUserModal from './add-user-modal/';
 import * as addCardsFromOtherCardSetsModal from './add-cards-from-other-card-sets-modal';
+import * as editCardCardSetsModal from './edit-card-card-sets-modal';
 
 import {merge, namespaced} from "overmind/es/config";
 
@@ -36,6 +37,7 @@ export const config = merge(
         createCardModal,
         addUserModal,
         addCardsFromOtherCardSetsModal,
+        editCardCardSetsModal
     })
 )
 

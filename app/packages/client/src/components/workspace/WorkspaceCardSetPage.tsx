@@ -5,6 +5,7 @@ import CardList from "../cards/CardList";
 import DeleteCardModal from "../cards/DeleteCardModal";
 import {pageUrls} from "../../page-urls";
 import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsModal";
+import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -33,6 +34,7 @@ function WorkspaceCardSetPage() {
             cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted}
             onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
             onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.workspaceCardSet.cardSetId!, card: card})}
+            onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
             cards={state.workspaceCardSet.cards}/>}
 
         {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.workspaceCardSet.cardSetId!, card: null})}>+ Create card</Button> : null}

@@ -1,7 +1,6 @@
 import {useActions, useAppState} from "../../overmind";
-import {Accordion, Alert, Button, Modal} from "react-bootstrap";
+import {Alert, Button, Modal} from "react-bootstrap";
 import React from "react";
-import CardPreviewSelectable from "./CardPreviewSelectable";
 import CardPreview from "./CardPreview";
 
 function EditCardCardSetsModal() {
@@ -14,12 +13,13 @@ function EditCardCardSetsModal() {
         </Modal.Header>
         <Modal.Body>
             <CardPreview
-                card={state.editCardCardSetsModal.card}
+                card={state.editCardCardSetsModal.card!}
                 showActionButtons={false}
                 onDeleteCard={() => {}}
                 beingDeleted={false}
                 onEditCard={() => {}}
-
+                showCardSetsPreview={false}
+                onEditCardSets={() => {}}
             />
         </Modal.Body>
         <Modal.Footer>
