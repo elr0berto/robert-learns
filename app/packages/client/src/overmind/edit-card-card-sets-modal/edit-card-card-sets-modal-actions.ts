@@ -1,8 +1,10 @@
 import {Context} from "..";
 import {getInitialEditCardCardSetsModalState} from "./edit-card-card-sets-modal-state";
 
-export const open = async ({ state, effects }: Context, cardSetId: number) => {
+export const open = async ({ state, effects }: Context, cardId: number) => {
     state.editCardCardSetsModal = getInitialEditCardCardSetsModalState();
+    state.editCardCardSetsModal.cardId = cardId;
+    state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.card!.cardSets.map(cs => cs.id);
     state.editCardCardSetsModal.loading = true;
 
     const cardSetsResp = await effects.api.cardSets.getCardSets({workspaceId: state.workspace.workspaceId!});
@@ -12,6 +14,14 @@ export const open = async ({ state, effects }: Context, cardSetId: number) => {
 }
 export const close = async ({ state }: Context) => {
     state.editCardCardSetsModal.cardId = null;
+}
+
+export const setSelectedCardSetId = ({state}: Context, {cardSetId, selected}: {cardSetId: number, selected: boolean}) => {
+    if (selected) {
+        state.editCardCardSetsModal.selectedCardSetIds.push(cardSetId);
+    } else {
+        state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.selectedCardSetIds.filter(id => id !== cardSetId);
+    }
 }
 
 export const save = async ({ state, effects }: Context,) => {
