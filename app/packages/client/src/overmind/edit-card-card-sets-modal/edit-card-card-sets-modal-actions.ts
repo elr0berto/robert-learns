@@ -28,7 +28,10 @@ export const save = async ({ state, effects }: Context,) => {
     state.editCardCardSetsModal.submitError = null;
     state.editCardCardSetsModal.submitting = true;
 
-    await effects.api.cardSetCards.updateCardCardSets({cardId: state.editCardCardSetsModal.cardId!, selectedCardSetIds: state.editCardCardSetsModal.selectedCardSetIds});
+    const resp = await effects.api.cardSetCards.updateCardCardSets({cardId: state.editCardCardSetsModal.cardId!, cardSetIds: state.editCardCardSetsModal.selectedCardSetIds});
 
-    effects.page.reloadPage();
+    state.editCardCardSetsModal.card!.cardSets = resp.card!.cardSets;
+
+    state.editCardCardSetsModal.submitting = false;
+    state.editCardCardSetsModal.cardId = null;
 }

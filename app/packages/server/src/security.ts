@@ -1,5 +1,12 @@
 import prisma from "./db/prisma.js";
-import {UserRole, User as PrismaUser, CardSet as PrismaCardSet, Workspace as PrismaWorkspace} from "@prisma/client";
+import {
+    UserRole,
+    User as PrismaUser,
+    Card as PrismaCard,
+    CardSetCard as PrismaCardSetCard,
+    CardSet as PrismaCardSet,
+    Workspace as PrismaWorkspace,
+} from "@prisma/client";
 import { getWorkspaceUser } from "./db/helpers/workspace-users.js";
 
 export const canUserViewWorkspaceId = async (user: PrismaUser, workspaceId: number) : Promise<boolean> => {
@@ -122,4 +129,29 @@ export const canUserCreateCardsForCardSetId = async (user: PrismaUser, cardSetId
         throw new Error('cardSetId: ' + cardSetId + ' not found!');
     }
     return await canUserCreateCardsForCardSet(user, cardSet);
+}
+
+export const canUserEditCardId = async (user: PrismaUser, cardId: number) : Promise<boolean> => {
+    const card = await prisma.card.findFirst({
+        where: { id: cardId },
+        include: {
+            cardSetCards: {
+                include: {
+                    cardSet: true
+                }
+            }
+        }
+    });
+
+    return await canUserEditCard(user, card!);
+}
+
+export const canUserEditCard = async (user: PrismaUser, card: PrismaCard & {cardSetCards: (PrismaCardSetCard & {cardSet: PrismaCardSet})[]}) : Promise<boolean> => {
+    let canEdit = false;
+    for (const cardSetCard of card.cardSetCards) {
+        if (await canUserContributeToWorkspace(user, cardSetCard.cardSet)) {
+            canEdit = true;
+        }
+    }
+    return canEdit;
 }

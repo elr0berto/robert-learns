@@ -47,13 +47,13 @@ function EditCardCardSetsModal() {
             </Container>
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => actions.addCardsFromOtherCardSetsModal.close()} disabled={state.addCardsFromOtherCardSetsModal.disabled}>
+            <Button variant="secondary" onClick={() => actions.editCardCardSetsModal.close()} disabled={state.editCardCardSetsModal.disabled}>
                 Cancel
             </Button>
-            <Button variant="primary" onClick={() => actions.addCardsFromOtherCardSetsModal.save()} disabled={state.addCardsFromOtherCardSetsModal.disabled}>
+            <Button variant="primary" onClick={() => actions.editCardCardSetsModal.save()} disabled={state.editCardCardSetsModal.disabled}>
                 Save
             </Button>
-            {state.addCardsFromOtherCardSetsModal.submitError ? <Alert variant={'danger'}>{state.addCardsFromOtherCardSetsModal.submitError}</Alert> : null}
+            {state.editCardCardSetsModal.submitError ? <Alert variant={'danger'}>{state.editCardCardSetsModal.submitError}</Alert> : null}
         </Modal.Footer>
     </Modal> : null;
 }

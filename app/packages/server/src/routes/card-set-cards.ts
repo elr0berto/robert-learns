@@ -1,12 +1,15 @@
 import {Request,Router} from 'express';
 import {getCardSetCardData, getSignedInUser, getUserData, TypedResponse} from "../common.js";
-import {canUserCreateCardsForCardSetId, canUserViewCardSetId} from "../security.js";
+import {canUserCreateCardsForCardSetId, canUserEditCard, canUserEditCardId, canUserViewCardSetId} from "../security.js";
 import prisma from "../db/prisma.js";
 import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     CreateCardSetCardsRequest,
     GetCardSetCardsRequest,
-    GetCardSetCardsResponseData, validateCreateCardSetCardsRequest
+    GetCardSetCardsResponseData,
+    UpdateCardCardSetsRequest,
+    UpdateCardCardSetsResponseData,
+    validateCreateCardSetCardsRequest
 } from "@elr0berto/robert-learns-shared/api/card-set-cards";
 
 
@@ -61,6 +64,144 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
     }
 
     const cardSetId = req.body.cardSetId;
+
+    if (!await canUserCreateCardsForCardSetId(user, cardSetId)) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'You are not authorized to create cards for this card set',
+        });
+    }
+
+    const cardIds = req.body.cardIds;
+
+    // check if card exists and belongs to the same workspace as the card set
+    const cards = await prisma.card.findMany({
+        where: {
+            id: {
+                in: cardIds
+            }
+        },
+        include: {
+            cardSetCards: {
+                include: {
+                    cardSet: true
+                }
+            }
+        }
+    });
+
+    // check if cards found are the same as the ones requested
+    if (cards.length !== cardIds.length) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'One or more cards do not exist',
+        });
+    }
+
+    const cardSet = await prisma.cardSet.findUnique({
+        where: {
+            id: cardSetId
+        },
+        include: {
+            workspace: true
+        }
+    });
+
+    const cardSetWorkspaceId = cardSet!.workspace.id;
+
+    for(const key in cards) {
+        const card = cards[key];
+
+        if (card.cardSetCards.length > 0) {
+            if (cardSetWorkspaceId !== card.cardSetCards[0].cardSet.workspaceId) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    signedInUserData: getUserData(user),
+                    errorMessage: 'One or more cards do not belong to the same workspace as the card set',
+                });
+            }
+        }
+    }
+
+    // check if card set card already exists
+    const existingCardSetCards = await prisma.cardSetCard.findMany({
+        where: {
+            cardSetId: cardSetId,
+            cardId: {
+                in: cardIds
+            }
+        }
+    });
+
+    if (existingCardSetCards.length > 0) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'One or more cards already exist in the card set',
+        });
+    }
+
+    // create card set cards
+    const cardSetCards = await prisma.cardSetCard.createMany({
+        data: cardIds.map(cardId => {
+            return {
+                cardSetId: cardSetId,
+                cardId: cardId,
+            }
+        })
+    });
+
+    return res.json({
+        dataType: true,
+        status: ResponseStatus.Success,
+        signedInUserData: getUserData(user),
+        errorMessage: null,
+    });
+});
+
+cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCardCardSetsRequest>, res : TypedResponse<UpdateCardCardSetsResponseData>) => {
+    let user = await getSignedInUser(req.session);
+
+    const cardId = req.body.cardId;
+
+    const card = await prisma.card.findUnique({
+        where: {
+            id: cardId
+        },
+        include: {
+            cardSetCards: {
+                include: {
+                    cardSet: true
+                }
+            }
+        }
+    });
+
+    if (!card) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'Card does not exist',
+            cardData: null,
+        });
+    }
+
+    if (!await canUserEditCard(user, card)) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: getUserData(user),
+            errorMessage: 'You are not authorized to edit this card',
+            cardData: null,
+        });
+    }
 
     if (!await canUserCreateCardsForCardSetId(user, cardSetId)) {
         return res.json({

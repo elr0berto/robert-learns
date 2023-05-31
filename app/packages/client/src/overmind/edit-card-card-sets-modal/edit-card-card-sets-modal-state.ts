@@ -26,7 +26,7 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
         if (state.cardId === null) {
             return null;
         }
-        return rootState.workspaceCardSet.cards.find(c => c.id)!;
+        return rootState.workspaceCardSet.cards.find(c => c.id === state.cardId)!;
     }),
     open: derived((state: EditCardCardSetsModalState) => {
         return state.cardId !== null;

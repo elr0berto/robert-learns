@@ -76,7 +76,7 @@ export class UpdateCardCardSetsResponse extends BaseResponse {
 
 export type UpdateCardCardSetsRequest = {
     cardId: number;
-    selectedCardSetIds: number[];
+    cardSetIds: number[];
 }
 
 export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promise<UpdateCardCardSetsResponse> => {
