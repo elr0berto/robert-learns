@@ -7,7 +7,7 @@ function EditCardCardSetsModal() {
     const state = useAppState();
     const actions = useActions();
 
-    return state.editCardCardSetsModal.open ? <Modal className="edit-card-card-sets-modal" show={true} size="lg" onHide={() => actions.editCardCardSetsModal.close()}>
+    return state.editCardCardSetsModal.open ? <Modal className="edit-card-card-sets-modal" show={true} size="lg" onHide={state.editCardCardSetsModal.disabled ? () => {} : () => actions.editCardCardSetsModal.close()}>
         <Modal.Header closeButton>
             <Modal.Title>Select card sets for card</Modal.Title>
         </Modal.Header>
@@ -34,6 +34,7 @@ function EditCardCardSetsModal() {
                                         type="checkbox"
                                         label={cardSet.name}
                                         checked={state.editCardCardSetsModal.selectedCardSetIds.indexOf(cardSet.id) !== -1}
+                                        disabled={state.editCardCardSetsModal.checkBoxesDisabled}
                                         onChange={event => actions.editCardCardSetsModal.setSelectedCardSetId({
                                             cardSetId: cardSet.id,
                                             selected: event.target.checked
@@ -42,6 +43,7 @@ function EditCardCardSetsModal() {
                                 </Form.Group>
                             )
                         }
+                        {state.editCardCardSetsModal.validationError ? <Alert variant={'danger'}>{state.editCardCardSetsModal.validationError}</Alert> : null}
                     </Col>
                 </Row>
             </Container>

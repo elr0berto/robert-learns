@@ -1,6 +1,7 @@
 import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
+import {validateUpdateCardCardSetsRequest} from "@elr0berto/robert-learns-shared/dist/api/card-set-cards";
 
 
 type EditCardCardSetsModalState = {
@@ -12,7 +13,10 @@ type EditCardCardSetsModalState = {
     cardSets: CardSet[];
     readonly card: Card | null;
     readonly open: boolean;
-    readonly disabled: boolean;
+    readonly checkBoxesDisabled: boolean;
+    readonly submitDisabled: boolean;
+    readonly closeDisabled: boolean;
+    readonly validationError: string | null;
 }
 
 export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalState => ({
@@ -32,8 +36,18 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
         return state.cardId !== null;
     }),
     disabled: derived((state: EditCardCardSetsModalState) => {
+        return state.loading || state.submitting || state.validationError !== null;
+    }),
+    checkBoxesDisabled: derived((state: EditCardCardSetsModalState) => {
         return state.loading || state.submitting;
     }),
+    validationError: derived((state: EditCardCardSetsModalState) => {
+        const errors = validateUpdateCardCardSetsRequest({cardSetIds: state.selectedCardSetIds, cardId: state.cardId!});
+        if (errors.length === 0) {
+            return null;
+        }
+        return errors.join(', ');
+    })
 });
 
 export const state: EditCardCardSetsModalState = getInitialEditCardCardSetsModalState();

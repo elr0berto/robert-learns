@@ -79,6 +79,32 @@ export type UpdateCardCardSetsRequest = {
     cardSetIds: number[];
 }
 
+export const validateUpdateCardCardSetsRequest = (req: UpdateCardCardSetsRequest) : string[] => {
+    let errs : string[] = [];
+    if (req.cardSetIds.length === 0) {
+        errs.push('You must select at least one card set');
+    }
+
+    // check that all cardSetIds are unique
+    const uniqueCardSetIds = new Set(req.cardSetIds);
+    if (uniqueCardSetIds.size !== req.cardSetIds.length) {
+        errs.push('You cannot add the same card set twice');
+    }
+
+    return errs;
+}
+
+
 export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promise<UpdateCardCardSetsResponse> => {
+    const errors = validateUpdateCardCardSetsRequest(req);
+    if (errors.length > 0) {
+        return new UpdateCardCardSetsResponse({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            signedInUserData: null,
+            errorMessage: errors.join('\n'),
+            cardData: null,
+        });
+    }
     return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/updateCardCardSets', req);
 }
