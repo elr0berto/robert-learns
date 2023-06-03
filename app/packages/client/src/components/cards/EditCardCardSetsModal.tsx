@@ -7,7 +7,7 @@ function EditCardCardSetsModal() {
     const state = useAppState();
     const actions = useActions();
 
-    return state.editCardCardSetsModal.open ? <Modal className="edit-card-card-sets-modal" show={true} size="lg" onHide={state.editCardCardSetsModal.disabled ? () => {} : () => actions.editCardCardSetsModal.close()}>
+    return state.editCardCardSetsModal.open ? <Modal className="edit-card-card-sets-modal" show={true} size="lg" onHide={state.editCardCardSetsModal.closeDisabled ? () => {} : () => actions.editCardCardSetsModal.close()}>
         <Modal.Header closeButton>
             <Modal.Title>Select card sets for card</Modal.Title>
         </Modal.Header>
@@ -34,7 +34,7 @@ function EditCardCardSetsModal() {
                                         type="checkbox"
                                         label={cardSet.name}
                                         checked={state.editCardCardSetsModal.selectedCardSetIds.indexOf(cardSet.id) !== -1}
-                                        disabled={state.editCardCardSetsModal.checkBoxesDisabled}
+                                        disabled={state.editCardCardSetsModal.formDisabled}
                                         onChange={event => actions.editCardCardSetsModal.setSelectedCardSetId({
                                             cardSetId: cardSet.id,
                                             selected: event.target.checked
@@ -49,10 +49,10 @@ function EditCardCardSetsModal() {
             </Container>
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => actions.editCardCardSetsModal.close()} disabled={state.editCardCardSetsModal.disabled}>
+            <Button variant="secondary" onClick={() => actions.editCardCardSetsModal.close()} disabled={state.editCardCardSetsModal.closeDisabled}>
                 Cancel
             </Button>
-            <Button variant="primary" onClick={() => actions.editCardCardSetsModal.save()} disabled={state.editCardCardSetsModal.disabled}>
+            <Button variant="primary" onClick={() => actions.editCardCardSetsModal.save()} disabled={state.editCardCardSetsModal.submitDisabled}>
                 Save
             </Button>
             {state.editCardCardSetsModal.submitError ? <Alert variant={'danger'}>{state.editCardCardSetsModal.submitError}</Alert> : null}

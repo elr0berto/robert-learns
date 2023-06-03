@@ -78,17 +78,16 @@ export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Cont
 export const showWorkspaceCardSetCreatePage = async ({ state, effects, actions }: Context, payload: Payload) => {
     await actions.page._loadAllData();
 
-    state.page.current = Pages.WorkspaceCardSetCreate;
-    if (payload.params?.workspaceId) {
-        state.workspace.workspaceId = +payload.params.workspaceId;
-    }
-
+    await actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetCreate});
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(null);
 }
 
 export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
     await actions.page._loadAllData();
 
+    await actions.page._setWorkspacePage({payload, page: Pages.WorkspaceCardSetEdit});
+
+    /*
     state.page.current = Pages.WorkspaceCardSetEdit;
     if (payload.params?.workspaceId) {
         state.workspace.workspaceId = +payload.params.workspaceId;
@@ -97,6 +96,7 @@ export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: 
             state.workspaceCardSet.cardSetId = +payload.params.cardSetId;
         }
     }
+    */
 
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(state.workspaceCardSet.cardSet);
 }

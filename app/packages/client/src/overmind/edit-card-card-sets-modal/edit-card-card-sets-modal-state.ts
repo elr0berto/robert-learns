@@ -13,7 +13,7 @@ type EditCardCardSetsModalState = {
     cardSets: CardSet[];
     readonly card: Card | null;
     readonly open: boolean;
-    readonly checkBoxesDisabled: boolean;
+    readonly formDisabled: boolean;
     readonly submitDisabled: boolean;
     readonly closeDisabled: boolean;
     readonly validationError: string | null;
@@ -35,10 +35,13 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
     open: derived((state: EditCardCardSetsModalState) => {
         return state.cardId !== null;
     }),
-    disabled: derived((state: EditCardCardSetsModalState) => {
+    formDisabled: derived((state: EditCardCardSetsModalState) => {
+        return state.loading || state.submitting;
+    }),
+    submitDisabled: derived((state: EditCardCardSetsModalState) => {
         return state.loading || state.submitting || state.validationError !== null;
     }),
-    checkBoxesDisabled: derived((state: EditCardCardSetsModalState) => {
+    closeDisabled: derived((state: EditCardCardSetsModalState) => {
         return state.loading || state.submitting;
     }),
     validationError: derived((state: EditCardCardSetsModalState) => {

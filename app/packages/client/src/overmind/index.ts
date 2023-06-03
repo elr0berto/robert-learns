@@ -4,6 +4,7 @@ import { IContext } from 'overmind';
 import * as error from './error';
 import * as page from './page';
 import * as api from './api';
+import * as data from './data';
 import * as signIn from './sign-in';
 import * as signUp from './sign-up/';
 import * as workspaceCreate from './workspace-create/';
@@ -27,6 +28,7 @@ export const config = merge(
         //log,
         page,
         api,
+        data,
         signIn,
         signUp,
         workspaceCreate,

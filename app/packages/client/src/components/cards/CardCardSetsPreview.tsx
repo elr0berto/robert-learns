@@ -13,7 +13,15 @@ type Props = {
 function CardCardSetsPreview(props: Props) {
     return <div className="card-card-sets-preview border p-2">
         <div><small>Card sets</small></div>
-        <small>{props.card.cardSets.map(cardSet => <><Badge key={cardSet.id} className="mr-1" bg={cardSet.id === props.thisCardSetId ? 'primary' : 'secondary'}>{cardSet.name}</Badge>{' '}</>)}</small>
+        <small>
+            {props.card.cardSets.map(cardSet => (
+                <React.Fragment key={cardSet.id}>
+                    <Badge className="mr-1" bg={cardSet.id === props.thisCardSetId ? 'primary' : 'secondary'}>
+                        {cardSet.name}
+                    </Badge>{' '}
+                </React.Fragment>
+            ))}
+        </small>
         {props.showEditButton ? <Button size="sm" variant="outline-primary" className="mt-2" onClick={() => props.onEdit(props.card)}><PencilSquare/> Edit</Button> : null}
     </div>;
 }
