@@ -1,6 +1,7 @@
 import {derived} from 'overmind'
 import {User} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {validateSignInRequest} from "@elr0berto/robert-learns-shared/dist/api/sign-in";
+import {config} from "../index";
 
 export const UnexpectedSignOutError = "UNEXPECTED_SIGN_OUT_ERROR";
 
@@ -28,14 +29,21 @@ type SignInFormState = {
 
 type SignInState = {
     status: SignInStatus,
-    user: User | null;
+    userId: number | null;
+    readonly user: User | null;
     signInForm: SignInFormState;
     readonly isGuest: boolean;
 }
 
-export const getInitialSignInState = (user: User | null): SignInState => ({
+export const getInitialSignInState = (userId: number | null): SignInState => ({
     status: SignInStatus.Idle,
-    user: user,
+    userId: userId,
+    user: derived((state: SignInState, rootState: typeof config.state) => {
+        if (state.userId === null) {
+            return null;
+        }
+        return rootState.data.users.find(u => u.id === state.userId)!;
+    }),
     signInForm: {
         username: '',
         password: '',

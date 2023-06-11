@@ -1,4 +1,4 @@
-import { UserRole } from "../types/index.js";
+import { UserRole } from '../api/models/UserRole.js';
 
 export const objectMap = <TObject extends {}, TRet>(obj : TObject, fn : (v: any, k: string, i: number) => TRet) =>
     Object.fromEntries(

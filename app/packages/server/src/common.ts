@@ -22,39 +22,14 @@ import {
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
-import { PermissionUser, UserRole } from '@elr0berto/robert-learns-shared/types';
 
 export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
 }
 
-export const getGuestUser = async () : Promise<PrismaUser> => {
-    let guestUser = await prisma.user.findFirst({
-        where: {
-            isGuest: true
-        }
-    });
-
-    if (guestUser === null) {
-        guestUser = await prisma.user.create({
-            data: {
-                firstName: 'Guest',
-                lastName: '',
-                username: 'guest',
-                password: '25uihdsfoi2345esfdoij23t',
-                email: 'guest@robert-learns.com',
-                isGuest: true,
-            }
-        });
-    }
-    return guestUser;
-}
-
-export const getSignedInUser = async (session: Session & Partial<SessionData>) : Promise<PrismaUser> => {
+export const getSignedInUser = async (session: Session & Partial<SessionData>) : Promise<PrismaUser | null> => {
     if (!session.userId) {
-        const guestUser = await getGuestUser();
-
-        session.userId = guestUser.id;
+        return null;
     }
 
     const user = await prisma.user.findUnique({
@@ -85,7 +60,6 @@ export const getUserData = (user: PrismaUser) : UserData => {
         firstName : user.firstName,
         lastName:user.lastName,
         username: user.username,
-        isGuest : user.isGuest,
         dataType: true, // to force the type ... too easy to send the Prisma user otherwise. the user class...
     };
 }
@@ -123,7 +97,7 @@ function getFaceData(face: PrismaCardFace) : CardFaceData {
     };
 }
 
-export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: PrismaMedia | null, cardSetCards: (PrismaCardSetCard & {cardSet: PrismaCardSet})[]}) : CardData {
+export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: PrismaMedia | null}) : CardData {
     const front = card.faces.filter(f => f.side === PrismaCardSide.FRONT)[0];
     const back = card.faces.filter(f => f.side === PrismaCardSide.BACK)[0];
     return {
@@ -132,7 +106,6 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
         front: getFaceData(front),
         back: getFaceData(back),
         audioData: card.audio === null ? null : getMediaData(card.audio),
-        cardSetDatas: card.cardSetCards.map(s => getCardSetData(s.cardSet)),
     };
 }
 
@@ -176,101 +149,14 @@ export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard
     })
 }
 
-export const canUserRemoveUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
-    if (user1 === null) {
-        return false;
-    }
 
-    if (user1.user.id === user2.user.id) {
-        return false;
-    }
-
-    switch(user1.role) {
-        case UserRole.OWNER:
-            return true;
-        case UserRole.ADMINISTRATOR:
-            return user2.role !== UserRole.OWNER;
-        default:
-            return false;
-    }
-}
-
-export const getRolesUserCanChangeUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) : UserRole[] => {
-    if (user1 === null) {
-        return [user2.role];
-    }
-
-    if (user1.user.id === user2.user.id) {
-        return [user2.role];
-    }
-
-    switch(user1.role) {
-        case UserRole.OWNER:
-            return Object.values(UserRole);
-        case UserRole.ADMINISTRATOR:
-            return user2.role === UserRole.OWNER ? [user2.role] : Object.values(UserRole).filter(role => role !== UserRole.OWNER);
-        default:
-            return [user2.role];
-    }
-}
-
-export const canUserChangeUserRole = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
-    return getRolesUserCanChangeUser(user1, user2).length > 1;
-}
-
-export const canUserChangeUserRoleRole = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}, wantedRole: UserRole) => {
-    const possibleRoles = getRolesUserCanChangeUser(user1, user2);
-    return possibleRoles.filter(r => r === wantedRole).length > 0;
-}
-
-export const canUserDeleteWorkspaceUser = (user1: PrismaWorkspaceUser & {user: PrismaUser} | null, user2: PrismaWorkspaceUser & {user: PrismaUser}) => {
-    if (user1 === null) {
-        return false;
-    }
-    if (user1.role === UserRole.OWNER) {
-        return true;
-    }
-    if (user1.role === UserRole.ADMINISTRATOR && user2.role !== UserRole.OWNER) {
-        return true;
-    }
-    return false;
-}
-
-export const getPermissionUsersFromWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PermissionUser[] => {
-    const workspaceUsers = workspace.users.filter(u => u.userId === user.id);
-    const workspaceUser = workspaceUsers.length === 1 ? workspaceUsers[0] : null;
-
-    return workspace.users.map(u => ({
-        userId: u.userId,
-        name: u.user.firstName + " " + u.user.lastName,
-        email: u.user.email,
-        role: u.role,
-        isGuest: u.user.isGuest,
-        canBeRemoved: canUserRemoveUser(workspaceUser, u),
-        canRoleBeChanged: canUserChangeUserRole(workspaceUser, u),
-        availableRoles: getRolesUserCanChangeUser(workspaceUser, u),
-    }));
-}
-
-export const getUsersMyRoleForWorkspace = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : PrismaUserRole => {
-    const workspaceUser = workspace.users.filter(u => u.userId === user.id)?.[0] ?? null;
-    const guestWorkspaceUser = workspace.users.filter(u => u.user.isGuest)?.[0] ?? null;
-
-    if (workspaceUser === null && guestWorkspaceUser === null) {
-        throw new Error('user: ' + user.id + ' does not have a workspace-user in workspace: ' + workspace.id);
-    }
-
-    return workspaceUser?.role ?? guestWorkspaceUser?.role;
-}
-
-export const getWorkspaceData = (workspace: PrismaWorkspace & { users : (PrismaWorkspaceUser & {user: PrismaUser})[]}, user: PrismaUser) : WorkspaceData => {
+export const getWorkspaceData = (workspace: PrismaWorkspace) : WorkspaceData => {
     return {
         dataType: true,
         id: workspace.id,
         name: workspace.name,
         description: workspace.description,
-        users: getPermissionUsersFromWorkspace(workspace, user),
-        myRole: getUsersMyRoleForWorkspace(workspace, user)
+        allowGuests: workspace.allowGuests,
     };
 }
 
@@ -280,6 +166,7 @@ export const getCardSetData = (cardSet: PrismaCardSet) : CardSetData => {
         id: cardSet.id,
         name: cardSet.name,
         description: cardSet.description,
+        workspaceId: cardSet.workspaceId,
     };
 }
 

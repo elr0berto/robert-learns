@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import AudioPlayer from "react-h5-audio-player";
 import CardPreviewFace from "./CardPreviewFace";
 import {Button} from "react-bootstrap";
@@ -8,6 +8,7 @@ import CardCardSetsPreview from "./CardCardSetsPreview";
 
 type Props = {
     card: Card;
+    cardSets: CardSet[];
     onDeleteCard: (card: Card) => void;
     onEditCard: (card: Card) => void;
     beingDeleted: boolean;
@@ -26,9 +27,37 @@ function CardPreview(props: Props) {
             src={props.card.audio.getUrl()}
             onPlay={e => console.log("onPlay")}
         /> : null}
-        {props.showCardSetsPreview ? <><hr/><CardCardSetsPreview showEditButton={props.showActionButtons} thisCardSetId={props.thisCardSetId} card={props.card} onEdit={props.onEditCardSets}/></> : null}
-        {props.showActionButtons ? <><hr/><Button size="sm" variant="outline-primary" className="mt-2" onClick={() => props.onEditCard(props.card)}><PencilSquare/> Edit</Button></> : null}
-        {props.showActionButtons ? <Button disabled={props.beingDeleted} size="sm" variant="outline-danger" className="mt-2 ms-1" onClick={() => props.onDeleteCard(props.card)}><DashCircle/> Delete</Button> : null}
+        {props.showCardSetsPreview ? <>
+            <hr/>
+            <CardCardSetsPreview
+                showEditButton={props.showActionButtons}
+                thisCardSetId={props.thisCardSetId}
+                card={props.card}
+                cardSets={props.cardSets}
+                onEdit={props.onEditCardSets}
+            />
+        </> : null}
+        {props.showActionButtons ? <>
+            <hr/>
+            <Button
+                size="sm"
+                variant="outline-primary"
+                className="mt-2"
+                onClick={() => props.onEditCard(props.card)}
+            >
+                <PencilSquare/> Edit
+            </Button>
+        </> : null}
+        {props.showActionButtons ?
+            <Button
+                disabled={props.beingDeleted}
+                size="sm"
+                variant="outline-danger"
+                className="mt-2 ms-1"
+                onClick={() => props.onDeleteCard(props.card)}
+            >
+                <DashCircle/> Delete
+            </Button> : null}
     </div>;
 }
 

@@ -2,19 +2,19 @@ import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
-import { SignUpRequest, validateSignUpRequest } from '@elr0berto/robert-learns-shared/api/sign-up';
-import { BaseResponseData, ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
+import {SignUpRequest, SignUpResponseData, validateSignUpRequest} from '@elr0berto/robert-learns-shared/api/sign-up';
+import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 const signUp = Router();
 
-signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse<BaseResponseData>) => {
+signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse<SignUpResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
 
-    if (!signedInUser.isGuest) {
+    if (signedInUser !== null) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'already signed in, please sign out first.',
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -25,7 +25,7 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
             dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: errors.join('. '),
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -40,7 +40,7 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
             dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: "User with email " + req.body.email + " already exists.",
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -55,7 +55,7 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
             dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: "User with email " + req.body.email + " already exists.",
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -66,7 +66,6 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
             username: req.body.username,
             password: bcrypt.hashSync(req.body.password, 8),
             email: req.body.email,
-            isGuest: false,
         }
     });
 
@@ -74,7 +73,7 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(newUser),
+        userData: getUserData(newUser),
         errorMessage: null,
     });
 });

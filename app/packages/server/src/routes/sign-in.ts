@@ -4,23 +4,27 @@ import prisma from "../db/prisma.js";
 import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
 import { BaseResponseData, ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
-import { SignInRequest, validateSignInRequest } from '@elr0berto/robert-learns-shared/api/sign-in';
+import {
+    SignInCheckResponseData,
+    SignInRequest, SignInResponseData,
+    validateSignInRequest
+} from '@elr0berto/robert-learns-shared/api/sign-in';
 
 
 const signIn = Router();
 
-signIn.post('/check', async (req, res : TypedResponse<BaseResponseData>) => {
+signIn.post('/check', async (req, res : TypedResponse<SignInCheckResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUserData: getUserData(user),
+        userData: user === null ? null : getUserData(user),
     });
 });
 
-signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse<BaseResponseData>) => {
+signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse<SignInResponseData>) => {
     const errors = validateSignInRequest(req.body);
 
     if (errors.length !== 0) {
@@ -28,7 +32,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -46,7 +50,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
             dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: 'Login/password is wrong!!',
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -55,7 +59,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
             dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: 'Login/password is wrong!',
-            signedInUserData: null,
+            userData: null,
         });
     }
 
@@ -67,7 +71,7 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUserData: getUserData(user),
+        userData: getUserData(user!),
     });
 });
 

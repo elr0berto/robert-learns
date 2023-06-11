@@ -10,8 +10,8 @@ type EditCardCardSetsModalState = {
     submitting: boolean;
     submitError: string | null;
     selectedCardSetIds: number[];
-    cardSets: CardSet[];
     readonly card: Card | null;
+    readonly cardSets: CardSet[];
     readonly open: boolean;
     readonly formDisabled: boolean;
     readonly submitDisabled: boolean;
@@ -25,12 +25,14 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
     submitting: false,
     submitError: null,
     selectedCardSetIds: [],
-    cardSets: [],
     card: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
         if (state.cardId === null) {
             return null;
         }
-        return rootState.workspaceCardSet.cards.find(c => c.id === state.cardId)!;
+        return rootState.page.cardsInCurrentCardSet.find(c => c.id === state.cardId)!;
+    }),
+    cardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
+        return rootState.page.cardSetsInCurrentWorkspace;
     }),
     open: derived((state: EditCardCardSetsModalState) => {
         return state.cardId !== null;

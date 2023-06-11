@@ -13,7 +13,7 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         if (resp.status !== ResponseStatus.Success) {
             switch(resp.status) {
                 case ResponseStatus.LoggedOut:
-                    actions.signIn.unexpectedlySignedOut(resp.signedInUser!);
+                    actions.signIn.unexpectedlySignedOut();
                     throw UnexpectedSignOutError;
                 case ResponseStatus.UserError:
                     break;
@@ -23,7 +23,7 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
         }
     })
 
-    await Promise.all([actions.signIn.check(), actions.workspaces.getWorkspaceList()]);
+    await Promise.all([actions.signIn.check()]);
 
     let routes : {[key:string]: (payload : Payload) => Promise<void>} = {};
 

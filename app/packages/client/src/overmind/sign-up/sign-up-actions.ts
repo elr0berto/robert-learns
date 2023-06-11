@@ -19,7 +19,7 @@ export const changePassword1 = ({ state }: Context, newVal: string) => {
 export const changePassword2 = ({ state }: Context, newVal: string) => {
     state.signUp.password2 = newVal;
 };
-export const submit = async ({state,effects} : Context) => {
+export const submit = async ({state,effects,actions} : Context) => {
     state.signUp.submitAttempted = true;
 
     state.signUp.submissionError = '';
@@ -42,10 +42,9 @@ export const submit = async ({state,effects} : Context) => {
         return;
     }
 
-    if (resp.signedInUser === null) {
-        state.signUp.submissionError = "Unexpected error. Please refresh the page and try again later."
-        return;
-    }
-    state.signIn.user = resp.signedInUser;
+    // replace or add the resp.user to state.data.users
+    actions.data.addOrUpdateUser(resp.user);
+
+    state.signIn.userId = resp.user.id;
     effects.page.router.goTo('/');
 }

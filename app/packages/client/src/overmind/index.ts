@@ -6,14 +6,13 @@ import * as page from './page';
 import * as api from './api';
 import * as data from './data';
 import * as signIn from './sign-in';
-import * as signUp from './sign-up/';
-import * as workspaceCreate from './workspace-create/';
-import * as workspaceCardSetCreate from './workspace-card-set-create/';
-import * as workspaces from './workspaces/';
-import * as workspace from './workspace/';
-import * as workspaceCardSet from './workspace-card-set/';
-import * as createCardModal from './create-card-modal/';
-import * as addUserModal from './add-user-modal/';
+import * as signUp from './sign-up';
+import * as permission from './permission';
+import * as workspaceCreate from './workspace-create';
+import * as workspaceCardSetCreate from './workspace-card-set-create';
+import * as workspaceCardSet from './workspace-card-set';
+import * as createCardModal from './create-card-modal';
+import * as addUserModal from './add-user-modal';
 import * as addCardsFromOtherCardSetsModal from './add-cards-from-other-card-sets-modal';
 import * as editCardCardSetsModal from './edit-card-card-sets-modal';
 
@@ -31,10 +30,9 @@ export const config = merge(
         data,
         signIn,
         signUp,
+        permission,
         workspaceCreate,
         workspaceCardSetCreate,
-        workspaces,
-        workspace,
         workspaceCardSet,
         createCardModal,
         addUserModal,

@@ -1,6 +1,7 @@
-import {BaseResponse} from "./models/BaseResponse.js";
+import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 import {apiClient} from "./ApiClient.js";
 import {validateEmail} from "../validation/index.js";
+import {User, UserData} from "./models/index.js";
 
 export type SignUpRequest = {
     firstName: string;
@@ -31,6 +32,18 @@ export const validateSignUpRequest = (req: SignUpRequest) : string[] => {
     return errs;
 }
 
-export const signUp = async(params: SignUpRequest) : Promise<BaseResponse> => {
-    return await apiClient.post(BaseResponse, '/sign-up', params);
+export type SignUpResponseData = BaseResponseData & {
+    userData: UserData | null;
+}
+
+export class SignUpResponse extends BaseResponse {
+    user: User | null;
+    constructor(data: SignUpResponseData) {
+        super(data);
+        this.user = data.userData === null ? null : new User(data.userData);
+    }
+}
+
+export const signUp = async(params: SignUpRequest) : Promise<SignUpResponse> => {
+    return await apiClient.post(SignUpResponse, '/sign-up', params);
 }

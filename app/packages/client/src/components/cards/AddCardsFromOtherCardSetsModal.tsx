@@ -9,7 +9,7 @@ function AddCardsFromOtherCardSetsModal() {
 
     return state.addCardsFromOtherCardSetsModal.open ? <Modal className="add-cards-from-other-card-sets-modal" show={true} size="lg" onHide={() => actions.addCardsFromOtherCardSetsModal.close()}>
         <Modal.Header closeButton>
-            <Modal.Title>Add cards from other card sets into <i>{state.addCardsFromOtherCardSetsModal.cardSet!.name}</i></Modal.Title>
+            <Modal.Title>Add cards from other card sets into <i>{state.page.cardSet!.name}</i></Modal.Title>
         </Modal.Header>
         <Modal.Body>
             {state.addCardsFromOtherCardSetsModal.loading ?
@@ -17,16 +17,17 @@ function AddCardsFromOtherCardSetsModal() {
                 (state.addCardsFromOtherCardSetsModal.otherCardSetsWithCards.length === 0 ?
                     <Alert variant={'info'}>No other card sets with cards found.</Alert> :
                     <Accordion>{state.addCardsFromOtherCardSetsModal.otherCardSetsWithCards.map(cardSetWithCards =>
-                        <Accordion.Item eventKey={cardSetWithCards.id.toString()}>
-                            <Accordion.Header>{cardSetWithCards.name}</Accordion.Header>
+                        <Accordion.Item eventKey={cardSetWithCards.cardSet.id.toString()}>
+                            <Accordion.Header>{cardSetWithCards.cardSet.name}</Accordion.Header>
                             <Accordion.Body>
                                 {cardSetWithCards.cards.map(card => <CardPreviewSelectable
-                                    thisCardSetId={cardSetWithCards.id}
-                                    uniqueContext={cardSetWithCards.id.toString()}
+                                    thisCardSetId={cardSetWithCards.cardSet.id}
+                                    uniqueContext={cardSetWithCards.cardSet.id.toString()}
                                     key={card.card.id}
                                     disabled={card.alreadyInCurrentCardSet}
                                     selected={card.alreadyInCurrentCardSet || card.selected}
                                     card={card.card}
+                                    cardSets={[]}
                                     showActionButtons={false}
                                     onDeleteCard={() => {}}
                                     beingDeleted={false}

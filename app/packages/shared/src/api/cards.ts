@@ -2,17 +2,20 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData, ResponseStatus} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
 import {CardSet, CardSetData} from "./models/CardSet.js";
-import {CreateCardSetRequest} from "api/card-sets.js";
+import {CardSetCard, CardSetCardData} from "./models/CardSetCard.js";
 
 export type GetCardsResponseData = BaseResponseData & {
     cardDatas: CardData[] | null;
+    cardSetCardDatas: CardSetCardData[] | null;
 }
 
 export class GetCardsResponse extends BaseResponse {
     cards: Card[];
+    cardSetCards: CardSetCard[];
     constructor(data: GetCardsResponseData) {
         super(data);
         this.cards = data.cardDatas?.map(cd => new Card(cd)) ?? [];
+        this.cardSetCards = data.cardSetCardDatas?.map(cscd => new CardSetCard(cscd)) ?? [];
     }
 }
 
@@ -82,7 +85,6 @@ export const createCard = async(params: CreateCardRequest) : Promise<CreateCardR
             errorMessage: errors.join(', '),
             status: ResponseStatus.UserError,
             cardData: null,
-            signedInUserData: null,
         });
     }
 

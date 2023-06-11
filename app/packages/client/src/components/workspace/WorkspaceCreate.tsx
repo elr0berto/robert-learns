@@ -87,7 +87,11 @@ function WorkspaceCreate() {
             {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit(scope)}>{scope === 'create' ? 'Create Workspace!' : 'Save workspace!'}</Button>
         </Form>
-        <AddUserModal onAdd={user => actions.workspaceCreate.addUser(user)} open={state.workspaceCreate.form.addUserOpen} onClose={() => actions.workspaceCreate.addUserModalClose()}/>
+        <AddUserModal
+            onAdd={user => actions.workspaceCreate.addUser(user)}
+            open={state.workspaceCreate.form.addUserOpen}
+            onClose={() => actions.workspaceCreate.addUserModalClose()}
+        />
     </Container>;
 }
 

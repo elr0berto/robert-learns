@@ -1,7 +1,7 @@
 import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
-import {PermissionUser} from "../types/index.js";
 import {Workspace, WorkspaceData} from "./models/Workspace.js";
+import {UserRole} from "./models/UserRole.js";
 
 export type CreateWorkspaceResponseData = BaseResponseData & {
     workspaceData: WorkspaceData | null;
@@ -15,12 +15,17 @@ export class CreateWorkspaceResponse extends BaseResponse {
     }
 }
 
+interface CreateWorkspaceUser {
+    userId: number;
+    role: UserRole;
+}
+
 export type CreateWorkspaceRequest = {
     workspaceId?: number;
     name: string;
     description: string;
     allowGuests: boolean;
-    workspaceUsers: PermissionUser[]
+    workspaceUsers: CreateWorkspaceUser[];
 }
 
 export const validateCreateWorkspaceRequest = (req: CreateWorkspaceRequest) : string[] => {

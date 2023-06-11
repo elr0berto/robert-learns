@@ -24,7 +24,6 @@ model User {
   firstName String
   lastName String
   password String
-  isGuest Boolean
   workspaces WorkspaceUser[]
   cardSets CardSetUser[]
 }
@@ -53,6 +52,7 @@ model Workspace {
   users   WorkspaceUser[]
   cardSets CardSet[]
   medias  Media[]
+  allowGuests Boolean @default(false)
 }
 
 enum MediaType {

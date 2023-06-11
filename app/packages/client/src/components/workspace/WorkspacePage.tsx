@@ -7,16 +7,16 @@ function WorkspacePage() {
     const state = useAppState();
     //const actions = useActions();
 
-    if (state.workspace.workspace === null) {
-        if (state.workspaces.loading) {
+    if (state.nav.workspace === null) {
+        if (state.nav.loadingWorkspaces) {
             return <Container>Loading...</Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }
     }
     return <Container>
-        <h1 className="my-5">Workspace {state.workspace.workspace.name}</h1>
-        {state.workspace.currentUserCanEdit ? <Button href={pageUrls.workspaceEdit.url(state.workspace.workspace)}>Edit workspace</Button> : null}
+        <h1 className="my-5">Workspace {state.nav.workspace.name}</h1>
+        {state.permission.currentUserCanEditCurrentWorkspace ? <Button href={pageUrls.workspaceEdit.url(state.nav.workspace)}>Edit workspace</Button> : null}
     </Container>;
 }
 

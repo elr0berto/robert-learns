@@ -11,6 +11,14 @@
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./permissions": {
+      "import": "./dist/permissions.js",
+      "types": "./dist/permissions.d.ts"
+    },
+    "./dist/permissions": {
+      "import": "./dist/permissions.js",
+      "types": "./dist/permissions.d.ts"
+    },
     "./api": {
       "import": "./dist/api/index.js",
       "types": "./dist/api/index.d.ts"

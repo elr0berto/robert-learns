@@ -50,7 +50,7 @@ export const signOut = async ({ effects, state }: Context) => {
     effects.page.router.goTo('/');
 }
 
-export const unexpectedlySignedOut = ({ effects, state }: Context, user : User) => {
+export const unexpectedlySignedOut = ({ effects, state }: Context) => {
     state.signIn = getInitialSignInState(user);
     state.signIn.status = SignInStatus.SignedOutDueToInactivity;
     effects.page.router.goTo('/');

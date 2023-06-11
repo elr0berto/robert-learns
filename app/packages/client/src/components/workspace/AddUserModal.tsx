@@ -1,7 +1,6 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
-import {PermissionUser} from "@elr0berto/robert-learns-shared/dist/types";
 
 type Props = {
     open: boolean;

@@ -8,71 +8,45 @@ type CardFromOtherCardSet = {
     alreadyInCurrentCardSet: boolean;
 }
 
-type CardSetWithCards = CardSet & {
+type CardSetWithCards = {
+    cardSet: CardSet;
     cards: CardFromOtherCardSet[];
 }
 
 type AddCardsFromOtherCardSetsModalState = {
     loading: boolean;
-    cardSetId: number | null;
-    cardSets: CardSet[];
-    cardSetCards: CardSetCard[];
-    cards: Card[];
+    open: boolean;
     submitting: boolean;
     submitError: string | null;
     selectedCardIds: number[];
-    readonly cardIdsInCurrentCardSet: number[];
     readonly otherCardSetsWithCards: CardSetWithCards[];
-    readonly cardSet: CardSet | null;
-    readonly open: boolean;
     readonly disabled: boolean;
 }
 
 export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOtherCardSetsModalState => ({
     loading: false,
-    cardSetId: null,
-    cardSets: [],
-    cardSetCards: [],
-    cards: [],
+    open: false,
     submitting: false,
     submitError: null,
     selectedCardIds: [],
-    cardIdsInCurrentCardSet: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
-        if (state.cardSetId === null) {
+    otherCardSetsWithCards: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
+        const cardSet = rootState.page.cardSet;
+        if (cardSet === null) {
             return [];
         }
-        return rootState.workspaceCardSet.cards.map(c => c.id);
-    }),
-    otherCardSetsWithCards: derived((state: AddCardsFromOtherCardSetsModalState) => {
-        if (state.cardSetId === null) {
-            return [];
-        }
-        return state.cardSets.filter(cs => cs.id !== state.cardSetId).map(cs => {
+
+        return rootState.data.cardSetsWithCards.filter(cs => cs.cardSet.id !== cardSet.id && cs.cards.length > 0).map(cs => {
             return {
-                ...cs,
-                cards: state.cardSetCards.filter(c => c.cardSetId === cs.id).map(csc => {
-                    const card = state.cards.filter(c => c.id === csc.cardId)[0];
+                cardSet: cs.cardSet,
+                cards: cs.cards.map(c => {
                     return {
-                        card,
-                        selected: state.selectedCardIds.includes(card.id),
-                        alreadyInCurrentCardSet: state.cardIdsInCurrentCardSet.includes(card.id),
+                        card: c,
+                        selected: state.selectedCardIds.includes(c.id),
+                        alreadyInCurrentCardSet: rootState.page.cardSetWithCards!.cards.map(c => c.id).includes(c.id),
                     }
                 }),
             };
-        }).filter(cs => cs.cards.length > 0)
-    }),
-    cardSet: derived((state: AddCardsFromOtherCardSetsModalState, rootState: typeof config.state) => {
-        if (state.cardSetId === null) {
-            return null;
-        }
-        const found = rootState.workspace.cardSets.filter(cs => cs.id === state.cardSetId);
-        if (found.length !== 1) {
-            return null;
-        }
-        return found[0];
-    }),
-    open: derived((state: AddCardsFromOtherCardSetsModalState) => {
-        return state.cardSetId !== null;
+        });
     }),
     disabled: derived((state: AddCardsFromOtherCardSetsModalState) => {
         return state.loading || state.submitting;

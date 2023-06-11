@@ -54,7 +54,6 @@ export const createCardSetCards = async(req : CreateCardSetCardsRequest) : Promi
         return new BaseResponse({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: null,
             errorMessage: errors.join('\n')
         });
     }
@@ -101,7 +100,6 @@ export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promi
         return new UpdateCardCardSetsResponse({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: null,
             errorMessage: errors.join('\n'),
             cardData: null,
         });

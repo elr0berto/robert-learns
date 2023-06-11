@@ -9,7 +9,6 @@ export type CardData = DataType & {
     front: CardFaceData;
     back: CardFaceData;
     audioData: MediaData | null;
-    cardSetDatas: CardSetData[];
 }
 
 export class Card {
@@ -17,13 +16,11 @@ export class Card {
     front: CardFace;
     back: CardFace;
     audio: Media | null;
-    cardSets: CardSet[];
 
     constructor(data: CardData) {
         this.id = data.id;
         this.front = new CardFace(data.front);
         this.back = new CardFace(data.back);
         this.audio = data.audioData === null ? null : new Media(data.audioData);
-        this.cardSets = data.cardSetDatas.map((set) => new CardSet(set));
     }
 }

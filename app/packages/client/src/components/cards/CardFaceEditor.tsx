@@ -12,17 +12,6 @@ function CardFaceEditor(props: Props) {
         initialValue={props.value}
         onChange={props.onChange}
         uploadCallback={props.uploadCallback}
-        //defaultEditorState={editorState}
-        //toolbarClassName="toolbarClassName"
-        //wrapperClassName="wrapperClassName"
-        //editorClassName="editorClassName"
-        //onEditorStateChange={onEditorStateChange}
-        //toolbar={{
-        //    image: {
-        //        uploadEnabled: true,
-        //        uploadCallback: async (file: File) => { const url = await uploadCallback(file); return {data:{link:url}}; }
-        //    }
-        //}}
     />;
 }
 

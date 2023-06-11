@@ -1,11 +1,12 @@
 import React from 'react';
-import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Form} from "react-bootstrap";
 import CardPreview from "./CardPreview";
 
 type Props = {
     uniqueContext: string;
     card: Card;
+    cardSets: CardSet[];
     onDeleteCard: (card: Card) => void;
     beingDeleted: boolean;
     showActionButtons: boolean;
@@ -20,6 +21,7 @@ function CardPreviewSelectable(props: Props) {
         <CardPreview
             thisCardSetId={props.thisCardSetId}
             card={props.card}
+            cardSets={props.cardSets}
             showActionButtons={props.showActionButtons}
             onEditCard={() => {}}
             onDeleteCard={props.onDeleteCard}
@@ -28,7 +30,13 @@ function CardPreviewSelectable(props: Props) {
             onEditCardSets={() => {}}
         />
         <Form.Group className="mb-3" controlId={'checkbox-card-'+props.uniqueContext+'-'+props.card.id}>
-            <Form.Check type="checkbox" label={"Add card" + (props.disabled ? " (already in current card set)" : '')} checked={props.selected} disabled={props.disabled} onChange={event=> props.onChange(event.target.checked)}/>
+            <Form.Check
+                type="checkbox"
+                label={"Add card" + (props.disabled ? " (already in current card set)" : '')}
+                checked={props.selected}
+                disabled={props.disabled}
+                onChange={event=> props.onChange(event.target.checked)}
+            />
         </Form.Group>
     </div>;
 }

@@ -68,7 +68,7 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
         workspaceUsers: state.workspaceCreate.form.selectedUsers,
     };
     if (scope === 'edit') {
-        request.workspaceId = state.workspace.workspaceId!;
+        request.workspaceId = state.page.workspaceId!;
     }
     const resp = await effects.api.workspaces.createWorkspace(request);
 
@@ -78,8 +78,5 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
         return;
     }
 
-    actions.workspaces.getWorkspaceList();
-
-    //effects.page.router.goTo('/');
     effects.page.router.goTo(pageUrls[Pages.Workspace].url(resp.workspace));
 }

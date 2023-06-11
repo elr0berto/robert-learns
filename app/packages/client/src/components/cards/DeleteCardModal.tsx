@@ -8,6 +8,7 @@ type Props = {
     onConfirm: () => void,
     card: Card,
     cardSet: CardSet,
+    cardSets: CardSet[],
     cardBeingDeletedExistsInOtherCardSets: CardSet[],
     confirming: boolean;
 }
@@ -20,6 +21,7 @@ function DeleteCardModal(props: Props) {
             <CardPreview
                 thisCardSetId={props.cardSet.id}
                 card={props.card}
+                cardSets={props.cardSets}
                 showActionButtons={false}
                 onDeleteCard={() => {}}
                 onEditCard={() => {}}
