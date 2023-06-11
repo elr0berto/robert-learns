@@ -15,6 +15,7 @@ type PageState = {
     readonly workspace: Workspace | null;
     readonly workspaceUser: WorkspaceUser | null;
     readonly cardSet: CardSet | null;
+    readonly cardSets: CardSet[];
     readonly cardSetWithCards: CardSetWithCards | null;
     readonly cardSetsInCurrentWorkspace: CardSet[];
     readonly cardsInCurrentCardSet: Card[];
@@ -52,6 +53,12 @@ export const state: PageState = {
             return null;
         }
         return rootState.data.cardSets.find(cs => cs.id === state.cardSetId)!;
+    }),
+    cardSets: derived((state: PageState, rootState: typeof config.state) => {
+        if (state.workspaceId === null) {
+            return [];
+        }
+        return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
     }),
     cardSetWithCards: derived((state: PageState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {

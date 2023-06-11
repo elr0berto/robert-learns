@@ -11,15 +11,15 @@ function WorkspaceCardSetPage() {
     const state = useAppState();
     const actions = useActions();
 
-    if (state.workspace.workspace === null) {
-        if (state.workspaces.loading) {
+    if (state.page.workspace === null) {
+        if (state.page.loadingWorkspaces) {
             return <Container className="my-5">Loading...</Container>;
         } else {
             return <Container className="my-5">Workspace not found.</Container>
         }
     }
-    if (state.workspaceCardSet.cardSet === null) {
-        if (state.workspace.cardSetsLoading) {
+    if (state.page.cardSet === null) {
+        if (state.page.loadingCardSets) {
             return <Container className="my-5">Loading...</Container>;
         } else {
             return <Container className="my-5">Card set not found.</Container>
@@ -27,7 +27,10 @@ function WorkspaceCardSetPage() {
     }
 
     return <Container>
-        <h1 className="my-5">Card set <i>{state.workspaceCardSet.cardSet?.name ?? 'unknown'}</i> in workspace <i>{state.workspace.workspace.name}</i> {state.workspaceCardSet.currentUserCanEdit ? <Button href={pageUrls.workspaceCardSetEdit.url(state.workspace.workspace, state.workspaceCardSet.cardSet)}>Edit card set</Button> : null}</h1>
+        <h1 className="my-5">
+            Card set <i>{state.page.cardSet.name}</i> in workspace <i>{state.page.workspace.name}</i>
+            {state.permission.editCardSet ? <Button href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}>Edit card set</Button> : null}
+        </h1>
         {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList
             thisCardSetId={state.workspaceCardSet.cardSetId!}
             showActionButtons={state.workspace.currentUserCanContribute!}

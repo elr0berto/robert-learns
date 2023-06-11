@@ -7,38 +7,31 @@ function WorkspaceCardSetCreatePage() {
     const state = useAppState();
     const actions = useActions();
 
-    const scope = state.page.current === Pages.WorkspaceCardSetCreate ? 'create' : 'edit';
+    const scope = state.page.page === Pages.WorkspaceCardSetCreate ? 'create' : 'edit';
 
-    if (state.signIn.user!.isGuest) {
-        return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to {scope} Card Sets</Alert></Container>;
-    }
-
-    if (state.workspace.workspace === null) {
-        if (state.workspaces.loading) {
-            return <Container>Loading...</Container>;
+    if (state.page.workspace === null) {
+        if (state.page.loadingWorkspaces) {
+            return <Container>Loading workspaces...</Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }
     }
 
-    if (scope === 'edit' && state.workspaceCardSet.cardSet === null) {
-        if (state.workspace.cardSetsLoading) {
-            return <Container>Loading...</Container>;
+    if ((scope === 'create' && !state.permission.createCardSet) ||
+        (scope === 'edit' && !state.permission.editCardSet)) {
+        return <Container className="my-5"><Alert variant="danger">You are not allowed to {scope} Card Sets in this workspace</Alert></Container>;
+    }
+
+    if (scope === 'edit' && state.page.cardSet === null) {
+        if (state.page.loadingCardSets) {
+            return <Container>Loading card set...</Container>;
         } else {
-            return <Container>Card Set not found.</Container>
+            return <Container>Card set not found.</Container>
         }
     }
 
-    if (scope === 'edit' && !state.workspaceCardSet.currentUserCanEdit) {
-        return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this Card Set</Alert></Container>;
-    }
-
-    if (scope === 'create' && !state.workspace.currentUserCanContribute) {
-        return <Container className="my-5"><Alert variant="danger">You are not allowed to create Card Sets in this workspace</Alert></Container>;
-    }
-
     return <Container>
-        <h1 className="my-5">{scope === 'create' ? 'Create a Card Set ' : 'Edit Card Set ' + state.workspaceCardSet.cardSet!.name} in workspace {state.workspace.workspace.name}</h1>
+        <h1 className="my-5">{scope === 'create' ? 'Create a card set ' : 'Edit card set ' + state.page.cardSet!.name} in workspace {state.page.workspace.name}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="cardSetName">
                 <Form.Label>Card Set Name</Form.Label>

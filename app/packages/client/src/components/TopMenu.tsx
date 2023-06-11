@@ -36,20 +36,25 @@ function TopMenu() {
                         <NavDropdown title={
                                 (state.page.page === Pages.WorkspaceCardSet || state.page.page === Pages.WorkspaceCardSetEdit) && state.page.cardSet !== null ?
                                 state.page.cardSet.name :
-                                (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.workspace.cardSets.length +')' ))}>
-                            {state.workspace.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.workspace.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
-                            {state.workspace.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
-                            <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.workspace.workspace!)}>Create card set</NavDropdown.Item>
+                                (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.page.cardSets.length +')' ))}>
+                            {state.page.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.page.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
+                            {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
+                            <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.page.workspace!)}>Create card set</NavDropdown.Item>
                         </NavDropdown> : null
                     }
 
                 </Nav>
                 <Nav>
-                    {state.signIn.status === SignInStatus.SigningOut ? 'Signing out...' : state.signIn.user!.isGuest ?
-                        'Signed in as guest' :
-                        <NavDropdown title={'Signed in as ' + state.signIn.user!.username}>
-                            <NavDropdown.Item onClick={() => actions.signIn.signOut()}>Sign out</NavDropdown.Item>
-                        </NavDropdown>
+                    {
+                        state.signIn.status === SignInStatus.SigningOut ?
+                        'Signing out...' :
+                        (
+                            state.signIn.user === null ?
+                            'Signed in as guest' :
+                            <NavDropdown title={'Signed in as ' + state.signIn.user!.username}>
+                                <NavDropdown.Item onClick={() => actions.signIn.signOut()}>Sign out</NavDropdown.Item>
+                            </NavDropdown>
+                        )
                     }
                 </Nav>
             </Navbar.Collapse>
