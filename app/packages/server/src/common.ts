@@ -10,8 +10,6 @@ import {
     Media as PrismaMedia,
     User as PrismaUser,
     Workspace as PrismaWorkspace,
-    WorkspaceUser as PrismaWorkspaceUser,
-    UserRole as PrismaUserRole
 } from '@prisma/client';
 import {
     CardSetCardData,

@@ -1,13 +1,16 @@
-import {Request,Router} from 'express';
-import {getCardSetData, getSignedInUser, getUserData, TypedResponse} from "../common.js";
-import {canUserContributeToWorkspaceId, canUserViewWorkspaceId} from "../security.js";
+import {Request, Router} from 'express';
+import {getCardSetData, getSignedInUser, TypedResponse} from "../common.js";
 import prisma from "../db/prisma.js";
-import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
+import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
-    CreateCardSetRequest, CreateCardSetResponseData,
+    CreateCardSetRequest,
+    CreateCardSetResponseData,
     GetCardSetsRequest,
-    GetCardSetsResponseData, validateCreateCardSetRequest
+    GetCardSetsResponseData,
+    validateCreateCardSetRequest
 } from '@elr0berto/robert-learns-shared/api/card-sets';
+import {checkPermissions} from "../permissions.js";
+import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 
 const cardSets = Router();
@@ -15,13 +18,13 @@ const cardSets = Router();
 cardSets.post('/get', async (req : Request<{}, {}, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>) => {
     let user = await getSignedInUser(req.session);
 
-    const hasRights = canUserViewWorkspaceId(user,req.body.workspaceId);
+    const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.ViewWorkspace});
+
     if (!hasRights) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not allowed to view this workspace.',
-            signedInUserData: null,
             cardSetDatas: null,
         });
     }
@@ -37,7 +40,6 @@ cardSets.post('/get', async (req : Request<{}, {}, GetCardSetsRequest>, res : Ty
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
         cardSetDatas: cardSets.map(cs => getCardSetData(cs))
     });
@@ -47,16 +49,6 @@ cardSets.post('/get', async (req : Request<{}, {}, GetCardSetsRequest>, res : Ty
 cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>) => {
     let user = await getSignedInUser(req.session);
 
-    if (user.isGuest) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: 'Guest users are not allowed to create card sets. please sign in first!',
-            signedInUserData: null,
-            cardSetData: null,
-        });
-    }
-
     const errors = validateCreateCardSetRequest(req.body);
 
     if (errors.length !== 0) {
@@ -64,18 +56,17 @@ cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res 
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join(', '),
-            signedInUserData: null,
             cardSetData: null,
         });
     }
 
-    const hasRights = canUserContributeToWorkspaceId(user,req.body.workspaceId);
+    const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.CreateCardSet});
+
     if (!hasRights) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not allowed to create card sets in this workspace.',
-            signedInUserData: null,
             cardSetData: null,
         });
     }
@@ -96,7 +87,6 @@ cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res 
                 dataType: true,
                 status: ResponseStatus.UserError,
                 errorMessage: 'A card set with the same name already exists in this workspace.',
-                signedInUserData: null,
                 cardSetData: null,
             });
         }
@@ -121,7 +111,6 @@ cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res 
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Access denied',
-                signedInUserData: null,
                 cardSetData: null,
             });
         }
@@ -140,7 +129,6 @@ cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res 
                         dataType: true,
                         status: ResponseStatus.UserError,
                         errorMessage: 'A card set with the same name already exists in this workspace.',
-                        signedInUserData: null,
                         cardSetData: null,
                     });
                 }
@@ -159,8 +147,6 @@ cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res 
         returnCardSetId = existingCardSet.id;
     }
 
-    user = await getSignedInUser(req.session);
-
     const returnCardSet = await prisma.cardSet.findUniqueOrThrow({
         where: {
             id: returnCardSetId
@@ -170,7 +156,6 @@ cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res 
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
         cardSetData: getCardSetData(returnCardSet),
     });

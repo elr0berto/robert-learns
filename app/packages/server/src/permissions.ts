@@ -1,6 +1,6 @@
 import prisma from "./db/prisma.js";
 import {
-    UserRole,
+    UserRole as PrismaUserRole,
     User as PrismaUser,
     CardSet as PrismaCardSet,
     Workspace as PrismaWorkspace,
@@ -8,15 +8,15 @@ import {
     Card as PrismaCard,
     CardSetCard as PrismaCardSetCard,
 } from "@prisma/client";
-import {Capability, roleCan} from "@elr0berto/robert-learns-shared/permissions";
+import {Capability, userCan} from "@elr0berto/robert-learns-shared/permissions";
 
 interface CheckPermissionsParams {
     capability: Capability;
     userId?: number;
-    user?: PrismaUser;
+    user?: PrismaUser | null;
     workspaceId?: number;
     workspace?: PrismaWorkspace;
-    userRole?: UserRole | null;
+    userRole?: PrismaUserRole | null;
     cardSetId?: number;
     cardSet?: PrismaCardSet;
     workspaceUser?: PrismaWorkspaceUser;
@@ -28,7 +28,7 @@ interface CheckPermissionsParams {
 export async function checkPermissions(params: CheckPermissionsParams): Promise<boolean> {
     let user: PrismaUser | null = null;
     let workspace: PrismaWorkspace | null = null;
-    let userRole: UserRole | null = params.userRole ?? null;
+    let userRole: PrismaUserRole | null = params.userRole ?? null;
 
     if (params.userId) {
         user = await prisma.user.findUnique({where: {id: params.userId}});
@@ -97,5 +97,5 @@ export async function checkPermissions(params: CheckPermissionsParams): Promise<
         userRole = workspaceUser?.role ?? null;
     }
 
-    return roleCan(workspace.allowGuests, userRole, params.capability);
+    return userCan(user === null, workspace.allowGuests, userRole, params.capability);
 }

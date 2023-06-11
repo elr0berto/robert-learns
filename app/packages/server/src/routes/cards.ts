@@ -1,30 +1,20 @@
 import {Request, Router} from 'express';
-import {
-    awaitExec,
-    deleteCardSetCard,
-    getCardData,
-    getCardSetData,
-    getSignedInUser,
-    getUserData,
-    TypedResponse
-} from '../common.js';
+import {awaitExec, deleteCardSetCard, getCardData, getCardSetData, getSignedInUser, TypedResponse} from '../common.js';
 import {upload} from "../multer.js";
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
-import {CardSetCard as PrismaCardSetCard, Card as PrismaCard, CardSide, MediaType} from "@prisma/client";
+import {CardSide, MediaType} from "@prisma/client";
+
 import {
-    canUserCreateCardsForCardSet,
-    canUserCreateCardsForCardSetId,
-    canUserDeleteCardsFromCardSetId,
-    canUserViewCardSetId
-} from '../security.js';
-import {
-    CreateCardRequest,
-    CreateCardResponseData, DeleteCardRequest, DeleteCardResponseData,
+    CreateCardResponseData,
+    DeleteCardRequest,
+    DeleteCardResponseData,
     GetCardsRequest,
     GetCardsResponseData
 } from '@elr0berto/robert-learns-shared/api/cards';
+import {checkPermissions} from "../permissions.js";
+import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 const cards = Router();
 
@@ -34,11 +24,11 @@ cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedRes
     for(const key in req.body.cardSetIds) {
         const cardSetId = req.body.cardSetIds[key];
 
-        if (!await canUserViewCardSetId(user, cardSetId)) {
+        //if (!await canUserViewCardSetId(user, cardSetId)) {
+        if (!await checkPermissions({user, cardSetId, capability: Capability.ViewCardSet})) {
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUserData: getUserData(user),
                 errorMessage: 'You are not authorized to view this card set',
                 cardDatas: [],
             });
@@ -69,7 +59,6 @@ cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedRes
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
         cardDatas: cardSetCards.map(csc => getCardData(csc.card))
     });
@@ -88,7 +77,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'invalid audioUpdateStatus',
             cardData: null,
         });
@@ -111,7 +99,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'Card not found',
             cardData: null,
         });
@@ -122,7 +109,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUserData: getUserData(user),
                 errorMessage: 'Card id '+ existingCard.id + ' does not belong to cardSetId: ' + req.body.cardSetId,
                 cardData: null,
             });
@@ -143,17 +129,15 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'Card set not found',
             cardData: null,
         });
     }
 
-    if (!await canUserCreateCardsForCardSet(user, cardSet)) {
+    if (!await checkPermissions({user, cardSet, capability: Capability.CreateCard})) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'You are not authorized to create/edit cards in this card set',
             cardData: null,
         });
@@ -174,7 +158,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    signedInUserData: getUserData(user),
                     errorMessage: 'failed to process audio file! err: exists',
                     cardData: null,
                 });
@@ -184,7 +167,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    signedInUserData: getUserData(user),
                     errorMessage: 'failed to process audio file! err: size',
                     cardData: null,
                 });
@@ -202,7 +184,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUserData: getUserData(user),
                 errorMessage: 'failed to process audio file! err: ex' + (ex?.toString()),
                 cardData: null,
             });
@@ -260,7 +241,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    signedInUserData: getUserData(user),
                     errorMessage: 'missing audio media when audioUpdateStatus is new-audio',
                     cardData: null,
                 });
@@ -274,7 +254,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUserData: getUserData(user),
                 errorMessage: 'unexpected audioUpdateStatus: ' + audioUpdateStatus,
                 cardData: null,
             });
@@ -326,7 +305,6 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
         cardData: getCardData(card!)
     });
@@ -336,23 +314,13 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
 cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : TypedResponse<DeleteCardResponseData>) => {
     const user = await getSignedInUser(req.session);
 
-    if (user.isGuest) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: "guest cannot delete cards",
-            signedInUserData: getUserData(user),
-            cardExistsInOtherCardSetDatas: null,
-        });
-    }
-
-    const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
+    //const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
+    const allowed = await checkPermissions({user, cardSetId: req.body.cardSetId, capability: Capability.DeleteCard});
     if (!allowed) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            errorMessage: "user id: " + user.id + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
-            signedInUserData: getUserData(user),
+            errorMessage: "user id: " + (user?.id ?? 'guest') + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
             cardExistsInOtherCardSetDatas: null,
         });
     }
@@ -371,7 +339,6 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
             dataType: true,
             status: ResponseStatus.Success,
             errorMessage: null,
-            signedInUserData: getUserData(user),
             cardExistsInOtherCardSetDatas: cardSetCards.filter(csc => csc.cardSetId !== req.body.cardSetId).map(csc => getCardSetData(csc.cardSet))
         });
     }
@@ -385,7 +352,6 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card not found, id: " + req.body.cardId,
-            signedInUserData: getUserData(user),
             cardExistsInOtherCardSetDatas: null,
         });
     }
@@ -402,7 +368,6 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card set not found, id: " + req.body.cardSetId,
-            signedInUserData: getUserData(user),
             cardExistsInOtherCardSetDatas: null,
         });
     }
@@ -412,7 +377,6 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUserData: getUserData(user),
         cardExistsInOtherCardSetDatas: null,
     });
 });

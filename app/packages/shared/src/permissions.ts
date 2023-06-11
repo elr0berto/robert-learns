@@ -1,7 +1,7 @@
 import {UserRole} from "./api/models/UserRole.js";
-import {User as PrismaUser, WorkspaceUser as PrismaWorkspaceUser} from "@prisma/client";
 
 export enum Capability {
+    CreateWorkspace = 'CreateWorkspace',
     EditWorkspace = 'EditWorkspace',
     ViewWorkspace = 'ViewWorkspace',
     DeleteWorkspace = 'DeleteWorkspace',
@@ -32,13 +32,19 @@ export const guestCapabilities = [
     Capability.ViewCardSet,
 ];
 
-export const roleCan = (workspaceAllowsGuests: boolean, userRole: UserRole | null, capability: Capability) => {
+export const userCan = (userIsGuest: boolean, workspaceAllowsGuests: boolean, userRole: UserRole | null, capability: Capability) => {
+    if (capability === Capability.CreateWorkspace) {
+        return !userIsGuest;
+    }
+
     if (workspaceAllowsGuests && guestCapabilities.includes(capability)) {
         return true;
     }
+
     if (userRole === null) {
         return false;
     }
+
     const roles = permissions[capability];
     return roles.includes(userRole);
 }

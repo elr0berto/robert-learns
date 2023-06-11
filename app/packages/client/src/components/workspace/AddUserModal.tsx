@@ -1,10 +1,11 @@
 import {Button, Form, Modal} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models/UserRole";
 
 type Props = {
     open: boolean;
-    onAdd: (user: PermissionUser) => void;
+    onAdd: (user: { userId: number, role: UserRole }) => void;
     onClose: () => void;
 }
 

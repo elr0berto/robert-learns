@@ -1,7 +1,7 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {getSignedInUser, getUserData, getWorkspaceData, TypedResponse} from "../common.js";
-import {UserRole} from '@prisma/client';
+import {UserRole as PrismaUserRole} from '@prisma/client';
 import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     CreateWorkspaceRequest,
@@ -17,6 +17,7 @@ import {
     Capability
 } from "@elr0berto/robert-learns-shared/permissions";
 import {checkPermissions} from "../permissions.js";
+import {check} from "@elr0berto/robert-learns-client/src/overmind/sign-in/sign-in-actions.js";
 
 const workspaces = Router();
 
@@ -58,6 +59,17 @@ workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, 
         });
     }
 
+    const scope = req.body.workspaceId ? 'edit' : 'create';
+
+    if (!await checkPermissions({user: signedInUser, workspaceId: req.body.workspaceId, capability: scope === 'edit' ? Capability.EditWorkspace : Capability.CreateWorkspace})) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: 'You are not allowed to create or edit workspaces.',
+            workspaceData: null,
+        });
+    }
+
     const errors = validateCreateWorkspaceRequest(req.body);
 
     if (errors.length !== 0) {
@@ -79,7 +91,7 @@ workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, 
         });
     }
 
-    const scope = req.body.workspaceId ? 'edit' : 'create';
+
 
     let workspaceId = req.body.workspaceId;
 
@@ -107,23 +119,13 @@ workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, 
             data: {
                 workspaceId: newWorkspace.id,
                 userId: signedInUser.id,
-                role: UserRole.OWNER,
+                role: PrismaUserRole.OWNER,
             }
         });
     } else {
         const existingWorkspace = await prisma.workspace.findUniqueOrThrow({
             where: { id: req.body.workspaceId }
         });
-
-        const access = await checkPermissions({user: signedInUser, workspace: existingWorkspace, capability: Capability.EditWorkspace});
-        if (!access) {
-            return res.json({
-                dataType: true,
-                status: ResponseStatus.UnexpectedError,
-                errorMessage: 'Access denied',
-                workspaceData: null,
-            });
-        }
 
         if (existingWorkspace.name !== req.body.name || existingWorkspace.description !== req.body.description || existingWorkspace.allowGuests !== req.body.allowGuests) {
             await prisma.workspace.update({
@@ -206,7 +208,7 @@ workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, 
             }
         }
 
-        if (!Object.values(UserRole).includes(permissionUser.role)) {
+        if (!Object.values(PrismaUserRole).includes(permissionUser.role)) {
             throw new Error('invalid role: ' + permissionUser.role);
         }
 

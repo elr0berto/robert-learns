@@ -6,11 +6,13 @@ import {
 import {ResponseStatus, User} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 
-export const check = async ({ state, effects }: Context) => {
+export const check = async ({ state, effects, actions }: Context) => {
     state.signIn.status = SignInStatus.Checking;
     const resp = await effects.api.signIn.SignInCheck();
     state.signIn.status = SignInStatus.Idle;
-    state.signIn.user = resp.signedInUser;
+
+    actions.data.addOrUpdateUser(resp.user!);
+    state.signIn.userId = resp.user!.id;
 }
 
 export const changeSignInFormUsername = ({ state }: Context, username: string) => {
@@ -28,15 +30,16 @@ export const submit = async ({ state, actions, effects }: Context) => {
     if (state.signIn.signInForm.hasErrors) {
         return;
     }
-    const results = await effects.api.signIn.signIn({
+    const resp = await effects.api.signIn.signIn({
         username: state.signIn.signInForm.username,
         password: state.signIn.signInForm.password
     });
-    if (results.status !== ResponseStatus.Success) {
+    if (resp.status !== ResponseStatus.Success) {
         state.signIn.status = SignInStatus.Error;
-        state.signIn.signInForm.submissionError = results.errorMessage ?? 'Unexpected error';
+        state.signIn.signInForm.submissionError = resp.errorMessage ?? 'Unexpected error';
     } else {
-        state.signIn.user = results.signedInUser;
+        actions.data.addOrUpdateUser(resp.user!);
+        state.signIn.userId = resp.user!.id;
         state.signIn.status = SignInStatus.Idle;
         effects.page.router.goTo('/');
     }
@@ -45,13 +48,13 @@ export const submit = async ({ state, actions, effects }: Context) => {
 export const signOut = async ({ effects, state }: Context) => {
     state.signIn.status = SignInStatus.SigningOut;
     const results = await effects.api.signOut.signOut();
-    state.signIn = getInitialSignInState(results.signedInUser);
+    state.signIn = getInitialSignInState(null);
     state.signIn.status = SignInStatus.Idle;
     effects.page.router.goTo('/');
 }
 
 export const unexpectedlySignedOut = ({ effects, state }: Context) => {
-    state.signIn = getInitialSignInState(user);
+    state.signIn = getInitialSignInState(null);
     state.signIn.status = SignInStatus.SignedOutDueToInactivity;
     effects.page.router.goTo('/');
 }

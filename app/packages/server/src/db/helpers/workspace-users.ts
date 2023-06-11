@@ -1,4 +1,4 @@
-import {User as PrismaUser, UserRole, Workspace as PrismaWorkspace, WorkspaceUser as PrismaWorkspaceUser} from "@prisma/client";
+import {User as PrismaUser, Workspace as PrismaWorkspace, WorkspaceUser as PrismaWorkspaceUser} from "@prisma/client";
 import prisma from "../prisma.js";
 
 export const getWorkspaceUser = async (user: PrismaUser, workspace: PrismaWorkspace) : Promise<PrismaWorkspaceUser & {user : PrismaUser} | null> => {

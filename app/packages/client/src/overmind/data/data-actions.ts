@@ -1,4 +1,5 @@
 import { Context } from '..';
+import {User} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export const loadWorkspaces = async ({state,effects} : Context) => {
     state.data.loadingWorkspaces = true;
@@ -60,4 +61,13 @@ export const loadUsers = async ({state,effects} : Context, userIds: number[]) =>
     state.data.users = resp.users!;
 
     state.data.loadingUsers = false;
+}
+
+export const addOrUpdateUser = ({state} : Context, user: User) => {
+    const index = state.data.users.findIndex(u => u.id === user.id);
+    if (index === -1) {
+        state.data.users.push(user);
+    } else {
+        state.data.users[index] = user;
+    }
 }

@@ -3,33 +3,32 @@ import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import AddUserModal from "./AddUserModal";
 import {Pages} from "../../page-urls";
-import {UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 
 function WorkspaceCreate() {
     const state = useAppState();
     const actions = useActions();
 
-    const scope = state.page.current === Pages.WorkspaceCreate ? 'create' : 'edit';
+    const scope = state.page.page === Pages.WorkspaceCreate ? 'create' : 'edit';
 
-    if (state.signIn.user!.isGuest) {
+    if (scope === 'create' && !state.permission.createWorkspace) {
         return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to {scope} workspaces</Alert></Container>;
     }
 
-    if (scope === 'edit' && state.workspace.workspace === null) {
-        if (state.workspaces.loading) {
+    if (scope === 'edit' && state.page.workspace === null) {
+        if (state.page.loadingWorkspaces) {
             return <Container>Loading...</Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }
     }
 
-    if (scope === 'edit' && !state.workspace.currentUserCanEdit) {
+    if (scope === 'edit' && !state.permission.editWorkspace) {
         return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this workspace</Alert></Container>;
     }
 
 
     return <Container>
-        <h1 className="my-5">{scope === 'create' ? 'Create a workspace' : 'Edit workspace ' + state.workspace.workspace!.name}</h1>
+        <h1 className="my-5">{scope === 'create' ? 'Create a workspace' : 'Edit workspace ' + state.page.workspace!.name}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="workspaceName">
                 <Form.Label>Workspace Name</Form.Label>
@@ -59,8 +58,8 @@ function WorkspaceCreate() {
                         <td>{state.signIn.user!.name()}</td>
                         <td colSpan={2}>OWNER</td>
                     </tr> : null}
-                    {state.workspaceCreate.form.selectedUsers.length > 0 ?
-                        state.workspaceCreate.form.selectedUsers.map(u => <tr key={u.userId}>
+                    {state.workspaceCreate.form.selectedUsersWithData.length > 0 ?
+                        state.workspaceCreate.form.selectedUsersWithData.map(u => <tr key={u.userId}>
                             <td>{u.name}</td>
                             <td>
                                 <Form.Select
@@ -82,7 +81,7 @@ function WorkspaceCreate() {
                         </tr>) : null}
                 </tbody>
             </Table>
-            {scope === 'create' || state.workspace.workspace!.myRoleIsAtLeast(UserRole.ADMINISTRATOR) ? <Button type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button> : null}
+            <Button type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button>
             <hr/>
             {state.workspaceCreate.form.showErrors ? <Alert variant="danger">{state.workspaceCreate.form.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.form.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit(scope)}>{scope === 'create' ? 'Create Workspace!' : 'Save workspace!'}</Button>

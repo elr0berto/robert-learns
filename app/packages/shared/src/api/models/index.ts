@@ -7,3 +7,4 @@ export * from './User.js';
 export * from './Workspace.js';
 export * from './CardSetCard.js';
 export * from './WorkspaceUser.js';
+export * from './UserRole.js';

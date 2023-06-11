@@ -42,9 +42,8 @@ export const submit = async ({state,effects,actions} : Context) => {
         return;
     }
 
-    // replace or add the resp.user to state.data.users
-    actions.data.addOrUpdateUser(resp.user);
+    actions.data.addOrUpdateUser(resp.user!);
 
-    state.signIn.userId = resp.user.id;
+    state.signIn.userId = resp.user!.id;
     effects.page.router.goTo('/');
 }

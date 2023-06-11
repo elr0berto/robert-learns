@@ -1,6 +1,5 @@
-import {Request,Router} from 'express';
+import {Request, Router} from 'express';
 import {getCardData, getCardSetCardData, getSignedInUser, getUserData, TypedResponse} from "../common.js";
-import {canUserCreateCardsForCardSetId, canUserEditCard, canUserEditCardId, canUserViewCardSetId} from "../security.js";
 import prisma from "../db/prisma.js";
 import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
@@ -9,8 +8,11 @@ import {
     GetCardSetCardsResponseData,
     UpdateCardCardSetsRequest,
     UpdateCardCardSetsResponseData,
-    validateCreateCardSetCardsRequest, validateUpdateCardCardSetsRequest
+    validateCreateCardSetCardsRequest,
+    validateUpdateCardCardSetsRequest
 } from "@elr0berto/robert-learns-shared/api/card-set-cards";
+import {checkPermissions} from "../permissions.js";
+import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 
 const cardSetCards = Router();
@@ -21,11 +23,10 @@ cardSetCards.post('/get', async (req : Request<{}, {}, GetCardSetCardsRequest>, 
     for(const key in req.body.cardSetIds) {
         const cardSetId = req.body.cardSetIds[key];
 
-        if (!await canUserViewCardSetId(user, cardSetId)) {
+        if (!await checkPermissions({user, cardSetId, capability: Capability.ViewCardSet})) {
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUserData: getUserData(user),
                 errorMessage: 'You are not authorized to view this card set',
                 cardSetCardDatas: [],
             });
@@ -44,7 +45,6 @@ cardSetCards.post('/get', async (req : Request<{}, {}, GetCardSetCardsRequest>, 
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
         cardSetCardDatas: cardSetCards.map(cs => getCardSetCardData(cs))
     });
@@ -58,18 +58,17 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: errors.join('\n'),
         });
     }
 
     const cardSetId = req.body.cardSetId;
 
-    if (!await canUserCreateCardsForCardSetId(user, cardSetId)) {
+    //if (!await canUserCreateCardsForCardSetId(user, cardSetId)) {
+    if (!await checkPermissions({user, cardSetId, capability: Capability.CreateCard})) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'You are not authorized to create cards for this card set',
         });
     }
@@ -97,7 +96,6 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'One or more cards do not exist',
         });
     }
@@ -121,7 +119,6 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    signedInUserData: getUserData(user),
                     errorMessage: 'One or more cards do not belong to the same workspace as the card set',
                 });
             }
@@ -142,7 +139,6 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'One or more cards already exist in the card set',
         });
     }
@@ -160,7 +156,6 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
     });
 });
@@ -173,7 +168,6 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: errors.join('\n'),
             cardData: null,
         });
@@ -198,17 +192,16 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'Card does not exist',
             cardData: null,
         });
     }
 
-    if (!await canUserEditCard(user, card)) {
+    //if (!await canUserEditCard(user, card)) {
+    if (!await checkPermissions({user, card, capability: Capability.EditCard})) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'You are not authorized to edit this card',
             cardData: null,
         });
@@ -230,7 +223,6 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
-            signedInUserData: getUserData(user),
             errorMessage: 'One or more card sets do not exist',
             cardData: null,
         });
@@ -245,7 +237,6 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                signedInUserData: getUserData(user),
                 errorMessage: 'One or more card sets do not belong to the same workspace as the card',
                 cardData: null,
             });
@@ -301,7 +292,6 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
-        signedInUserData: getUserData(user),
         errorMessage: null,
         cardData: getCardData(updatedCard!),
     });

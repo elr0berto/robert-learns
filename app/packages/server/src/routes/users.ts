@@ -7,12 +7,11 @@ const users = Router();
 
 users.post('/getByEmail', async (req : Request<{},{},UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
-    if (signedInUser.isGuest) {
+    if (signedInUser === null) {
         return res.json({
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Not signed in.',
-            signedInUserData: null,
             userData: null,
         });
     }
@@ -24,7 +23,6 @@ users.post('/getByEmail', async (req : Request<{},{},UserGetByEmailRequest>, res
             dataType: true,
             status: ResponseStatus.UserError,
             errorMessage: 'Invalid email: ' + errors.join(', ') + ' ' + JSON.stringify(req.params),
-            signedInUserData: getUserData(signedInUser),
             userData: null,
         });
     }
@@ -39,8 +37,7 @@ users.post('/getByEmail', async (req : Request<{},{},UserGetByEmailRequest>, res
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        signedInUserData: getUserData(signedInUser),
-        userData: user === null || user.isGuest ? null : getUserData(user),
+        userData: user === null ? null : getUserData(user),
     });
 });
 

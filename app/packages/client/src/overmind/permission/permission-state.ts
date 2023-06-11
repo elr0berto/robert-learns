@@ -1,32 +1,27 @@
-import {Workspace, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "..";
+import {Capability, userCan} from "@elr0berto/robert-learns-shared/dist/permissions";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models/UserRole";
+
+function _userCan(state: PermissionState, rootState: typeof config.state, capability: Capability): boolean {
+    return userCan(rootState.signIn.userId !== null, rootState.page.workspace?.allowGuests ?? false, state.role, capability);
+}
 
 type PermissionState = {
-    workspaceId: number | null;
-    cardSetId: number | null;
-    loadingWorkspaces: boolean;
-    loadingCardSets: boolean;
-    readonly workspace: Workspace | null;
-    readonly cardSet: CardSet | null;
+    readonly role: UserRole | null;
+    readonly createWorkspace: boolean;
+    readonly editWorkspace: boolean;
 }
 
 export const getInitialPermissionState = (): PermissionState => ({
-    workspaceId: null,
-    cardSetId: null,
-    loadingWorkspaces: false,
-    loadingCardSets: false,
-    workspace: derived((state: NavState, rootState: typeof config.state) => {
-        if (state.workspaceId === null) {
-            return null;
-        }
-        return rootState.data.workspaces.find(w => w.id === state.workspaceId)!;
+    role: derived((state: PermissionState, rootState: typeof config.state) => {
+        return rootState.page.workspaceUser?.role ?? null;
     }),
-    cardSet: derived((state: NavState, rootState: typeof config.state) => {
-        if (state.cardSetId === null) {
-            return null;
-        }
-        return rootState.data.cardSets.find(cs => cs.id === state.cardSetId)!;
+    createWorkspace: derived((state: PermissionState, rootState: typeof config.state) => {
+        return _userCan(state, rootState, Capability.CreateWorkspace);
+    }),
+    editWorkspace: derived((state: PermissionState, rootState: typeof config.state) => {
+        return _userCan(state, rootState, Capability.EditWorkspace);
     }),
 });
 

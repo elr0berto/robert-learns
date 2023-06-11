@@ -1,9 +1,9 @@
 import { Context } from '..';
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
-import {PermissionUser, UserRole} from "@elr0berto/robert-learns-shared/dist/types";
 import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
 import {pageUrls, Pages} from "../../page-urls";
 import {CreateWorkspaceRequest} from "@elr0berto/robert-learns-shared/dist/api/workspaces";
+import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export const changeFormName = ({ state }: Context, name: string) => {
     state.workspaceCreate.form.name = name;
@@ -30,7 +30,7 @@ export const addUserModalClose = ({ state }: Context) => {
     state.workspaceCreate.form.addUserOpen = false;
 }
 
-export const addUser = ({ state, actions }: Context, user: PermissionUser) => {
+export const addUser = ({ state, actions }: Context, user: { userId: number, role: UserRole }) => {
     const exists = state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId).length === 1;
     if (!exists) {
         state.workspaceCreate.form.selectedUsers.push(user);
@@ -44,12 +44,11 @@ export const changeUserRole = ({ state }: Context, {user, role}: {user: {userId:
         case UserRole.OWNER:
         case UserRole.CONTRIBUTOR:
         case UserRole.ADMINISTRATOR:
-            state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId)[0].role = role;
+            state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId)[0].role = role as UserRole;
             break;
         default:
             throw new Error('unexpected role: ' + role);
     }
-
 }
 
 export const formSubmit = async ({state, effects, actions} : Context, scope: string) => {
