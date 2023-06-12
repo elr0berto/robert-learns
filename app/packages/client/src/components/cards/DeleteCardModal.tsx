@@ -1,14 +1,14 @@
 import {Alert, Button, Modal} from "react-bootstrap";
 import React from "react";
-import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import CardPreview from "./CardPreview";
+import {CardWithCardSets} from "../../overmind/data/data-state";
 
 type Props = {
     onClose: () => void,
     onConfirm: () => void,
-    card: Card,
+    cardWithCardSets: CardWithCardSets,
     cardSet: CardSet,
-    cardSets: CardSet[],
     cardBeingDeletedExistsInOtherCardSets: CardSet[],
     confirming: boolean;
 }
@@ -20,8 +20,8 @@ function DeleteCardModal(props: Props) {
         <Modal.Body>
             <CardPreview
                 thisCardSetId={props.cardSet.id}
-                card={props.card}
-                cardSets={props.cardSets}
+                card={props.cardWithCardSets.card}
+                cardSets={props.cardWithCardSets.cardSets}
                 showActionButtons={false}
                 onDeleteCard={() => {}}
                 onEditCard={() => {}}

@@ -31,26 +31,25 @@ function WorkspaceCardSetPage() {
             Card set <i>{state.page.cardSet.name}</i> in workspace <i>{state.page.workspace.name}</i>
             {state.permission.editCardSet ? <Button href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}>Edit card set</Button> : null}
         </h1>
-        {state.workspaceCardSet.cardsLoading ? <div>Loading cards...</div> : <CardList
-            thisCardSetId={state.workspaceCardSet.cardSetId!}
-            showActionButtons={state.workspace.currentUserCanContribute!}
-            cardBeingDeleted={state.workspaceCardSet.cardBeingDeleted}
+        {state.page.loadingCards ? <div>Loading cards...</div> : <CardList
+            thisCardSetId={state.page.cardSet.id}
+            showActionButtons={state.permission.editCardSet}
+            cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
             onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
-            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.workspaceCardSet.cardSetId!, card: card})}
+            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet!.id, card: card})}
             onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
-            cards={state.workspaceCardSet.cards}/>}
+            cardsWithCardSets={state.page.cardsWithCardSets}/>}
 
-        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.workspaceCardSet.cardSetId!, card: null})}>+ Create card</Button> : null}
-        {state.workspaceCardSet.currentUserCanCreateCards ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.workspaceCardSet.cardSetId!)}>+ Add cards from other card sets</Button> : null}
-
+        {state.permission.createCard ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet!.id, card: null})}>+ Create card</Button> : null}
+        {state.permission.createCard ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.page.cardSet!.id!)}>+ Add cards from other card sets</Button> : null}
 
         {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
-            cardSet={state.workspaceCardSet.cardSet}
+            cardSet={state.page.cardSet!}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}
             onConfirm={() => actions.workspaceCardSet.deleteCardConfirm()}
             confirming={state.workspaceCardSet.confirmingDeleteCard}
             cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets!}
-            card={state.workspaceCardSet.cardBeingDeleted!}/> : null}
+            cardWithCardSets={state.workspaceCardSet.cardWithCardSetsBeingDeleted!}/> : null}
         <AddCardsFromOtherCardSetsModal/>
         <EditCardCardSetsModal/>
     </Container>;

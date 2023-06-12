@@ -16,8 +16,6 @@ type CreateCardModalState = {
     readonly card: Card | null;
 }
 
-
-
 export const getInitialCreateCardModalState = (cardSetId: number | null, card: Card | null) : CreateCardModalState => {
     return {
         cardId: card?.id ?? null,
@@ -38,7 +36,7 @@ export const getInitialCreateCardModalState = (cardSetId: number | null, card: C
             if (state.cardId === null) {
                 return null;
             }
-            const card = rootState.workspaceCardSet.cards.find(card => card.id === state.cardId);
+            const card = rootState.page.cards.find(card => card.id === state.cardId);
             if (card === undefined || card === null) {
                 throw new Error(`Card with id ${state.cardId} not found`);
             }

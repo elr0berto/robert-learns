@@ -13,6 +13,7 @@ type PermissionState = {
     readonly editWorkspace: boolean;
     readonly createCardSet: boolean;
     readonly editCardSet: boolean;
+    readonly createCard: boolean;
 }
 
 export const getInitialPermissionState = (): PermissionState => ({
@@ -30,6 +31,9 @@ export const getInitialPermissionState = (): PermissionState => ({
     }),
     editCardSet: derived((state: PermissionState, rootState: typeof config.state) => {
         return _userCan(state, rootState, Capability.EditCardSet);
+    }),
+    createCard: derived((state: PermissionState, rootState: typeof config.state) => {
+        return _userCan(state, rootState, Capability.CreateCard);
     }),
 });
 

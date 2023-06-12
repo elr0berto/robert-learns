@@ -2,7 +2,7 @@ import {Pages} from "../../page-urls";
 import {Card, CardSet, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
-import {CardSetWithCards} from "../data/data-state";
+import {CardSetWithCards, CardWithCardSets} from "../data/data-state";
 
 type PageState = {
     page: Pages | null;
@@ -17,8 +17,8 @@ type PageState = {
     readonly cardSet: CardSet | null;
     readonly cardSets: CardSet[];
     readonly cardSetWithCards: CardSetWithCards | null;
-    readonly cardSetsInCurrentWorkspace: CardSet[];
-    readonly cardsInCurrentCardSet: Card[];
+    readonly cards: Card[];
+    readonly cardsWithCardSets: CardWithCardSets[];
 }
 
 export const state: PageState = {
@@ -66,16 +66,16 @@ export const state: PageState = {
         }
         return rootState.data.cardSetsWithCards.find(cs => cs.cardSet.id === state.cardSetId) ?? null;
     }),
-    cardSetsInCurrentWorkspace: derived((state: PageState, rootState: typeof config.state) => {
-        if (state.workspaceId === null) {
-            return [];
-        }
-        return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
-    }),
-    cardsInCurrentCardSet: derived((state: PageState) => {
+    cards: derived((state: PageState) => {
         if (state.cardSetId === null) {
             return [];
         }
         return state.cardSetWithCards?.cards ?? [];
+    }),
+    cardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
+        if (state.workspaceId === null) {
+            return [];
+        }
+        return rootState.data.cardsWithCardSets.filter(c => c.cardSets.some(cs => cs.workspaceId === state.workspaceId));
     }),
 };

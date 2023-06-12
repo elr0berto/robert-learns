@@ -27,7 +27,7 @@ export const setBackHtml = ({ state }: Context, html: string) => {
 }
 
 export const uploadFile = async ({ state, effects }: Context, file: File) => {
-    const resp = await effects.api.media.uploadFile(state.workspace.workspaceId!, file);
+    const resp = await effects.api.media.uploadFile(state.page.workspaceId!, file);
     return resp.url;
 }
 
@@ -61,7 +61,7 @@ export const submit = async ({ state, effects, actions }: Context) => {
 
     let audioUpdateStatus : 'new-card' | 'new-audio' | 'delete-audio' | 'no-change' = 'new-card';
     if (state.createCardModal.cardId !== null) {
-        const card = state.workspaceCardSet.cards.find(c => c.id === state.createCardModal.cardId);
+        const card = state.page.cards.find(c => c.id === state.createCardModal.cardId);
         if (card === undefined) {
             throw new Error('Card not found, id: ' + state.createCardModal.cardId);
         }
@@ -96,22 +96,8 @@ export const submit = async ({ state, effects, actions }: Context) => {
         return;
     }
 
-    if (state.createCardModal.cardId === null) {
-        state.workspaceCardSet.cards.push(resp.card!);
-    } else {
-        const card = state.workspaceCardSet.cards.find(c => c.id === state.createCardModal.cardId);
-        if (card === undefined) {
-            throw new Error('Card not found, id: ' + state.createCardModal.cardId);
-        }
-
-        // replace the card in state.workspaceCardSet.cards with the new card
-        const index = state.workspaceCardSet.cards.indexOf(card);
-        // check that index is valid
-        if (index === -1) {
-            throw new Error('Card not found, id: ' + state.createCardModal.cardId);
-        }
-        state.workspaceCardSet.cards[index] = resp.card!;
-    }
+    actions.data.addOrUpdateCard(resp.card!);
+    actions.data.addOrUpdateCardSets(resp.cardSets!);
 
     actions.createCardModal.closeCreateCardModal();
     state.createCardModal.submitting = false;
