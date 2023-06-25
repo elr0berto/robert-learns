@@ -97,7 +97,7 @@ export const submit = async ({ state, effects, actions }: Context) => {
     }
 
     actions.data.addOrUpdateCard(resp.card!);
-    actions.data.addOrUpdateCardSets(resp.cardSets!);
+    actions.data.addOrUpdateCardSetCardsForCard({card: resp.card!, cardSetCards: resp.cardSetCards!});
 
     actions.createCardModal.closeCreateCardModal();
     state.createCardModal.submitting = false;

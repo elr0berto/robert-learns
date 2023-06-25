@@ -1,5 +1,13 @@
 import {Request, Router} from 'express';
-import {awaitExec, deleteCardSetCard, getCardData, getCardSetData, getSignedInUser, TypedResponse} from '../common.js';
+import {
+    awaitExec,
+    deleteCardSetCard,
+    getCardData,
+    getCardSetCardData,
+    getCardSetData,
+    getSignedInUser,
+    TypedResponse
+} from '../common.js';
 import {upload} from "../multer.js";
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
@@ -79,6 +87,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'invalid audioUpdateStatus',
             cardData: null,
+            cardSetCardDatas: null,
         });
     }
 
@@ -101,6 +110,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Card not found',
             cardData: null,
+            cardSetCardDatas: null,
         });
     }
 
@@ -111,6 +121,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Card id '+ existingCard.id + ' does not belong to cardSetId: ' + req.body.cardSetId,
                 cardData: null,
+                cardSetCardDatas: null,
             });
         }
     }
@@ -131,6 +142,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Card set not found',
             cardData: null,
+            cardSetCardDatas: null,
         });
     }
 
@@ -140,6 +152,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not authorized to create/edit cards in this card set',
             cardData: null,
+            cardSetCardDatas: null,
         });
     }
 
@@ -160,6 +173,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'failed to process audio file! err: exists',
                     cardData: null,
+                    cardSetCardDatas: null,
                 });
             }
             var stats = fs.statSync(outPath);
@@ -169,6 +183,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'failed to process audio file! err: size',
                     cardData: null,
+                    cardSetCardDatas: null,
                 });
             }
 
@@ -186,6 +201,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'failed to process audio file! err: ex' + (ex?.toString()),
                 cardData: null,
+                cardSetCardDatas: null,
             });
         }
     }
@@ -243,6 +259,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'missing audio media when audioUpdateStatus is new-audio',
                     cardData: null,
+                    cardSetCardDatas: null,
                 });
             }
             existingCard!.audioId = audioMedia.id;
@@ -256,6 +273,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'unexpected audioUpdateStatus: ' + audioUpdateStatus,
                 cardData: null,
+                cardSetCardDatas: null,
             });
         }
 
@@ -306,7 +324,8 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        cardData: getCardData(card!)
+        cardData: getCardData(card!),
+        cardSetCardDatas: card!.cardSetCards.map(csc => getCardSetCardData(csc)),
     });
 });
 

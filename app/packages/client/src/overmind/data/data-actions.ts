@@ -1,5 +1,5 @@
 import { Context } from '..';
-import {User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSetCard, User} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export const loadWorkspaces = async ({state,effects} : Context) => {
     state.data.loadingWorkspaces = true;
@@ -70,4 +70,19 @@ export const addOrUpdateUser = ({state} : Context, user: User) => {
     } else {
         state.data.users[index] = user;
     }
+}
+
+
+export const addOrUpdateCard = ({state} : Context, card: Card) => {
+    const index = state.data.cards.findIndex(c => c.id === card.id);
+    if (index === -1) {
+        state.data.cards.push(card);
+    } else {
+        state.data.cards[index] = card;
+    }
+}
+
+export const addOrUpdateCardSetCardsForCard = ({state} : Context, {card, cardSetCards}: {card: Card, cardSetCards: CardSetCard[]}) => {
+    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== card.id);
+    state.data.cardSetCards.push(...cardSetCards);
 }
