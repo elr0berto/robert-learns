@@ -17,7 +17,7 @@ export class GetCardsResponse extends BaseResponse {
 }
 
 export type GetCardsRequest = {
-    cardSetIds: number[],
+    cardIds: number[],
 }
 
 export const getCards = async(getCardsRequest : GetCardsRequest) : Promise<GetCardsResponse> => {

@@ -29,38 +29,28 @@ const cards = Router();
 cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>) => {
     let user = await getSignedInUser(req.session);
 
-    for(const key in req.body.cardSetIds) {
-        const cardSetId = req.body.cardSetIds[key];
+    for(const key in req.body.cardIds) {
+        const cardId = req.body.cardIds[key];
 
-        //if (!await canUserViewCardSetId(user, cardSetId)) {
-        if (!await checkPermissions({user, cardSetId, capability: Capability.ViewCardSet})) {
+        if (!await checkPermissions({user, cardId, capability: Capability.ViewCardSet})) {
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                errorMessage: 'You are not authorized to view this card set',
+                errorMessage: 'You are not authorized to view this card',
                 cardDatas: [],
             });
         }
     }
 
-    const cardSetCards = await prisma.cardSetCard.findMany({
+    const cards = await prisma.card.findMany({
         where: {
-            cardSetId: {
-                in: req.body.cardSetIds
+            id: {
+                in: req.body.cardIds
             }
         },
         include: {
-            card : {
-                include: {
-                    faces: true,
-                    audio: true,
-                    cardSetCards: {
-                        include: {
-                            cardSet: true
-                        }
-                    },
-                },
-            },
+            faces: true,
+            audio: true,
         },
     });
 
@@ -68,7 +58,7 @@ cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedRes
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        cardDatas: cardSetCards.map(csc => getCardData(csc.card))
+        cardDatas: cards.map(card => getCardData(card))
     });
 });
 

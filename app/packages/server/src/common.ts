@@ -10,13 +10,14 @@ import {
     Media as PrismaMedia,
     User as PrismaUser,
     Workspace as PrismaWorkspace,
+    WorkspaceUser as PrismaWorkspaceUser,
 } from '@prisma/client';
 import {
     CardSetCardData,
     CardSetData,
     MediaData,
     UserData,
-    WorkspaceData
+    WorkspaceData, WorkspaceUserData
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
@@ -155,6 +156,15 @@ export const getWorkspaceData = (workspace: PrismaWorkspace) : WorkspaceData => 
         name: workspace.name,
         description: workspace.description,
         allowGuests: workspace.allowGuests,
+    };
+}
+
+export const getWorkspaceUserData = (workspaceUser: PrismaWorkspaceUser) : WorkspaceUserData => {
+    return {
+        dataType: true,
+        userId: workspaceUser.userId,
+        workspaceId: workspaceUser.workspaceId,
+        role: workspaceUser.role,
     };
 }
 

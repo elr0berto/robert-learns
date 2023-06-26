@@ -43,6 +43,14 @@
       "import": "./dist/api/workspaces.js",
       "types": "./dist/api/workspaces.d.ts"
     },
+    "./api/workspace-users": {
+      "import": "./dist/api/workspace-users.js",
+      "types": "./dist/api/workspace-users.d.ts"
+    },
+    "./dist/api/workspace-users": {
+      "import": "./dist/api/workspace-users.js",
+      "types": "./dist/api/workspace-users.d.ts"
+    },
     "./api/sign-up": {
       "import": "./dist/api/sign-up.js",
       "types": "./dist/api/sign-up.d.ts"

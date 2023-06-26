@@ -44,5 +44,5 @@ export const getWorkspaceUsers = async(req: GetWorkspaceUsersRequest) : Promise<
             status: ResponseStatus.UserError,
         });
     }
-    return await apiClient.post(GetWorkspaceUsersResponse, '/workspace-users/getWorkspaceUsers', req);
+    return await apiClient.post(GetWorkspaceUsersResponse, '/workspace-users/get-workspace-users', req);
 }
