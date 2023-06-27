@@ -1,9 +1,10 @@
-import {Card, CardSet, CardSetCard} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
+import {CardWithCardSets} from "../data/data-state";
 
 type CardFromOtherCardSet = {
-    card: Card;
+    cardWithCardSets: CardWithCardSets;
     selected: boolean;
     alreadyInCurrentCardSet: boolean;
 }
@@ -40,7 +41,7 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
                 cardSet: cs.cardSet,
                 cards: cs.cards.map(c => {
                     return {
-                        card: c,
+                        cardWithCardSets: rootState.data.cardsWithCardSets.find(cwcs => cwcs.card.id === c.id)!,
                         selected: state.selectedCardIds.includes(c.id),
                         alreadyInCurrentCardSet: rootState.page.cardSetWithCards!.cards.map(c => c.id).includes(c.id),
                     }

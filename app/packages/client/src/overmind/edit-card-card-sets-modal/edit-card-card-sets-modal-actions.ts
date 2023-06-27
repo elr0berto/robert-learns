@@ -1,14 +1,14 @@
 import {Context} from "..";
 import {getInitialEditCardCardSetsModalState} from "./edit-card-card-sets-modal-state";
+import {addOrUpdateCardSetCardsForCard} from "../data/data-actions";
 
-export const open = async ({ state, effects }: Context, cardId: number) => {
+export const open = async ({ state, effects, actions }: Context, cardId: number) => {
     state.editCardCardSetsModal = getInitialEditCardCardSetsModalState();
     state.editCardCardSetsModal.cardId = cardId;
-    state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.card!.cardSets.map(cs => cs.id);
+    state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.cardWithCardSets!.cardSets.map(cs => cs.id);
     state.editCardCardSetsModal.loading = true;
 
-    const cardSetsResp = await effects.api.cardSets.getCardSets({workspaceId: state.workspace.workspaceId!});
-    state.editCardCardSetsModal.cardSets = cardSetsResp.cardSets;
+    await actions.data.loadCardSets(state.page.workspaceId!);
 
     state.editCardCardSetsModal.loading = false;
 }
@@ -24,13 +24,13 @@ export const setSelectedCardSetId = ({state}: Context, {cardSetId, selected}: {c
     }
 }
 
-export const save = async ({ state, effects }: Context,) => {
+export const save = async ({ state, effects, actions }: Context,) => {
     state.editCardCardSetsModal.submitError = null;
     state.editCardCardSetsModal.submitting = true;
 
     const resp = await effects.api.cardSetCards.updateCardCardSets({cardId: state.editCardCardSetsModal.cardId!, cardSetIds: state.editCardCardSetsModal.selectedCardSetIds});
 
-    state.editCardCardSetsModal.card!.cardSets = resp.card!.cardSets;
+    actions.data.addOrUpdateCardSetCardsForCard({card: state.editCardCardSetsModal.cardWithCardSets!.card, cardSetCards: resp.cardSetCards! });
 
     state.editCardCardSetsModal.submitting = false;
     state.editCardCardSetsModal.cardId = null;

@@ -170,6 +170,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join('\n'),
             cardData: null,
+            cardSetCardDatas: [],
         });
     }
 
@@ -194,6 +195,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'Card does not exist',
             cardData: null,
+            cardSetCardDatas: [],
         });
     }
 
@@ -204,6 +206,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'You are not authorized to edit this card',
             cardData: null,
+            cardSetCardDatas: [],
         });
     }
 
@@ -225,6 +228,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
             status: ResponseStatus.UnexpectedError,
             errorMessage: 'One or more card sets do not exist',
             cardData: null,
+            cardSetCardDatas: [],
         });
     }
 
@@ -239,6 +243,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'One or more card sets do not belong to the same workspace as the card',
                 cardData: null,
+                cardSetCardDatas: [],
             });
         }
     }
@@ -294,6 +299,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
         status: ResponseStatus.Success,
         errorMessage: null,
         cardData: getCardData(updatedCard!),
+        cardSetCardDatas: updatedCard!.cardSetCards.map(csc => getCardSetCardData(csc)),
     });
 });
 

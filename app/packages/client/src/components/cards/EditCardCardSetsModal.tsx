@@ -16,8 +16,7 @@ function EditCardCardSetsModal() {
                 <Row>
                     <Col>
                         <CardPreview
-                            card={state.editCardCardSetsModal.card!}
-                            cardSets={[]}
+                            cardWithCardSets={state.editCardCardSetsModal.cardWithCardSets!}
                             showActionButtons={false}
                             onDeleteCard={() => {}}
                             beingDeleted={false}

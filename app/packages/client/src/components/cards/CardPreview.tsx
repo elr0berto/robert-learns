@@ -5,10 +5,10 @@ import CardPreviewFace from "./CardPreviewFace";
 import {Button} from "react-bootstrap";
 import {DashCircle, PencilSquare} from "react-bootstrap-icons";
 import CardCardSetsPreview from "./CardCardSetsPreview";
+import {CardWithCardSets} from "../../overmind/data/data-state";
 
 type Props = {
-    card: Card;
-    cardSets: CardSet[];
+    cardWithCardSets: CardWithCardSets;
     onDeleteCard: (card: Card) => void;
     onEditCard: (card: Card) => void;
     beingDeleted: boolean;
@@ -20,11 +20,11 @@ type Props = {
 
 function CardPreview(props: Props) {
     return <div className="card-preview border p-2">
-        <CardPreviewFace content={props.card.front?.content ?? ''}/>
+        <CardPreviewFace content={props.cardWithCardSets.card.front?.content ?? ''}/>
         <hr/>
-        <CardPreviewFace content={props.card.back?.content ?? ''}/>
-        {props.card.audio !== null ? <AudioPlayer
-            src={props.card.audio.getUrl()}
+        <CardPreviewFace content={props.cardWithCardSets.card.back?.content ?? ''}/>
+        {props.cardWithCardSets.card.audio !== null ? <AudioPlayer
+            src={props.cardWithCardSets.card.audio.getUrl()}
             onPlay={e => console.log("onPlay")}
         /> : null}
         {props.showCardSetsPreview ? <>
@@ -32,8 +32,7 @@ function CardPreview(props: Props) {
             <CardCardSetsPreview
                 showEditButton={props.showActionButtons}
                 thisCardSetId={props.thisCardSetId}
-                card={props.card}
-                cardSets={props.cardSets}
+                cardWithCardSets={props.cardWithCardSets}
                 onEdit={props.onEditCardSets}
             />
         </> : null}
@@ -43,7 +42,7 @@ function CardPreview(props: Props) {
                 size="sm"
                 variant="outline-primary"
                 className="mt-2"
-                onClick={() => props.onEditCard(props.card)}
+                onClick={() => props.onEditCard(props.cardWithCardSets.card)}
             >
                 <PencilSquare/> Edit
             </Button>
@@ -54,7 +53,7 @@ function CardPreview(props: Props) {
                 size="sm"
                 variant="outline-danger"
                 className="mt-2 ms-1"
-                onClick={() => props.onDeleteCard(props.card)}
+                onClick={() => props.onDeleteCard(props.cardWithCardSets.card)}
             >
                 <DashCircle/> Delete
             </Button> : null}

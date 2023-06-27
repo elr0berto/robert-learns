@@ -2,6 +2,7 @@ import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {validateUpdateCardCardSetsRequest} from "@elr0berto/robert-learns-shared/dist/api/card-set-cards";
+import {CardWithCardSets} from "../data/data-state";
 
 
 type EditCardCardSetsModalState = {
@@ -10,7 +11,7 @@ type EditCardCardSetsModalState = {
     submitting: boolean;
     submitError: string | null;
     selectedCardSetIds: number[];
-    readonly card: Card | null;
+    readonly cardWithCardSets: CardWithCardSets | null;
     readonly cardSets: CardSet[];
     readonly open: boolean;
     readonly formDisabled: boolean;
@@ -25,14 +26,14 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
     submitting: false,
     submitError: null,
     selectedCardSetIds: [],
-    card: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
+    cardWithCardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
         if (state.cardId === null) {
             return null;
         }
-        return rootState.page.cardsInCurrentCardSet.find(c => c.id === state.cardId)!;
+        return rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardId)!;
     }),
     cardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
-        return rootState.page.cardSetsInCurrentWorkspace;
+        return rootState.page.cardSets;
     }),
     open: derived((state: EditCardCardSetsModalState) => {
         return state.cardId !== null;

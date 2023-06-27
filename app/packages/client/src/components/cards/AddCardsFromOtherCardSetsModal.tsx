@@ -23,15 +23,14 @@ function AddCardsFromOtherCardSetsModal() {
                                 {cardSetWithCards.cards.map(card => <CardPreviewSelectable
                                     thisCardSetId={cardSetWithCards.cardSet.id}
                                     uniqueContext={cardSetWithCards.cardSet.id.toString()}
-                                    key={card.card.id}
+                                    key={card.cardWithCardSets.card.id}
                                     disabled={card.alreadyInCurrentCardSet}
                                     selected={card.alreadyInCurrentCardSet || card.selected}
-                                    card={card.card}
-                                    cardSets={[]}
+                                    cardWithCardSets={card.cardWithCardSets}
                                     showActionButtons={false}
                                     onDeleteCard={() => {}}
                                     beingDeleted={false}
-                                    onChange={(selected => actions.addCardsFromOtherCardSetsModal.setSelected({cardId: card.card.id, selected: selected}))}/>)}
+                                    onChange={(selected => actions.addCardsFromOtherCardSetsModal.setSelected({cardId: card.cardWithCardSets.card.id, selected: selected}))}/>)}
                             </Accordion.Body>
                         </Accordion.Item>)}
                     </Accordion>

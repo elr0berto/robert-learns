@@ -28,8 +28,7 @@ function CardList(props: Props) {
                     onDeleteCard={props.onDeleteCard}
                     onEditCard={props.onEditCard}
                     showActionButtons={props.showActionButtons}
-                    card={cardWithCardSets.card}
-                    cardSets={cardWithCardSets.cardSets}
+                    cardWithCardSets={cardWithCardSets}
                     showCardSetsPreview={true}
                     onEditCardSets={props.onEditCardCardSets}
                 />
