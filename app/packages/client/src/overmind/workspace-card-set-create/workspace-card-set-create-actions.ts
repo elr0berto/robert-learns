@@ -24,11 +24,11 @@ export const formSubmit = async ({state,effects,actions} : Context, scope: strin
     let request : CreateCardSetRequest = {
         name: state.workspaceCardSetCreate.form.name,
         description: state.workspaceCardSetCreate.form.description,
-        workspaceId: state.workspace.workspaceId!,
+        workspaceId: state.page.workspaceId!,
     };
 
     if (scope === 'edit') {
-        request.cardSetId = state.workspaceCardSet.cardSetId!;
+        request.cardSetId = state.page.cardSetId!;
     }
 
     const resp = await effects.api.cardSets.createCardSet(request);
@@ -39,7 +39,7 @@ export const formSubmit = async ({state,effects,actions} : Context, scope: strin
         return;
     }
 
-    await actions.workspace._loadCardSets();
-    effects.page.router.goTo(pageUrls[Pages.WorkspaceCardSet].url(state.workspace.workspace!, {id: resp.cardSet.id, name: state.workspaceCardSetCreate.form.name}))
+    effects.page.router.goTo(pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace!, {id: resp.cardSet.id, name: state.workspaceCardSetCreate.form.name}));
+
     state.workspaceCardSetCreate.form.submitting = false;
 }

@@ -109,21 +109,8 @@ export const createCard = async(params: CreateCardRequest) : Promise<CreateCardR
 export type DeleteCardRequest = {
     cardSetId: number,
     cardId: number,
-    confirm: boolean,
 }
 
-export type DeleteCardResponseData = BaseResponseData & {
-    cardExistsInOtherCardSetDatas: CardSetData[] | null;
-}
-
-export class DeleteCardResponse extends BaseResponse {
-    cardExistsInOtherCardSets: CardSet[];
-    constructor(data: DeleteCardResponseData) {
-        super(data);
-        this.cardExistsInOtherCardSets = data.cardExistsInOtherCardSetDatas?.map(cs => new CardSet(cs)) ?? [];
-    }
-}
-
-export const deleteCard = async(params: DeleteCardRequest) : Promise<DeleteCardResponse> => {
-    return await apiClient.post(DeleteCardResponse, '/cards/delete', params);
+export const deleteCard = async(params: DeleteCardRequest) : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/cards/delete', params);
 }

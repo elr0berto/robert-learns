@@ -2,7 +2,7 @@ import {Pages} from "../../page-urls";
 import {Card, CardSet, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
-import {CardSetWithCards, CardWithCardSets} from "../data/data-state";
+import {CardSetWithCards, CardWithCardSets, WorkspaceWithWorkspaceUsers} from "../data/data-state";
 
 type PageState = {
     page: Pages | null;
@@ -13,6 +13,7 @@ type PageState = {
     loadingCards: boolean;
     readonly workspaces: Workspace[];
     readonly workspace: Workspace | null;
+    readonly workspaceWithWorkspaceUsers: WorkspaceWithWorkspaceUsers | null;
     readonly workspaceUser: WorkspaceUser | null;
     readonly cardSet: CardSet | null;
     readonly cardSets: CardSet[];
@@ -38,6 +39,12 @@ export const state: PageState = {
             return null;
         }
         return state.workspaces.find(w => w.id === state.workspaceId)!;
+    }),
+    workspaceWithWorkspaceUsers: derived((state: PageState, rootState: typeof config.state) => {
+        if (state.workspaceId === null) {
+            return null;
+        }
+        return rootState.data.workspacesWithWorkspaceUsers.find(wwu => wwu.workspace.id === state.workspaceId) ?? null;
     }),
     workspaceUser: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {

@@ -23,10 +23,10 @@ export const loadCardSets = async ({state,effects} : Context, workspaceId: numbe
     state.data.loadingCardSets = false;
 }
 
-export const loadCardSetCards = async ({state,effects} : Context, cardSetIds: number[]) => {
+export const loadCardSetCards = async ({state,effects} : Context, request: {cardIds?: number[], cardSetIds?: number[]}) => {
     state.data.loadingCardSetCards = true;
 
-    const resp = await effects.api.cardSetCards.getCardSetCards({cardSetIds});
+    const resp = await effects.api.cardSetCards.getCardSetCards(request);
 
     state.data.cardSetCards = resp.cardSetCards!;
 

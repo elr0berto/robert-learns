@@ -44,6 +44,7 @@ function WorkspaceCardSetPage() {
         {state.permission.createCard ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.page.cardSet!.id!)}>+ Add cards from other card sets</Button> : null}
 
         {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
+            loading={state.workspaceCardSet.loadingDeleteCardModal}
             cardSet={state.page.cardSet!}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}
             onConfirm={() => actions.workspaceCardSet.deleteCardConfirm()}

@@ -9,7 +9,7 @@ import {
 import {apiClient} from "./ApiClient.js";
 
 export type GetCardSetCardsResponseData = BaseResponseData & {
-    cardSetCardDatas: CardSetCardData[] | null;
+    cardSetCardDatas: CardSetCardData[];
 }
 
 export class GetCardSetCardsResponse extends BaseResponse {
@@ -21,10 +21,49 @@ export class GetCardSetCardsResponse extends BaseResponse {
 }
 
 export type GetCardSetCardsRequest = {
-    cardSetIds: number[],
+    cardSetIds?: number[],
+    cardIds?: number[],
 }
 
+export const validateGetCardSetCardsRequest = (req: GetCardSetCardsRequest) : string[] => {
+    let errs : string[] = [];
+
+    if (req.cardSetIds === undefined && req.cardIds === undefined) {
+        errs.push('You must provide either cardSetIds or cardIds');
+    }
+
+    if (req.cardSetIds !== undefined && req.cardIds !== undefined) {
+        errs.push('You cannot provide both cardSetIds and cardIds');
+    }
+
+    // check that cardIds are unique
+    if (req.cardIds !== undefined) {
+        const uniqueCardIds = new Set(req.cardIds);
+        if (uniqueCardIds.size !== req.cardIds.length) {
+            errs.push('You cannot request the same card twice');
+        }
+    }
+
+    // check that cardSetIds are unique
+    if (req.cardSetIds !== undefined) {
+        const uniqueCardSetIds = new Set(req.cardSetIds);
+        if (uniqueCardSetIds.size !== req.cardSetIds.length) {
+            errs.push('You cannot request the same card set twice');
+        }
+    }
+
+    return errs;
+}
 export const getCardSetCards = async(req : GetCardSetCardsRequest) : Promise<GetCardSetCardsResponse> => {
+    const errors = validateGetCardSetCardsRequest(req);
+    if (errors.length > 0) {
+        return new GetCardSetCardsResponse({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join('\n'),
+            cardSetCardDatas: [],
+        });
+    }
     return await apiClient.post(GetCardSetCardsResponse, '/card-set-cards/get', req);
 }
 

@@ -1,20 +1,11 @@
 import {Context} from "..";
 import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 
-export const _loadCards = async ({ state, effects }: Context) => {
-    if (state.workspaceCardSet.cardSet === null) {
-        return;
-    }
-    state.workspaceCardSet.cardsLoading = true;
-    const resp = await effects.api.cards.getCards({cardSetIds: [state.workspaceCardSet.cardSet.id]});
-    state.workspaceCardSet.cards = resp.cards;
-    state.workspaceCardSet.cardsLoading = false;
-}
-
-export const deleteCardStart = async ({ state, effects }: Context, card: Card) => {
-    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = null;
+export const deleteCardStart = async ({ state, effects, actions }: Context, card: Card) => {
+    state.workspaceCardSet.loadingDeleteCardModal = true;
     state.workspaceCardSet.cardIdBeingDeleted = card.id;
-    const resp = await effects.api.cards.deleteCard({cardId: card.id, cardSetId: state.workspaceCardSet.cardSetId!, confirm: false});
+    //const resp = await effects.api.cards.deleteCard({cardId: card.id, cardSetId: state.workspaceCardSet.cardSetId!, confirm: false});
+    await actions.data.loadCards()
     state.workspaceCardSet.confirmingDeleteCard = false;
     state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = resp.cardExistsInOtherCardSets;
 }

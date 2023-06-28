@@ -4,12 +4,11 @@ import {
     deleteCardSetCard,
     getCardData,
     getCardSetCardData,
-    getCardSetData,
     getSignedInUser,
     TypedResponse
 } from '../common.js';
 import {upload} from "../multer.js";
-import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
+import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
 import {CardSide, MediaType} from "@prisma/client";
@@ -17,7 +16,6 @@ import {CardSide, MediaType} from "@prisma/client";
 import {
     CreateCardResponseData,
     DeleteCardRequest,
-    DeleteCardResponseData,
     GetCardsRequest,
     GetCardsResponseData
 } from '@elr0berto/robert-learns-shared/api/cards';
@@ -320,7 +318,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
 });
 
 
-cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : TypedResponse<DeleteCardResponseData>) => {
+cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : TypedResponse<BaseResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     //const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
@@ -330,25 +328,6 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "user id: " + (user?.id ?? 'guest') + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
-            cardExistsInOtherCardSetDatas: null,
-        });
-    }
-
-    if (!req.body.confirm) {
-        const cardSetCards = await prisma.cardSetCard.findMany({
-            where: {
-                cardId: req.body.cardId
-            },
-            include: {
-                cardSet: true
-            }
-        });
-
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.Success,
-            errorMessage: null,
-            cardExistsInOtherCardSetDatas: cardSetCards.filter(csc => csc.cardSetId !== req.body.cardSetId).map(csc => getCardSetData(csc.cardSet))
         });
     }
 
@@ -361,7 +340,6 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card not found, id: " + req.body.cardId,
-            cardExistsInOtherCardSetDatas: null,
         });
     }
 
@@ -377,16 +355,15 @@ cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : Type
             dataType: true,
             status: ResponseStatus.UnexpectedError,
             errorMessage: "card set not found, id: " + req.body.cardSetId,
-            cardExistsInOtherCardSetDatas: null,
         });
     }
 
     await deleteCardSetCard(cardSet, card);
+
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        cardExistsInOtherCardSetDatas: null,
     });
 });
 

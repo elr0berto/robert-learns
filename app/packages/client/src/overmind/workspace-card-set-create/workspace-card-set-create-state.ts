@@ -33,7 +33,7 @@ export const getInitialWorkspaceCardSetCreateState = (cardSet: CardSet | null): 
             let errors = validateCreateCardSetRequest({
                 name: state.name.trim(),
                 description: state.description.trim(),
-                workspaceId: rootState.workspace.workspaceId!,
+                workspaceId: rootState.page.workspaceId!,
             });
             return errors;
         }),

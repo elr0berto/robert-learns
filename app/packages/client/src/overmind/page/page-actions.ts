@@ -91,7 +91,7 @@ export const showWorkspaceCreatePage = async ({ state, effects, actions }: Conte
 export const showWorkspaceEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
     state.page.page = Pages.WorkspaceEdit;
     await actions.page.load(payload);
-    state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspace);
+    state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspaceWithWorkspaceUsers);
 }
 
 export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Context, payload: Payload) => {

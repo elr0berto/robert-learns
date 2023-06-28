@@ -74,7 +74,7 @@ export const getInitialSignInState = (userId: number | null): SignInState => ({
         }),
     },
     isGuest: derived((state: SignInState) => {
-        return state.user?.isGuest ?? true;
+        return state.user === null;
     }),
 });
 
