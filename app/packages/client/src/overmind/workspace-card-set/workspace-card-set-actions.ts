@@ -5,21 +5,18 @@ export const deleteCardStart = async ({ state, effects, actions }: Context, card
     state.workspaceCardSet.loadingDeleteCardModal = true;
     state.workspaceCardSet.cardIdBeingDeleted = card.id;
     //const resp = await effects.api.cards.deleteCard({cardId: card.id, cardSetId: state.workspaceCardSet.cardSetId!, confirm: false});
-    await actions.data.loadCards()
+    await actions.data.loadCardsWithCardSets({workspaceId: state.page.workspaceId!, cardIds: [card.id]});
     state.workspaceCardSet.confirmingDeleteCard = false;
-    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = resp.cardExistsInOtherCardSets;
+    state.workspaceCardSet.loadingDeleteCardModal = false;
 }
 
-export const deleteCardConfirm = async ({ state, effects }: Context,) => {
+export const deleteCardConfirm = async ({ state, effects, actions }: Context,) => {
     state.workspaceCardSet.confirmingDeleteCard = true;
-    await effects.api.cards.deleteCard({cardId: state.workspaceCardSet.cardBeingDeleted!.id, cardSetId: state.workspaceCardSet.cardSetId!, confirm: true});
 
-    // remove card from state.workspaceCardSet.cards based on cardBeingDeleted.id
-    const newCards = state.workspaceCardSet.cards.filter(c => c.id !== state.workspaceCardSet.cardBeingDeleted!.id);
+    await effects.api.cards.deleteCard({cardId: state.workspaceCardSet.cardIdBeingDeleted!, cardSetId: state.page.cardSetId!});
 
-    // copy newCards to state.workspaceCardSet.cards
-    state.workspaceCardSet.cards = [...newCards];
-    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = null;
+    actions.data.deleteCard({cardId: state.workspaceCardSet.cardIdBeingDeleted!, cardSetId: state.page.cardSetId!});
+
     state.workspaceCardSet.cardIdBeingDeleted = null;
     state.workspaceCardSet.confirmingDeleteCard = false;
 }
@@ -28,7 +25,6 @@ export const deleteCardCancel = async ({ state }: Context,) => {
     if (state.workspaceCardSet.confirmingDeleteCard) {
         return;
     }
-    state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets = null;
     state.workspaceCardSet.cardIdBeingDeleted = null;
     state.workspaceCardSet.confirmingDeleteCard = false;
 }

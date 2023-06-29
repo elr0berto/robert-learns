@@ -8,11 +8,12 @@ import {
     GetCardSetCardsResponseData,
     UpdateCardCardSetsRequest,
     UpdateCardCardSetsResponseData,
-    validateCreateCardSetCardsRequest,
+    validateCreateCardSetCardsRequest, validateGetCardSetCardsRequest,
     validateUpdateCardCardSetsRequest
 } from "@elr0berto/robert-learns-shared/api/card-set-cards";
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
+import { CardSetCard as PrismaCardSetCard } from '@prisma/client';
 
 
 const cardSetCards = Router();
@@ -20,27 +21,48 @@ const cardSetCards = Router();
 cardSetCards.post('/get', async (req : Request<{}, {}, GetCardSetCardsRequest>, res : TypedResponse<GetCardSetCardsResponseData>) => {
     let user = await getSignedInUser(req.session);
 
-    for(const key in req.body.cardSetIds) {
-        const cardSetId = req.body.cardSetIds[key];
+    const errors = validateGetCardSetCardsRequest(req.body);
+    if (errors.length > 0) {
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join('\n'),
+            cardSetCardDatas: [],
+        });
+    }
 
+    let cardSetCards : PrismaCardSetCard[] = [];
+    if (typeof req.body.cardIds !== 'undefined') {
+        cardSetCards = await prisma.cardSetCard.findMany({
+            where: {
+                cardId: {
+                    in: req.body.cardIds
+                }
+            },
+        });
+    } else {
+        cardSetCards = await prisma.cardSetCard.findMany({
+            where: {
+                cardSetId: {
+                    in: req.body.cardSetIds
+                }
+            },
+        });
+    }
+
+    const uniqueCardSetIds = new Set(cardSetCards.map(cs => cs.cardSetId));
+
+    // loop over uniqueCardSetIds and check permissions
+    for (const cardSetId of uniqueCardSetIds) {
         if (!await checkPermissions({user, cardSetId, capability: Capability.ViewCardSet})) {
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                errorMessage: 'You are not authorized to view this card set',
+                errorMessage: 'You are not authorized to read cards for this card set',
                 cardSetCardDatas: [],
             });
         }
     }
-
-
-    const cardSetCards = await prisma.cardSetCard.findMany({
-        where: {
-            cardSetId: {
-                in: req.body.cardSetIds
-            }
-        },
-    });
 
     return res.json({
         dataType: true,

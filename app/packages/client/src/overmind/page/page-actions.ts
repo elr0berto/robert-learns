@@ -31,6 +31,7 @@ export const loadWorkspaces = async ({state,effects,actions} : Context) => {
     state.page.loadingWorkspaces = true;
 
     await actions.data.loadWorkspaces();
+    await actions.data.loadWorkspaceUsers(state.data.workspaces.map(w => w.id));
 
     state.page.loadingWorkspaces = false;
 }
@@ -46,6 +47,7 @@ export const loadCardSets = async ({state,effects,actions} : Context, workspaceI
 export const loadCards = async ({state,effects,actions} : Context, cardSetIds: number[]) => {
     state.page.loadingCards = true;
 
+    await actions.data.loadCardSetCards({cardSetIds: cardSetIds});
     await actions.data.loadCards(cardSetIds);
 
     state.page.loadingCards = false;
