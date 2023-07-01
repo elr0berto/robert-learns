@@ -1,3 +1,5 @@
+bugfix - edit workspace is crashing
+make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
 add card to other card sets
 centralize the permission stuff in shared
 validation

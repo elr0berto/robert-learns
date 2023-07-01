@@ -4,7 +4,7 @@ import {Capability, userCan} from "@elr0berto/robert-learns-shared/dist/permissi
 import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models/UserRole";
 
 function _userCan(state: PermissionState, rootState: typeof config.state, capability: Capability): boolean {
-    return userCan(rootState.signIn.userId !== null, rootState.page.workspace?.allowGuests ?? false, state.role, capability);
+    return userCan(rootState.signIn.userId === null, rootState.page.workspace?.allowGuests ?? false, state.role, capability);
 }
 
 type PermissionState = {

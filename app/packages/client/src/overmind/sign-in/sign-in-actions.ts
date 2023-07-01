@@ -11,8 +11,11 @@ export const check = async ({ state, effects, actions }: Context) => {
     const resp = await effects.api.signIn.SignInCheck();
     state.signIn.status = SignInStatus.Idle;
 
-    actions.data.addOrUpdateUser(resp.user!);
-    state.signIn.userId = resp.user!.id;
+    if (resp.user !== null) {
+        actions.data.addOrUpdateUser(resp.user);
+    }
+
+    state.signIn.userId = resp.user?.id ?? null;
 }
 
 export const changeSignInFormUsername = ({ state }: Context, username: string) => {

@@ -50,7 +50,7 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
         submitAttempted: false,
         submissionError: '',
         addUserOpen: false,
-        selectedUsersWithData: derived((state: WorkspaceCreateFormState, rootState : typeof config.state) => {;
+        selectedUsersWithData: derived((state: WorkspaceCreateFormState, rootState : typeof config.state) => {
             return state.selectedUsers.map(u => {
                 const user = rootState.data.users.find(u2 => u2.id === u.userId)!;
                 return {
