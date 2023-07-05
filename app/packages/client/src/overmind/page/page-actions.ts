@@ -11,7 +11,9 @@ export type Payload = {
     querystring: queryString.ParsedQuery<string>
 }
 
-export const load = async ({state, effects, actions}: Context, payload?: Payload) => {
+export const load = async ({state, effects, actions}: Context, {payload, page, onSuccessCallback}: {payload?: Payload, page: Pages, onSuccessCallback: () => void}) => {
+    state.page.initializing = true;
+    state.page.page = page;
     await actions.page.loadWorkspaces();
     if (payload?.params?.workspaceId || state.page.workspaceId !== null) {
         if (payload?.params?.workspaceId) {
@@ -32,6 +34,7 @@ export const loadWorkspaces = async ({state,effects,actions} : Context) => {
 
     await actions.data.loadWorkspaces();
     await actions.data.loadWorkspaceUsers(state.data.workspaces.map(w => w.id));
+    await actions.data.loadUsers(state.data.workspaceUsers.map(wu => wu.userId));
 
     state.page.loadingWorkspaces = false;
 }
@@ -91,9 +94,7 @@ export const showWorkspaceCreatePage = async ({ state, effects, actions }: Conte
 }
 
 export const showWorkspaceEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    state.page.page = Pages.WorkspaceEdit;
-    await actions.page.load(payload);
-    state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspaceWithWorkspaceUsers);
+    await actions.page.load(Pages.WorkspaceEdit, payload, () => {state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspaceWithWorkspaceUsers);});
 }
 
 export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Context, payload: Payload) => {

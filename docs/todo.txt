@@ -8,3 +8,4 @@ logging
 study-drill-session
 save stats for right/wrong answers
 style card lists / cards -- maybe use CardGroup
+only show workspace-users to users that can edit the workspace

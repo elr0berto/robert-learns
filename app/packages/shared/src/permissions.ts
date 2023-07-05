@@ -50,7 +50,6 @@ export const userCan = (userIsGuest: boolean, workspaceAllowsGuests: boolean, us
 }
 
 
-
 export const canUserRemoveUser = (user1: {user_id: number, role: UserRole} | null, user2: {user_id: number, role: UserRole}) => {
     if (user1 === null) {
         return false;
