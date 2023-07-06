@@ -9,7 +9,7 @@ function TopMenu() {
     const actions = useActions();
 
     console.log('TopMenu page: ' + state.page.page);
-
+    console.log('TopMenu state.page.workspace', state.page.workspace);
     return <Navbar bg="light" expand="lg">
         <Container>
             <Navbar.Brand href="/">Robert Learns</Navbar.Brand>

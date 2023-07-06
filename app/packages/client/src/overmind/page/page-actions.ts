@@ -11,25 +11,46 @@ export type Payload = {
     querystring: queryString.ParsedQuery<string>
 }
 
-export const load = async ({state, effects, actions}: Context, {payload, page, onSuccessCallback}: {payload?: Payload, page: Pages, onSuccessCallback: () => void}) => {
+export const load = async ({state, actions}: Context, params?: {payload?: Payload, page?: Pages, onSuccessCallback?: () => void}) => {
     state.page.initializing = true;
-    state.page.page = page;
-    await actions.page.loadWorkspaces();
-    if (payload?.params?.workspaceId || state.page.workspaceId !== null) {
-        if (payload?.params?.workspaceId) {
-            state.page.workspaceId = +payload.params.workspaceId;
+
+    if (params?.page) {
+        state.page.page = params.page;
+    }
+
+    let promises : Promise<void>[] = [];
+
+    promises.push(actions.page.loadWorkspaces());
+
+    if (params?.payload?.params?.workspaceId || state.page.workspaceId !== null) {
+        if (params?.payload?.params?.workspaceId) {
+            state.page.workspaceId = +params?.payload.params.workspaceId;
         }
-        await actions.page.loadCardSets(state.page.workspaceId!);
-        if (payload?.params?.cardSetId || state.page.cardSetId !== null) {
-            if (payload?.params?.cardSetId) {
-                state.page.cardSetId = +payload.params.cardSetId;
+        promises.push(actions.page.loadCardSets(state.page.workspaceId!));
+
+        if (params?.payload?.params?.cardSetId || state.page.cardSetId !== null) {
+            if (params?.payload?.params?.cardSetId) {
+                state.page.cardSetId = +params?.payload.params.cardSetId;
             }
-            await actions.page.loadCards([state.page.cardSetId!]);
+            promises.push(actions.page.loadCards([state.page.cardSetId!]));
+        } else {
+            state.page.cardSetId = null;
         }
+    } else {
+        state.page.workspaceId = null;
+        state.page.cardSetId = null;
+    }
+
+    state.page.initializing = false;
+
+    await Promise.all(promises);
+
+    if (params?.onSuccessCallback) {
+        params.onSuccessCallback();
     }
 }
 
-export const loadWorkspaces = async ({state,effects,actions} : Context) => {
+export const loadWorkspaces = async ({state,actions} : Context) => {
     state.page.loadingWorkspaces = true;
 
     await actions.data.loadWorkspaces();
@@ -39,7 +60,7 @@ export const loadWorkspaces = async ({state,effects,actions} : Context) => {
     state.page.loadingWorkspaces = false;
 }
 
-export const loadCardSets = async ({state,effects,actions} : Context, workspaceId: number) => {
+export const loadCardSets = async ({state,actions} : Context, workspaceId: number) => {
     state.page.loadingCardSets = true;
 
     await actions.data.loadCardSets(workspaceId);
@@ -47,7 +68,7 @@ export const loadCardSets = async ({state,effects,actions} : Context, workspaceI
     state.page.loadingCardSets = false;
 }
 
-export const loadCards = async ({state,effects,actions} : Context, cardSetIds: number[]) => {
+export const loadCards = async ({state,actions} : Context, cardSetIds: number[]) => {
     state.page.loadingCards = true;
 
     await actions.data.loadCardSetCards({cardSetIds: cardSetIds});
@@ -56,60 +77,44 @@ export const loadCards = async ({state,effects,actions} : Context, cardSetIds: n
     state.page.loadingCards = false;
 }
 
-
-
-export const resetNav = async ({state}: Context) => {
-    state.page.workspaceId = null;
-    state.page.cardSetId = null;
+export const showFrontPage = async ({ actions }: Context) => {
+    actions.page.load({page: Pages.Front});
 }
 
-export const showFrontPage = async ({ state, effects, actions }: Context) => {
-    state.page.page = Pages.Front;
-    actions.page.load();
-    actions.page.resetNav();
-}
-
-export const showSignInPage = async ({ state, effects, actions }: Context) => {
-    state.page.page = Pages.SignIn;
-    actions.page.load();
+export const showSignInPage = async ({ state, actions }: Context) => {
+    actions.page.load({page: Pages.SignIn});
     state.signIn = getInitialSignInState(state.signIn.userId);
 }
 
-export const showSignUpPage = async ({ state, effects, actions }: Context) => {
-    state.page.page = Pages.SignUp;
-    actions.page.load();
+export const showSignUpPage = async ({ state, actions }: Context) => {
+    actions.page.load({page: Pages.SignUp});
     state.signUp = getInitialSignUpState();
 }
 
-export const showWorkspacePage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    state.page.page = Pages.Workspace;
-    state.page.cardSetId = null;
-    actions.page.load(payload);
+export const showWorkspacePage = async ({ actions }: Context, payload: Payload) => {
+    actions.page.load({page: Pages.Workspace, payload: payload});
 }
 
-export const showWorkspaceCreatePage = async ({ state, effects, actions }: Context) => {
-    state.page.page = Pages.WorkspaceCreate;
-    actions.page.load();
+export const showWorkspaceCreatePage = async ({ state, actions }: Context) => {
+    actions.page.load({page: Pages.WorkspaceCreate});
     state.workspaceCreate = getInitialWorkspaceCreateState(null);
 }
 
-export const showWorkspaceEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    await actions.page.load(Pages.WorkspaceEdit, payload, () => {state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspaceWithWorkspaceUsers);});
+export const showWorkspaceEditPage = async ({ state, actions }: Context, payload: Payload) => {
+    await actions.page.load({page: Pages.WorkspaceEdit, payload: payload});
+    state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspaceWithWorkspaceUsers);
 }
 
-export const showWorkspaceCardSetPage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    state.page.page = Pages.WorkspaceCardSet;
-    actions.page.load(payload);
+export const showWorkspaceCardSetPage = async ({ actions }: Context, payload: Payload) => {
+    actions.page.load({page: Pages.WorkspaceCardSet, payload: payload});
 }
 
-export const showWorkspaceCardSetCreatePage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    state.page.page = Pages.WorkspaceCardSetCreate;
-    actions.page.load(payload);
+export const showWorkspaceCardSetCreatePage = async ({ state, actions }: Context, payload: Payload) => {
+    actions.page.load({page: Pages.WorkspaceCardSetCreate, payload: payload});
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(null);
 }
 
 export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
-    state.page.page = Pages.WorkspaceCardSetEdit;
-    await actions.page.load(payload);
+    await actions.page.load({page: Pages.WorkspaceCardSetEdit, payload: payload});
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(state.page.cardSet);
 }

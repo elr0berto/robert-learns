@@ -8,6 +8,7 @@ type PageState = {
     page: Pages | null;
     workspaceId: number | null;
     cardSetId: number | null;
+    initializing: boolean;
     loadingWorkspaces: boolean;
     loadingCardSets: boolean;
     loadingCards: boolean;
@@ -26,6 +27,7 @@ export const state: PageState = {
     page: null,
     workspaceId: null,
     cardSetId: null,
+    initializing: false,
     loadingWorkspaces: true,
     loadingCardSets: true,
     loadingCards: true,
@@ -38,7 +40,11 @@ export const state: PageState = {
         if (state.workspaceId === null) {
             return null;
         }
-        return state.workspaces.find(w => w.id === state.workspaceId)!;
+        const workspace = state.workspaces.find(w => w.id === state.workspaceId);
+        if (workspace === undefined) {
+            return null;
+        }
+        return workspace;
     }),
     workspaceWithWorkspaceUsers: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {
