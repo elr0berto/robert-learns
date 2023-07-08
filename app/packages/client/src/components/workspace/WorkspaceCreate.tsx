@@ -28,7 +28,7 @@ function WorkspaceCreate() {
 
 
     return <Container>
-        <h1 className="my-5">{scope === 'create' ? 'Create a workspace' : 'Edit workspace ' + state.page.workspace!.name}</h1>
+        <h1 className="my-5">{scope === 'create' ? 'Create a workspace' : 'Edit workspace ' + state.page.workspace.name}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="workspaceName">
                 <Form.Label>Workspace Name</Form.Label>
@@ -55,7 +55,7 @@ function WorkspaceCreate() {
                 <tbody>
                     {scope === 'create' ?
                     <tr>
-                        <td>{state.signIn.user!.name()}</td>
+                        <td>{state.signIn.user.name()}</td>
                         <td colSpan={2}>OWNER</td>
                     </tr> : null}
                     {state.workspaceCreate.form.selectedUsersWithData.length > 0 ?

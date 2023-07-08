@@ -6,7 +6,11 @@ export const open = async ({ state, effects, actions }: Context, cardSetId: numb
     state.addCardsFromOtherCardSetsModal.loading = true;
     state.addCardsFromOtherCardSetsModal.open = true;
 
-    await actions.data.loadCardSets(state.page.workspaceId!);
+    if (state.page.workspaceId === null) {
+        throw new Error('Workspace ID is null');
+    }
+
+    await actions.data.loadCardSets(state.page.workspaceId);
     await actions.data.loadCards(state.data.cardSets.filter(cs => cs.workspaceId === state.page.workspaceId).map(cs => cs.id));
 
     state.addCardsFromOtherCardSetsModal.loading = false;
@@ -31,7 +35,12 @@ export const save = async ({ state, effects, actions }: Context,) => {
     state.addCardsFromOtherCardSetsModal.submitError = null;
     state.addCardsFromOtherCardSetsModal.submitting = true;
 
-    const cardSetId = state.page.cardSetId!;
+    const cardSetId = state.page.cardSetId;
+
+    if (cardSetId === null) {
+        throw new Error('Card Set ID is null');
+    }
+
     const cardIds = state.addCardsFromOtherCardSetsModal.selectedCardIds;
     await effects.api.cardSetCards.createCardSetCards({cardSetId, cardIds});
 

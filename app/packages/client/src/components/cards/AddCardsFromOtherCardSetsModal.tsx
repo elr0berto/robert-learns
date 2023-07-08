@@ -7,9 +7,13 @@ function AddCardsFromOtherCardSetsModal() {
     const state = useAppState();
     const actions = useActions();
 
+    if (state.page.cardSet === null) {
+        throw new Error('state.page.cardSet is null');
+    }
+
     return state.addCardsFromOtherCardSetsModal.open ? <Modal className="add-cards-from-other-card-sets-modal" show={true} size="lg" onHide={() => actions.addCardsFromOtherCardSetsModal.close()}>
         <Modal.Header closeButton>
-            <Modal.Title>Add cards from other card sets into <i>{state.page.cardSet!.name}</i></Modal.Title>
+            <Modal.Title>Add cards from other card sets into <i>{state.page.cardSet.name}</i></Modal.Title>
         </Modal.Header>
         <Modal.Body>
             {state.addCardsFromOtherCardSetsModal.loading ?

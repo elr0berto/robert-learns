@@ -40,10 +40,17 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
             return {
                 cardSet: cs.cardSet,
                 cards: cs.cards.map(c => {
+                    const cardWithCardSets = rootState.data.cardsWithCardSets.find(cwcs => cwcs.card.id === c.id);
+                    if (cardWithCardSets === undefined) {
+                        throw new Error(`Could not find card with card sets for card id ${c.id}`);
+                    }
+                    if (rootState.page.cardSetWithCards === null) {
+                        throw new Error(`Could not find current card set with cards`);
+                    }
                     return {
-                        cardWithCardSets: rootState.data.cardsWithCardSets.find(cwcs => cwcs.card.id === c.id)!,
+                        cardWithCardSets: cardWithCardSets,
                         selected: state.selectedCardIds.includes(c.id),
-                        alreadyInCurrentCardSet: rootState.page.cardSetWithCards!.cards.map(c => c.id).includes(c.id),
+                        alreadyInCurrentCardSet: rootState.page.cardSetWithCards.cards.map(c => c.id).includes(c.id),
                     }
                 }),
             };

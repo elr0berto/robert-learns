@@ -30,8 +30,9 @@ function WorkspaceCardSetCreatePage() {
         }
     }
 
+
     return <Container>
-        <h1 className="my-5">{scope === 'create' ? 'Create a card set ' : 'Edit card set ' + state.page.cardSet!.name} in workspace {state.page.workspace.name}</h1>
+        <h1 className="my-5">{scope === 'edit' ? 'Edit card set ' + (state.page.cardSet?.name ?? 'ERROR') : 'Create a card set'} in workspace {state.page.workspace.name}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="cardSetName">
                 <Form.Label>Card Set Name</Form.Label>

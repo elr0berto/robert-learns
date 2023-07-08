@@ -32,7 +32,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "@typescript-eslint/no-non-null-assertion": "error"
+    }
   },
   "browserslist": {
     "production": [

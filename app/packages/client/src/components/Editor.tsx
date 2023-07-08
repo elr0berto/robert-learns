@@ -12,8 +12,14 @@ function Editor(props: Props) {
 
     // Insert Image(selected by user) to quill
     const insertToEditor = (url: string) => {
-        const range = quill!.getSelection();
-        quill!.insertEmbed(range!.index, 'image', url);
+        if (!quill) {
+            throw new Error('quill is undefined or null');
+        }
+        const range = quill.getSelection();
+        if (range === null) {
+            throw new Error('range is null');
+        }
+        quill.insertEmbed(range.index, 'image', url);
     };
 
 
@@ -25,7 +31,10 @@ function Editor(props: Props) {
         input.click();
 
         input.onchange = async () => {
-            const file = input.files![0];
+            if (!input.files) {
+                throw new Error('input.files is null or undefined');
+            }
+            const file = input.files[0];
             const url = await props.uploadCallback(file);
             insertToEditor(url);
         };

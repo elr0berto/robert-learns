@@ -58,7 +58,7 @@ export async function checkPermissions(params: CheckPermissionsParams): Promise<
         const card = await prisma.card.findUnique({
             where: { id: params.cardId },
         });
-        if (!card) throw new Error("Card not found");
+        if (!card) throw new Error("Card not found. cardId: " + params.cardId + JSON.stringify(params));
         const cardSetCard = await prisma.cardSetCard.findFirst({ where: { cardId: card.id } });
         if (!cardSetCard) throw new Error("CardSetCard not found");
         const cardSet = await prisma.cardSet.findUnique({ where: { id: cardSetCard.cardSetId } });

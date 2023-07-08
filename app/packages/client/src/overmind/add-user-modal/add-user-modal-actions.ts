@@ -10,7 +10,10 @@ export const changeEmail = ({ state }: Context, email: string) => {
 export const submit = async ({ state, effects, actions }: Context, onAdd: (user: { userId: number, role: UserRole }) => void) => {
     state.addUserModal.errorMessage = null;
     state.addUserModal.submitting = true;
-    if (state.addUserModal.email === state.signIn.user!.email) {
+    if (state.signIn.user === null) {
+        throw new Error('User is not signed in!');
+    }
+    if (state.addUserModal.email === state.signIn.user.email) {
         state.addUserModal.submitting = false;
         state.addUserModal.errorMessage = 'You cannot add your self.';
         return;

@@ -28,7 +28,7 @@ function TopMenu() {
                         </>}
                         <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
                     </NavDropdown>
-                    {!state.page.loadingWorkspaces && (
+                    {!state.page.loadingWorkspaces && state.page.workspace !== null && (
                         state.page.page === Pages.Workspace ||
                         state.page.page === Pages.WorkspaceCardSetCreate ||
                         state.page.page === Pages.WorkspaceCardSetEdit ||
@@ -37,12 +37,11 @@ function TopMenu() {
                                 (state.page.page === Pages.WorkspaceCardSet || state.page.page === Pages.WorkspaceCardSetEdit) && state.page.cardSet !== null ?
                                 state.page.cardSet.name :
                                 (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.page.cardSets.length +')' ))}>
-                            {state.page.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.page.workspace!, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
+                            {state.page.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.page.workspace, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
                             {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
-                            <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.page.workspace!)}>Create card set</NavDropdown.Item>
+                            <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.page.workspace)}>Create card set</NavDropdown.Item>
                         </NavDropdown> : null
                     }
-
                 </Nav>
                 <Nav>
                     {
@@ -51,7 +50,7 @@ function TopMenu() {
                         (
                             state.signIn.user === null ?
                             'Signed in as guest' :
-                            <NavDropdown title={'Signed in as ' + state.signIn.user!.username}>
+                            <NavDropdown title={'Signed in as ' + state.signIn.user.username}>
                                 <NavDropdown.Item onClick={() => actions.signIn.signOut()}>Sign out</NavDropdown.Item>
                             </NavDropdown>
                         )

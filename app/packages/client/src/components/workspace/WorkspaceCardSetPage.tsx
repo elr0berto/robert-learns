@@ -36,21 +36,21 @@ function WorkspaceCardSetPage() {
             showActionButtons={state.permission.editCardSet}
             cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
             onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
-            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet!.id, card: card})}
+            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet.id, card: card})}
             onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
             cardsWithCardSets={state.page.cardsWithCardSets}/>}
 
-        {state.permission.createCard ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet!.id, card: null})}>+ Create card</Button> : null}
-        {state.permission.createCard ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.page.cardSet!.id!)}>+ Add cards from other card sets</Button> : null}
+        {state.permission.createCard ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet.id, card: null})}>+ Create card</Button> : null}
+        {state.permission.createCard ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.page.cardSet.id)}>+ Add cards from other card sets</Button> : null}
 
         {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
             loading={state.workspaceCardSet.loadingDeleteCardModal}
-            cardSet={state.page.cardSet!}
+            cardSet={state.page.cardSet}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}
             onConfirm={() => actions.workspaceCardSet.deleteCardConfirm()}
             confirming={state.workspaceCardSet.confirmingDeleteCard}
-            cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets!}
-            cardWithCardSets={state.workspaceCardSet.cardWithCardSetsBeingDeleted!}/> : null}
+            cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets}
+            cardWithCardSets={state.workspaceCardSet.cardWithCardSetsBeingDeleted}/> : null}
         <AddCardsFromOtherCardSetsModal/>
         <EditCardCardSetsModal/>
     </Container>;

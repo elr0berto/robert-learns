@@ -7,7 +7,15 @@ function EditCardCardSetsModal() {
     const state = useAppState();
     const actions = useActions();
 
-    return state.editCardCardSetsModal.open ? <Modal className="edit-card-card-sets-modal" show={true} size="lg" onHide={state.editCardCardSetsModal.closeDisabled ? () => {} : () => actions.editCardCardSetsModal.close()}>
+    if (!state.editCardCardSetsModal.open) {
+        return null;
+    }
+
+    if (state.editCardCardSetsModal.cardWithCardSets === null) {
+        throw new Error('state.editCardCardSetsModal.cardWithCardSets is null');
+    }
+
+    return <Modal className="edit-card-card-sets-modal" show={true} size="lg" onHide={state.editCardCardSetsModal.closeDisabled ? () => {} : () => actions.editCardCardSetsModal.close()}>
         <Modal.Header closeButton>
             <Modal.Title>Select card sets for card</Modal.Title>
         </Modal.Header>
@@ -16,7 +24,7 @@ function EditCardCardSetsModal() {
                 <Row>
                     <Col>
                         <CardPreview
-                            cardWithCardSets={state.editCardCardSetsModal.cardWithCardSets!}
+                            cardWithCardSets={state.editCardCardSetsModal.cardWithCardSets}
                             showActionButtons={false}
                             onDeleteCard={() => {}}
                             beingDeleted={false}
@@ -57,7 +65,7 @@ function EditCardCardSetsModal() {
             </Button>
             {state.editCardCardSetsModal.submitError ? <Alert variant={'danger'}>{state.editCardCardSetsModal.submitError}</Alert> : null}
         </Modal.Footer>
-    </Modal> : null;
+    </Modal>;
 }
 
 export default EditCardCardSetsModal;
