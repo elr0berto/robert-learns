@@ -3,7 +3,7 @@ import {
     getInitialSignInState,
     SignInStatus,
 } from "./sign-in-state";
-import {ResponseStatus, User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 
 export const check = async ({ state, effects, actions }: Context) => {
@@ -41,8 +41,11 @@ export const submit = async ({ state, actions, effects }: Context) => {
         state.signIn.status = SignInStatus.Error;
         state.signIn.signInForm.submissionError = resp.errorMessage ?? 'Unexpected error';
     } else {
-        actions.data.addOrUpdateUser(resp.user!);
-        state.signIn.userId = resp.user!.id;
+        if (resp.user === null) {
+            throw new Error('user is null');
+        }
+        actions.data.addOrUpdateUser(resp.user);
+        state.signIn.userId = resp.user.id;
         state.signIn.status = SignInStatus.Idle;
         effects.page.router.goTo('/');
     }
@@ -50,7 +53,7 @@ export const submit = async ({ state, actions, effects }: Context) => {
 
 export const signOut = async ({ effects, state }: Context) => {
     state.signIn.status = SignInStatus.SigningOut;
-    const results = await effects.api.signOut.signOut();
+    await effects.api.signOut.signOut();
     state.signIn = getInitialSignInState(null);
     state.signIn.status = SignInStatus.Idle;
     effects.page.router.goTo('/');

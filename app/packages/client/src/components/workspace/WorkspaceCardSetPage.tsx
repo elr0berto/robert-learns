@@ -6,6 +6,7 @@ import DeleteCardModal from "../cards/DeleteCardModal";
 import {pageUrls} from "../../page-urls";
 import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsModal";
 import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
+import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -26,6 +27,8 @@ function WorkspaceCardSetPage() {
         }
     }
 
+    const cardSet : CardSet = state.page.cardSet;
+
     return <Container>
         <h1 className="my-5">
             Card set <i>{state.page.cardSet.name}</i> in workspace <i>{state.page.workspace.name}</i>
@@ -36,14 +39,14 @@ function WorkspaceCardSetPage() {
             showActionButtons={state.permission.editCardSet}
             cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
             onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
-            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet.id, card: card})}
+            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: card})}
             onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
             cardsWithCardSets={state.page.cardsWithCardSets}/>}
 
-        {state.permission.createCard ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: state.page.cardSet.id, card: null})}>+ Create card</Button> : null}
-        {state.permission.createCard ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(state.page.cardSet.id)}>+ Add cards from other card sets</Button> : null}
+        {state.permission.createCard ? <Button className="mt-5" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}>+ Create card</Button> : null}
+        {state.permission.createCard ? <Button className="mt-5 ms-3" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
 
-        {state.workspaceCardSet.showConfirmDeleteModal ? <DeleteCardModal
+        {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsBeingDeleted !== null ? <DeleteCardModal
             loading={state.workspaceCardSet.loadingDeleteCardModal}
             cardSet={state.page.cardSet}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}

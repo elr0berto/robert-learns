@@ -7,6 +7,7 @@ import {Pages, pageUrls} from "../page-urls";
 function TopMenu() {
     const state = useAppState();
     const actions = useActions();
+    const workspace = state.page.workspace;
 
     console.log('TopMenu page: ' + state.page.page);
     console.log('TopMenu state.page.workspace', state.page.workspace);
@@ -28,18 +29,19 @@ function TopMenu() {
                         </>}
                         <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
                     </NavDropdown>
-                    {!state.page.loadingWorkspaces && state.page.workspace !== null && (
+                    {
+                        (
                         state.page.page === Pages.Workspace ||
                         state.page.page === Pages.WorkspaceCardSetCreate ||
                         state.page.page === Pages.WorkspaceCardSetEdit ||
                         state.page.page === Pages.WorkspaceCardSet) ?
                         <NavDropdown title={
-                                (state.page.page === Pages.WorkspaceCardSet || state.page.page === Pages.WorkspaceCardSetEdit) && state.page.cardSet !== null ?
+                                state.page.cardSet !== null ?
                                 state.page.cardSet.name :
                                 (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.page.cardSets.length +')' ))}>
-                            {state.page.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(state.page.workspace, cardSet)}>{cardSet.name}</NavDropdown.Item>)}
+                            {workspace !== null ? state.page.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(workspace, cardSet)}>{cardSet.name}</NavDropdown.Item>) : null}
                             {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
-                            <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(state.page.workspace)}>Create card set</NavDropdown.Item>
+                            {workspace !== null ? <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(workspace)}>Create card set</NavDropdown.Item> : null}
                         </NavDropdown> : null
                     }
                 </Nav>

@@ -25,6 +25,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "nodemon --watch src --ext js,jsx,ts,tsx --exec 'npx eslint src --ext .js,.jsx,.ts,.tsx'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -53,6 +54,8 @@
   "devDependencies": {
     "@types/page": "^1.11.5",
     "@types/quill": "^2.0.10",
+    "eslint-config-react-app": "^7.0.1",
+    "nodemon": "^3.0.0",
     "sass": "^1.57.1"
   }
 }

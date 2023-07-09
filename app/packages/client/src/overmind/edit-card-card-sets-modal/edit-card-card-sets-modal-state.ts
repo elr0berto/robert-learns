@@ -1,4 +1,4 @@
-import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {validateUpdateCardCardSetsRequest} from "@elr0berto/robert-learns-shared/dist/api/card-set-cards";
@@ -30,7 +30,11 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
         if (state.cardId === null) {
             return null;
         }
-        return rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardId)!;
+        const ret = rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardId);
+        if (ret === undefined) {
+            throw new Error('Card not found: ' + state.cardId);
+        }
+        return ret;
     }),
     cardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
         return rootState.page.cardSets;
@@ -48,7 +52,10 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
         return state.loading || state.submitting;
     }),
     validationError: derived((state: EditCardCardSetsModalState) => {
-        const errors = validateUpdateCardCardSetsRequest({cardSetIds: state.selectedCardSetIds, cardId: state.cardId!});
+        if (state.cardId === null) {
+            throw new Error('Card ID is null');
+        }
+        const errors = validateUpdateCardCardSetsRequest({cardSetIds: state.selectedCardSetIds, cardId: state.cardId});
         if (errors.length === 0) {
             return null;
         }

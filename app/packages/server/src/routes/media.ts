@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import {getMediaData, getSignedInUser, getUrlFromMediaData, getUserData, TypedResponse} from '../common.js';
+import {getMediaData, getSignedInUser, getUrlFromMediaData, TypedResponse} from '../common.js';
 import prisma from "../db/prisma.js";
 import {upload} from "../multer.js";
 import {fileTypeFromFile} from "file-type";
@@ -12,7 +12,7 @@ import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 const media = Router();
 
 media.post('/uploadFile/:workspaceId', upload.single('file'), async (req, res : TypedResponse<MediaUploadFileResponseData>) => {
-    let user = await getSignedInUser(req.session);
+    const user = await getSignedInUser(req.session);
 
     //if (!await canUserContributeToWorkspaceId(user, parseInt(req.params.workspaceId))) {
     if (!await checkPermissions({user, workspaceId: parseInt(req.params.workspaceId), capability: Capability.CreateCard})) {
@@ -60,11 +60,15 @@ media.get('/:mediaId/*', async (req, res) => {
     const media = await prisma.media.findFirst({
         where: {
             id: parseInt(req.params.mediaId)
-        }
+        },
     });
 
     if (media === null) {
         throw new Error('missing media: ' + req.params.mediaId);
+    }
+
+    if (!await checkPermissions({user, workspaceId: media.workspaceId, capability: Capability.ViewWorkspace})) {
+        throw new Error('user cannot view workspace: ' + media.workspaceId);
     }
 
     res.download(media.path, media.name);

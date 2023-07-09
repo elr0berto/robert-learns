@@ -15,8 +15,8 @@ import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 const cardSets = Router();
 
-cardSets.post('/get', async (req : Request<{}, {}, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>) => {
-    let user = await getSignedInUser(req.session);
+cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>) => {
+    const user = await getSignedInUser(req.session);
 
     const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.ViewWorkspace});
 
@@ -46,8 +46,8 @@ cardSets.post('/get', async (req : Request<{}, {}, GetCardSetsRequest>, res : Ty
 });
 
 
-cardSets.post('/create', async (req: Request<{}, {}, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>) => {
-    let user = await getSignedInUser(req.session);
+cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>) => {
+    const user = await getSignedInUser(req.session);
 
     const errors = validateCreateCardSetRequest(req.body);
 

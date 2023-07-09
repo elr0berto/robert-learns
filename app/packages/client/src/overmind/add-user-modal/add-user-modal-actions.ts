@@ -1,6 +1,5 @@
 import { Context } from '..';
 import {ResponseStatus, UserRole} from "@elr0berto/robert-learns-shared/dist/api/models";
-import {Pages} from "../../page-urls";
 
 export const changeEmail = ({ state }: Context, email: string) => {
     state.addUserModal.email = email;

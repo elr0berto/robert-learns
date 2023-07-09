@@ -42,8 +42,12 @@ export const submit = async ({state,effects,actions} : Context) => {
         return;
     }
 
-    actions.data.addOrUpdateUser(resp.user!);
+    if (resp.user === null) {
+        throw new Error('user is null');
+    }
 
-    state.signIn.userId = resp.user!.id;
+    actions.data.addOrUpdateUser(resp.user);
+
+    state.signIn.userId = resp.user.id;
     effects.page.router.goTo('/');
 }

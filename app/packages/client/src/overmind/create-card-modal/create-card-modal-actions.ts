@@ -27,7 +27,10 @@ export const setBackHtml = ({ state }: Context, html: string) => {
 }
 
 export const uploadFile = async ({ state, effects }: Context, file: File) => {
-    const resp = await effects.api.media.uploadFile(state.page.workspaceId!, file);
+    if (state.page.workspaceId === null) {
+        throw new Error('workspaceId is null');
+    }
+    const resp = await effects.api.media.uploadFile(state.page.workspaceId, file);
     return resp.url;
 }
 
@@ -81,9 +84,13 @@ export const submit = async ({ state, effects, actions }: Context) => {
         }
     }
 
+    if (state.createCardModal.cardSetId === null) {
+        throw new Error('cardSetId is null');
+    }
+
     const resp = await effects.api.cards.createCard({
         cardId: state.createCardModal.cardId,
-        cardSetId: state.createCardModal.cardSetId!,
+        cardSetId: state.createCardModal.cardSetId,
         front: state.createCardModal.frontHtml,
         back: state.createCardModal.backHtml,
         audio: window.audioFile ?? null,
@@ -96,8 +103,16 @@ export const submit = async ({ state, effects, actions }: Context) => {
         return;
     }
 
-    actions.data.addOrUpdateCard(resp.card!);
-    actions.data.addOrUpdateCardSetCardsForCard({card: resp.card!, cardSetCards: resp.cardSetCards!});
+    if (resp.card === null) {
+        throw new Error('resp.card is null');
+    }
+
+    if (resp.cardSetCards === null) {
+        throw new Error('resp.cardSetCards is null');
+    }
+
+    actions.data.addOrUpdateCard(resp.card);
+    actions.data.addOrUpdateCardSetCardsForCard({card: resp.card, cardSetCards: resp.cardSetCards});
 
     actions.createCardModal.closeCreateCardModal();
     state.createCardModal.submitting = false;

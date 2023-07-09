@@ -65,7 +65,11 @@ export const state: PageState = {
         if (state.cardSetId === null) {
             return null;
         }
-        return rootState.data.cardSets.find(cs => cs.id === state.cardSetId)!;
+        const ret = rootState.data.cardSets.find(cs => cs.id === state.cardSetId);
+        if (ret === undefined) {
+            throw new Error(`Card set with ID ${state.cardSetId} not found`);
+        }
+        return ret;
     }),
     cardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {

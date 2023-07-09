@@ -52,7 +52,10 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
         addUserOpen: false,
         selectedUsersWithData: derived((state: WorkspaceCreateFormState, rootState : typeof config.state) => {
             return state.selectedUsers.map(u => {
-                const user = rootState.data.users.find(u2 => u2.id === u.userId)!;
+                const user = rootState.data.users.find(u2 => u2.id === u.userId);
+                if (user === undefined) {
+                    throw new Error('User not found: ' + u.userId);
+                }
                 return {
                     userId: u.userId,
                     role: u.role,
@@ -67,13 +70,12 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
             return state.submitting;
         }),
         validationErrors: derived((state: WorkspaceCreateFormState) => {
-            let errors = validateCreateWorkspaceRequest({
+            return validateCreateWorkspaceRequest({
                 name: state.name.trim(),
                 description: state.description.trim(),
                 allowGuests: state.allowGuests,
                 workspaceUsers: state.selectedUsers,
             });
-            return errors;
         }),
         isValid: derived((state: WorkspaceCreateFormState) => {
             return state.validationErrors.length === 0;

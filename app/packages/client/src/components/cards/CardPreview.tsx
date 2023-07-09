@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import AudioPlayer from "react-h5-audio-player";
 import CardPreviewFace from "./CardPreviewFace";
 import {Button} from "react-bootstrap";

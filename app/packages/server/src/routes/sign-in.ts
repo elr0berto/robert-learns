@@ -3,7 +3,7 @@ import prisma from "../db/prisma.js";
 
 import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
-import { BaseResponseData, ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
+import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 import {
     SignInCheckResponseData,
     SignInRequest, SignInResponseData,
@@ -24,7 +24,7 @@ signIn.post('/check', async (req, res : TypedResponse<SignInCheckResponseData>) 
     });
 });
 
-signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse<SignInResponseData>) => {
+signIn.post('/', async (req: Request<unknown, unknown, SignInRequest>, res : TypedResponse<SignInResponseData>) => {
     const errors = validateSignInRequest(req.body);
 
     if (errors.length !== 0) {
@@ -67,11 +67,15 @@ signIn.post('/', async (req: Request<{}, {}, SignInRequest>, res : TypedResponse
 
     const user = await getSignedInUser(req.session);
 
+    if (user === null) {
+        throw new Error('User is null after successful sign in.');
+    }
+
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        userData: getUserData(user!),
+        userData: getUserData(user),
     });
 });
 

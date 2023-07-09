@@ -58,13 +58,25 @@ export const getInitialDataState = () : DataState => ({
     cardSetsWithCards: derived((state: DataState) => {
         return state.cardSets.map(cs => ({
             cardSet: cs,
-            cards: state.cardSetCards.filter(csc => csc.cardSetId === cs.id).map(csc => state.cards.find(c => c.id === csc.cardId)!),
+            cards: state.cardSetCards.filter(csc => csc.cardSetId === cs.id).map(csc => {
+                const card = state.cards.find(c => c.id === csc.cardId);
+                if (card === undefined) {
+                    throw new Error(`Card with id ${csc.cardId} not found`);
+                }
+                return card;
+            }),
         }));
     }),
     cardsWithCardSets: derived((state: DataState) => {
         return state.cards.map(c => ({
             card: c,
-            cardSets: state.cardSetCards.filter(csc => csc.cardId === c.id).map(csc => state.cardSets.find(cs => cs.id === csc.cardSetId)!),
+            cardSets: state.cardSetCards.filter(csc => csc.cardId === c.id).map(csc => {
+                const cardSet = state.cardSets.find(cs => cs.id === csc.cardSetId);
+                if (cardSet === undefined) {
+                    throw new Error(`CardSet with id ${csc.cardSetId} not found`);
+                }
+                return cardSet;
+            }),
         }));
     }),
 });

@@ -1,6 +1,6 @@
 import {derived} from "overmind";
 import {config} from "../index.js";
-import {CardSet, Card } from "@elr0berto/robert-learns-shared/dist/api/models";
+import {CardSet } from "@elr0berto/robert-learns-shared/dist/api/models";
 import {CardWithCardSets} from "../data/data-state";
 
 type WorkspaceCardSetState = {
@@ -20,14 +20,22 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
             return null;
         }
 
-        return rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardIdBeingDeleted)!;
+        const ret = rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardIdBeingDeleted);
+        if (ret === undefined) {
+            throw new Error('Card not found: ' + state.cardIdBeingDeleted);
+        }
+        return ret;
     }),
     cardBeingDeletedExistsInOtherCardSets: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
         if (state.cardWithCardSetsBeingDeleted === null) {
             return [];
         }
 
-        return state.cardWithCardSetsBeingDeleted.cardSets.filter(cs => cs.id !== rootState.page.cardSet!.id);
+        const cardSet = rootState.page.cardSet;
+        if (cardSet === null) {
+            throw new Error('Card set is null');
+        }
+        return state.cardWithCardSetsBeingDeleted.cardSets.filter(cs => cs.id !== cardSet.id);
     }),
     confirmingDeleteCard: false,
     showConfirmDeleteModal: derived((state: WorkspaceCardSetState) => {

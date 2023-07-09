@@ -30,10 +30,13 @@ export const getInitialWorkspaceCardSetCreateState = (cardSet: CardSet | null): 
             return state.submitting;
         }),
         validationErrors: derived((state: WorkspaceCardSetCreateFormState, rootState: typeof config.state) => {
+            if (rootState.page.workspaceId === null) {
+                throw new Error('Workspace ID is null');
+            }
             let errors = validateCreateCardSetRequest({
                 name: state.name.trim(),
                 description: state.description.trim(),
-                workspaceId: rootState.page.workspaceId!,
+                workspaceId: rootState.page.workspaceId,
             });
             return errors;
         }),

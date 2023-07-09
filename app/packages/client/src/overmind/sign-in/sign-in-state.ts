@@ -42,7 +42,11 @@ export const getInitialSignInState = (userId: number | null): SignInState => ({
         if (state.userId === null) {
             return null;
         }
-        return rootState.data.users.find(u => u.id === state.userId)!;
+        const ret = rootState.data.users.find(u => u.id === state.userId);
+        if (ret === undefined) {
+            throw new Error('User not found, id: ' + state.userId);
+        }
+        return ret;
     }),
     signInForm: {
         username: '',

@@ -1,6 +1,6 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getSignedInUser, getUserData, getWorkspaceData, TypedResponse} from "../common.js";
+import {getSignedInUser, getWorkspaceData, TypedResponse} from "../common.js";
 import {UserRole as PrismaUserRole} from '@prisma/client';
 import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
@@ -17,7 +17,6 @@ import {
     Capability
 } from "@elr0berto/robert-learns-shared/permissions";
 import {checkPermissions} from "../permissions.js";
-import {check} from "@elr0berto/robert-learns-client/src/overmind/sign-in/sign-in-actions.js";
 
 const workspaces = Router();
 
@@ -47,8 +46,8 @@ workspaces.post('/get', async (req, res : TypedResponse<GetWorkspacesResponseDat
     });
 });
 
-workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, res : TypedResponse<CreateWorkspaceResponseData>) => {
-    let signedInUser = await getSignedInUser(req.session);
+workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspaceRequest>, res : TypedResponse<CreateWorkspaceResponseData>) => {
+    const signedInUser = await getSignedInUser(req.session);
 
     if (signedInUser === null) {
         return res.json({
@@ -115,7 +114,7 @@ workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, 
 
         workspaceId = newWorkspace.id;
 
-        const workspaceUser = await prisma.workspaceUser.create({
+        await prisma.workspaceUser.create({
             data: {
                 workspaceId: newWorkspace.id,
                 userId: signedInUser.id,
@@ -216,16 +215,18 @@ workspaces.post('/create', async (req: Request<{}, {}, CreateWorkspaceRequest>, 
             where: { id: permissionUser.userId }
         });
 
+        if (!workspaceId) {
+            throw new Error('workspaceId is: ' + workspaceId);
+        }
+
         await prisma.workspaceUser.create({
             data: {
-                workspaceId: workspaceId!,
+                workspaceId: workspaceId,
                 userId: permissionUser.userId,
                 role: permissionUser.role,
             }
         });
     }
-
-    signedInUser = await getSignedInUser(req.session);
 
     const workspace = await prisma.workspace.findUniqueOrThrow({
         where: {

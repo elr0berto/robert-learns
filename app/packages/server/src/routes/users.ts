@@ -12,7 +12,7 @@ import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 const users = Router();
 
-users.post('/getByEmail', async (req : Request<{},{},UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
+users.post('/getByEmail', async (req : Request<unknown,unknown,UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
     if (signedInUser === null) {
         return res.json({
@@ -48,16 +48,8 @@ users.post('/getByEmail', async (req : Request<{},{},UserGetByEmailRequest>, res
     });
 });
 
-users.post('/getUsers', async (req : Request<{},{},GetUsersRequest>, res : TypedResponse<GetUsersResponseData>) => {
+users.post('/getUsers', async (req : Request<unknown,unknown,GetUsersRequest>, res : TypedResponse<GetUsersResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
-    if (signedInUser === null) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: 'Not signed in.',
-            userDatas: [],
-        });
-    }
 
     const errors = validateGetUsersRequest(req.body);
 
@@ -65,7 +57,7 @@ users.post('/getUsers', async (req : Request<{},{},GetUsersRequest>, res : Typed
         return res.json({
             dataType: true,
             status: ResponseStatus.UserError,
-            errorMessage: 'Invalid email: ' + errors.join(', ') + ' ' + JSON.stringify(req.params),
+            errorMessage: errors.join(', ') + ' ' + JSON.stringify(req.params),
             userDatas: [],
         });
     }

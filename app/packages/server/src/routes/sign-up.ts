@@ -6,7 +6,7 @@ import {SignUpRequest, SignUpResponseData, validateSignUpRequest} from '@elr0ber
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 const signUp = Router();
 
-signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse<SignUpResponseData>) => {
+signUp.post('/', async (req: Request<unknown, unknown, SignUpRequest>, res : TypedResponse<SignUpResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
 
     if (signedInUser !== null) {
@@ -18,7 +18,7 @@ signUp.post('/', async (req: Request<{}, {}, SignUpRequest>, res : TypedResponse
         });
     }
 
-    let errors : string[] = validateSignUpRequest(req.body);
+    const errors : string[] = validateSignUpRequest(req.body);
 
     if (errors.length > 0) {
         return res.json({

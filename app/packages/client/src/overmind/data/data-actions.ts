@@ -22,7 +22,7 @@ export const loadWorkspaces = async ({state,effects} : Context) => {
 
     const resp = await effects.api.workspaces.getWorkspaces();
 
-    state.data.workspaces = resp.workspaces!;
+    state.data.workspaces = resp.workspaces;
     state.data.loadingWorkspaces = false;
 }
 
@@ -31,7 +31,7 @@ export const loadCardSets = async ({state,effects} : Context, workspaceId: numbe
 
     const resp = await effects.api.cardSets.getCardSets({workspaceId});
 
-    state.data.cardSets = resp.cardSets!;
+    state.data.cardSets = resp.cardSets;
 
     state.data.loadingCardSets = false;
 }
@@ -44,12 +44,12 @@ export const loadCardSetCards = async ({state,effects,actions} : Context, reques
     if (typeof request.cardIds !== 'undefined') {
         // loop over cardIds
         request.cardIds.forEach(cardId => {
-            actions.data.addOrUpdateCardSetCardsForCardId({cardId, cardSetCards: resp.cardSetCards!.filter(csc => csc.cardId === cardId)});
+            actions.data.addOrUpdateCardSetCardsForCardId({cardId, cardSetCards: resp.cardSetCards.filter(csc => csc.cardId === cardId)});
         });
     } else if (typeof request.cardSetIds !== 'undefined') {
         // loop over cardSetIds
         request.cardSetIds.forEach(cardSetId => {
-            actions.data.addOrUpdateCardSetCardsForCardSetId({cardSetId, cardSetCards: resp.cardSetCards!.filter(csc => csc.cardSetId === cardSetId)});
+            actions.data.addOrUpdateCardSetCardsForCardSetId({cardSetId, cardSetCards: resp.cardSetCards.filter(csc => csc.cardSetId === cardSetId)});
         });
     }
 
@@ -62,7 +62,7 @@ export const loadCards = async ({state,effects,actions} : Context, cardIds: numb
     const resp = await effects.api.cards.getCards({cardIds});
 
     // loop over resp.cards and run addOrUpdateCard for each card
-    resp.cards!.forEach(c => actions.data.addOrUpdateCard(c));
+    resp.cards.forEach(c => actions.data.addOrUpdateCard(c));
 
     state.data.loadingCards = false;
 }
@@ -79,7 +79,7 @@ export const loadWorkspaceUsers = async ({state,effects} : Context, workspaceIds
 
     const resp = await effects.api.workspaceUsers.getWorkspaceUsers({workspaceIds});
 
-    state.data.workspaceUsers = resp.workspaceUsers!;
+    state.data.workspaceUsers = resp.workspaceUsers;
 
     state.data.loadingWorkspaceUsers = false;
 }
@@ -89,7 +89,7 @@ export const loadUsers = async ({state,effects} : Context, userIds: number[]) =>
 
     const resp = await effects.api.users.getUsers({userIds});
 
-    state.data.users = resp.users!;
+    state.data.users = resp.users;
 
     state.data.loadingUsers = false;
 }

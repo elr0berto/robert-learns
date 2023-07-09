@@ -1,5 +1,5 @@
 import {Request, Router} from 'express';
-import {getSignedInUser, getWorkspaceData, getWorkspaceUserData, TypedResponse} from "../common.js";
+import {getSignedInUser, getWorkspaceUserData, TypedResponse} from "../common.js";
 import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 
 import {
@@ -13,7 +13,7 @@ import prisma from "../db/prisma.js";
 
 const workspaceUsers = Router();
 
-workspaceUsers.post('/get-workspace-users', async (req: Request<{}, {}, GetWorkspaceUsersRequest>, res : TypedResponse<GetWorkspaceUsersResponseData>) => {
+workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown, GetWorkspaceUsersRequest>, res : TypedResponse<GetWorkspaceUsersResponseData>) => {
     const signedInUser = await getSignedInUser(req.session);
 
     const errors = validateGetWorkspaceUsersRequest(req.body);

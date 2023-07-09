@@ -14,6 +14,10 @@ function WorkspaceCreate() {
         return <Container className="my-5"><Alert variant="danger">Only signed in users are allowed to {scope} workspaces</Alert></Container>;
     }
 
+    if (scope === 'create' && state.signIn.user === null) {
+        throw new Error('User is not signed in');
+    }
+
     if (scope === 'edit' && state.page.workspace === null) {
         if (state.page.loadingWorkspaces) {
             return <Container>Loading...</Container>;
@@ -28,7 +32,7 @@ function WorkspaceCreate() {
 
 
     return <Container>
-        <h1 className="my-5">{scope === 'create' ? 'Create a workspace' : 'Edit workspace ' + state.page.workspace.name}</h1>
+        <h1 className="my-5">{scope === 'edit' && state.page.workspace !== null ? 'Edit workspace ' + state.page.workspace.name : 'Create a workspace'}</h1>
         <Form className="col-lg-5">
             <Form.Group className="mb-3" controlId="workspaceName">
                 <Form.Label>Workspace Name</Form.Label>
@@ -53,7 +57,7 @@ function WorkspaceCreate() {
                     </tr>
                 </thead>
                 <tbody>
-                    {scope === 'create' ?
+                    {scope === 'create' && state.signIn.user !== null ?
                     <tr>
                         <td>{state.signIn.user.name()}</td>
                         <td colSpan={2}>OWNER</td>

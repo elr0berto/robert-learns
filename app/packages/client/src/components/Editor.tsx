@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useQuill } from 'react-quilljs';
 
 type Props = {
@@ -7,11 +7,10 @@ type Props = {
     uploadCallback: (file: File) => Promise<string>;
 }
 
-function Editor(props: Props) {
+function Editor({ initialValue, onChange, uploadCallback }: Props) {
     const { quill, quillRef } = useQuill();
 
-    // Insert Image(selected by user) to quill
-    const insertToEditor = (url: string) => {
+    const insertToEditor = useCallback((url: string) => {
         if (!quill) {
             throw new Error('quill is undefined or null');
         }
@@ -20,11 +19,9 @@ function Editor(props: Props) {
             throw new Error('range is null');
         }
         quill.insertEmbed(range.index, 'image', url);
-    };
+    }, [quill]);
 
-
-    // Open Dialog to select Image File
-    const selectLocalImage = () => {
+    const selectLocalImage = useCallback(() => {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
         input.setAttribute('accept', 'image/*');
@@ -35,20 +32,20 @@ function Editor(props: Props) {
                 throw new Error('input.files is null or undefined');
             }
             const file = input.files[0];
-            const url = await props.uploadCallback(file);
+            const url = await uploadCallback(file);
             insertToEditor(url);
         };
-    };
+    }, [uploadCallback, insertToEditor]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (quill) {
-            quill.clipboard.dangerouslyPasteHTML(props.initialValue);
+            quill.clipboard.dangerouslyPasteHTML(initialValue);
             quill.on('text-change', (delta, oldDelta, source) => {
-                props.onChange(quill.root.innerHTML);
+                onChange(quill.root.innerHTML);
             });
             quill.getModule('toolbar').addHandler('image', selectLocalImage);
         }
-    }, [quill]);
+    }, [quill, initialValue, onChange, selectLocalImage]);
 
     return (
         <div ref={quillRef} />

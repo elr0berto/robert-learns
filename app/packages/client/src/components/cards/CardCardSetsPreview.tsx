@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Badge, Button} from "react-bootstrap";
 import {PencilSquare} from "react-bootstrap-icons";
 import {CardWithCardSets} from "../../overmind/data/data-state";

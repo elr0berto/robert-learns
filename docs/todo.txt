@@ -1,10 +1,11 @@
-bugfix - edit workspace is crashing
+when server is not running there is blank screen with "Wroskapce ID is null" in the console
 make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
+error here: http://localhost:3000/workspace/1/card-set/2
 add card to other card sets
-centralize the permission stuff in shared
 validation
-security
 logging
+catch all server side throws and respond with BaseResponse - Unexpected error and LOG with stacktrace
+catch all client side throws and show error message and send to server for logging
 study-drill-session
 save stats for right/wrong answers
 style card lists / cards -- maybe use CardGroup

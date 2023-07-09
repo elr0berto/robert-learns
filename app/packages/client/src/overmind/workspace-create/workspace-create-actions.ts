@@ -67,7 +67,10 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
         workspaceUsers: state.workspaceCreate.form.selectedUsers,
     };
     if (scope === 'edit') {
-        request.workspaceId = state.page.workspaceId!;
+        if (state.page.workspaceId === null) {
+            throw new Error('workspace id is null');
+        }
+        request.workspaceId = state.page.workspaceId;
     }
     const resp = await effects.api.workspaces.createWorkspace(request);
 

@@ -26,13 +26,19 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         if (params?.payload?.params?.workspaceId) {
             state.page.workspaceId = +params?.payload.params.workspaceId;
         }
-        promises.push(actions.page.loadCardSets(state.page.workspaceId!));
+        if (typeof state.page.workspaceId !== 'number') {
+            throw new Error('workspaceId is ' + typeof state.page.workspaceId);
+        }
+        promises.push(actions.page.loadCardSets(state.page.workspaceId));
 
         if (params?.payload?.params?.cardSetId || state.page.cardSetId !== null) {
             if (params?.payload?.params?.cardSetId) {
                 state.page.cardSetId = +params?.payload.params.cardSetId;
             }
-            promises.push(actions.page.loadCards([state.page.cardSetId!]));
+            if (typeof state.page.cardSetId !== 'number') {
+                throw new Error('cardSetId is ' + typeof state.page.cardSetId);
+            }
+            promises.push(actions.page.loadCards([state.page.cardSetId]));
         } else {
             state.page.cardSetId = null;
         }

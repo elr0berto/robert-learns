@@ -1,5 +1,5 @@
 import {Request, Router} from 'express';
-import {getCardData, getCardSetCardData, getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {getCardData, getCardSetCardData, getSignedInUser, TypedResponse} from "../common.js";
 import prisma from "../db/prisma.js";
 import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
@@ -18,8 +18,8 @@ import { CardSetCard as PrismaCardSetCard } from '@prisma/client';
 
 const cardSetCards = Router();
 
-cardSetCards.post('/get', async (req : Request<{}, {}, GetCardSetCardsRequest>, res : TypedResponse<GetCardSetCardsResponseData>) => {
-    let user = await getSignedInUser(req.session);
+cardSetCards.post('/get', async (req : Request<unknown, unknown, GetCardSetCardsRequest>, res : TypedResponse<GetCardSetCardsResponseData>) => {
+    const user = await getSignedInUser(req.session);
 
     const errors = validateGetCardSetCardsRequest(req.body);
     if (errors.length > 0) {
@@ -31,7 +31,7 @@ cardSetCards.post('/get', async (req : Request<{}, {}, GetCardSetCardsRequest>, 
         });
     }
 
-    let cardSetCards : PrismaCardSetCard[] = [];
+    let cardSetCards : PrismaCardSetCard[];
     if (typeof req.body.cardIds !== 'undefined') {
         cardSetCards = await prisma.cardSetCard.findMany({
             where: {
@@ -72,8 +72,8 @@ cardSetCards.post('/get', async (req : Request<{}, {}, GetCardSetCardsRequest>, 
     });
 });
 
-cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequest>, res : TypedResponse<BaseResponseData>) => {
-    let user = await getSignedInUser(req.session);
+cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSetCardsRequest>, res : TypedResponse<BaseResponseData>) => {
+    const user = await getSignedInUser(req.session);
 
     const errors = validateCreateCardSetCardsRequest(req.body);
     if (errors.length > 0) {
@@ -131,7 +131,11 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
         }
     });
 
-    const cardSetWorkspaceId = cardSet!.workspace.id;
+    if (cardSet === null) {
+        throw new Error('Card set not found, id: ' + cardSetId);
+    }
+
+    const cardSetWorkspaceId = cardSet.workspace.id;
 
     for(const key in cards) {
         const card = cards[key];
@@ -166,7 +170,7 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
     }
 
     // create card set cards
-    const cardSetCards = await prisma.cardSetCard.createMany({
+    await prisma.cardSetCard.createMany({
         data: cardIds.map(cardId => {
             return {
                 cardSetId: cardSetId,
@@ -182,8 +186,8 @@ cardSetCards.post('/create', async (req : Request<{}, {}, CreateCardSetCardsRequ
     });
 });
 
-cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCardCardSetsRequest>, res : TypedResponse<UpdateCardCardSetsResponseData>) => {
-    let user = await getSignedInUser(req.session);
+cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, UpdateCardCardSetsRequest>, res : TypedResponse<UpdateCardCardSetsResponseData>) => {
+    const user = await getSignedInUser(req.session);
 
     const errors = validateUpdateCardCardSetsRequest(req.body);
     if (errors.length > 0) {
@@ -316,12 +320,16 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<{}, {}, UpdateCard
         }
     });
 
+    if (!updatedCard) {
+        throw new Error('Card not found, id: ' + cardId);
+    }
+
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        cardData: getCardData(updatedCard!),
-        cardSetCardDatas: updatedCard!.cardSetCards.map(csc => getCardSetCardData(csc)),
+        cardData: getCardData(updatedCard),
+        cardSetCardDatas: updatedCard.cardSetCards.map(csc => getCardSetCardData(csc)),
     });
 });
 

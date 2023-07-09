@@ -1,4 +1,5 @@
 import {Request, Router} from 'express';
+import { Express } from 'express-serve-static-core';
 import {
     awaitExec,
     deleteCardSetCard,
@@ -11,7 +12,7 @@ import {upload} from "../multer.js";
 import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
-import {CardSide, MediaType} from "@prisma/client";
+import {Card as PrismaCard, CardSetCard as PrismaCardSetCard, CardFace as PrismaCardFace, CardSide as PrismaCardSide, MediaType} from "@prisma/client";
 
 import {
     CreateCardResponseData,
@@ -24,8 +25,8 @@ import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 const cards = Router();
 
-cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>) => {
-    let user = await getSignedInUser(req.session);
+cards.post('/get', async (req : Request<unknown, unknown, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>) => {
+    const user = await getSignedInUser(req.session);
 
     for(const key in req.body.cardIds) {
         const cardId = req.body.cardIds[key];
@@ -60,12 +61,16 @@ cards.post('/get', async (req : Request<{}, {}, GetCardsRequest>, res : TypedRes
     });
 });
 
-cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<CreateCardResponseData>) => {
+interface MulterRequest extends Request {
+    file?: Express.Multer.File;
+}
+
+cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: TypedResponse<CreateCardResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     // TODO: remove dangerous html from req.body.front and req.body.back
 
-    let cardId : number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
+    const cardId : number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
 
     const audioUpdateStatus = req.body.audioUpdateStatus;
     // check that audioUpdateStatus is a string with one of the following values: 'new-card' | 'new-audio' | 'delete-audio' | 'no-change';
@@ -81,28 +86,32 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
 
     const create : boolean = cardId === null;
 
-    let existingCard = create ? null : await prisma.card.findUnique({
-        where: {
-            id: cardId!,
-        },
-        include: {
-            faces: true,
-            audio: true,
-            cardSetCards: true,
+    let existingCard : PrismaCard & {cardSetCards : PrismaCardSetCard[], faces: PrismaCardFace[]} | null = null;
+    if (!create) {
+        if (cardId === null) {
+            throw new Error('cardId is null');
         }
-    });
-
-    if (!create && existingCard === null) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: 'Card not found',
-            cardData: null,
-            cardSetCardDatas: null,
+        existingCard = await prisma.card.findUnique({
+            where: {
+                id: cardId,
+            },
+            include: {
+                faces: true,
+                audio: true,
+                cardSetCards: true,
+            }
         });
-    }
 
-    if (existingCard !== null) {
+        if (existingCard === null) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Card not found',
+                cardData: null,
+                cardSetCardDatas: null,
+            });
+        }
+
         if (existingCard.cardSetCards.find(s => s.cardSetId === parseInt(req.body.cardSetId)) === undefined) {
             return res.json({
                 dataType: true,
@@ -113,6 +122,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             });
         }
     }
+
 
     // load the card set from db including the workspace
     const cardSet = await prisma.cardSet.findUnique({
@@ -164,7 +174,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                     cardSetCardDatas: null,
                 });
             }
-            var stats = fs.statSync(outPath);
+            const stats = fs.statSync(outPath);
             if (stats.size <= 0) {
                 return res.json({
                     dataType: true,
@@ -201,26 +211,26 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             }
         });
 
-        const newCardSetCard = await prisma.cardSetCard.create({
+        await prisma.cardSetCard.create({
             data: {
                 cardSetId: parseInt(req.body.cardSetId),
                 cardId: newCard.id,
             }
         });
 
-        const faceFront = await prisma.cardFace.create({
+        await prisma.cardFace.create({
             data: {
                 content: req.body.front ?? '',
                 cardId: newCard.id,
-                side: CardSide.FRONT,
+                side: PrismaCardSide.FRONT,
             }
         });
 
-        const faceBack = await prisma.cardFace.create({
+        await prisma.cardFace.create({
             data: {
                 content: req.body.back ?? '',
                 cardId: newCard.id,
-                side: CardSide.BACK,
+                side: PrismaCardSide.BACK,
             }
         });
 
@@ -239,6 +249,9 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             },
         });
     } else {
+        if (existingCard === null) {
+            throw new Error('existingCard is null');
+        }
         // 'new-audio' | 'delete-audio' | 'no-change'
         if (audioUpdateStatus === 'new-audio') {
             if (audioMedia === null) {
@@ -250,9 +263,9 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                     cardSetCardDatas: null,
                 });
             }
-            existingCard!.audioId = audioMedia.id;
+            existingCard.audioId = audioMedia.id;
         } else if (audioUpdateStatus === 'delete-audio') {
-            existingCard!.audioId = null;
+            existingCard.audioId = null;
         } else if (audioUpdateStatus === 'no-change') {
             // do nothing
         } else {
@@ -265,21 +278,24 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
             });
         }
 
-        const existingFaceFront = existingCard!.faces.find(f => f.side === CardSide.FRONT);
-        const existingFaceBack = existingCard!.faces.find(f => f.side === CardSide.BACK);
+        const existingFaceFront = existingCard.faces.find(f => f.side === PrismaCardSide.FRONT);
+        const existingFaceBack = existingCard.faces.find(f => f.side === PrismaCardSide.BACK);
 
+        if (existingFaceFront === undefined || existingFaceBack === undefined) {
+            throw new Error('existingFaceFront or existingFaceBack is undefined');
+        }
         // save existingCard and its face
         card = await prisma.card.update({
             where: {
-                id: existingCard!.id,
+                id: existingCard.id,
             },
             data: {
-                audioId: existingCard!.audioId,
+                audioId: existingCard.audioId,
                 faces: {
                     update: [
                         {
                             where: {
-                                id: existingFaceFront!.id,
+                                id: existingFaceFront.id,
                             },
                             data: {
                                 content: req.body.front ?? '',
@@ -287,7 +303,7 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
                         },
                         {
                             where: {
-                                id: existingFaceBack!.id,
+                                id: existingFaceBack.id,
                             },
                             data: {
                                 content: req.body.back ?? '',
@@ -308,17 +324,21 @@ cards.post('/create', upload.single('audio'),async (req, res: TypedResponse<Crea
         });
     }
 
+    if (card === null) {
+        throw new Error('card is null');
+    }
+
     return res.json({
         dataType: true,
         status: ResponseStatus.Success,
         errorMessage: null,
-        cardData: getCardData(card!),
-        cardSetCardDatas: card!.cardSetCards.map(csc => getCardSetCardData(csc)),
+        cardData: getCardData(card),
+        cardSetCardDatas: card.cardSetCards.map(csc => getCardSetCardData(csc)),
     });
 });
 
 
-cards.post('/delete', async (req: Request<{}, {}, DeleteCardRequest>, res : TypedResponse<BaseResponseData>) => {
+cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, res : TypedResponse<BaseResponseData>) => {
     const user = await getSignedInUser(req.session);
 
     //const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
