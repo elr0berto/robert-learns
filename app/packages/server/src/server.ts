@@ -1,5 +1,4 @@
-import express from 'express';
-
+import express, { Request, Response, NextFunction } from 'express';
 import signIn from './routes/sign-in.js';
 import signOut from "./routes/sign-out.js";
 import signUp from './routes/sign-up.js';
@@ -12,6 +11,8 @@ import cards from './routes/cards.js';
 import users from './routes/users.js';
 
 import session from './session.js';
+import logger from "./logger.js";
+import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 
 class Server {
     public express;
@@ -21,6 +22,7 @@ class Server {
 
         this.middlewares();
         this.routes();
+        this.setupErrorHandler();
     }
 
     middlewares() {
@@ -39,6 +41,17 @@ class Server {
         this.express.use('/api/media', media);
         this.express.use('/api/cards', cards);
         this.express.use('/api/users', users);
+    }
+
+    setupErrorHandler() {
+        this.express.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+            logger.error(`${req.method} - ${req.url} - ${err.message}`);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: null,
+            });
+        });
     }
 }
 

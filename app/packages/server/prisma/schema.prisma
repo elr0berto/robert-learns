@@ -10,6 +10,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Logs {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  timestamp DateTime @default(now()) @db.Timestamp(0)
+  level     String   @db.Text
+  message   String   @db.Text
+  meta      Json?
+}
+
 model Session {
   id        String   @id
   sid       String   @unique
