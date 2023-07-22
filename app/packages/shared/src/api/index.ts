@@ -1,3 +1,4 @@
+export * as logs from './logs.js';
 export * as signIn from './sign-in.js';
 export * as signOut from './sign-out.js';
 export * as signUp from './sign-up.js';

@@ -22,6 +22,9 @@ export const loadWorkspaces = async ({state,effects} : Context) => {
 
     const resp = await effects.api.workspaces.getWorkspaces();
 
+    if (resp.workspaces === null) {
+        throw new Error('resp.workspaces is null');
+    }
     state.data.workspaces = resp.workspaces;
     state.data.loadingWorkspaces = false;
 }
@@ -31,6 +34,9 @@ export const loadCardSets = async ({state,effects} : Context, workspaceId: numbe
 
     const resp = await effects.api.cardSets.getCardSets({workspaceId});
 
+    if (resp.cardSets === null) {
+        throw new Error('resp.cardSets is null');
+    }
     state.data.cardSets = resp.cardSets;
 
     state.data.loadingCardSets = false;
@@ -41,14 +47,24 @@ export const loadCardSetCards = async ({state,effects,actions} : Context, reques
 
     const resp = await effects.api.cardSetCards.getCardSetCards(request);
 
+    if (resp.cardSetCards === null) {
+        throw new Error('resp.cardSetCards is null');
+    }
+
     if (typeof request.cardIds !== 'undefined') {
         // loop over cardIds
         request.cardIds.forEach(cardId => {
+            if (resp.cardSetCards === null) {
+                throw new Error('resp.cardSetCards is null');
+            }
             actions.data.addOrUpdateCardSetCardsForCardId({cardId, cardSetCards: resp.cardSetCards.filter(csc => csc.cardId === cardId)});
         });
     } else if (typeof request.cardSetIds !== 'undefined') {
         // loop over cardSetIds
         request.cardSetIds.forEach(cardSetId => {
+            if (resp.cardSetCards === null) {
+                throw new Error('resp.cardSetCards is null');
+            }
             actions.data.addOrUpdateCardSetCardsForCardSetId({cardSetId, cardSetCards: resp.cardSetCards.filter(csc => csc.cardSetId === cardSetId)});
         });
     }
@@ -60,6 +76,10 @@ export const loadCards = async ({state,effects,actions} : Context, cardIds: numb
     state.data.loadingCards = true;
 
     const resp = await effects.api.cards.getCards({cardIds});
+
+    if (resp.cards === null) {
+        throw new Error('resp.cards is null');
+    }
 
     // loop over resp.cards and run addOrUpdateCard for each card
     resp.cards.forEach(c => actions.data.addOrUpdateCard(c));
@@ -79,6 +99,9 @@ export const loadWorkspaceUsers = async ({state,effects} : Context, workspaceIds
 
     const resp = await effects.api.workspaceUsers.getWorkspaceUsers({workspaceIds});
 
+    if (resp.workspaceUsers === null) {
+        throw new Error('resp.workspaceUsers is null');
+    }
     state.data.workspaceUsers = resp.workspaceUsers;
 
     state.data.loadingWorkspaceUsers = false;
@@ -89,6 +112,9 @@ export const loadUsers = async ({state,effects} : Context, userIds: number[]) =>
 
     const resp = await effects.api.users.getUsers({userIds});
 
+    if (resp.users === null) {
+        throw new Error('resp.users is null');
+    }
     state.data.users = resp.users;
 
     state.data.loadingUsers = false;

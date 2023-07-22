@@ -6,10 +6,7 @@ export const setError = async ({ state, effects }: Context, {error, errorInfo}: 
         state.error.error = error;
         state.error.errorInfo = errorInfo;
 
-        //effects.analytics.DtvGA('my-pages-error', 'my-pages-set-error');
-
-        //await effects.log.logError({error: error, errorInfo: errorInfo ?? undefined});
-
+        await effects.log.logError({error: error, errorInfo: errorInfo ?? undefined});
     } catch {}
 };
 

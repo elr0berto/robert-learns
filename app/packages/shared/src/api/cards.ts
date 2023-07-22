@@ -9,10 +9,10 @@ export type GetCardsResponseData = BaseResponseData & {
 }
 
 export class GetCardsResponse extends BaseResponse {
-    cards: Card[];
+    cards: Card[] | null;
     constructor(data: GetCardsResponseData) {
         super(data);
-        this.cards = data.cardDatas?.map(cd => new Card(cd)) ?? [];
+        this.cards = data.cardDatas?.map(cd => new Card(cd)) ?? null;
     }
 }
 
@@ -43,7 +43,7 @@ export class CreateCardResponse extends BaseResponse {
     cardSetCards: CardSetCard[] | null;
     constructor(data: CreateCardResponseData) {
         super(data);
-        this.card = data.cardData === null ? null : new Card(data.cardData);
+        this.card = data.cardData ? new Card(data.cardData) : null;
         this.cardSetCards = data.cardSetCardDatas?.map(cscd => new CardSetCard(cscd)) ?? null;
     }
 }

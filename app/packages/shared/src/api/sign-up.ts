@@ -40,7 +40,7 @@ export class SignUpResponse extends BaseResponse {
     user: User | null;
     constructor(data: SignUpResponseData) {
         super(data);
-        this.user = data.userData === null ? null : new User(data.userData);
+        this.user = data.userData ? new User(data.userData) : null;
     }
 }
 

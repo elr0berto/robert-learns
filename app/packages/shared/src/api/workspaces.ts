@@ -11,7 +11,7 @@ export class CreateWorkspaceResponse extends BaseResponse {
     workspace: Workspace | null;
     constructor(data: CreateWorkspaceResponseData) {
         super(data);
-        this.workspace = data.workspaceData === null ? null : new Workspace(data.workspaceData);
+        this.workspace = data.workspaceData ? new Workspace(data.workspaceData) : null;
     }
 }
 
@@ -49,10 +49,10 @@ export type GetWorkspacesResponseData = BaseResponseData & {
 }
 
 export class GetWorkspacesResponse extends BaseResponse {
-    workspaces: Workspace[];
+    workspaces: Workspace[] | null;
     constructor(data: GetWorkspacesResponseData) {
         super(data);
-        this.workspaces = data.workspaceDatas?.map(wd => new Workspace(wd)) ?? [];
+        this.workspaces = data.workspaceDatas?.map(wd => new Workspace(wd)) ?? null;
     }
 }
 

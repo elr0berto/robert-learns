@@ -2,6 +2,7 @@ import {derived} from 'overmind'
 import {validateCreateCardSetRequest} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 import {config} from "..";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {overmind} from "../../index";
 
 type WorkspaceCardSetCreateFormState = {
     name: string;
@@ -31,7 +32,8 @@ export const getInitialWorkspaceCardSetCreateState = (cardSet: CardSet | null): 
         }),
         validationErrors: derived((state: WorkspaceCardSetCreateFormState, rootState: typeof config.state) => {
             if (rootState.page.workspaceId === null) {
-                throw new Error('Workspace ID is null');
+                console.warn("WorkspaceCardSetCreateFormState validationErrors derived state.page.workspaceId is null (this is ok during development)");
+                return [];
             }
             let errors = validateCreateCardSetRequest({
                 name: state.name.trim(),

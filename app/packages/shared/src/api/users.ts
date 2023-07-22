@@ -14,7 +14,7 @@ export class UserGetByEmailResponse extends BaseResponse {
     user: User | null;
     constructor(data: UserGetByEmailResponseData) {
         super(data);
-        this.user = data.userData === null ? null : new User(data.userData);
+        this.user = data.userData ? new User(data.userData) : null;
     }
 }
 
@@ -33,9 +33,9 @@ export const userGetByEmail = async(req: UserGetByEmailRequest) : Promise<UserGe
     if (errors.length > 0) {
         return new UserGetByEmailResponse({
             dataType: true,
-            userData: null,
             errorMessage: errors.join('.'),
             status: ResponseStatus.UserError,
+            userData: null
         });
     }
     return await apiClient.post(UserGetByEmailResponse, '/users/getByEmail', req);
@@ -46,14 +46,14 @@ export type GetUsersRequest = {
 }
 
 export type GetUsersResponseData = BaseResponseData & {
-    userDatas: UserData[];
+    userDatas: UserData[] | null;
 }
 
 export class GetUsersResponse extends BaseResponse {
-    users: User[];
+    users: User[] | null;
     constructor(data: GetUsersResponseData) {
         super(data);
-        this.users = data.userDatas.map(u => new User(u));
+        this.users = data.userDatas?.map(u => new User(u)) ?? null;
     }
 }
 

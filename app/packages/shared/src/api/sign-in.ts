@@ -10,7 +10,7 @@ export class SignInCheckResponse extends BaseResponse {
     user: User | null;
     constructor(data: SignInCheckResponseData) {
         super(data);
-        this.user = data.userData === null ? null : new User(data.userData);
+        this.user = data.userData ? new User(data.userData) : null;
     }
 }
 
@@ -44,7 +44,7 @@ export class SignInResponse extends BaseResponse {
     user: User | null;
     constructor(data: SignInResponseData) {
         super(data);
-        this.user = data.userData === null ? null : new User(data.userData);
+        this.user = data.userData ? new User(data.userData) : null;
     }
 }
 

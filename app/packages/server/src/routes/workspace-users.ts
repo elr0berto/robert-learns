@@ -13,48 +13,58 @@ import prisma from "../db/prisma.js";
 
 const workspaceUsers = Router();
 
-workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown, GetWorkspaceUsersRequest>, res : TypedResponse<GetWorkspaceUsersResponseData>) => {
-    const signedInUser = await getSignedInUser(req.session);
+workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown, GetWorkspaceUsersRequest>, res : TypedResponse<GetWorkspaceUsersResponseData>, next) => {
+    try {
+        const signedInUser = await getSignedInUser(req.session);
 
-    const errors = validateGetWorkspaceUsersRequest(req.body);
+        const errors = validateGetWorkspaceUsersRequest(req.body);
 
-    if (errors.length > 0) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UserError,
-            errorMessage: errors.join('.'),
-            workspaceUserDatas: [],
-        });
-    }
-
-    const workspaceIds = req.body.workspaceIds;
-
-    // loop over the workspaceIds and check that the user has access to each one
-    for (let i = 0; i < workspaceIds.length; i++) {
-        if (!await checkPermissions({user: signedInUser, workspaceId: workspaceIds[i], capability: Capability.ViewWorkspace})) {
+        if (errors.length > 0) {
             return res.json({
                 dataType: true,
-                status: ResponseStatus.UnexpectedError,
-                errorMessage: 'You are not allowed to view workspace id: ' + workspaceIds[i],
+                status: ResponseStatus.UserError,
+                errorMessage: errors.join('.'),
                 workspaceUserDatas: [],
             });
         }
-    }
 
-    const workspaceUsers = await prisma.workspaceUser.findMany({
-        where: {
-            workspaceId: {
-                in: workspaceIds
+        const workspaceIds = req.body.workspaceIds;
+
+        // loop over the workspaceIds and check that the user has access to each one
+        for (let i = 0; i < workspaceIds.length; i++) {
+            if (!await checkPermissions({
+                user: signedInUser,
+                workspaceId: workspaceIds[i],
+                capability: Capability.ViewWorkspace
+            })) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: 'You are not allowed to view workspace id: ' + workspaceIds[i],
+                    workspaceUserDatas: [],
+                });
             }
         }
-    });
 
-    return res.json({
-        dataType: true,
-        status: ResponseStatus.Success,
-        errorMessage: null,
-        workspaceUserDatas: workspaceUsers.map(wu => getWorkspaceUserData(wu)),
-    });
+        const workspaceUsers = await prisma.workspaceUser.findMany({
+            where: {
+                workspaceId: {
+                    in: workspaceIds
+                }
+            }
+        });
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            workspaceUserDatas: workspaceUsers.map(wu => getWorkspaceUserData(wu)),
+        });
+    } catch (ex) {
+        console.error('/workspace-users/get-workspace-users caught ex', ex);
+        next(ex);
+        return;
+    }
 });
 
 

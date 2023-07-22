@@ -9,14 +9,14 @@ import {
 import {apiClient} from "./ApiClient.js";
 
 export type GetCardSetCardsResponseData = BaseResponseData & {
-    cardSetCardDatas: CardSetCardData[];
+    cardSetCardDatas: CardSetCardData[] | null;
 }
 
 export class GetCardSetCardsResponse extends BaseResponse {
-    cardSetCards: CardSetCard[];
+    cardSetCards: CardSetCard[] | null;
     constructor(data: GetCardSetCardsResponseData) {
         super(data);
-        this.cardSetCards = data.cardSetCardDatas?.map(c => new CardSetCard(c)) ?? [];
+        this.cardSetCards = data.cardSetCardDatas?.map(c => new CardSetCard(c)) ?? null;
     }
 }
 
@@ -102,16 +102,16 @@ export const createCardSetCards = async(req : CreateCardSetCardsRequest) : Promi
 
 export type UpdateCardCardSetsResponseData = BaseResponseData & {
     cardData: CardData | null;
-    cardSetCardDatas: CardSetCardData[];
+    cardSetCardDatas: CardSetCardData[] | null;
 }
 
 export class UpdateCardCardSetsResponse extends BaseResponse {
     card: Card | null;
-    cardSetCards: CardSetCard[];
+    cardSetCards: CardSetCard[] | null;
     constructor(data: UpdateCardCardSetsResponseData) {
         super(data);
-        this.card = data.cardData === null ? null : new Card(data.cardData);
-        this.cardSetCards = data.cardSetCardDatas.map(c => new CardSetCard(c));
+        this.card = data.cardData ? new Card(data.cardData) : null;
+        this.cardSetCards = data.cardSetCardDatas?.map(c => new CardSetCard(c)) ?? null;
     }
 }
 
@@ -144,7 +144,7 @@ export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promi
             status: ResponseStatus.UnexpectedError,
             errorMessage: errors.join('\n'),
             cardData: null,
-            cardSetCardDatas: [],
+            cardSetCardDatas: null,
         });
     }
     return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/updateCardCardSets', req);

@@ -6,8 +6,10 @@ import WorkspacePage from "../components/workspace/WorkspacePage";
 import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
 import WorkspaceCardSetPage from "../components/workspace/WorkspaceCardSetPage";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
+import AdminLogsPage from "../components/admin/AdminLogsPage";
 
 export enum Pages {
+    AdminLogs = "adminLogs",
     Front = "front",
     SignIn = "signIn",
     SignUp = "signUp",
@@ -20,66 +22,63 @@ export enum Pages {
 }
 
 const pageUrls = {
+    [Pages.AdminLogs]: {
+        route: '/admin/logs',
+        url: () => '/admin/logs',
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showAdminLogsPage,
+        getPageComponent: () => AdminLogsPage,
+    },
     [Pages.Front]: {
         route: '/',
         url: () => '/',
-        //page: Pages.Front,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showFrontPage,
         getPageComponent: () => null,
     },
     [Pages.SignIn]: {
         route: '/sign-in',
         url: () => '/sign-in',
-        //page: Pages.SignIn,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showSignInPage,
         getPageComponent: () => SignIn,
     },
     [Pages.SignUp]: {
         route: '/sign-up',
         url: () => '/sign-up',
-        //page: Pages.SignUp,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showSignUpPage,
         getPageComponent: () => SignUp,
     },
     [Pages.Workspace]: {
         route: '/workspace/:workspaceId',
         url: (workspace: Workspace) => '/workspace/'+workspace.id,
-        //page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspacePage,
         getPageComponent: () => WorkspacePage,
     },
     [Pages.WorkspaceCardSetCreate]: {
         route: '/workspace/:workspaceId/card-set-create',
         url: (workspace: Workspace) => '/workspace/'+workspace.id+'/card-set-create/',
-        //page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetCreatePage,
         getPageComponent: () => WorkspaceCardSetCreatePage,
     },
     [Pages.WorkspaceCardSetEdit]: {
         route: '/workspace/:workspaceId/card-set-edit/:cardSetId',
         url: (workspace: Workspace, cardSet: {id: number}) => '/workspace/'+workspace.id+'/card-set-edit/'+cardSet.id,
-        //page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetEditPage,
         getPageComponent: () => WorkspaceCardSetCreatePage,
     },
     [Pages.WorkspaceCardSet]: {
         route: '/workspace/:workspaceId/card-set/:cardSetId',
         url: (workspace: Workspace, cardSet: {id: number, name: string}) => '/workspace/'+workspace.id+'/card-set/'+cardSet.id,
-        //page: Pages.Workspace,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCardSetPage,
         getPageComponent: () => WorkspaceCardSetPage,
     },
     [Pages.WorkspaceCreate]: {
         route: '/workspace-create',
         url: () => '/workspace-create',
-        //page: Pages.WorkspaceCreate,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceCreatePage,
         getPageComponent: () => WorkspaceCreate,
     },
     [Pages.WorkspaceEdit]: {
         route: '/workspace-edit/:workspaceId',
         url: (workspace: Workspace) => '/workspace-edit/'+workspace.id,
-        //page: Pages.WorkspaceCreate,
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceEditPage,
         getPageComponent: () => WorkspaceCreate,
     }

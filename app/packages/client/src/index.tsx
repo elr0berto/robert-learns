@@ -3,14 +3,14 @@ import './sass/style.scss';
 import { createOvermind } from 'overmind';
 import {config} from './overmind';
 import {Provider} from "overmind-react";
+import {createRoot} from "react-dom/client";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'quill/dist/quill.snow.css'; // Add css for snow theme
 // or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 
-import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";
 import App from "./components/App";
-import {createRoot} from "react-dom/client";
+import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";
 
 declare global {
     interface Window {
@@ -21,7 +21,7 @@ declare global {
 window.audioFile = null;
 
 export const overmind = createOvermind(config, {
-    devtools: true /*process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',*/
+    devtools: false /*process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',*/
 });
 
 window.onerror = (msg, url, line, col, error) => {
@@ -35,7 +35,11 @@ window.onunhandledrejection = (e: PromiseRejectionEvent) => {
     if (e?.reason === UnexpectedSignOutError) { // ignore.. this is just thrown to interrupt the flow when user is logged out,.
         return;
     }
-    overmind.actions.error.setError({error: new Error(e.reason.stack), errorInfo: null});
+    const error = e.reason instanceof Error
+        ? e.reason
+        : new Error(String(e.reason));
+    console.error('onunhandledrejection error', error);
+    overmind.actions.error.setError({error: error, errorInfo: null});
 }
 const root = createRoot(document.getElementById("root") as HTMLElement);
 root.render(

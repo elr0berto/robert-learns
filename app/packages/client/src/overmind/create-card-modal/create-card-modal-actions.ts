@@ -26,11 +26,14 @@ export const setBackHtml = ({ state }: Context, html: string) => {
     state.createCardModal.backHtml = html;
 }
 
-export const uploadFile = async ({ state, effects }: Context, file: File) => {
+export const uploadFile = async ({ state, effects }: Context, file: File) : Promise<string> => {
     if (state.page.workspaceId === null) {
         throw new Error('workspaceId is null');
     }
     const resp = await effects.api.media.uploadFile(state.page.workspaceId, file);
+    if (resp.url === null) {
+        throw new Error('resp.url is null');
+    }
     return resp.url;
 }
 

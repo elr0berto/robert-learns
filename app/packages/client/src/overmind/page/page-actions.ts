@@ -5,6 +5,7 @@ import {getInitialSignUpState} from "../sign-up/sign-up-state";
 import {getInitialSignInState} from "../sign-in/sign-in-state";
 import {getInitialWorkspaceCreateState} from "../workspace-create/workspace-create-state";
 import {getInitialWorkspaceCardSetCreateState} from "../workspace-card-set-create/workspace-card-set-create-state";
+import {getInitialAdminLogsPageState} from "../admin-logs-page/admin-logs-page-state";
 
 export type Payload = {
     params: any,
@@ -81,6 +82,14 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
     await actions.data.loadCards(state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId));
 
     state.page.loadingCards = false;
+}
+
+export const showAdminLogsPage = async ({ actions, state, effects }: Context) => {
+    actions.page.load({page: Pages.AdminLogs});
+    state.adminLogsPage = getInitialAdminLogsPageState();
+    if ((state.signIn.user?.admin ?? false) === true) {
+        await actions.adminLogsPage.loadMore();
+    }
 }
 
 export const showFrontPage = async ({ actions }: Context) => {

@@ -15,150 +15,166 @@ import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 const cardSets = Router();
 
-cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>) => {
-    const user = await getSignedInUser(req.session);
+cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>, next) => {
+    try {
+        const user = await getSignedInUser(req.session);
 
-    const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.ViewWorkspace});
-
-    if (!hasRights) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: 'You are not allowed to view this workspace.',
-            cardSetDatas: null,
-        });
-    }
-
-    const cardSets = await prisma.cardSet.findMany({
-        where: {
-            workspaceId: {
-                equals: req.body.workspaceId
-            }
-        },
-    });
-
-    return res.json({
-        dataType: true,
-        status: ResponseStatus.Success,
-        errorMessage: null,
-        cardSetDatas: cardSets.map(cs => getCardSetData(cs))
-    });
-});
-
-
-cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>) => {
-    const user = await getSignedInUser(req.session);
-
-    const errors = validateCreateCardSetRequest(req.body);
-
-    if (errors.length !== 0) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join(', '),
-            cardSetData: null,
-        });
-    }
-
-    const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.CreateCardSet});
-
-    if (!hasRights) {
-        return res.json({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: 'You are not allowed to create card sets in this workspace.',
-            cardSetData: null,
-        });
-    }
-
-    const scope = req.body.cardSetId ? 'edit' : 'create';
-
-    let returnCardSetId : number;
-    if (scope === 'create') {
-        const existingCardSetWithSameName = await prisma.cardSet.findFirst({
-            where: {
-                name: req.body.name,
-                workspaceId: req.body.workspaceId,
-            }
+        const hasRights = await checkPermissions({
+            user: user,
+            workspaceId: req.body.workspaceId,
+            capability: Capability.ViewWorkspace
         });
 
-        if (existingCardSetWithSameName) {
-            return res.json({
-                dataType: true,
-                status: ResponseStatus.UserError,
-                errorMessage: 'A card set with the same name already exists in this workspace.',
-                cardSetData: null,
-            });
-        }
-
-        const returnCardSet = await prisma.cardSet.create({
-            data: {
-                name: req.body.name,
-                description: req.body.description,
-                workspaceId: req.body.workspaceId,
-            }
-        });
-        returnCardSetId = returnCardSet.id;
-    } else {
-        const existingCardSet = await prisma.cardSet.findUniqueOrThrow({
-            where: {
-                id: req.body.cardSetId,
-            }
-        });
-
-        if (existingCardSet.workspaceId !== req.body.workspaceId) {
+        if (!hasRights) {
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                errorMessage: 'Access denied',
+                errorMessage: 'You are not allowed to view this workspace.',
+                cardSetDatas: null,
+            });
+        }
+
+        const cardSets = await prisma.cardSet.findMany({
+            where: {
+                workspaceId: {
+                    equals: req.body.workspaceId
+                }
+            },
+        });
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            cardSetDatas: cardSets.map(cs => getCardSetData(cs))
+        });
+    } catch (ex) {
+        console.error('/card-sets/get caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+
+cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>, next) => {
+    try {
+        const user = await getSignedInUser(req.session);
+
+        const errors = validateCreateCardSetRequest(req.body);
+
+        if (errors.length !== 0) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
                 cardSetData: null,
             });
         }
 
-        if (existingCardSet.name !== req.body.name || existingCardSet.description !== req.body.description) {
-            if (existingCardSet.name !== req.body.name) {
-                const existingCardSetWithSameName = await prisma.cardSet.findFirst({
-                    where: {
-                        name: req.body.name,
-                        workspaceId: req.body.workspaceId,
-                    }
-                });
+        const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.CreateCardSet});
 
-                if (existingCardSetWithSameName) {
-                    return res.json({
-                        dataType: true,
-                        status: ResponseStatus.UserError,
-                        errorMessage: 'A card set with the same name already exists in this workspace.',
-                        cardSetData: null,
-                    });
+        if (!hasRights) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'You are not allowed to create card sets in this workspace.',
+                cardSetData: null,
+            });
+        }
+
+        const scope = req.body.cardSetId ? 'edit' : 'create';
+
+        let returnCardSetId : number;
+        if (scope === 'create') {
+            const existingCardSetWithSameName = await prisma.cardSet.findFirst({
+                where: {
+                    name: req.body.name,
+                    workspaceId: req.body.workspaceId,
                 }
+            });
+
+            if (existingCardSetWithSameName) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'A card set with the same name already exists in this workspace.',
+                    cardSetData: null,
+                });
             }
 
-            await prisma.cardSet.update({
-                where: {
-                    id: req.body.cardSetId,
-                },
+            const returnCardSet = await prisma.cardSet.create({
                 data: {
                     name: req.body.name,
                     description: req.body.description,
+                    workspaceId: req.body.workspaceId,
                 }
             });
+            returnCardSetId = returnCardSet.id;
+        } else {
+            const existingCardSet = await prisma.cardSet.findUniqueOrThrow({
+                where: {
+                    id: req.body.cardSetId,
+                }
+            });
+
+            if (existingCardSet.workspaceId !== req.body.workspaceId) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: 'Access denied',
+                    cardSetData: null,
+                });
+            }
+
+            if (existingCardSet.name !== req.body.name || existingCardSet.description !== req.body.description) {
+                if (existingCardSet.name !== req.body.name) {
+                    const existingCardSetWithSameName = await prisma.cardSet.findFirst({
+                        where: {
+                            name: req.body.name,
+                            workspaceId: req.body.workspaceId,
+                        }
+                    });
+
+                    if (existingCardSetWithSameName) {
+                        return res.json({
+                            dataType: true,
+                            status: ResponseStatus.UserError,
+                            errorMessage: 'A card set with the same name already exists in this workspace.',
+                            cardSetData: null,
+                        });
+                    }
+                }
+
+                await prisma.cardSet.update({
+                    where: {
+                        id: req.body.cardSetId,
+                    },
+                    data: {
+                        name: req.body.name,
+                        description: req.body.description,
+                    }
+                });
+            }
+            returnCardSetId = existingCardSet.id;
         }
-        returnCardSetId = existingCardSet.id;
+
+        const returnCardSet = await prisma.cardSet.findUniqueOrThrow({
+            where: {
+                id: returnCardSetId
+            }
+        });
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            cardSetData: getCardSetData(returnCardSet),
+        });
+    } catch (ex) {
+        console.error('/card-sets/create caught ex', ex);
+        next(ex);
+        return;
     }
-
-    const returnCardSet = await prisma.cardSet.findUniqueOrThrow({
-        where: {
-            id: returnCardSetId
-        }
-    });
-
-    return res.json({
-        dataType: true,
-        status: ResponseStatus.Success,
-        errorMessage: null,
-        cardSetData: getCardSetData(returnCardSet),
-    });
 });
 
 export default cardSets;

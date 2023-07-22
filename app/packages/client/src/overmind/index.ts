@@ -5,6 +5,7 @@ import * as error from './error';
 import * as page from './page';
 import * as api from './api';
 import * as data from './data';
+import * as log from './log';
 import * as signIn from './sign-in';
 import * as signUp from './sign-up';
 import * as permission from './permission';
@@ -15,6 +16,7 @@ import * as createCardModal from './create-card-modal';
 import * as addUserModal from './add-user-modal';
 import * as addCardsFromOtherCardSetsModal from './add-cards-from-other-card-sets-modal';
 import * as editCardCardSetsModal from './edit-card-card-sets-modal';
+import * as adminLogsPage from './admin-logs-page';
 
 import {merge, namespaced} from "overmind/es/config";
 
@@ -24,7 +26,7 @@ export const config = merge(
     },
     namespaced({
         error,
-        //log,
+        log,
         page,
         api,
         data,
@@ -37,7 +39,8 @@ export const config = merge(
         createCardModal,
         addUserModal,
         addCardsFromOtherCardSetsModal,
-        editCardCardSetsModal
+        editCardCardSetsModal,
+        adminLogsPage,
     })
 )
 

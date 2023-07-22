@@ -32,6 +32,7 @@ model User {
   firstName String
   lastName String
   password String
+  admin Boolean @default(false)
   workspaces WorkspaceUser[]
   cardSets CardSetUser[]
 }

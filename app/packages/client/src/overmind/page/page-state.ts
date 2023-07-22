@@ -67,7 +67,7 @@ export const state: PageState = {
         }
         const ret = rootState.data.cardSets.find(cs => cs.id === state.cardSetId);
         if (ret === undefined) {
-            throw new Error(`Card set with ID ${state.cardSetId} not found`);
+            return null;
         }
         return ret;
     }),

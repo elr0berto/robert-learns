@@ -53,7 +53,8 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
     }),
     validationError: derived((state: EditCardCardSetsModalState) => {
         if (state.cardId === null) {
-            throw new Error('Card ID is null');
+            console.warn('EditCardCardSetsModalState validationError derived state.cardId is null (this is ok during development)');
+            return null;
         }
         const errors = validateUpdateCardCardSetsRequest({cardSetIds: state.selectedCardSetIds, cardId: state.cardId});
         if (errors.length === 0) {

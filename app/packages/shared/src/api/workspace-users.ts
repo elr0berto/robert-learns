@@ -7,14 +7,14 @@ export type GetWorkspaceUsersRequest = {
 }
 
 export type GetWorkspaceUsersResponseData = BaseResponseData & {
-    workspaceUserDatas: WorkspaceUserData[];
+    workspaceUserDatas: WorkspaceUserData[] | null;
 }
 
 export class GetWorkspaceUsersResponse extends BaseResponse {
-    workspaceUsers: WorkspaceUser[];
+    workspaceUsers: WorkspaceUser[] | null;
     constructor(data: GetWorkspaceUsersResponseData) {
         super(data);
-        this.workspaceUsers = data.workspaceUserDatas.map(wu => new WorkspaceUser(wu));
+        this.workspaceUsers = data.workspaceUserDatas?.map(wu => new WorkspaceUser(wu)) ?? null;
     }
 }
 

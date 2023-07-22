@@ -6,7 +6,7 @@ export type UserData = DataType & {
     username: string;
     firstName: string;
     lastName: string;
-    dataType: boolean;
+    admin: boolean;
 }
 
 export class User {
@@ -15,12 +15,14 @@ export class User {
     username: string;
     firstName: string;
     lastName: string;
+    admin: boolean;
     constructor(data: UserData) {
         this.id = data.id;
         this.email = data.email;
         this.username = data.username;
         this.firstName = data.firstName;
         this.lastName = data.lastName;
+        this.admin = data.admin;
     }
     name() : string {
         return this.firstName + " " + this.lastName;

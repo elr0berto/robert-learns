@@ -4,14 +4,20 @@ import { BaseResponseData, ResponseStatus } from '@elr0berto/robert-learns-share
 
 const signOut = Router();
 
-signOut.post('/', async (req, res : TypedResponse<BaseResponseData>) => {
-    req.session.userId = null;
+signOut.post('/', async (req, res : TypedResponse<BaseResponseData>, next) => {
+    try {
+        req.session.userId = null;
 
-    return res.json({
-        dataType: true,
-        status: ResponseStatus.Success,
-        errorMessage: null,
-    });
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+        });
+    } catch (ex) {
+        console.error('/sign-out caught ex', ex);
+        next(ex);
+        return;
+    }
 });
 
 export default signOut;

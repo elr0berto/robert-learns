@@ -2,11 +2,11 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/index.js";
 
 export type MediaUploadFileResponseData = BaseResponseData & {
-    url: string;
+    url: string | null;
 }
 
 export class MediaUploadFileResponse extends BaseResponse {
-    url: string;
+    url: string | null;
     constructor(data: MediaUploadFileResponseData) {
         super(data);
         this.url = data.url;

@@ -9,10 +9,11 @@ import cardSetCards from './routes/card-set-cards.js';
 import media from './routes/media.js';
 import cards from './routes/cards.js';
 import users from './routes/users.js';
+import logs from './routes/logs.js';
 
 import session from './session.js';
 import logger from "./logger.js";
-import {ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
+import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 
 class Server {
     public express;
@@ -31,6 +32,7 @@ class Server {
     }
 
     routes() {
+        this.express.use('/api/logs', logs);
         this.express.use('/api/sign-in', signIn);
         this.express.use('/api/sign-out', signOut);
         this.express.use('/api/sign-up', signUp);
@@ -45,15 +47,19 @@ class Server {
 
     setupErrorHandler() {
         this.express.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+            console.log('inside logger');
             logger.error(`${req.method} - ${req.url} - ${err.message}`);
-            return res.json({
+
+            const response : BaseResponseData = {
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: null,
-            });
+            }
+            return res.json(response);
         });
     }
 }
 
 const server = new Server();
+console.log('starting to listen on port 3333');
 server.express.listen(3333);

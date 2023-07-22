@@ -53,6 +53,7 @@ function TopMenu() {
                             state.signIn.user === null ?
                             'Signed in as guest' :
                             <NavDropdown title={'Signed in as ' + state.signIn.user.username}>
+                                {state.signIn.user.admin ? <NavDropdown.Item href={pageUrls.adminLogs.url()}>Logs</NavDropdown.Item> :null}
                                 <NavDropdown.Item onClick={() => actions.signIn.signOut()}>Sign out</NavDropdown.Item>
                             </NavDropdown>
                         )

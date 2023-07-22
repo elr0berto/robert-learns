@@ -1,10 +1,6 @@
-import { createRequire } from 'module';
 import winston, { format } from "winston";
 import { PrismaClient } from "@prisma/client";
-
-const require = createRequire(import.meta.url);
-const PrismaWinstonTransporter = require('winston-prisma-transporter').default;
-
+import { PrismaWinstonTransporter } from "./winston-prisma-transporter/index.js";
 const prisma = new PrismaClient();
 
 const logger = winston.createLogger({
@@ -13,7 +9,6 @@ const logger = winston.createLogger({
         new PrismaWinstonTransporter({
             level: "http",
             prisma,
-            tableName: "Logs"
         }),
     ],
 });

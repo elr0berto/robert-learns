@@ -1,4 +1,5 @@
 import {ErrorInfo} from "react";
+import {overmind} from "../../index";
 
 export enum ErrorLevel {
     Info = "Info",
@@ -20,10 +21,17 @@ interface LogParams extends BaseLogParams {
 
 export const log = async ({level, message, errorCode, error, errorInfo}: LogParams) => {
     console.log(level + (message ? ": " + message : ''), error);
-    //await overmind.effects.api.log.Log({level,message,errorCode, error, errorInfo});
+    await overmind.effects.api.logs.addLogEntry({
+        level,
+        message,
+        errorCode,
+        error,
+        componentStack: errorInfo?.componentStack
+    });
 }
 
 export const logError = async(params: BaseLogParams) => {
+    console.log('logError error', params.error);
     await log({level: ErrorLevel.Error, ...params});
 }
 

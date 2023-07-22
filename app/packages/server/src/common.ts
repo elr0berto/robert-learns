@@ -1,5 +1,6 @@
 import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
+import { format } from 'date-fns';
 import {Session, SessionData} from "express-session";
 import {
     Card as PrismaCard,
@@ -11,16 +12,17 @@ import {
     User as PrismaUser,
     Workspace as PrismaWorkspace,
     WorkspaceUser as PrismaWorkspaceUser,
+    Logs as PrismaLogs,
 } from '@prisma/client';
 import {
     CardSetCardData,
-    CardSetData,
+    CardSetData, LogEntryData,
     MediaData,
     UserData,
-    WorkspaceData, WorkspaceUserData
+    WorkspaceData, WorkspaceUserData,
+    CardData, CardFaceData
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
-import {CardData, CardFaceData} from "@elr0berto/robert-learns-shared/api/models";
 
 export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
@@ -57,9 +59,20 @@ export const getUserData = (user: PrismaUser) : UserData => {
         id: user.id,
         email: user.email,
         firstName : user.firstName,
-        lastName:user.lastName,
+        lastName: user.lastName,
         username: user.username,
-        dataType: true, // to force the type ... too easy to send the Prisma user otherwise. the user class...
+        admin: user.admin,
+        dataType: true,
+    };
+}
+
+export const getLogEntryData = (logEntry: PrismaLogs) : LogEntryData => {
+    return {
+        id: logEntry.id,
+        message: logEntry.message,
+        timestamp: format(logEntry.timestamp, 'yyyy-MM-dd HH:mm:ss'),
+        level: logEntry.level,
+        dataType: true,
     };
 }
 
