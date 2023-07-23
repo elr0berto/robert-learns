@@ -1,7 +1,6 @@
 import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData, ResponseStatus} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
-import {CardSet, CardSetData} from "./models/CardSet.js";
 import {CardSetCard, CardSetCardData} from "./models/index.js";
 
 export type GetCardsResponseData = BaseResponseData & {
@@ -49,7 +48,7 @@ export class CreateCardResponse extends BaseResponse {
 }
 
 export const validateCreateCardRequest = (params: CreateCardRequest) : string[] => {
-    let errors : string[] = [];
+    const errors : string[] = [];
 
     if (params.cardSetId === null) {
         errors.push('cardSetId is required');

@@ -29,7 +29,7 @@ export type CreateWorkspaceRequest = {
 }
 
 export const validateCreateWorkspaceRequest = (req: CreateWorkspaceRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
     if (req.name.trim().length === 0) {
         errs.push('You must enter a name');
     }

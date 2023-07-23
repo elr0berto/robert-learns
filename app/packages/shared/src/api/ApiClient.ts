@@ -3,8 +3,8 @@ import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 
 
 class ApiClient {
-    onBeforeRequest: () => void = () => {};
-    onAfterRequest: (response: BaseResponse) => void = () => {};
+    onBeforeRequest: () => void = () => { console.log('default onBeforeRequest'); };
+    onAfterRequest: (response: BaseResponse) => void = () => { console.log('default onAfterRequest'); };
     axiosInstance: AxiosInstance = axios.create({
         baseURL: '/api',
         withCredentials: true,
@@ -22,7 +22,7 @@ class ApiClient {
     async post<ResponseType extends BaseResponse, ResponseDataType extends BaseResponseData>(
         cls: {new (args: ResponseDataType): ResponseType;},
         url: string,
-        data?: any,
+        data?: unknown,
         config?: AxiosRequestConfig | undefined) : Promise<ResponseType>
     {
         this.onBeforeRequest();

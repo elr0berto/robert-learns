@@ -53,7 +53,6 @@ let logAttempts = 0;
 
 
 export const addLogEntry = async (req: AddLogEntryRequestParams) : Promise<BaseResponse> => {
-    console.log('addLogEntry', req);
     if (logAttempts >= 3) {
         return new BaseResponse({
             dataType: true,
@@ -98,7 +97,6 @@ export const addLogEntry = async (req: AddLogEntryRequestParams) : Promise<BaseR
             });
         }
     }
-    console.log('addLogEntry 2', req);
 
     // Error object serialized to string
     const realReq = {

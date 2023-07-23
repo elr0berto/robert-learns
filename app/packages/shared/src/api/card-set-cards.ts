@@ -26,7 +26,7 @@ export type GetCardSetCardsRequest = {
 }
 
 export const validateGetCardSetCardsRequest = (req: GetCardSetCardsRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
 
     if (req.cardSetIds === undefined && req.cardIds === undefined) {
         errs.push('You must provide either cardSetIds or cardIds');
@@ -73,7 +73,7 @@ export type CreateCardSetCardsRequest = {
 }
 
 export const validateCreateCardSetCardsRequest = (req: CreateCardSetCardsRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
     if (req.cardIds.length === 0) {
         errs.push('You must select at least one card');
     }
@@ -121,7 +121,7 @@ export type UpdateCardCardSetsRequest = {
 }
 
 export const validateUpdateCardCardSetsRequest = (req: UpdateCardCardSetsRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
     if (req.cardSetIds.length === 0) {
         errs.push('You must select at least one card set');
     }

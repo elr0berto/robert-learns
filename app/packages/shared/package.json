@@ -139,6 +139,9 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc --watch",
-    "test": "echo \"Error: no test specified\" && exit 0"
+    "lint": "nodemon --watch 'src/**/*.ts' --exec 'npx eslint --config .eslintrc.cjs src --ext .ts'"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }

@@ -57,7 +57,6 @@ export class PrismaWinstonTransporter extends Transport {
                 // eslint-disable-next-line @typescript-eslint/no-empty-function
                 callback = () => {};
             }
-            const metaJson = meta ? JSON.stringify(meta) : null;
 
             this.prisma.logs
                 .create({

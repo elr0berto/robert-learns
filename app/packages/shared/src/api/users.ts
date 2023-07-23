@@ -19,7 +19,7 @@ export class UserGetByEmailResponse extends BaseResponse {
 }
 
 export const validateUserGetByEmailRequest = (req: UserGetByEmailRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
 
     if (!validateEmail(req.email)) {
         errs.push('Email is invalid.')
@@ -58,7 +58,7 @@ export class GetUsersResponse extends BaseResponse {
 }
 
 export const validateGetUsersRequest = (req: GetUsersRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
 
     if (req.userIds.length === 0) {
         errs.push('No user ids provided.');

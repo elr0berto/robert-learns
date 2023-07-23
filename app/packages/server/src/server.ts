@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import signIn from './routes/sign-in.js';
 import signOut from "./routes/sign-out.js";
 import signUp from './routes/sign-up.js';
@@ -46,7 +46,7 @@ class Server {
     }
 
     setupErrorHandler() {
-        this.express.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+        this.express.use((err: Error, req: Request, res: Response) => {
             console.log('inside logger');
             logger.error(`${req.method} - ${req.url} - ${err.message}`);
 

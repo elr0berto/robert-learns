@@ -19,7 +19,7 @@ export class GetWorkspaceUsersResponse extends BaseResponse {
 }
 
 export const validateGetWorkspaceUsersRequest = (req: GetWorkspaceUsersRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
 
     if (req.workspaceIds.length === 0) {
         errs.push('No workspace ids provided.');

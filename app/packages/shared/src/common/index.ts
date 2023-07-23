@@ -1,6 +1,6 @@
 import { UserRole } from '../api/models/UserRole.js';
 
-export const objectMap = <TObject extends {}, TRet>(obj : TObject, fn : (v: any, k: string, i: number) => TRet) =>
+export const objectMap = <TObject extends object, TRet>(obj : TObject, fn : (v: unknown, k: string, i: number) => TRet) =>
     Object.fromEntries(
         Object.entries(obj).map(
             ([k, v], i) => [k, fn(v, k, i)]

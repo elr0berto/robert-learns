@@ -25,7 +25,7 @@ export type SignInRequest = {
 }
 
 export const validateSignInRequest = (req: SignInRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
     if (req.username.length === 0) {
         errs.push('You must enter a username');
     }

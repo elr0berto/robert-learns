@@ -42,7 +42,7 @@ export type CreateCardSetRequest = {
 }
 
 export const validateCreateCardSetRequest = (req: CreateCardSetRequest) : string[] => {
-    let errs : string[] = [];
+    const errs : string[] = [];
     if (req.workspaceId <= 0) {
         errs.push('Workspace id is missing');
     }

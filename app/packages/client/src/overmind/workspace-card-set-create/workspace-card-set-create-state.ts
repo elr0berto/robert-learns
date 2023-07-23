@@ -2,7 +2,6 @@ import {derived} from 'overmind'
 import {validateCreateCardSetRequest} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 import {config} from "..";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
-import {overmind} from "../../index";
 
 type WorkspaceCardSetCreateFormState = {
     name: string;
