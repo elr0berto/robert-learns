@@ -7,6 +7,7 @@ import {Pages, pageUrls} from "../page-urls";
 function TopMenu() {
     const state = useAppState();
     const actions = useActions();
+
     const workspace = state.page.workspace;
 
     console.log('TopMenu page: ' + state.page.page);

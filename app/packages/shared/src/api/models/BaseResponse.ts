@@ -1,6 +1,3 @@
-import {User,UserData} from "./User.js";
-import {Type} from "class-transformer";
-
 export enum ResponseStatus {
     Success = "Success",
     LoggedOut = "LoggedOut",

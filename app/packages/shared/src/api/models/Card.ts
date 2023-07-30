@@ -1,7 +1,6 @@
 import {Media,MediaData} from "./Media.js";
 import {CardFace,CardFaceData} from "./CardFace.js";
 import { DataType } from "./BaseResponse.js";
-import {CardSet, CardSetData} from "./CardSet.js";
 
 
 export type CardData = DataType & {

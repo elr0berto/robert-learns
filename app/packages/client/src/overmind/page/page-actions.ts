@@ -61,8 +61,12 @@ export const loadWorkspaces = async ({state,actions} : Context) => {
     state.page.loadingWorkspaces = true;
 
     await actions.data.loadWorkspaces();
-    await actions.data.loadWorkspaceUsers(state.data.workspaces.map(w => w.id));
-    await actions.data.loadUsers(state.data.workspaceUsers.map(wu => wu.userId));
+    if (state.data.workspaces.length > 0) {
+        await actions.data.loadWorkspaceUsers(state.data.workspaces.map(w => w.id));
+        if (state.data.workspaceUsers.length > 0) {
+            await actions.data.loadUsers(state.data.workspaceUsers.map(wu => wu.userId));
+        }
+    }
 
     state.page.loadingWorkspaces = false;
 }

@@ -1,6 +1,12 @@
+creating workspace bug - cannot change added user permissions
+test creating workspaces
+test editing workspace users
+test different permissions are working
+test creating cardsets
+test creating cards
+test adding cards to other cardsets
+test adding cards from other cardsets
 make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
-error here: http://localhost:3000/workspace/1/card-set/2
-add card to other card sets
 validation
 study-drill-session
 save stats for right/wrong answers

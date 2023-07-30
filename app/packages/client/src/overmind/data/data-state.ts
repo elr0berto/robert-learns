@@ -58,13 +58,16 @@ export const getInitialDataState = () : DataState => ({
     cardSetsWithCards: derived((state: DataState) => {
         return state.cardSets.map(cs => ({
             cardSet: cs,
-            cards: state.cardSetCards.filter(csc => csc.cardSetId === cs.id).map(csc => {
+            cards: state.cardSetCards.filter(csc => csc.cardSetId === cs.id && state.cards.find(c => c.id === csc.cardId) !== undefined).map(csc => {
                 const card = state.cards.find(c => c.id === csc.cardId);
                 if (card === undefined) {
+                    console.log('getInitialDataState cardSetsWithCards typeof csc.cardId', typeof csc.cardId);
+                    console.log('getInitialDataState cardSetsWithCards state.cards', JSON.parse(JSON.stringify(state.cards)));
+                    console.log('getInitialDataState cardSetsWithCards state.cardSetCards', JSON.parse(JSON.stringify(state.cardSetCards)));
                     throw new Error(`Card with id ${csc.cardId} not found`);
                 }
                 return card;
-            }),
+            }).filter(c => c !== null),
         }));
     }),
     cardsWithCardSets: derived((state: DataState) => {

@@ -6,34 +6,34 @@ import {CreateWorkspaceRequest} from "@elr0berto/robert-learns-shared/dist/api/w
 import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export const changeFormName = ({ state }: Context, name: string) => {
-    state.workspaceCreate.form.name = name;
+    state.workspaceCreate.name = name;
 };
 
 export const changeFormDescription = ({ state }: Context, desc: string) => {
-    state.workspaceCreate.form.description = desc;
+    state.workspaceCreate.description = desc;
 };
 
 export const changeAllowGuests = ({ state }: Context, allowGuests: boolean) => {
-    state.workspaceCreate.form.allowGuests = allowGuests;
+    state.workspaceCreate.allowGuests = allowGuests;
 };
 
 export const removeUser = ({ state }: Context, userId: number) => {
-    state.workspaceCreate.form.selectedUsers = state.workspaceCreate.form.selectedUsers.filter(u => u.userId !== userId);
+    state.workspaceCreate.selectedUsers = state.workspaceCreate.selectedUsers.filter(u => u.userId !== userId);
 }
 
 export const addUserModalOpen = ({ state }: Context) => {
     state.addUserModal = getInitialAddUserModalState();
-    state.workspaceCreate.form.addUserOpen = true;
+    state.workspaceCreate.addUserOpen = true;
 }
 
 export const addUserModalClose = ({ state }: Context) => {
-    state.workspaceCreate.form.addUserOpen = false;
+    state.workspaceCreate.addUserOpen = false;
 }
 
 export const addUser = ({ state, actions }: Context, user: { userId: number, role: UserRole }) => {
-    const exists = state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId).length === 1;
+    const exists = state.workspaceCreate.selectedUsers.filter(u => u.userId === user.userId).length === 1;
     if (!exists) {
-        state.workspaceCreate.form.selectedUsers.push(user);
+        state.workspaceCreate.selectedUsers.push(user);
     }
     actions.workspaceCreate.addUserModalClose();
 }
@@ -44,7 +44,7 @@ export const changeUserRole = ({ state }: Context, {user, role}: {user: {userId:
         case UserRole.OWNER:
         case UserRole.CONTRIBUTOR:
         case UserRole.ADMINISTRATOR:
-            state.workspaceCreate.form.selectedUsers.filter(u => u.userId === user.userId)[0].role = role as UserRole;
+            state.workspaceCreate.selectedUsers.filter(u => u.userId === user.userId)[0].role = role as UserRole;
             break;
         default:
             throw new Error('unexpected role: ' + role);
@@ -52,19 +52,19 @@ export const changeUserRole = ({ state }: Context, {user, role}: {user: {userId:
 }
 
 export const formSubmit = async ({state, effects, actions} : Context, scope: string) => {
-    state.workspaceCreate.form.submitAttempted = true;
+    state.workspaceCreate.submitAttempted = true;
 
-    state.workspaceCreate.form.submissionError = '';
-    if (!state.workspaceCreate.form.isValid) {
+    state.workspaceCreate.submissionError = '';
+    if (!state.workspaceCreate.isValid) {
         return;
     }
 
-    state.workspaceCreate.form.submitting = true;
+    state.workspaceCreate.submitting = true;
     const request : CreateWorkspaceRequest = {
-        name: state.workspaceCreate.form.name,
-        description: state.workspaceCreate.form.description,
-        allowGuests: state.workspaceCreate.form.allowGuests,
-        workspaceUsers: state.workspaceCreate.form.selectedUsers,
+        name: state.workspaceCreate.name,
+        description: state.workspaceCreate.description,
+        allowGuests: state.workspaceCreate.allowGuests,
+        workspaceUsers: state.workspaceCreate.selectedUsers,
     };
     if (scope === 'edit') {
         if (state.page.workspaceId === null) {
@@ -74,9 +74,9 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
     }
     const resp = await effects.api.workspaces.createWorkspace(request);
 
-    state.workspaceCreate.form.submitting = false;
+    state.workspaceCreate.submitting = false;
     if (resp.status !== ResponseStatus.Success || resp.workspace === null) {
-        state.workspaceCreate.form.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
+        state.workspaceCreate.submissionError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
         return;
     }
 

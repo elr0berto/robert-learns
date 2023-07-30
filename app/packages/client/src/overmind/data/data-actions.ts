@@ -107,7 +107,7 @@ export const loadWorkspaceUsers = async ({state,effects} : Context, workspaceIds
     state.data.loadingWorkspaceUsers = false;
 }
 
-export const loadUsers = async ({state,effects} : Context, userIds: number[]) => {
+export const loadUsers = async ({state,effects,actions} : Context, userIds: number[]) => {
     state.data.loadingUsers = true;
 
     const resp = await effects.api.users.getUsers({userIds});
@@ -115,18 +115,25 @@ export const loadUsers = async ({state,effects} : Context, userIds: number[]) =>
     if (resp.users === null) {
         throw new Error('resp.users is null');
     }
-    state.data.users = resp.users;
+
+    // foreach user in resp.users, run addOrUpdateUser
+    resp.users.forEach(u => actions.data.addOrUpdateUser(u));
 
     state.data.loadingUsers = false;
 }
 
 export const addOrUpdateUser = ({state} : Context, user: User) => {
+    console.log('addOrUpdateUser user: ', user);
     const index = state.data.users.findIndex(u => u.id === user.id);
+    console.log('addOrUpdateUser index: ', index);
     if (index === -1) {
+        console.log('addOrUpdateUser pushing user: ', user);
         state.data.users.push(user);
     } else {
+        console.log('addOrUpdateUser updating user: ', user);
         state.data.users[index] = user;
     }
+    console.log('addOrUpdateUser state.data.users: ', state.data.users);
 }
 
 

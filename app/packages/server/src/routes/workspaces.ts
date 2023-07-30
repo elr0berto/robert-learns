@@ -25,18 +25,18 @@ workspaces.post('/get', async (req, res : TypedResponse<GetWorkspacesResponseDat
         const user = await getSignedInUser(req.session);
 
         const workspaces = await prisma.workspace.findMany({
-            where: user === null ?
-                {
-                    allowGuests: true
-                }
-                :
-                {
-                    users: {
-                        some: {
-                            userId: user.id
+            where: {
+                OR: [
+                    { allowGuests: true },
+                    {
+                        users: {
+                            some: {
+                                userId: user?.id
+                            }
                         }
                     }
-                },
+                ]
+            },
         });
 
         return res.json({

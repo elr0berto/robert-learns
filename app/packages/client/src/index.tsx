@@ -21,7 +21,7 @@ declare global {
 window.audioFile = null;
 
 export const overmind = createOvermind(config, {
-    devtools: false /*process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',*/
+    devtools: true /*process.env.REACT_APP_OVERMIND_DEVTOOLS === 'true',*/
 });
 
 window.onerror = (msg, url, line, col, error) => {
