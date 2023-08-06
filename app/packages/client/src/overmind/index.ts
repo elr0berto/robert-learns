@@ -6,6 +6,7 @@ import * as page from './page';
 import * as api from './api';
 import * as data from './data';
 import * as log from './log';
+import * as notifications from './notifications';
 import * as signIn from './sign-in';
 import * as signUp from './sign-up';
 import * as permission from './permission';
@@ -30,6 +31,7 @@ export const config = merge(
         page,
         api,
         data,
+        notifications,
         signIn,
         signUp,
         permission,

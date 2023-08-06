@@ -4,7 +4,6 @@ import {Card, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/mod
 
 
 export const openCreateCardModal = ({ state }: Context, {cardSetId, card}: {cardSetId: number, card: Card|null}) => {
-    console.log('openCreateCardModal', cardSetId, card);
     window.audioFile = null;
     state.createCardModal = getInitialCreateCardModalState(cardSetId, card);
 }

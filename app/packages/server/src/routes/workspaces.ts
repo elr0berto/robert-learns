@@ -2,10 +2,11 @@ import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {getSignedInUser, getWorkspaceData, TypedResponse} from "../common.js";
 import {UserRole as PrismaUserRole} from '@prisma/client';
-import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     CreateWorkspaceRequest,
     CreateWorkspaceResponseData,
+    DeleteWorkspaceRequest,
     GetWorkspacesResponseData,
     validateCreateWorkspaceRequest
 } from '@elr0berto/robert-learns-shared/api/workspaces';
@@ -104,15 +105,6 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
 
         let workspaceId = req.body.workspaceId;
 
-        const existingWorkspaceUsers = await prisma.workspaceUser.findMany({
-            where: {
-                workspaceId: req.body.workspaceId
-            },
-            include: {
-                user: true,
-            }
-        });
-
         if (scope === 'create') {
             const newWorkspace = await prisma.workspace.create({
                 data: {
@@ -131,15 +123,38 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
                     role: PrismaUserRole.OWNER,
                 }
             });
+
+            for (const permissionUser of req.body.workspaceUsers) {
+                if (!Object.values(PrismaUserRole).includes(permissionUser.role)) {
+                    throw new Error('invalid role: ' + permissionUser.role);
+                }
+
+                await prisma.user.findUniqueOrThrow({
+                    where: {id: permissionUser.userId}
+                });
+
+                if (!workspaceId) {
+                    throw new Error('workspaceId is: ' + workspaceId);
+                }
+
+                await prisma.workspaceUser.create({
+                    data: {
+                        workspaceId: workspaceId,
+                        userId: permissionUser.userId,
+                        role: permissionUser.role,
+                    }
+                });
+            }
+
         } else {
             const existingWorkspace = await prisma.workspace.findUniqueOrThrow({
-                where: {id: req.body.workspaceId}
+                where: {id: workspaceId}
             });
 
             if (existingWorkspace.name !== req.body.name || existingWorkspace.description !== req.body.description || existingWorkspace.allowGuests !== req.body.allowGuests) {
                 await prisma.workspace.update({
                     where: {
-                        id: req.body.workspaceId,
+                        id: workspaceId,
                     },
                     data: {
                         name: req.body.name,
@@ -150,6 +165,15 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
             }
 
             const signedInWorkspaceUser = await getWorkspaceUser(signedInUser, existingWorkspace);
+
+            const existingWorkspaceUsers = await prisma.workspaceUser.findMany({
+                where: {
+                    workspaceId: workspaceId
+                },
+                include: {
+                    user: true,
+                }
+            });
 
             for (const existingWorkspaceUser of existingWorkspaceUsers) {
                 const matches = req.body.workspaceUsers.filter(wu => wu.userId === existingWorkspaceUser.user.id);
@@ -205,38 +229,6 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
             }
         }
 
-        for (const permissionUser of req.body.workspaceUsers) {
-            const existing = existingWorkspaceUsers.filter(wu => wu.userId === permissionUser.userId);
-            if (existing.length > 0) {
-                if (scope === 'create') {
-                    throw new Error('user already exists. userid: ' + permissionUser.userId);
-                } else if (scope === 'edit') {
-                    continue;
-                } else {
-                    throw new Error('invalid scope: ' + scope);
-                }
-            }
-
-            if (!Object.values(PrismaUserRole).includes(permissionUser.role)) {
-                throw new Error('invalid role: ' + permissionUser.role);
-            }
-
-            await prisma.user.findUniqueOrThrow({
-                where: {id: permissionUser.userId}
-            });
-
-            if (!workspaceId) {
-                throw new Error('workspaceId is: ' + workspaceId);
-            }
-
-            await prisma.workspaceUser.create({
-                data: {
-                    workspaceId: workspaceId,
-                    userId: permissionUser.userId,
-                    role: permissionUser.role,
-                }
-            });
-        }
 
         const workspace = await prisma.workspace.findUniqueOrThrow({
             where: {
@@ -259,6 +251,83 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
         });
     } catch (ex) {
         console.error('/workspaces/create caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+workspaces.post('/deleteWorkspace', async (req: Request<unknown, unknown, DeleteWorkspaceRequest>, res : TypedResponse<BaseResponseData>, next) => {
+    try {
+        const signedInUser = await getSignedInUser(req.session);
+
+        if (signedInUser === null) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Guest users are not allowed to delete workspaces.',
+            });
+        }
+
+        if (!await checkPermissions({
+            user: signedInUser,
+            workspaceId: req.body.workspaceId,
+            capability: Capability.DeleteWorkspace,
+        })) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'You are not allowed to delete this workspace',
+            });
+        }
+
+
+
+        const resp = await prisma.$transaction(async tx => {
+            const workspace = await tx.workspace.findUniqueOrThrow({
+                where: {
+                    id: req.body.workspaceId
+                },
+                include: {
+                    users: true,
+                    cardSets: true,
+                },
+            });
+
+            if (workspace.cardSets.length > 0) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'Cannot delete workspace with card sets. Please delete all card sets first.',
+                });
+            }
+            // loop over workspace.users
+            for (const workspaceUser of workspace.users) {
+                await tx.workspaceUser.delete({
+                    where: {
+                        workspaceId_userId: {
+                            workspaceId: workspace.id,
+                            userId: workspaceUser.userId,
+                        },
+                    }
+                });
+            }
+
+            await tx.workspace.delete({
+                where: {
+                    id: req.body.workspaceId
+                }
+            });
+
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+            });
+        });
+
+        return resp;
+    } catch (ex) {
+        console.error('/workspaces/get caught ex', ex);
         next(ex);
         return;
     }

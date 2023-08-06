@@ -59,3 +59,11 @@ export class GetWorkspacesResponse extends BaseResponse {
 export const getWorkspaces = async() : Promise<GetWorkspacesResponse> => {
     return await apiClient.post(GetWorkspacesResponse, '/workspaces/get');
 }
+
+export type DeleteWorkspaceRequest = {
+    workspaceId: number;
+}
+
+export const deleteWorkspace = async(params: DeleteWorkspaceRequest) : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/workspaces/deleteWorkspace', params);
+}

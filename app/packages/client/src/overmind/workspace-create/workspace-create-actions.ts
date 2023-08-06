@@ -82,3 +82,44 @@ export const formSubmit = async ({state, effects, actions} : Context, scope: str
 
     effects.page.router.goTo(pageUrls[Pages.Workspace].url(resp.workspace));
 }
+
+export const deleteWorkspace = async ({state} : Context) => {
+    if (state.workspaceCreate.deletingWorkspace) {
+        return;
+    }
+    state.workspaceCreate.deleteWorkspaceError = null;
+    state.workspaceCreate.deleteWorkspaceModalOpen = true;
+}
+
+export const deleteWorkspaceClose = async ({state} : Context) => {
+    state.workspaceCreate.deleteWorkspaceModalOpen = false;
+}
+
+export const deleteWorkspaceConfirm = async ({state,effects,actions} : Context) => {
+    state.workspaceCreate.deletingWorkspace = true;
+    state.workspaceCreate.deleteWorkspaceError = null;
+
+    const workspaceId = state.page.workspaceId;
+
+    if (workspaceId === null) {
+        throw new Error('workspace id is null');
+    }
+
+    const resp = await effects.api.workspaces.deleteWorkspace({workspaceId});
+
+    if (resp.status !== ResponseStatus.Success) {
+        state.workspaceCreate.deleteWorkspaceError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
+        state.workspaceCreate.deletingWorkspace = false;
+        return;
+    }
+
+    state.notifications.notifications.push({
+        message: 'Workspace deleted',
+    });
+
+    actions.data.deleteWorkspace(workspaceId);
+    console.log('deleted workspace from data!', state.data.workspaces);
+    console.log('deleted workspace from data!!', state.page.workspaceId);
+    effects.page.router.goTo(pageUrls[Pages.Front].url());
+
+}

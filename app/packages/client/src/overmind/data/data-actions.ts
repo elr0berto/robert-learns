@@ -1,5 +1,5 @@
 import { Context } from '..';
-import {Card, CardSetCard, User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSet, CardSetCard, User} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export const clean = ({state} : Context) => {
     // loop over cardSets and remove any cardSets that don't have a workspaceId in state.data.workspaces
@@ -29,7 +29,7 @@ export const loadWorkspaces = async ({state,effects} : Context) => {
     state.data.loadingWorkspaces = false;
 }
 
-export const loadCardSets = async ({state,effects} : Context, workspaceId: number) => {
+export const loadCardSets = async ({state,effects,actions} : Context, workspaceId: number) => {
     state.data.loadingCardSets = true;
 
     const resp = await effects.api.cardSets.getCardSets({workspaceId});
@@ -37,7 +37,8 @@ export const loadCardSets = async ({state,effects} : Context, workspaceId: numbe
     if (resp.cardSets === null) {
         throw new Error('resp.cardSets is null');
     }
-    state.data.cardSets = resp.cardSets;
+
+    actions.data.addOrUpdateCardSetsForWorkspaceId({workspaceId, cardSets: resp.cardSets});
 
     state.data.loadingCardSets = false;
 }
@@ -110,7 +111,10 @@ export const loadWorkspaceUsers = async ({state,effects} : Context, workspaceIds
 export const loadUsers = async ({state,effects,actions} : Context, userIds: number[]) => {
     state.data.loadingUsers = true;
 
-    const resp = await effects.api.users.getUsers({userIds});
+    // get unique userIds
+    const uniqueUserIds = userIds.filter((v, i, a) => a.indexOf(v) === i);
+
+    const resp = await effects.api.users.getUsers({userIds: uniqueUserIds});
 
     if (resp.users === null) {
         throw new Error('resp.users is null');
@@ -123,19 +127,18 @@ export const loadUsers = async ({state,effects,actions} : Context, userIds: numb
 }
 
 export const addOrUpdateUser = ({state} : Context, user: User) => {
-    console.log('addOrUpdateUser user: ', user);
     const index = state.data.users.findIndex(u => u.id === user.id);
-    console.log('addOrUpdateUser index: ', index);
     if (index === -1) {
-        console.log('addOrUpdateUser pushing user: ', user);
         state.data.users.push(user);
     } else {
-        console.log('addOrUpdateUser updating user: ', user);
         state.data.users[index] = user;
     }
-    console.log('addOrUpdateUser state.data.users: ', state.data.users);
 }
 
+export const addOrUpdateCardSetsForWorkspaceId = ({state} : Context, params: {cardSets: CardSet[], workspaceId: number}) => {
+    state.data.cardSets = state.data.cardSets.filter(cs => cs.workspaceId !== params.workspaceId);
+    state.data.cardSets.push(...params.cardSets);
+}
 
 export const addOrUpdateCard = ({state} : Context, card: Card) => {
     const index = state.data.cards.findIndex(c => c.id === card.id);
@@ -164,4 +167,9 @@ export const addOrUpdateCardSetCardsForCardSetId = ({state} : Context, {cardSetI
 export const deleteCard = ({state, actions} : Context, params: {cardId: number, cardSetId: number}) => {
     state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== params.cardId && csc.cardSetId !== params.cardSetId);
     actions.data.clean();
+}
+
+export const deleteWorkspace = ({state} : Context, workspaceId: number) => {
+    state.data.workspaceUsers = state.data.workspaceUsers.filter(wu => wu.workspaceId !== workspaceId);
+    state.data.workspaces = state.data.workspaces.filter(w => w.id !== workspaceId);
 }

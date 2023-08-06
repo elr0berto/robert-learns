@@ -5,7 +5,7 @@ import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models/UserRole
 import {config} from "..";
 import {
     canUserChangeUserRole,
-    canUserDeleteWorkspaceUser,
+    canUserDeleteWorkspaceUser, getAllRoles,
     getRolesUserCanChangeUser
 } from "@elr0berto/robert-learns-shared/dist/permissions";
 import {Pages} from "../../page-urls";
@@ -29,6 +29,9 @@ type WorkspaceCreateState = {
     submitAttempted: boolean;
     submissionError: string;
     addUserOpen: boolean;
+    deleteWorkspaceModalOpen: boolean;
+    deletingWorkspace: boolean;
+    deleteWorkspaceError: string | null;
     readonly selectedUsersWithData: SelectedUser[];
     readonly submitDisabled: boolean;
     readonly validationErrors: string[];
@@ -36,6 +39,7 @@ type WorkspaceCreateState = {
     readonly showErrors: boolean;
     readonly allErrors: string[];
     readonly scope: 'create' | 'edit';
+    readonly canDelete: boolean;
 }
 
 
@@ -49,19 +53,23 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
     submitAttempted: false,
     submissionError: '',
     addUserOpen: false,
+    deleteWorkspaceModalOpen: false,
+    deletingWorkspace: false,
+    deleteWorkspaceError: null,
     selectedUsersWithData: derived((state: WorkspaceCreateState, rootState : typeof config.state) => {
-        return state.selectedUsers.map(u => {
+        return state.selectedUsers.filter(u => rootState.data.users.find(u2 => u2.id === u.userId) !== undefined).map(u => {
             const user = rootState.data.users.find(u2 => u2.id === u.userId);
             if (user === undefined) {
                 throw new Error('User not found: ' + u.userId);
             }
+
             return {
                 userId: u.userId,
                 role: u.role,
                 name: user.name(),
-                canRoleBeChanged: canUserChangeUserRole(state.scope === 'create' ? rootState.signIn.user : rootState.page.workspaceUser, u),
-                availableRoles: getRolesUserCanChangeUser(rootState.page.workspaceUser, u),
-                canBeRemoved: canUserDeleteWorkspaceUser(rootState.page.workspaceUser, u),
+                canRoleBeChanged: state.scope === 'create' ? true : canUserChangeUserRole(rootState.page.workspaceUser, u),
+                availableRoles: state.scope === 'create' ? getAllRoles() : getRolesUserCanChangeUser(rootState.page.workspaceUser, u),
+                canBeRemoved: state.scope === 'create' ? true : canUserDeleteWorkspaceUser(rootState.page.workspaceUser, u),
             };
         });
     }),
@@ -91,6 +99,9 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
     }),
     scope: derived((state: WorkspaceCreateState, rootState : typeof config.state) => {
         return rootState.page.page === Pages.WorkspaceCreate ? 'create' : 'edit';
+    }),
+    canDelete: derived((state: WorkspaceCreateState, rootState : typeof config.state) => {
+        return rootState.permission.deleteWorkspace;
     }),
 });
 

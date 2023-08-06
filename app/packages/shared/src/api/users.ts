@@ -74,14 +74,16 @@ export const validateGetUsersRequest = (req: GetUsersRequest) : string[] => {
 }
 
 export const getUsers = async(req: GetUsersRequest) : Promise<GetUsersResponse> => {
+    console.log('getUsers req', req);
     const errors = validateGetUsersRequest(req);
     if (errors.length > 0) {
         return new GetUsersResponse({
             dataType: true,
-            userDatas: [],
+            userDatas: null,
             errorMessage: errors.join('.'),
             status: ResponseStatus.UserError,
         });
     }
+    console.log('getUsers req', req);
     return await apiClient.post(GetUsersResponse, '/users/getUsers', req);
 }

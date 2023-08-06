@@ -1,5 +1,6 @@
 import {Context} from "..";
 import {getInitialAddCardsFromOtherCardSetsModalState} from "./add-cards-from-other-card-sets-modal-state";
+import {pageUrls, Pages} from "../../page-urls";
 
 export const open = async ({ state, effects, actions }: Context, cardSetId: number) => {
     state.addCardsFromOtherCardSetsModal = getInitialAddCardsFromOtherCardSetsModalState();
@@ -48,5 +49,12 @@ export const save = async ({ state, effects, actions }: Context,) => {
     await effects.api.cardSetCards.createCardSetCards({cardSetId, cardIds});
 
     state.addCardsFromOtherCardSetsModal.open = false;
-    await actions.page.load();
+
+    if (state.page.workspace === null) {
+        throw new Error('Workspace is null');
+    }
+    if (state.page.cardSet === null) {
+        throw new Error('Card Set is null');
+    }
+    effects.page.router.goTo(pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace, state.page.cardSet));
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import {useActions, useAppState} from "../overmind";
-import {Col, Container, Row, Spinner} from "react-bootstrap";
+import {Col, Container, Row, Spinner, Toast, ToastContainer} from "react-bootstrap";
 import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import MainContent from "./MainContent";
 import ErrorBoundary from "./error/ErrorBoundary";
@@ -9,7 +9,7 @@ import CreateCardModal from "./cards/CreateCardModal";
 
 function AppInner() {
     const state = useAppState();
-
+    const actions = useActions();
     console.log('state.signIn.status', state.signIn.status);
     console.log('state.signIn.user', state.signIn.user);
 
@@ -28,6 +28,16 @@ function AppInner() {
         <TopMenu/>
         <MainContent/>
         <CreateCardModal/>
+        <ToastContainer position={'top-center'}>
+            {state.notifications.notificationsWithId.map(notification =>
+            <Toast key={notification.id} onClose={() => actions.notifications.closeNotification(notification.id)}>
+                <Toast.Header>
+                    <strong className="mr-auto">Notification</strong>
+                </Toast.Header>
+                <Toast.Body>{notification.notification.message}</Toast.Body>
+            </Toast>
+            )}
+        </ToastContainer>
     </>;
 }
 

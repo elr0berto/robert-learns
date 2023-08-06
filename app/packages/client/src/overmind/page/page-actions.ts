@@ -23,7 +23,9 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
 
     promises.push(actions.page.loadWorkspaces());
 
-    if (params?.payload?.params?.workspaceId || state.page.workspaceId !== null) {
+    console.log('load 1');
+    if (params?.payload?.params?.workspaceId/* || state.page.workspaceId !== null Removed because otherwise deleting workspace doesnt work.*/) {
+        console.log('load 2');
         if (params?.payload?.params?.workspaceId) {
             state.page.workspaceId = +params?.payload.params.workspaceId;
         }
@@ -32,7 +34,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         }
         promises.push(actions.page.loadCardSets(state.page.workspaceId));
 
-        if (params?.payload?.params?.cardSetId || state.page.cardSetId !== null) {
+        if (params?.payload?.params?.cardSetId/* || state.page.cardSetId !== null: COMMENTED OUT BECAUSE OTHERWISE it gets weird when changing from a cardset-page to the workspace-page. menu thinks cardset is still selected!*/) {
             if (params?.payload?.params?.cardSetId) {
                 state.page.cardSetId = +params?.payload.params.cardSetId;
             }
@@ -44,6 +46,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
             state.page.cardSetId = null;
         }
     } else {
+        console.log('load 3');
         state.page.workspaceId = null;
         state.page.cardSetId = null;
     }

@@ -3,6 +3,7 @@ import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import AddUserModal from "./AddUserModal";
 import {Pages} from "../../page-urls";
+import DeleteWorkspaceModal from "./DeleteWorkspaceModal";
 
 function WorkspaceCreate() {
     const state = useAppState();
@@ -18,18 +19,18 @@ function WorkspaceCreate() {
         throw new Error('User is not signed in');
     }
 
-    if (scope === 'edit' && state.page.workspace === null) {
+    if (scope === 'edit') {
         if (state.page.loadingWorkspaces) {
             return <Container>Loading...</Container>;
-        } else {
+        }
+        if (state.page.workspace === null) {
             return <Container>Workspace not found.</Container>
         }
     }
 
     if (scope === 'edit' && !state.permission.editWorkspace) {
-        return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this workspace</Alert></Container>;
+        return <Container className="my-5"><Alert variant="danger">You are not allowed to edit this workspace {state.signIn.user === null ? 'null' : 'not null'}</Alert></Container>;
     }
-
 
     return <Container>
         <h1 className="my-5">{scope === 'edit' && state.page.workspace !== null ? 'Edit workspace ' + state.page.workspace.name : 'Create a workspace'}</h1>
@@ -89,12 +90,14 @@ function WorkspaceCreate() {
             <hr/>
             {state.workspaceCreate.showErrors ? <Alert variant="danger">{state.workspaceCreate.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit(scope)}>{scope === 'create' ? 'Create Workspace!' : 'Save workspace!'}</Button>
+            {scope === 'edit' && state.workspaceCreate.canDelete ? <Button variant="outline-danger" className="ms-2" onClick={() => actions.workspaceCreate.deleteWorkspace()}>{'Delete workspace'}</Button> : null}
         </Form>
         <AddUserModal
             onAdd={user => actions.workspaceCreate.addUser(user)}
             open={state.workspaceCreate.addUserOpen}
             onClose={() => actions.workspaceCreate.addUserModalClose()}
         />
+        <DeleteWorkspaceModal/>
     </Container>;
 }
 

@@ -20,7 +20,7 @@ export const router = {
     },
     redirect(url: string) {
         page.redirect(url);
-    }
+    },
 };
 
 export const reloadPage = () => {

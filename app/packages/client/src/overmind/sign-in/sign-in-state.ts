@@ -44,7 +44,6 @@ export const getInitialSignInState = (userId: number | null): SignInState => ({
         }
         const ret = rootState.data.users.find(u => u.id === state.userId);
         if (ret === undefined) {
-            console.log('getInitialSignInState.user rootState.data.users:', rootState.data.users);
             throw new Error('User not found, id: ' + state.userId + ' ' + typeof state.userId);
         }
         return ret;

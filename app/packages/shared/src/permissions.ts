@@ -69,6 +69,10 @@ export const canUserRemoveUser = (user1: {user_id: number, role: UserRole} | nul
     }
 }
 
+export const getAllRoles = () => {
+    return Object.values(UserRole);
+}
+
 export const getRolesUserCanChangeUser = (user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) : UserRole[] => {
     if (user1 === null) {
         return [user2.role];
@@ -80,7 +84,7 @@ export const getRolesUserCanChangeUser = (user1: {userId: number, role: UserRole
 
     switch(user1.role) {
         case UserRole.OWNER:
-            return Object.values(UserRole);
+            return getAllRoles();
         case UserRole.ADMINISTRATOR:
             return user2.role === UserRole.OWNER ? [user2.role] : Object.values(UserRole).filter(role => role !== UserRole.OWNER);
         default:

@@ -1,4 +1,13 @@
-creating workspace bug - cannot change added user permissions
+should be able to delete card-sets
+workspace users when editing workspace should be ordered by permissions and then self first
+make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
+make workspace page show list of card sets
+validation
+study-drill-session
+save stats for right/wrong answers
+style card lists / cards -- maybe use CardGroup
+
+test everything
 test creating workspaces
 test editing workspace users
 test different permissions are working
@@ -6,9 +15,5 @@ test creating cardsets
 test creating cards
 test adding cards to other cardsets
 test adding cards from other cardsets
-make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
-validation
-study-drill-session
-save stats for right/wrong answers
-style card lists / cards -- maybe use CardGroup
-only show workspace-users to users that can edit the workspace
+
+
