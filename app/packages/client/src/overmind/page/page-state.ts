@@ -90,9 +90,9 @@ export const state: PageState = {
         return state.cardSetWithCards?.cards ?? [];
     }),
     cardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
-        if (state.workspaceId === null) {
+        if (state.cardSetId === null) {
             return [];
         }
-        return rootState.data.cardsWithCardSets.filter(c => c.cardSets.some(cs => cs.workspaceId === state.workspaceId));
+        return rootState.data.cardsWithCardSets.filter(c => c.cardSets.some(cs => cs.id === state.cardSetId));
     }),
 };

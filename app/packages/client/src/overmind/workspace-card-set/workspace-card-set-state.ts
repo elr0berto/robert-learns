@@ -4,6 +4,9 @@ import {CardSet } from "@elr0berto/robert-learns-shared/dist/api/models";
 import {CardWithCardSets} from "../data/data-state";
 
 type WorkspaceCardSetState = {
+    deleteCardSetModalOpen: boolean;
+    deletingCardSet: boolean;
+    deleteCardSetError: string | null;
     loadingDeleteCardModal: boolean;
     cardIdBeingDeleted: number | null;
     readonly cardWithCardSetsBeingDeleted: CardWithCardSets | null;
@@ -13,6 +16,9 @@ type WorkspaceCardSetState = {
 }
 
 export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
+    deleteCardSetModalOpen: false,
+    deletingCardSet: false,
+    deleteCardSetError: null,
     loadingDeleteCardModal: false,
     cardIdBeingDeleted: null,
     cardWithCardSetsBeingDeleted: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {

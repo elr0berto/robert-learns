@@ -1,5 +1,47 @@
 import {Context} from "..";
-import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Pages, pageUrls} from "../../page-urls";
+
+export const deleteCardSet = async ({state} : Context) => {
+    if (state.workspaceCardSet.deletingCardSet) {
+        return;
+    }
+    state.workspaceCardSet.deleteCardSetError = null;
+    state.workspaceCardSet.deleteCardSetModalOpen = true;
+}
+
+export const deleteCardSetClose = async ({state} : Context) => {
+    state.workspaceCardSet.deleteCardSetModalOpen = false;
+}
+
+export const deleteCardSetConfirm = async ({state,effects,actions} : Context) => {
+    state.workspaceCardSet.deletingCardSet = true;
+    state.workspaceCardSet.deleteCardSetError = null;
+
+    const cardSetId = state.page.cardSetId;
+
+    if (cardSetId === null) {
+        throw new Error('cardSet id is null');
+    }
+
+    const resp = await effects.api.cardSets.deleteCardSet({cardSetId});
+
+    if (resp.status !== ResponseStatus.Success) {
+        state.workspaceCardSet.deleteCardSetError = resp.errorMessage ?? "Unexpected error. please refresh the page and try again later.";
+        state.workspaceCardSet.deletingCardSet = false;
+        return;
+    }
+
+    state.notifications.notifications.push({
+        message: 'Card set deleted',
+    });
+
+    actions.data.deleteCardSet(cardSetId);
+    if (state.page.workspace === null) {
+        throw new Error('Workspace is null');
+    }
+    effects.page.router.goTo(pageUrls[Pages.Workspace].url(state.page.workspace));
+}
 
 export const deleteCardStart = async ({ state, effects, actions }: Context, card: Card) => {
     state.workspaceCardSet.loadingDeleteCardModal = true;

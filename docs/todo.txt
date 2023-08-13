@@ -1,4 +1,5 @@
-should be able to delete card-sets
+bug: editing cards has stopped working again...
+log server side errors instead of just returning "unexpected error"-json
 workspace users when editing workspace should be ordered by permissions and then self first
 make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
 make workspace page show list of card sets

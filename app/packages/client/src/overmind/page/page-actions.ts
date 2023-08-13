@@ -6,6 +6,7 @@ import {getInitialSignInState} from "../sign-in/sign-in-state";
 import {getInitialWorkspaceCreateState} from "../workspace-create/workspace-create-state";
 import {getInitialWorkspaceCardSetCreateState} from "../workspace-card-set-create/workspace-card-set-create-state";
 import {getInitialAdminLogsPageState} from "../admin-logs-page/admin-logs-page-state";
+import {getInitialWorkspaceCardSetState} from "../workspace-card-set/workspace-card-set-state";
 
 export type Payload = {
     params: any,
@@ -127,8 +128,9 @@ export const showWorkspaceEditPage = async ({ state, actions }: Context, payload
     state.workspaceCreate = getInitialWorkspaceCreateState(state.page.workspaceWithWorkspaceUsers);
 }
 
-export const showWorkspaceCardSetPage = async ({ actions }: Context, payload: Payload) => {
+export const showWorkspaceCardSetPage = async ({ state, actions }: Context, payload: Payload) => {
     actions.page.load({page: Pages.WorkspaceCardSet, payload: payload});
+    state.workspaceCardSet = getInitialWorkspaceCardSetState();
 }
 
 export const showWorkspaceCardSetCreatePage = async ({ state, actions }: Context, payload: Payload) => {

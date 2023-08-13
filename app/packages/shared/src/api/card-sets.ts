@@ -60,3 +60,11 @@ export const validateCreateCardSetRequest = (req: CreateCardSetRequest) : string
 export const createCardSet = async(req: CreateCardSetRequest) : Promise<CreateCardSetResponse> => {
     return await apiClient.post(CreateCardSetResponse, '/card-sets/create', req);
 }
+
+export type DeleteCardSetRequest = {
+    cardSetId: number;
+}
+
+export const deleteCardSet = async(params: DeleteCardSetRequest) : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/card-sets/delete-card-set', params);
+}

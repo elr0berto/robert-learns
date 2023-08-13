@@ -1,16 +1,17 @@
 import {Request, Router} from 'express';
 import {getCardSetData, getSignedInUser, TypedResponse} from "../common.js";
 import prisma from "../db/prisma.js";
-import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     CreateCardSetRequest,
-    CreateCardSetResponseData,
+    CreateCardSetResponseData, DeleteCardSetRequest,
     GetCardSetsRequest,
     GetCardSetsResponseData,
     validateCreateCardSetRequest
 } from '@elr0berto/robert-learns-shared/api/card-sets';
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
+import workspaces from "./workspaces.js";
 
 
 const cardSets = Router();
@@ -176,5 +177,71 @@ cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequ
         return;
     }
 });
+
+
+cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCardSetRequest>, res : TypedResponse<BaseResponseData>, next) => {
+    try {
+        const signedInUser = await getSignedInUser(req.session);
+
+        if (signedInUser === null) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Guest users are not allowed to delete workspaces.',
+            });
+        }
+
+        if (!await checkPermissions({
+            user: signedInUser,
+            cardSetId: req.body.cardSetId,
+            capability: Capability.DeleteCardSet,
+        })) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'You are not allowed to delete this card set',
+            });
+        }
+
+        const resp = await prisma.$transaction(async tx => {
+            const cardSet = await tx.cardSet.findUniqueOrThrow({
+                where: {
+                    id: req.body.cardSetId
+                },
+                include: {
+                    workspace: true,
+                    cards: true,
+                },
+            });
+
+            if (cardSet.cards.length > 0) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'Cannot delete card set with cards. Please delete or move all cards from the card set first.',
+                });
+            }
+
+            await tx.cardSet.delete({
+                where: {
+                    id: req.body.cardSetId
+                }
+            });
+
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+            });
+        });
+
+        return resp;
+    } catch (ex) {
+        console.error('/card-set/delete-card-set caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
 
 export default cardSets;

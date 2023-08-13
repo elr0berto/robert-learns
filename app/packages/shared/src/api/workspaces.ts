@@ -65,5 +65,5 @@ export type DeleteWorkspaceRequest = {
 }
 
 export const deleteWorkspace = async(params: DeleteWorkspaceRequest) : Promise<BaseResponse> => {
-    return await apiClient.post(BaseResponse, '/workspaces/deleteWorkspace', params);
+    return await apiClient.post(BaseResponse, '/workspaces/delete-workspace', params);
 }

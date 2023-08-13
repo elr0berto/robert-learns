@@ -32,7 +32,7 @@ workspaces.post('/get', async (req, res : TypedResponse<GetWorkspacesResponseDat
                     {
                         users: {
                             some: {
-                                userId: user?.id
+                                userId: user?.id ?? -1 // if user is not signed in we look for non-existing user-id = -1 ... hacky but works.. looking for null|undefined returns all workspaces...
                             }
                         }
                     }
@@ -256,7 +256,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
     }
 });
 
-workspaces.post('/deleteWorkspace', async (req: Request<unknown, unknown, DeleteWorkspaceRequest>, res : TypedResponse<BaseResponseData>, next) => {
+workspaces.post('/delete-workspace', async (req: Request<unknown, unknown, DeleteWorkspaceRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
         const signedInUser = await getSignedInUser(req.session);
 
@@ -279,8 +279,6 @@ workspaces.post('/deleteWorkspace', async (req: Request<unknown, unknown, Delete
                 errorMessage: 'You are not allowed to delete this workspace',
             });
         }
-
-
 
         const resp = await prisma.$transaction(async tx => {
             const workspace = await tx.workspace.findUniqueOrThrow({
@@ -327,7 +325,7 @@ workspaces.post('/deleteWorkspace', async (req: Request<unknown, unknown, Delete
 
         return resp;
     } catch (ex) {
-        console.error('/workspaces/get caught ex', ex);
+        console.error('/workspaces/delete-workspace caught ex', ex);
         next(ex);
         return;
     }

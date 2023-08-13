@@ -1,7 +1,6 @@
-import {Alert, Button, Form, Modal} from "react-bootstrap";
+import {Alert, Button, Modal} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
-import {deleteWorkspaceClose} from "../../overmind/workspace-create/workspace-create-actions";
 
 
 function DeleteWorkspaceModal() {

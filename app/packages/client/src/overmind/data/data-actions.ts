@@ -165,11 +165,21 @@ export const addOrUpdateCardSetCardsForCardSetId = ({state} : Context, {cardSetI
 }
 
 export const deleteCard = ({state, actions} : Context, params: {cardId: number, cardSetId: number}) => {
-    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== params.cardId && csc.cardSetId !== params.cardSetId);
+    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== params.cardId || csc.cardSetId !== params.cardSetId);
     actions.data.clean();
 }
 
 export const deleteWorkspace = ({state} : Context, workspaceId: number) => {
     state.data.workspaceUsers = state.data.workspaceUsers.filter(wu => wu.workspaceId !== workspaceId);
     state.data.workspaces = state.data.workspaces.filter(w => w.id !== workspaceId);
+}
+
+export const deleteCardSet = ({state} : Context, cardSetId: number) => {
+    state.data.cardSets = state.data.cardSets.filter(cs => cs.id !== cardSetId);
+    // don't need to delete cardSetCards because card sets can only be deleted if it has no card-set-cards.
+    // check if there's any card-set-cards that refer to the card set id
+    const cardSetCards = state.data.cardSetCards.filter(csc => csc.cardSetId === cardSetId);
+    if (cardSetCards.length > 0) {
+        throw new Error('cardSetCards.length > 0 when deleting card set id: ' + cardSetId);
+    }
 }
