@@ -1,5 +1,7 @@
-import React, { useEffect, useCallback } from 'react';
-import { useQuill } from 'react-quilljs';
+import React, { useCallback, useRef, useState } from 'react';
+import ReactQuill from "react-quill";
+
+import "react-quill/dist/quill.snow.css";
 
 type Props = {
     initialValue: string;
@@ -7,49 +9,89 @@ type Props = {
     uploadCallback: (file: File) => Promise<string>;
 }
 
-function Editor({ initialValue, onChange, uploadCallback }: Props) {
-    const { quill, quillRef } = useQuill();
+function Editor(props: Props) {
+    console.log('Editor props', props);
+    const [value, setValue] = useState<string>(props.initialValue ?? '');
+    const reactQuillRef = useRef<ReactQuill>(null);
 
-    const insertToEditor = useCallback((url: string) => {
-        if (!quill) {
-            throw new Error('quill is undefined or null');
-        }
-        const range = quill.getSelection();
-        if (range === null) {
-            throw new Error('range is null');
-        }
-        quill.insertEmbed(range.index, 'image', url);
-    }, [quill]);
+    const onChange = (content: string) => {
+        console.log('onChange content:', content);
+        setValue(content);
 
-    const selectLocalImage = useCallback(() => {
-        const input = document.createElement('input');
-        input.setAttribute('type', 'file');
-        input.setAttribute('accept', 'image/*');
+        if (props.onChange) {
+            props.onChange(content);
+        }
+    };
+
+    const imageHandler = useCallback(() => {
+        const input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.setAttribute("accept", "image/*");
         input.click();
-
         input.onchange = async () => {
-            if (!input.files) {
-                throw new Error('input.files is null or undefined');
+            if (input !== null && input.files !== null) {
+                const file = input.files[0];
+                const url = await props.uploadCallback(file);
+                const quill = reactQuillRef.current;
+                if (quill) {
+                    const range = quill.getEditorSelection();
+                    range && quill.getEditor().insertEmbed(range.index, "image", url);
+                }
             }
-            const file = input.files[0];
-            const url = await uploadCallback(file);
-            insertToEditor(url);
         };
-    }, [uploadCallback, insertToEditor]);
-
-    useEffect(() => {
-        if (quill) {
-            quill.clipboard.dangerouslyPasteHTML(initialValue);
-            quill.on('text-change', (delta, oldDelta, source) => {
-                onChange(quill.root.innerHTML);
-            });
-            quill.getModule('toolbar').addHandler('image', selectLocalImage);
-        }
-    }, [quill, initialValue, onChange, selectLocalImage]);
+    }, []);
 
     return (
-        <div ref={quillRef} />
+        <ReactQuill
+            ref={reactQuillRef}
+            theme="snow"
+            placeholder="Start writing..."
+            modules={{
+                toolbar: {
+                    container: [
+                        [{ header: "1" }, { header: "2" }, { font: [] }],
+                        [{ size: [] }],
+                        ["bold", "italic", "underline", "strike", "blockquote"],
+                        [
+                            { list: "ordered" },
+                            { list: "bullet" },
+                            { indent: "-1" },
+                            { indent: "+1" },
+                        ],
+                        ["link", "image", "video"],
+                        ["code-block"],
+                        ["clean"],
+                    ],
+                    handlers: {
+                        image: imageHandler,
+                    },
+                },
+                clipboard: {
+                    matchVisual: false,
+                },
+            }}
+            formats={[
+                "header",
+                "font",
+                "size",
+                "bold",
+                "italic",
+                "underline",
+                "strike",
+                "blockquote",
+                "list",
+                "bullet",
+                "indent",
+                "link",
+                "image",
+                "video",
+                "code-block",
+            ]}
+            value={value}
+            onChange={onChange}
+        />
     );
 }
+
 
 export default Editor;

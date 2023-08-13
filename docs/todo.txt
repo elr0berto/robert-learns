@@ -1,4 +1,7 @@
-bug: editing cards has stopped working again...
+change quill to use ref when saving instead of setting overmind state constantly.
+remove one of the quill packages
+bug: back button broken when clicking back from editing a card.
+make it less confusing with the two edit-buttons inside each card on cardsetpage somehow.
 log server side errors instead of just returning "unexpected error"-json
 workspace users when editing workspace should be ordered by permissions and then self first
 make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
