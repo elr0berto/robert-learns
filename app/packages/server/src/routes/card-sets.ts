@@ -12,6 +12,7 @@ import {
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 import workspaces from "./workspaces.js";
+import {logWithRequest} from "../logger.js";
 
 
 const cardSets = Router();
@@ -27,6 +28,7 @@ cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>
         });
 
         if (!hasRights) {
+            logWithRequest('error', req, 'User does not have rights to view workspace');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -64,6 +66,7 @@ cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequ
         const errors = validateCreateCardSetRequest(req.body);
 
         if (errors.length !== 0) {
+            logWithRequest('error', req, 'Invalid create card set request', {errors: errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -75,6 +78,7 @@ cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequ
         const hasRights = await checkPermissions({user: user, workspaceId: req.body.workspaceId, capability: Capability.CreateCardSet});
 
         if (!hasRights) {
+            logWithRequest('error', req, 'User does not have rights to create card set', {user, workspaceId: req.body.workspaceId, capability: Capability.CreateCardSet});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -119,6 +123,7 @@ cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequ
             });
 
             if (existingCardSet.workspaceId !== req.body.workspaceId) {
+                logWithRequest('error', req, 'existingCardSet.workspaceId !== req.body.workspaceId', {user, existingCardSetWorkspaceId: existingCardSet.workspaceId, reqBodyWorkspaceId: req.body.workspaceId});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -184,6 +189,7 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
         const signedInUser = await getSignedInUser(req.session);
 
         if (signedInUser === null) {
+            logWithRequest('error', req, 'Guest users are not allowed to delete workspaces');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -196,6 +202,7 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
             cardSetId: req.body.cardSetId,
             capability: Capability.DeleteCardSet,
         })) {
+            logWithRequest('error', req, 'User does not have rights to delete card set', {user: signedInUser, cardSetId: req.body.cardSetId, capability: Capability.DeleteCardSet});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,

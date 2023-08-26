@@ -18,13 +18,13 @@ import {
     Capability
 } from "@elr0berto/robert-learns-shared/permissions";
 import {checkPermissions} from "../permissions.js";
+import logger, {logWithRequest} from "../logger.js";
 
 const workspaces = Router();
 
 workspaces.post('/get', async (req, res : TypedResponse<GetWorkspacesResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
-
         const workspaces = await prisma.workspace.findMany({
             where: {
                 OR: [
@@ -58,6 +58,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
         const signedInUser = await getSignedInUser(req.session);
 
         if (signedInUser === null) {
+            logWithRequest('error', req, 'Guest users are not allowed to create or edit workspaces. please sign in first!');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -73,6 +74,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
             workspaceId: req.body.workspaceId,
             capability: scope === 'edit' ? Capability.EditWorkspace : Capability.CreateWorkspace
         })) {
+            logWithRequest('error', req, 'You are not allowed to create or edit workspaces.');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -84,6 +86,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
         const errors = validateCreateWorkspaceRequest(req.body);
 
         if (errors.length !== 0) {
+            logWithRequest('error', req, 'Create workspace request validation failed', {errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -94,6 +97,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
 
         const userIds = req.body.workspaceUsers.map(u => u.userId);
         if (arrayUnique(userIds).length !== userIds.length) {
+            logWithRequest('error', req, 'userIds are not unique: ' + userIds.join(', '));
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -188,6 +192,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
 
                     if (existingWorkspaceUser.role !== newWorkspaceUser.role) {
                         if (!canUserChangeUserRoleRole(signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser.role)) {
+                            logWithRequest('error', req, 'Access denied, canUserChangeUserRoleRole', {signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser});
                             return res.json({
                                 dataType: true,
                                 status: ResponseStatus.UnexpectedError,
@@ -210,6 +215,7 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
                 } else if (matches.length === 0) {
                     // delete existing
                     if (!canUserDeleteWorkspaceUser(signedInWorkspaceUser, existingWorkspaceUser)) {
+                        logWithRequest('error', req, 'Access denied, canUserDeleteWorkspaceUser', {signedInWorkspaceUser, existingWorkspaceUser});
                         return res.json({
                             dataType: true,
                             status: ResponseStatus.UnexpectedError,
@@ -261,6 +267,7 @@ workspaces.post('/delete-workspace', async (req: Request<unknown, unknown, Delet
         const signedInUser = await getSignedInUser(req.session);
 
         if (signedInUser === null) {
+            logWithRequest('error', req, 'Guest users are not allowed to delete workspaces.');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -273,6 +280,7 @@ workspaces.post('/delete-workspace', async (req: Request<unknown, unknown, Delet
             workspaceId: req.body.workspaceId,
             capability: Capability.DeleteWorkspace,
         })) {
+            logWithRequest('error', req, 'You are not allowed to delete this workspace');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,

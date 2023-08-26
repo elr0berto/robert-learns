@@ -10,6 +10,7 @@ import {
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 import prisma from "../db/prisma.js";
+import {logWithRequest} from "../logger.js";
 
 const workspaceUsers = Router();
 
@@ -37,6 +38,7 @@ workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown
                 workspaceId: workspaceIds[i],
                 capability: Capability.ViewWorkspace
             })) {
+                logWithRequest('error', req, 'User is not allowed to view workspace id: ' + workspaceIds[i]);
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,

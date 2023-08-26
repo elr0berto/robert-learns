@@ -72,6 +72,7 @@ export const getLogEntryData = (logEntry: PrismaLogs) : LogEntryData => {
         message: logEntry.message,
         timestamp: format(logEntry.timestamp, 'yyyy-MM-dd HH:mm:ss'),
         level: logEntry.level,
+        meta: logEntry.meta ? JSON.stringify(logEntry.meta) : null,
         dataType: true,
     };
 }

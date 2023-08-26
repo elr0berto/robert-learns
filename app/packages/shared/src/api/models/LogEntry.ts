@@ -5,6 +5,7 @@ export type LogEntryData = DataType & {
     timestamp: string;
     level: string;
     message: string;
+    meta: string | null;
 }
 
 export class LogEntry {
@@ -12,10 +13,13 @@ export class LogEntry {
     timestamp: string;
     level: string;
     message: string;
+        meta: string | null;
+
     constructor(data: LogEntryData) {
         this.id = data.id;
         this.timestamp = data.timestamp;
         this.level = data.level;
         this.message = data.message;
+        this.meta = data.meta;
     }
 }

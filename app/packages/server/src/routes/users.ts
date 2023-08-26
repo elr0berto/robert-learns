@@ -10,12 +10,14 @@ import {
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
+import {logWithRequest} from "../logger.js";
 const users = Router();
 
 users.post('/getByEmail', async (req : Request<unknown,unknown,UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>, next) => {
     try {
         const signedInUser = await getSignedInUser(req.session);
         if (signedInUser === null) {
+            logWithRequest('error', req, 'User is not signed in');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -27,6 +29,7 @@ users.post('/getByEmail', async (req : Request<unknown,unknown,UserGetByEmailReq
         const errors = validateUserGetByEmailRequest(req.body);
 
         if (errors.length > 0) {
+            logWithRequest('error', req, 'Invalid email: ' + errors.join(', '));
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UserError,
@@ -94,6 +97,7 @@ users.post('/getUsers', async (req : Request<unknown,unknown,GetUsersRequest>, r
                 }
             }
             if (!canViewAnyWorkspace) {
+                logWithRequest('error', req, 'User does not have rights to view any of the workspaces for user id: ' + user.id);
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,

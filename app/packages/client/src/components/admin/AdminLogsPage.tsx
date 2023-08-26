@@ -1,6 +1,7 @@
 import {useActions, useAppState} from "../../overmind";
 import {Button, Container, Table} from "react-bootstrap";
 import React from "react";
+import ReactJson from 'react-json-view'
 
 function AdminLogsPage() {
     const state = useAppState();
@@ -18,6 +19,7 @@ function AdminLogsPage() {
                 <th>Timestamp</th>
                 <th>Level</th>
                 <th>Message</th>
+                <th>Meta</th>
             </tr>
             </thead>
             <tbody>
@@ -27,6 +29,7 @@ function AdminLogsPage() {
                     <td>{entry.timestamp}</td>
                     <td>{entry.level}</td>
                     <td>{entry.message}</td>
+                    <td>{entry.meta ? <ReactJson name={false} src={JSON.parse(entry.meta)}/> : null}</td>
                 </tr>
             ))}
             </tbody>

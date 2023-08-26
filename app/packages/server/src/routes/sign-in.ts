@@ -9,6 +9,7 @@ import {
     SignInRequest, SignInResponseData,
     validateSignInRequest
 } from '@elr0berto/robert-learns-shared/api/sign-in';
+import {logWithRequest} from "../logger.js";
 
 
 const signIn = Router();
@@ -34,6 +35,7 @@ signIn.post('/', async (req: Request<unknown, unknown, SignInRequest>, res : Typ
         const errors = validateSignInRequest(req.body);
 
         if (errors.length !== 0) {
+            logWithRequest('error', req, 'Sign in request validation failed', {errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,

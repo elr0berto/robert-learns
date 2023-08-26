@@ -4,6 +4,7 @@ import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
 import {SignUpRequest, SignUpResponseData, validateSignUpRequest} from '@elr0berto/robert-learns-shared/api/sign-up';
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
+import {logWithRequest} from "../logger.js";
 const signUp = Router();
 
 signUp.post('/', async (req: Request<unknown, unknown, SignUpRequest>, res : TypedResponse<SignUpResponseData>, next) => {
@@ -11,6 +12,7 @@ signUp.post('/', async (req: Request<unknown, unknown, SignUpRequest>, res : Typ
         const signedInUser = await getSignedInUser(req.session);
 
         if (signedInUser !== null) {
+            logWithRequest('error', req, 'User is already signed in');
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,

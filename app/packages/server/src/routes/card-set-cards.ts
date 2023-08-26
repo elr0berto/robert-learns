@@ -14,6 +14,7 @@ import {
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 import { CardSetCard as PrismaCardSetCard } from '@prisma/client';
+import logger, {logWithRequest} from "../logger.js";
 
 
 const cardSetCards = Router();
@@ -24,6 +25,7 @@ cardSetCards.post('/get', async (req : Request<unknown, unknown, GetCardSetCards
 
         const errors = validateGetCardSetCardsRequest(req.body);
         if (errors.length > 0) {
+            logWithRequest('error', req, 'validateGetCardSetCardsRequest failed', {errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -56,6 +58,7 @@ cardSetCards.post('/get', async (req : Request<unknown, unknown, GetCardSetCards
         // loop over uniqueCardSetIds and check permissions
         for (const cardSetId of uniqueCardSetIds) {
             if (!await checkPermissions({user, cardSetId, capability: Capability.ViewCardSet})) {
+                logWithRequest('error', req, 'checkPermissions failed', {user, cardSetId, capability: Capability.ViewCardSet});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -84,6 +87,7 @@ cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSe
 
         const errors = validateCreateCardSetCardsRequest(req.body);
         if (errors.length > 0) {
+            logWithRequest('error', req, 'validateCreateCardSetCardsRequest failed', {errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -95,6 +99,7 @@ cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSe
 
         //if (!await canUserCreateCardsForCardSetId(user, cardSetId)) {
         if (!await checkPermissions({user, cardSetId, capability: Capability.CreateCard})) {
+            logWithRequest('error', req, 'checkPermissions failed', {user, cardSetId, capability: Capability.CreateCard});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -122,6 +127,7 @@ cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSe
 
         // check if cards found are the same as the ones requested
         if (cards.length !== cardIds.length) {
+            logWithRequest('error', req, 'cards.length !== cardIds.length', {cards, cardIds})
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -149,6 +155,7 @@ cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSe
 
             if (card.cardSetCards.length > 0) {
                 if (cardSetWorkspaceId !== card.cardSetCards[0].cardSet.workspaceId) {
+                    logWithRequest('error', req, 'cardSetWorkspaceId !== card.cardSetCards[0].cardSet.workspaceId', {cardSetWorkspaceId, cardSet: card.cardSetCards[0].cardSet});
                     return res.json({
                         dataType: true,
                         status: ResponseStatus.UnexpectedError,
@@ -169,6 +176,7 @@ cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSe
         });
 
         if (existingCardSetCards.length > 0) {
+            logWithRequest('error', req, 'existingCardSetCards.length > 0', {existingCardSetCards});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -204,6 +212,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, 
 
         const errors = validateUpdateCardCardSetsRequest(req.body);
         if (errors.length > 0) {
+            logWithRequest('error', req, 'validateUpdateCardCardSetsRequest failed', {errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -229,6 +238,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, 
         });
 
         if (!card) {
+            logWithRequest('error', req, '!card', {cardId});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -240,6 +250,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, 
 
         //if (!await canUserEditCard(user, card)) {
         if (!await checkPermissions({user, card, capability: Capability.EditCard})) {
+            logWithRequest('error', req, 'checkPermissions failed', {user, card, capability: Capability.EditCard});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -262,6 +273,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, 
 
         // check if card sets found are the same as the ones requested
         if (cardSets.length !== cardSetIds.length) {
+            logWithRequest('error', req, 'cardSets.length !== cardSetIds.length', {cardSets, cardSetIds})
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,

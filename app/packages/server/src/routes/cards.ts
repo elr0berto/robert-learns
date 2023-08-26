@@ -1,5 +1,4 @@
 import {Request, Router} from 'express';
-import { Express } from 'express-serve-static-core';
 import {
     awaitExec,
     deleteCardSetCard,
@@ -22,6 +21,7 @@ import {
 } from '@elr0berto/robert-learns-shared/api/cards';
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
+import {logWithRequest} from "../logger.js";
 
 const cards = Router();
 
@@ -33,6 +33,7 @@ cards.post('/get', async (req : Request<unknown, unknown, GetCardsRequest>, res 
             const cardId = req.body.cardIds[key];
 
             if (!await checkPermissions({user, cardId, capability: Capability.ViewCardSet})) {
+                logWithRequest('error', req, 'User does not have rights to view card id: ' + cardId, {user, cardId});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -82,6 +83,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
         const audioUpdateStatus = req.body.audioUpdateStatus;
         // check that audioUpdateStatus is a string with one of the following values: 'new-card' | 'new-audio' | 'delete-audio' | 'no-change';
         if (typeof audioUpdateStatus !== 'string' || !['new-card', 'new-audio', 'delete-audio', 'no-change'].includes(audioUpdateStatus)) {
+            logWithRequest('error', req, 'invalid audioUpdateStatus', {audioUpdateStatus});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -110,6 +112,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
             });
 
             if (existingCard === null) {
+                logWithRequest('error', req, 'Card not found', {cardId});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -120,6 +123,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
             }
 
             if (existingCard.cardSetCards.find(s => s.cardSetId === parseInt(req.body.cardSetId)) === undefined) {
+                logWithRequest('error', req, 'Card id ' + existingCard.id + ' does not belong to cardSetId: ' + req.body.cardSetId, {cardId: existingCard.id, cardSetId: req.body.cardSetId});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -142,6 +146,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
         });
 
         if (cardSet === null) {
+            logWithRequest('error', req, 'Card set not found', {cardSetId: req.body.cardSetId});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -152,6 +157,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
         }
 
         if (!await checkPermissions({user, cardSet, capability: Capability.CreateCard})) {
+            logWithRequest('error', req, 'User does not have rights to create/edit cards in this card set', {user, cardSet});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -173,6 +179,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
                 await awaitExec('ffmpeg -i ' + req.file.path + ' ' + outPath);
 
                 if (!fs.existsSync(outPath)) {
+                    logWithRequest('error', req, 'failed to process audio file! err: exists', {outPath});
                     return res.json({
                         dataType: true,
                         status: ResponseStatus.UnexpectedError,
@@ -183,6 +190,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
                 }
                 const stats = fs.statSync(outPath);
                 if (stats.size <= 0) {
+                    logWithRequest('error', req, 'failed to process audio file! err: size', {outPath});
                     return res.json({
                         dataType: true,
                         status: ResponseStatus.UnexpectedError,
@@ -201,6 +209,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
                     }
                 });
             } catch (ex) {
+                logWithRequest('error', req, 'failed to process audio file! err: ex' + (ex?.toString()), {outPath});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -262,6 +271,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
             // 'new-audio' | 'delete-audio' | 'no-change'
             if (audioUpdateStatus === 'new-audio') {
                 if (audioMedia === null) {
+                    logWithRequest('error', req, 'missing audio media when audioUpdateStatus is new-audio', {audioUpdateStatus});
                     return res.json({
                         dataType: true,
                         status: ResponseStatus.UnexpectedError,
@@ -276,6 +286,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
             } else if (audioUpdateStatus === 'no-change') {
                 // do nothing
             } else {
+                logWithRequest('error', req, 'unexpected audioUpdateStatus: ' + audioUpdateStatus, {audioUpdateStatus});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
@@ -361,6 +372,7 @@ cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, 
             capability: Capability.DeleteCard
         });
         if (!allowed) {
+            logWithRequest('error', req, 'user id: ' + (user?.id ?? 'guest') + ' is not allowed to delete card id: ' + req.body.cardId + ' in card set id: ' + req.body.cardSetId, {user, cardId: req.body.cardId, cardSetId: req.body.cardSetId});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -373,6 +385,7 @@ cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, 
         });
 
         if (card === null) {
+            logWithRequest('error', req, 'card not found, id: ' + req.body.cardId, {cardId: req.body.cardId});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
@@ -388,6 +401,7 @@ cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, 
         });
 
         if (cardSet === null) {
+            logWithRequest('error', req, 'card set not found, id: ' + req.body.cardSetId, {cardSetId: req.body.cardSetId});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,

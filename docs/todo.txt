@@ -1,4 +1,5 @@
 log server side errors instead of just returning "unexpected error"-json
+remove dangerous html from req.body.front and req.body.back
 workspace users when editing workspace should be ordered by permissions and then self first
 make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
 make workspace page show list of card sets
@@ -7,7 +8,7 @@ study-drill-session
 save stats for right/wrong answers
 style card lists / cards -- maybe use CardGroup
 
-test everything
+lint everything
 test creating workspaces
 test editing workspace users
 test different permissions are working
