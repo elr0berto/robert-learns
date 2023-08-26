@@ -1,8 +1,7 @@
-remove dangerous html from req.body.front and req.body.back
 workspace users when editing workspace should be ordered by permissions and then self first
 make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
 make workspace page show list of card sets
-validation
+validation on every request in server
 study-drill-session
 save stats for right/wrong answers
 style card lists / cards -- maybe use CardGroup
