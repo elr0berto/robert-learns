@@ -12,7 +12,7 @@ import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/
 import * as fs from "fs";
 import prisma from "../db/prisma.js";
 import {Card as PrismaCard, CardSetCard as PrismaCardSetCard, CardFace as PrismaCardFace, CardSide as PrismaCardSide, MediaType} from "@prisma/client";
-
+import sanitizeHtml from 'sanitize-html';
 import {
     CreateCardResponseData,
     DeleteCardRequest,
@@ -76,7 +76,8 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
     try {
         const user = await getSignedInUser(req.session);
 
-        // TODO: remove dangerous html from req.body.front and req.body.back
+        const front = sanitizeHtml(req.body.front ?? '');
+        const back = sanitizeHtml(req.body.back ?? '');
 
         const cardId: number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
 
@@ -236,7 +237,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
 
             await prisma.cardFace.create({
                 data: {
-                    content: req.body.front ?? '',
+                    content: front,
                     cardId: newCard.id,
                     side: PrismaCardSide.FRONT,
                 }
@@ -244,7 +245,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
 
             await prisma.cardFace.create({
                 data: {
-                    content: req.body.back ?? '',
+                    content: back,
                     cardId: newCard.id,
                     side: PrismaCardSide.BACK,
                 }
@@ -316,7 +317,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
                                     id: existingFaceFront.id,
                                 },
                                 data: {
-                                    content: req.body.front ?? '',
+                                    content: front,
                                 }
                             },
                             {
@@ -324,7 +325,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
                                     id: existingFaceBack.id,
                                 },
                                 data: {
-                                    content: req.body.back ?? '',
+                                    content: back,
                                 }
                             }
                         ]
