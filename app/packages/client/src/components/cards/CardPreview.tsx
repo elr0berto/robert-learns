@@ -44,7 +44,7 @@ function CardPreview(props: Props) {
                 className="mt-2"
                 onClick={() => props.onEditCard(props.cardWithCardSets.card)}
             >
-                <PencilSquare/> Edit
+                <PencilSquare/> Edit card
             </Button>
         </> : null}
         {props.showActionButtons ?
@@ -55,7 +55,7 @@ function CardPreview(props: Props) {
                 className="mt-2 ms-1"
                 onClick={() => props.onDeleteCard(props.cardWithCardSets.card)}
             >
-                <DashCircle/> Delete
+                <DashCircle/> Delete card
             </Button> : null}
     </div>;
 }

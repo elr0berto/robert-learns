@@ -1,18 +1,27 @@
-import React from 'react';
-import Editor from '../Editor';
+import React, {useRef} from 'react';
+import Editor, {EditorInstance} from '../Editor';
 
 type Props = {
-    onChange: (html: string) => void;
     uploadCallback: (file: File) => Promise<string>;
-    value: string;
+    initialValue: string;
 };
 
-function CardFaceEditor(props: Props) {
+const CardFaceEditor = React.forwardRef<EditorInstance, Props>((props: Props, ref: React.Ref<any>) => {
+    console.log('CardFaceEditor');
+
+    const editorRef = useRef<EditorInstance | null>(null);
+
+    React.useImperativeHandle(ref, () => ({
+        getContent: () => {
+            return editorRef.current?.getContent();
+        }
+    }));
+
     return <Editor
-        initialValue={props.value}
-        onChange={props.onChange}
+        ref={editorRef}
+        initialValue={props.initialValue}
         uploadCallback={props.uploadCallback}
     />;
-}
+});
 
 export default CardFaceEditor;

@@ -7,7 +7,6 @@ import {createRoot} from "react-dom/client";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'quill/dist/quill.snow.css'; // Add css for snow theme
-// or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
 
 import App from "./components/App";
 import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";

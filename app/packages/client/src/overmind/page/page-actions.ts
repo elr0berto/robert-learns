@@ -7,14 +7,25 @@ import {getInitialWorkspaceCreateState} from "../workspace-create/workspace-crea
 import {getInitialWorkspaceCardSetCreateState} from "../workspace-card-set-create/workspace-card-set-create-state";
 import {getInitialAdminLogsPageState} from "../admin-logs-page/admin-logs-page-state";
 import {getInitialWorkspaceCardSetState} from "../workspace-card-set/workspace-card-set-state";
+import {getInitialCreateCardModalState} from "../create-card-modal/create-card-modal-state";
+import {getInitialEditCardCardSetsModalState} from "../edit-card-card-sets-modal/edit-card-card-sets-modal-state";
+import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
 
 export type Payload = {
     params: any,
     querystring: queryString.ParsedQuery<string>
 }
 
+export const resetModalsAndStuff = ({state, actions}: Context) => {
+    state.createCardModal = getInitialCreateCardModalState(null, null);
+    state.editCardCardSetsModal = getInitialEditCardCardSetsModalState();
+    state.addUserModal = getInitialAddUserModalState();
+};
+
 export const load = async ({state, actions}: Context, params?: {payload?: Payload, page?: Pages, onSuccessCallback?: () => void}) => {
     state.page.initializing = true;
+
+    actions.page.resetModalsAndStuff();
 
     if (params?.page) {
         state.page.page = params.page;

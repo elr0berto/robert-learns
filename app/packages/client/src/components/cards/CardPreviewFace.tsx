@@ -5,7 +5,7 @@ type Props = {
 }
 
 function CardPreviewFace(props: Props) {
-    return <div className="card-preview-face" dangerouslySetInnerHTML={{__html: props.content ?? ''}}/>;
+    return <div className="card-preview-face ql-editor" dangerouslySetInnerHTML={{__html: props.content ?? ''}}/>;
 }
 
 export default CardPreviewFace;

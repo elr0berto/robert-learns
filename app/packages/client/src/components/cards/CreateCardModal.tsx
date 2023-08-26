@@ -1,13 +1,31 @@
 import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Container, Form, Modal, Tab, Tabs} from "react-bootstrap";
-import React, {useRef} from "react";
+import React, {useCallback, useRef} from "react";
 import CardFaceEditor from "./CardFaceEditor";
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
+import {EditorInstance} from "../Editor";
 
 function CreateCardModal() {
+    console.log('CreateCardModal');
     const state = useAppState();
     const actions = useActions();
+
+    const { uploadFile } = actions.createCardModal;
+    const uploadCallback = useCallback((file: File) => {
+        return uploadFile(file);
+    }, [uploadFile]);
+
+    const frontEditorRef = useRef<EditorInstance | null>(null);
+    const backEditorRef = useRef<EditorInstance | null>(null);
+
+    const saveEditorContentState = () => {
+        const frontContent = frontEditorRef.current?.getContent();
+        const backContent = backEditorRef.current?.getContent();
+
+        actions.createCardModal.setFrontHtml(frontContent ?? '');
+        actions.createCardModal.setBackHtml(backContent ?? '');
+    }
 
     // 👇️ create a ref for the file input
     const inputRef = useRef<HTMLInputElement>(null);
@@ -35,22 +53,24 @@ function CreateCardModal() {
                 <Container>
                     <Form>
                         <Tabs
+                            unmountOnExit={false}
+                            mountOnEnter={true}
                             activeKey={state.createCardModal.activeTab ?? 'front'}
-                            onSelect={(k: any) => actions.createCardModal.setActiveTab(k)}
+                            onSelect={(k: any) => { actions.createCardModal.setActiveTab(k)}}
                             className="mb-3"
                         >
                             <Tab eventKey="front" title="Front">
                                 <CardFaceEditor
-                                    value={state.createCardModal.frontHtml}
-                                    onChange={html => actions.createCardModal.setFrontHtml(html)}
-                                    uploadCallback={file => actions.createCardModal.uploadFile(file)}
+                                    ref={frontEditorRef}
+                                    initialValue={state.createCardModal.frontHtml}
+                                    uploadCallback={uploadCallback}
                                 />
                             </Tab>
                             <Tab eventKey="back" title="Back">
                                 <CardFaceEditor
-                                    value={state.createCardModal.backHtml}
-                                    onChange={html => actions.createCardModal.setBackHtml(html)}
-                                    uploadCallback={file => actions.createCardModal.uploadFile(file)}
+                                    ref={backEditorRef}
+                                    initialValue={state.createCardModal.backHtml}
+                                    uploadCallback={uploadCallback}
                                 />
                             </Tab>
                             <Tab eventKey="audio" title="Audio">
@@ -73,6 +93,12 @@ function CreateCardModal() {
                                 </> : null}
                             </Tab>
                         </Tabs>
+                        <div className={state.createCardModal.activeTab === 'front' ? '' : 'd-none'}>
+
+                        </div>
+                        <div className={state.createCardModal.activeTab === 'back' ? '' : 'd-none'}>
+
+                        </div>
                         {state.createCardModal.submitError !== null ? <Alert variant={'danger'}>{state.createCardModal.submitError}</Alert> : null}
                     </Form>
                 </Container>
@@ -80,7 +106,7 @@ function CreateCardModal() {
 
             <Modal.Footer>
                 <Button variant="secondary" onClick={() => actions.createCardModal.closeCreateCardModal()}>Close</Button>
-                <Button variant="primary" onClick={() => actions.createCardModal.submit()}>Save card!</Button>
+                <Button variant="primary" onClick={() => {saveEditorContentState(); actions.createCardModal.submit()}}>Save card!</Button>
             </Modal.Footer>
         </Modal>
     );

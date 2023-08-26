@@ -1,97 +1,91 @@
-import React, { useCallback, useRef, useState } from 'react';
-import ReactQuill from "react-quill";
+import React, { useCallback } from 'react';
+import { useQuill } from 'react-quilljs';
 
-import "react-quill/dist/quill.snow.css";
+
+export type EditorInstance = {
+    getContent: () => string;
+};
 
 type Props = {
     initialValue: string;
-    onChange: (html: string) => void;
     uploadCallback: (file: File) => Promise<string>;
 }
 
-function Editor(props: Props) {
+const Editor = React.forwardRef<EditorInstance, Props>((props: Props, ref: React.Ref<any>) => {
     console.log('Editor props', props);
-    const [value, setValue] = useState<string>(props.initialValue ?? '');
-    const reactQuillRef = useRef<ReactQuill>(null);
+    const { initialValue, uploadCallback } = props;
 
-    const onChange = (content: string) => {
-        console.log('onChange content:', content);
-        setValue(content);
+    const { quill, quillRef } = useQuill();
 
-        if (props.onChange) {
-            props.onChange(content);
+    // Function to get the content of the editor
+    const getContent = useCallback(() => {
+        console.log('Editor.tsx getContent');
+        if (quill) {
+            return quill.root.innerHTML;
         }
-    };
+        return '';
+    }, [quill]);
 
-    const imageHandler = useCallback(() => {
-        const input = document.createElement("input");
-        input.setAttribute("type", "file");
-        input.setAttribute("accept", "image/*");
+    // Expose the getContent function to the parent component through the ref
+    React.useImperativeHandle(ref, () => ({
+        getContent
+    }));
+
+    // Insert Image(selected by user) to quill
+    const insertToEditor = useCallback((url: string) => {
+        if (!quill) {
+            throw new Error('quill is undefined|null in insertToEditor');
+        }
+        const range = quill.getSelection();
+        if (!range) {
+            throw new Error('range is undefined|null in insertToEditor');
+        }
+        quill.insertEmbed(range.index, 'image', url);
+    }, [quill]);
+
+
+    // Upload Image to Image Server such as AWS S3, Cloudinary, Cloud Storage, etc..
+    const saveToServer = useCallback(async (file: File) => {
+        const url = await uploadCallback(file);
+        insertToEditor(url);
+    }, [uploadCallback, insertToEditor]);
+
+
+    // Open Dialog to select Image File
+    const selectLocalImage = useCallback(() => {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', 'image/*');
         input.click();
-        input.onchange = async () => {
-            if (input !== null && input.files !== null) {
+
+        input.onchange = () => {
+            if (input && input.files && input.files.length > 0) {
                 const file = input.files[0];
-                const url = await props.uploadCallback(file);
-                const quill = reactQuillRef.current;
-                if (quill) {
-                    const range = quill.getEditorSelection();
-                    range && quill.getEditor().insertEmbed(range.index, "image", url);
-                }
+                saveToServer(file);
             }
         };
-    }, []);
+    }, [saveToServer]); // saveToServer is a dependency since it's used inside selectLocalImage
+
+
+    React.useEffect(() => {
+        if (quill) {
+            quill.clipboard.dangerouslyPasteHTML(initialValue);
+        }
+    }, [quill,initialValue]);
+
+    React.useEffect(() => {
+        if (quill) {
+            // Add custom handler for Image Upload
+            quill.getModule('toolbar').addHandler('image', selectLocalImage);
+        }
+    }, [quill,selectLocalImage]);
 
     return (
-        <ReactQuill
-            ref={reactQuillRef}
-            theme="snow"
-            placeholder="Start writing..."
-            modules={{
-                toolbar: {
-                    container: [
-                        [{ header: "1" }, { header: "2" }, { font: [] }],
-                        [{ size: [] }],
-                        ["bold", "italic", "underline", "strike", "blockquote"],
-                        [
-                            { list: "ordered" },
-                            { list: "bullet" },
-                            { indent: "-1" },
-                            { indent: "+1" },
-                        ],
-                        ["link", "image", "video"],
-                        ["code-block"],
-                        ["clean"],
-                    ],
-                    handlers: {
-                        image: imageHandler,
-                    },
-                },
-                clipboard: {
-                    matchVisual: false,
-                },
-            }}
-            formats={[
-                "header",
-                "font",
-                "size",
-                "bold",
-                "italic",
-                "underline",
-                "strike",
-                "blockquote",
-                "list",
-                "bullet",
-                "indent",
-                "link",
-                "image",
-                "video",
-                "code-block",
-            ]}
-            value={value}
-            onChange={onChange}
-        />
+        <div>
+            <div ref={quillRef} />
+        </div>
     );
-}
+});
 
 
 export default Editor;

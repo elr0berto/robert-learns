@@ -8,6 +8,7 @@ import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsMo
 import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import DeleteCardSetModal from "./DeleteCardSetModal";
+import {DashCircle, PencilSquare} from "react-bootstrap-icons";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -45,8 +46,8 @@ function WorkspaceCardSetPage() {
 
         {state.permission.createCard ? <Button className="mt-5" variant="outline-success" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}>+ Create card</Button> : null}
         {state.permission.createCard ? <Button className="mt-5 ms-3" variant="outline-success" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
-        {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-warning" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}>Edit card set</Button> : null}
-        {state.permission.deleteCardSet ? <Button className="mt-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}>Delete card set</Button> : null}
+        {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-warning" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
+        {state.permission.deleteCardSet ? <Button className="mt-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
 
         {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsBeingDeleted !== null ? <DeleteCardModal
             loading={state.workspaceCardSet.loadingDeleteCardModal}

@@ -23,7 +23,7 @@ function CardCardSetsPreview(props: Props) {
                 </React.Fragment>
             ))}
         </small>
-        {props.showEditButton ? <Button size="sm" variant="outline-primary" className="mt-2" onClick={() => props.onEdit(props.cardWithCardSets.card)}><PencilSquare/> Edit</Button> : null}
+        {props.showEditButton ? <Button size="sm" variant="outline-primary" className="mt-2" onClick={() => props.onEdit(props.cardWithCardSets.card)}><PencilSquare/> Change Card Sets</Button> : null}
     </div>;
 }
 
