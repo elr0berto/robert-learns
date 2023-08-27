@@ -9,11 +9,13 @@ import {
     getRolesUserCanChangeUser
 } from "@elr0berto/robert-learns-shared/dist/permissions";
 import {Pages} from "../../page-urls";
+import {UserRolesInOrder} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type SelectedUser = {
     userId: number;
     role: UserRole;
     name: string;
+    isMe: boolean;
     canRoleBeChanged: boolean;
     availableRoles: UserRole[];
     canBeRemoved: boolean;
@@ -57,21 +59,27 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
     deletingWorkspace: false,
     deleteWorkspaceError: null,
     selectedUsersWithData: derived((state: WorkspaceCreateState, rootState : typeof config.state) => {
-        return state.selectedUsers.filter(u => rootState.data.users.find(u2 => u2.id === u.userId) !== undefined).map(u => {
-            const user = rootState.data.users.find(u2 => u2.id === u.userId);
-            if (user === undefined) {
-                throw new Error('User not found: ' + u.userId);
-            }
+        return state.selectedUsers
+            .filter(u => rootState.data.users.find(u2 => u2.id === u.userId) !== undefined)
+            .map(u => {
+                const user = rootState.data.users.find(u2 => u2.id === u.userId);
+                if (user === undefined) {
+                    throw new Error('User not found: ' + u.userId);
+                }
 
-            return {
-                userId: u.userId,
-                role: u.role,
-                name: user.name(),
-                canRoleBeChanged: state.scope === 'create' ? true : canUserChangeUserRole(rootState.page.workspaceUser, u),
-                availableRoles: state.scope === 'create' ? getAllRoles() : getRolesUserCanChangeUser(rootState.page.workspaceUser, u),
-                canBeRemoved: state.scope === 'create' ? true : canUserDeleteWorkspaceUser(rootState.page.workspaceUser, u),
-            };
-        });
+                return {
+                    userId: u.userId,
+                    role: u.role,
+                    name: user.name(),
+                    isMe: state.scope === 'create' ? false : rootState.page.workspaceUser?.userId === u.userId,
+                    canRoleBeChanged: state.scope === 'create' ? true : canUserChangeUserRole(rootState.page.workspaceUser, u),
+                    availableRoles: state.scope === 'create' ? getAllRoles() : getRolesUserCanChangeUser(rootState.page.workspaceUser, u),
+                    canBeRemoved: state.scope === 'create' ? true : canUserDeleteWorkspaceUser(rootState.page.workspaceUser, u),
+                };
+            });
+            /*.sort((a, b) => { // commented out because it makes the users jump up and down when you change role. Moved the sorting server side.
+                return UserRolesInOrder.indexOf(a.role) - UserRolesInOrder.indexOf(b.role)
+            });*/
     }),
     submitDisabled: derived((state: WorkspaceCreateState) => {
         return state.submitting;

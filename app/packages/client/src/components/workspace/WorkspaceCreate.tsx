@@ -2,7 +2,6 @@ import {Alert, Button, Container, Form, Table} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import AddUserModal from "./AddUserModal";
-import {Pages} from "../../page-urls";
 import DeleteWorkspaceModal from "./DeleteWorkspaceModal";
 
 function WorkspaceCreate() {
@@ -60,12 +59,12 @@ function WorkspaceCreate() {
                 <tbody>
                     {scope === 'create' && state.signIn.user !== null ?
                     <tr>
-                        <td>{state.signIn.user.name()}</td>
+                        <td>{state.signIn.user.name()} (you)</td>
                         <td colSpan={2}>OWNER</td>
                     </tr> : null}
                     {state.workspaceCreate.selectedUsersWithData.length > 0 ?
                         state.workspaceCreate.selectedUsersWithData.map(u => <tr key={u.userId}>
-                            <td>{u.name}</td>
+                            <td>{u.name} {u.isMe ? '(you)' : ''}</td>
                             <td>
                                 <Form.Select
                                     disabled={!u.canRoleBeChanged}

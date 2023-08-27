@@ -149,7 +149,6 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
                     }
                 });
             }
-
         } else {
             const existingWorkspace = await prisma.workspace.findUniqueOrThrow({
                 where: {id: workspaceId}
@@ -229,6 +228,38 @@ workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspace
                                 workspaceId: existingWorkspace.id,
                                 userId: existingWorkspaceUser.userId,
                             },
+                        }
+                    });
+                }
+            }
+
+            // Add new workspaceUsers from req.body.workspaceUsers if they don't exist yet
+            for (const newWorkspaceUser of req.body.workspaceUsers) {
+                const matches = existingWorkspaceUsers.filter(wu => wu.user.id === newWorkspaceUser.userId);
+
+                if (matches.length > 1) {
+                    throw new Error('found ' + matches.length + ' matches for workspace user id: ' + newWorkspaceUser.userId);
+                }
+
+                if (matches.length === 0) {
+                    // add new
+                    if (!Object.values(PrismaUserRole).includes(newWorkspaceUser.role)) {
+                        throw new Error('invalid role: ' + newWorkspaceUser.role);
+                    }
+
+                    await prisma.user.findUniqueOrThrow({
+                        where: {id: newWorkspaceUser.userId}
+                    });
+
+                    if (!workspaceId) {
+                        throw new Error('workspaceId is: ' + workspaceId);
+                    }
+
+                    await prisma.workspaceUser.create({
+                        data: {
+                            workspaceId: workspaceId,
+                            userId: newWorkspaceUser.userId,
+                            role: newWorkspaceUser.role,
                         }
                     });
                 }

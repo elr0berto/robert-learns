@@ -1,6 +1,6 @@
 import {Request, Router} from 'express';
 import {getSignedInUser, getWorkspaceUserData, TypedResponse} from "../common.js";
-import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {ResponseStatus, UserRolesInOrder} from '@elr0berto/robert-learns-shared/api/models';
 
 import {
     GetWorkspaceUsersRequest,
@@ -60,7 +60,9 @@ workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown
             dataType: true,
             status: ResponseStatus.Success,
             errorMessage: null,
-            workspaceUserDatas: workspaceUsers.map(wu => getWorkspaceUserData(wu)),
+            workspaceUserDatas: workspaceUsers.map(wu => getWorkspaceUserData(wu)).sort((a, b) => {
+                return UserRolesInOrder.indexOf(a.role) - UserRolesInOrder.indexOf(b.role)
+            }),
         });
     } catch (ex) {
         console.error('/workspace-users/get-workspace-users caught ex', ex);
