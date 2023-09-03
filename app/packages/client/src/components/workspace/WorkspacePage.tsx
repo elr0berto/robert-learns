@@ -1,7 +1,8 @@
 import {/*useActions,*/ useAppState} from "../../overmind";
-import {Button, Container} from "react-bootstrap";
+import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import React from "react";
-import {pageUrls} from "../../page-urls";
+import {Pages, pageUrls} from "../../page-urls";
+import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 function WorkspacePage() {
     const state = useAppState();
@@ -16,6 +17,24 @@ function WorkspacePage() {
     }
     return <Container>
         <h1 className="my-5">Workspace {state.page.workspace.name}</h1>
+        {state.page.loadingCardSets ?
+            <p>Loading card sets...</p> :
+            <Container>
+                <Row>
+                    {state.page.cardSets.map((cardSet, index) => (
+                        <Col key={index} sm={12} md={6} lg={4} xl={3}>
+                            <Card>
+                                <Card.Body>
+                                    <Card.Title>{cardSet.name}</Card.Title>
+                                    <Card.Text>{cardSet.description}</Card.Text>
+                                    <Card.Link href={pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace as Workspace, cardSet)}>Go to card set</Card.Link>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+            </Container>
+        }
         {state.permission.editWorkspace ? <Button href={pageUrls.workspaceEdit.url(state.page.workspace)}>Edit workspace</Button> : null}
     </Container>;
 }

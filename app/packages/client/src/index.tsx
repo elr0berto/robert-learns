@@ -1,15 +1,15 @@
 import React from 'react';
-import './sass/style.scss';
 import { createOvermind } from 'overmind';
 import {config} from './overmind';
 import {Provider} from "overmind-react";
 import {createRoot} from "react-dom/client";
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'quill/dist/quill.snow.css'; // Add css for snow theme
-
 import App from "./components/App";
 import {UnexpectedSignOutError} from "./overmind/sign-in/sign-in-state";
+
+import './sass/style.scss';
+import 'quill/dist/quill.snow.css'; // Add css for snow theme
+
 
 declare global {
     interface Window {

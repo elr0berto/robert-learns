@@ -9,7 +9,6 @@ import {
     getRolesUserCanChangeUser
 } from "@elr0berto/robert-learns-shared/dist/permissions";
 import {Pages} from "../../page-urls";
-import {UserRolesInOrder} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type SelectedUser = {
     userId: number;

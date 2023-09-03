@@ -1,5 +1,3 @@
-make front-page (show lists of workspaces?! or just "Welcome to robert-learns")
-make workspace page show list of card sets
 validation on every request in server
 study-drill-session (make the state url based? or localstorage? or server side?)
 save stats for right/wrong answers

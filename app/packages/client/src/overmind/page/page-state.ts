@@ -2,7 +2,12 @@ import {Pages} from "../../page-urls";
 import {Card, CardSet, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
-import {CardSetWithCards, CardWithCardSets, WorkspaceWithWorkspaceUsers} from "../data/data-state";
+import {
+    CardSetWithCards,
+    CardWithCardSets,
+    WorkspaceWithCardSetsCount,
+    WorkspaceWithWorkspaceUsers
+} from "../data/data-state";
 
 type PageState = {
     page: Pages | null;
@@ -13,6 +18,7 @@ type PageState = {
     loadingCardSets: boolean;
     loadingCards: boolean;
     readonly workspaces: Workspace[];
+    readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspace: Workspace | null;
     readonly workspaceWithWorkspaceUsers: WorkspaceWithWorkspaceUsers | null;
     readonly workspaceUser: WorkspaceUser | null;
@@ -34,6 +40,11 @@ export const state: PageState = {
     workspaces: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.workspaces.filter(workspace => {
             return workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === workspace.id && wu.userId === rootState.signIn.userId);
+        });
+    }),
+    workspacesWithCardSetsCounts: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.workspacesWithCardSetsCounts.filter(wwc => {
+            return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
         });
     }),
     workspace: derived((state: PageState) => {
