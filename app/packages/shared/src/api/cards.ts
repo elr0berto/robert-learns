@@ -19,7 +19,32 @@ export type GetCardsRequest = {
     cardIds: number[],
 }
 
+export const validateGetCardsRequest = (req: GetCardsRequest) : string[] => {
+    const errs : string[] = [];
+
+    if (req.cardIds.length === 0) {
+        errs.push('You must provide at least one card id');
+    }
+
+    // check that cardIds are unique
+    const uniqueCardIds = new Set(req.cardIds);
+    if (uniqueCardIds.size !== req.cardIds.length) {
+        errs.push('You cannot request the same card twice');
+    }
+
+    return errs;
+}
+
 export const getCards = async(getCardsRequest : GetCardsRequest) : Promise<GetCardsResponse> => {
+    const errors = validateGetCardsRequest(getCardsRequest);
+    if (errors.length > 0) {
+        return new GetCardsResponse({
+            dataType: true,
+            errorMessage: errors.join(', '),
+            status: ResponseStatus.UnexpectedError,
+            cardDatas: null,
+        });
+    }
     return await apiClient.post(GetCardsResponse, '/cards/get', getCardsRequest);
 }
 
@@ -50,8 +75,11 @@ export class CreateCardResponse extends BaseResponse {
 export const validateCreateCardRequest = (params: CreateCardRequest) : string[] => {
     const errors : string[] = [];
 
-    if (params.cardSetId === null) {
+    if (params.cardSetId <= 0) {
         errors.push('cardSetId is required');
+    }
+    if (params.cardId !== null && params.cardId <= 0) {
+        errors.push('cardId must be null or greater than 0');
     }
     if (params.front === null) {
         errors.push('front is required');
@@ -110,6 +138,27 @@ export type DeleteCardRequest = {
     cardId: number,
 }
 
+export const validateDeleteCardRequest = (params: DeleteCardRequest) : string[] => {
+    const errors : string[] = [];
+
+    if (params.cardSetId <= 0) {
+        errors.push('cardSetId is required');
+    }
+    if (params.cardId <= 0) {
+        errors.push('cardId is required');
+    }
+
+    return errors;
+}
+
 export const deleteCard = async(params: DeleteCardRequest) : Promise<BaseResponse> => {
+    const errors = validateDeleteCardRequest(params);
+    if (errors.length > 0) {
+        return new BaseResponse({
+            dataType: true,
+            errorMessage: errors.join(', '),
+            status: ResponseStatus.UnexpectedError,
+        });
+    }
     return await apiClient.post(BaseResponse, '/cards/delete', params);
 }

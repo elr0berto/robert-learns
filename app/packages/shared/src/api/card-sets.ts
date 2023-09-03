@@ -1,9 +1,19 @@
 import {apiClient} from './ApiClient.js';
-import {BaseResponse, BaseResponseData, CardSet, CardSetData} from "./models/index.js";
+import {BaseResponse, BaseResponseData, CardSet, CardSetData, ResponseStatus} from "./models/index.js";
 
 export type GetCardSetsRequest = {
     workspaceId: number;
 }
+
+export const validateGetCardSetsRequest = (req: GetCardSetsRequest) : string[] => {
+    const errs : string[] = [];
+    if (req.workspaceId <= 0) {
+        errs.push('Workspace id is missing');
+    }
+
+    return errs;
+}
+
 
 export type GetCardSetsResponseData = BaseResponseData & {
     cardSetDatas: CardSetData[] | null;
@@ -18,6 +28,15 @@ export class GetCardSetsResponse extends BaseResponse {
 }
 
 export const getCardSets = async(request : GetCardSetsRequest) : Promise<GetCardSetsResponse> => {
+    const errors = validateGetCardSetsRequest(request);
+    if (errors.length !== 0) {
+        return new GetCardSetsResponse({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join(', '),
+            cardSetDatas: null,
+        });
+    }
     return await apiClient.post(GetCardSetsResponse, '/card-sets/get', request);
 }
 
@@ -58,6 +77,15 @@ export const validateCreateCardSetRequest = (req: CreateCardSetRequest) : string
 
 
 export const createCardSet = async(req: CreateCardSetRequest) : Promise<CreateCardSetResponse> => {
+    const errors = validateCreateCardSetRequest(req);
+    if (errors.length !== 0) {
+        return new CreateCardSetResponse({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join(', '),
+            cardSetData: null,
+        });
+    }
     return await apiClient.post(CreateCardSetResponse, '/card-sets/create', req);
 }
 
@@ -65,6 +93,23 @@ export type DeleteCardSetRequest = {
     cardSetId: number;
 }
 
+export const validateDeleteCardSetRequest = (req: DeleteCardSetRequest) : string[] => {
+    const errs : string[] = [];
+    if (req.cardSetId <= 0) {
+        errs.push('Card set id is missing');
+    }
+
+    return errs;
+}
+
 export const deleteCardSet = async(params: DeleteCardSetRequest) : Promise<BaseResponse> => {
+    const errors = validateDeleteCardSetRequest(params);
+    if (errors.length !== 0) {
+        return new BaseResponse({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join(', '),
+        });
+    }
     return await apiClient.post(BaseResponse, '/card-sets/delete-card-set', params);
 }

@@ -123,7 +123,7 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
 }
 
 
-export const deleteCardSetCard = async (cardSet: PrismaCardSet, card: PrismaCard) : Promise<void> => {
+export const deleteCardSetCardAndCardIfNeeded = async (cardSet: PrismaCardSet, card: PrismaCard) : Promise<void> => {
     await prisma.$transaction(async (tx) => {
 
         // remove the link to the current card set

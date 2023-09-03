@@ -1,7 +1,7 @@
 import {Request, Router} from 'express';
 import {
     awaitExec,
-    deleteCardSetCard,
+    deleteCardSetCardAndCardIfNeeded,
     getCardData,
     getCardSetCardData,
     getSignedInUser,
@@ -17,7 +17,9 @@ import {
     CreateCardResponseData,
     DeleteCardRequest,
     GetCardsRequest,
-    GetCardsResponseData
+    GetCardsResponseData,
+    validateDeleteCardRequest,
+    validateGetCardsRequest
 } from '@elr0berto/robert-learns-shared/api/cards';
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
@@ -27,6 +29,17 @@ const cards = Router();
 
 cards.post('/get', async (req : Request<unknown, unknown, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>, next) => {
     try {
+        const errors = validateGetCardsRequest(req.body);
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Invalid get cards request', {errors: errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+                cardDatas: null,
+            });
+        }
+
         const user = await getSignedInUser(req.session);
 
         for (const key in req.body.cardIds) {
@@ -364,6 +377,16 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
 
 cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
+        const errors = validateDeleteCardRequest(req.body);
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Invalid delete card request', {errors: errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+            });
+        }
+
         const user = await getSignedInUser(req.session);
 
         //const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
@@ -410,7 +433,7 @@ cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, 
             });
         }
 
-        await deleteCardSetCard(cardSet, card);
+        await deleteCardSetCardAndCardIfNeeded(cardSet, card);
 
         return res.json({
             dataType: true,

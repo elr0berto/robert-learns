@@ -7,11 +7,12 @@ import {
     CreateCardSetResponseData, DeleteCardSetRequest,
     GetCardSetsRequest,
     GetCardSetsResponseData,
-    validateCreateCardSetRequest
+    validateCreateCardSetRequest,
+    validateDeleteCardSetRequest,
+    validateGetCardSetsRequest
 } from '@elr0berto/robert-learns-shared/api/card-sets';
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
-import workspaces from "./workspaces.js";
 import {logWithRequest} from "../logger.js";
 
 
@@ -19,6 +20,18 @@ const cardSets = Router();
 
 cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>, next) => {
     try {
+        const errors = validateGetCardSetsRequest(req.body);
+
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Invalid get card sets request', {errors: errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+                cardSetDatas: null,
+            });
+        }
+
         const user = await getSignedInUser(req.session);
 
         const hasRights = await checkPermissions({
@@ -186,6 +199,17 @@ cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequ
 
 cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCardSetRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
+        const errors = validateDeleteCardSetRequest(req.body);
+
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Invalid delete card set request', {errors: errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+            });
+        }
+
         const signedInUser = await getSignedInUser(req.session);
 
         if (signedInUser === null) {
