@@ -3,6 +3,7 @@ import {Button, Card, Col, Container, Row} from "react-bootstrap";
 import React from "react";
 import {Pages, pageUrls} from "../../page-urls";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {PencilSquare} from "react-bootstrap-icons";
 
 function WorkspacePage() {
     const state = useAppState();
@@ -35,7 +36,9 @@ function WorkspacePage() {
                 </Row>
             </Container>
         }
-        {state.permission.editWorkspace ? <Button href={pageUrls.workspaceEdit.url(state.page.workspace)}>Edit workspace</Button> : null}
+        <div className="mt-3 buttons">
+            {state.permission.editWorkspace ? <Button href={pageUrls.workspaceEdit.url(state.page.workspace)}><PencilSquare/> Edit workspace</Button> : null}
+        </div>
     </Container>;
 }
 

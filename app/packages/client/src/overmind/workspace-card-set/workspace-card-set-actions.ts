@@ -56,7 +56,7 @@ export const deleteCardStart = async ({ state, effects, actions }: Context, card
     state.workspaceCardSet.loadingDeleteCardModal = false;
 }
 
-export const deleteCardConfirm = async ({ state, effects, actions }: Context,) => {
+export const deleteCardConfirm = async ({ state, effects, actions }: Context) => {
     state.workspaceCardSet.confirmingDeleteCard = true;
 
     if (state.page.cardSetId === null) {
@@ -73,10 +73,19 @@ export const deleteCardConfirm = async ({ state, effects, actions }: Context,) =
     state.workspaceCardSet.confirmingDeleteCard = false;
 }
 
-export const deleteCardCancel = async ({ state }: Context,) => {
+export const deleteCardCancel = async ({ state }: Context) => {
     if (state.workspaceCardSet.confirmingDeleteCard) {
         return;
     }
     state.workspaceCardSet.cardIdBeingDeleted = null;
     state.workspaceCardSet.confirmingDeleteCard = false;
+}
+
+export const sortCardSet = async ({ state }: Context) => {
+    state.workspaceCardSet.sorting = true;
+}
+
+export type SortDirection = 'first' | 'last' | 'up' | 'down';
+export const sortCard = async ({ state }: Context, {cardId, direction}: {cardId: number, direction: SortDirection}) => {
+    console.log('sortCard cardId: ' + cardId + ' direction: ' + direction);
 }

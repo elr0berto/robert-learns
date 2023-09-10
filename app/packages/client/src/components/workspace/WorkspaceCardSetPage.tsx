@@ -8,7 +8,7 @@ import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsMo
 import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import DeleteCardSetModal from "./DeleteCardSetModal";
-import {DashCircle, PencilSquare} from "react-bootstrap-icons";
+import {ArrowLeftRight, DashCircle, PencilSquare} from "react-bootstrap-icons";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -35,19 +35,26 @@ function WorkspaceCardSetPage() {
         <h1 className="my-5">
             Card set <i>{state.page.cardSet.name}</i> in workspace <i>{state.page.workspace.name}</i>
         </h1>
-        {state.page.loadingCards ? <div>Loading cards...</div> : <CardList
-            thisCardSetId={state.page.cardSet.id}
-            showActionButtons={state.permission.editCardSet}
-            cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
-            onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
-            onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: card})}
-            onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
-            cardsWithCardSets={state.page.cardsWithCardSets}/>}
+        {state.page.loadingCards ?
+            <div>Loading cards...</div> :
+            <CardList
+                thisCardSetId={state.page.cardSet.id}
+                showActionButtons={state.permission.editCardSet}
+                cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
+                onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
+                onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: card})}
+                onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
+                cardsWithCardSets={state.page.cardsWithCardSets}
+                sorting={state.workspaceCardSet.sorting}
+                onSortCard={(cardId, direction) => actions.workspaceCardSet.sortCard({cardId, direction})}
+            />
+        }
 
         {state.permission.createCard ? <Button className="mt-5" variant="outline-success" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}>+ Create card</Button> : null}
         {state.permission.createCard ? <Button className="mt-5 ms-3" variant="outline-success" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
         {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-warning" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
         {state.permission.deleteCardSet ? <Button className="mt-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
+        {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-warning" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
 
         {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsBeingDeleted !== null ? <DeleteCardModal
             loading={state.workspaceCardSet.loadingDeleteCardModal}
