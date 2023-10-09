@@ -14,6 +14,7 @@ type WorkspaceCardSetState = {
     confirmingDeleteCard: boolean;
     readonly showConfirmDeleteModal: boolean;
     sorting: boolean;
+    readonly cardsWithCardSets: CardWithCardSets[];
 }
 
 export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
@@ -49,6 +50,9 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
         return state.cardIdBeingDeleted !== null;
     }),
     sorting: false,
+    cardsWithCardSets: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
+        return rootState.page.cardsWithCardSets;
+    }),
 });
 
 export const state: WorkspaceCardSetState = getInitialWorkspaceCardSetState();

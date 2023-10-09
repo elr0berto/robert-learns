@@ -3,7 +3,7 @@ import {Card, CardSet, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-
 import {derived} from "overmind";
 import {config} from "../index";
 import {
-    CardSetWithCards,
+    CardSetWithCards, CardSetWithCardsWithCardSets,
     CardWithCardSets,
     WorkspaceWithCardSetsCount,
     WorkspaceWithWorkspaceUsers
@@ -24,7 +24,7 @@ type PageState = {
     readonly workspaceUser: WorkspaceUser | null;
     readonly cardSet: CardSet | null;
     readonly cardSets: CardSet[];
-    readonly cardSetWithCards: CardSetWithCards | null;
+    readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
     readonly cards: Card[];
     readonly cardsWithCardSets: CardWithCardSets[];
 }
@@ -88,22 +88,22 @@ export const state: PageState = {
         }
         return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
     }),
-    cardSetWithCards: derived((state: PageState, rootState: typeof config.state) => {
+    cardSetWithCardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {
             return null;
         }
-        return rootState.data.cardSetsWithCards.find(cs => cs.cardSet.id === state.cardSetId) ?? null;
+        return rootState.data.cardSetsWithCardsWithCardSets.find(cs => cs.cardSet.id === state.cardSetId) ?? null;
     }),
     cards: derived((state: PageState) => {
         if (state.cardSetId === null) {
             return [];
         }
-        return state.cardSetWithCards?.cards ?? [];
+        return state.cardsWithCardSets.map(c => c.card);
     }),
-    cardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
+    cardsWithCardSets: derived((state: PageState) => {
         if (state.cardSetId === null) {
             return [];
         }
-        return rootState.data.cardsWithCardSets.filter(c => c.cardSets.some(cs => cs.id === state.cardSetId));
+        return state.cardSetWithCardsWithCardSets?.cardsWithCardSets ?? [];
     }),
 };
