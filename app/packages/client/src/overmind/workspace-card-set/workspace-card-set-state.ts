@@ -15,6 +15,8 @@ type WorkspaceCardSetState = {
     readonly showConfirmDeleteModal: boolean;
     sorting: boolean;
     readonly cardsWithCardSets: CardWithCardSets[];
+    newSorting: number[] | null;
+    savingSorting: boolean;
 }
 
 export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
@@ -51,8 +53,19 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
     }),
     sorting: false,
     cardsWithCardSets: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
+        if (state.newSorting !== null) {
+            return state.newSorting.map(id => {
+                const cardWithCardSets = rootState.page.cardsWithCardSets.find(cwcs => cwcs.card.id === id);
+                if (cardWithCardSets === undefined) {
+                    throw new Error('Could not find card with card sets');
+                }
+                return cardWithCardSets;
+            });
+        }
         return rootState.page.cardsWithCardSets;
     }),
+    newSorting: null,
+    savingSorting: false,
 });
 
 export const state: WorkspaceCardSetState = getInitialWorkspaceCardSetState();

@@ -1,4 +1,5 @@
 sort card-set-cards
+throw error/exception when validation fails inside api calls
 study-drill-session (make the state url based? or localstorage? or server side?)
 save stats for right/wrong answers
 style card lists / cards -- maybe use CardGroup

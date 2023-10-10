@@ -148,3 +148,55 @@ export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promi
     }
     return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/updateCardCardSets', req);
 }
+
+
+export type UpdateCardSetCardsOrderRequest = {
+    cardSetId: number;
+    cardIds: number[];
+}
+
+export type UpdateCardSetCardsOrderResponseData = BaseResponseData & {
+    cardSetCardDatas: CardSetCardData[] | null;
+}
+
+export class UpdateCardSetCardsOrderResponse extends BaseResponse {
+    cardSetCards: CardSetCard[] | null;
+    constructor(data: UpdateCardSetCardsOrderResponseData) {
+        super(data);
+        this.cardSetCards = data.cardSetCardDatas?.map(c => new CardSetCard(c)) ?? null;
+    }
+}
+
+export const validateUpdateCardSetCardsOrderRequest = (req: UpdateCardSetCardsOrderRequest) : string[] => {
+    const errs : string[] = [];
+    if (req.cardSetId <= 0) {
+        errs.push('cardSetId must be greater than 0');
+    }
+
+    // check that all cardIds are unique
+    const uniqueCardIds = new Set(req.cardIds);
+    if (uniqueCardIds.size !== req.cardIds.length) {
+        errs.push('You cannot add the same card id twice');
+    }
+
+    // check that all cardIds are above 0
+    if (req.cardIds.some(id => id <= 0)) {
+        errs.push('cardIds must be greater than 0');
+    }
+
+    return errs;
+}
+
+export const updateCardSetCardsOrder = async(req : UpdateCardSetCardsOrderRequest) : Promise<UpdateCardSetCardsOrderResponse> => {
+    const errors = validateUpdateCardSetCardsOrderRequest(req);
+    if (errors.length > 0) {
+        return new UpdateCardSetCardsOrderResponse({
+            dataType: true,
+            status: ResponseStatus.UnexpectedError,
+            errorMessage: errors.join('\n'),
+            cardSetCardDatas: null,
+        });
+    }
+
+    return await apiClient.post(UpdateCardSetCardsOrderResponse, '/card-set-cards/updateCardSetCardsOrder', req);
+}
