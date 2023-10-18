@@ -94,7 +94,8 @@ export const getInitialDataState = () : DataState => ({
         return state.cardSets.map(cs => ({
             cardSet: cs,
             cardsWithCardSets: state.cardSetCards.filter(csc => csc.cardSetId === cs.id && state.cards.find(c => c.id === csc.cardId) !== undefined)
-                .sort(csc => csc.order)
+                .sort((a,b) => a.order - b.order)
+                .reverse()
                 .map(csc => {
                     const card = state.cards.find(c => c.id === csc.cardId);
                     if (card === undefined) {

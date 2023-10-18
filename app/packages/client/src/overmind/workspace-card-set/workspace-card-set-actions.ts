@@ -136,6 +136,9 @@ export const sortCardSetSave = async ({ state, effects, actions }: Context) => {
         cardSetId: state.page.cardSetId ?? 0,
         cardIds: state.workspaceCardSet.newSorting ?? [],
     });
+    if (resp.cardSetCards === null) {
+        throw new Error('resp.cardSetCards is null');
+    }
     actions.data.addOrUpdateCardSetCardsForCardSetId({
         cardSetId: state.page.cardSetId ?? 0,
         cardSetCards: resp.cardSetCards,

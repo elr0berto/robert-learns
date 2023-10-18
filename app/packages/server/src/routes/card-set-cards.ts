@@ -7,9 +7,9 @@ import {
     GetCardSetCardsRequest,
     GetCardSetCardsResponseData,
     UpdateCardCardSetsRequest,
-    UpdateCardCardSetsResponseData,
+    UpdateCardCardSetsResponseData, UpdateCardSetCardsOrderRequest, UpdateCardSetCardsOrderResponseData,
     validateCreateCardSetCardsRequest, validateGetCardSetCardsRequest,
-    validateUpdateCardCardSetsRequest
+    validateUpdateCardCardSetsRequest, validateUpdateCardSetCardsOrderRequest
 } from "@elr0berto/robert-learns-shared/api/card-set-cards";
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
@@ -358,6 +358,78 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, 
         });
     } catch (ex) {
         console.error('/card-set-cards/updateCardCardSets caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+// updateCardSetCardsOrder
+cardSetCards.post('/updateCardSetCardsOrder', async (req : Request<unknown, unknown, UpdateCardSetCardsOrderRequest>, res : TypedResponse<UpdateCardSetCardsOrderResponseData>, next) => {
+    try {
+        const user = await getSignedInUser(req.session);
+        const errors = validateUpdateCardSetCardsOrderRequest(req.body);
+        if (errors.length > 0) {
+            logWithRequest('error', req, 'validateUpdateCardSetCardsOrderRequest failed', {errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join('\n'),
+                cardSetCardDatas: null,
+            });
+        }
+
+        // check that user is allowed to edit card set
+        const cardSetId = req.body.cardSetId;
+        if (!await checkPermissions({user, cardSetId, capability: Capability.EditCardSet})) {
+            logWithRequest('error', req, 'checkPermissions failed', {user, cardSetId, capability: Capability.EditCardSet});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'You are not authorized to edit this card set',
+                cardSetCardDatas: null,
+            });
+        }
+
+        const cardIds = req.body.cardIds.reverse();
+
+        // get all the card-sets-cards with cardSetId and cardIds
+        const cardSetCards = await prisma.cardSetCard.findMany({
+            where: {
+                cardSetId: cardSetId,
+            }
+        });
+
+        // set the order column in each cardSetCard based on the order of cardIds in the request
+        for (const key in cardIds) {
+            const cardId = cardIds[key];
+            const cardSetCard = cardSetCards.find(csc => csc.cardId === cardId);
+            if (!cardSetCard) {
+                throw new Error('cardSetCard not found, cardId: ' + cardId);
+            }
+            cardSetCard.order = parseInt(key);
+            // save the cardSetCard
+            await prisma.cardSetCard.update({
+                where: {
+                    cardId_cardSetId: {
+                        cardId: cardSetCard.cardId,
+                        cardSetId: cardSetCard.cardSetId,
+                    },
+                },
+                data: {
+                    order: cardSetCard.order,
+                }
+            });
+        }
+
+        // return all the cardSetCards
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            cardSetCardDatas: cardSetCards.map(csc => getCardSetCardData(csc)),
+        });
+    } catch (ex) {
+        console.error('/card-set-cards/updateCardSetCardsOrder caught ex', ex);
         next(ex);
         return;
     }
