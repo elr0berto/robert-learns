@@ -56,12 +56,7 @@ export const validateGetCardSetCardsRequest = (req: GetCardSetCardsRequest) : st
 export const getCardSetCards = async(req : GetCardSetCardsRequest) : Promise<GetCardSetCardsResponse> => {
     const errors = validateGetCardSetCardsRequest(req);
     if (errors.length > 0) {
-        return new GetCardSetCardsResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join('\n'),
-            cardSetCardDatas: [],
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(GetCardSetCardsResponse, '/card-set-cards/get', req);
 }
@@ -89,11 +84,7 @@ export const validateCreateCardSetCardsRequest = (req: CreateCardSetCardsRequest
 export const createCardSetCards = async(req : CreateCardSetCardsRequest) : Promise<BaseResponse> => {
     const errors = validateCreateCardSetCardsRequest(req);
     if (errors.length > 0) {
-        return new BaseResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join('\n')
-        });
+        throw new Error(errors.join('\n'));
     }
 
     return await apiClient.post(BaseResponse, '/card-set-cards/create', req);
@@ -138,13 +129,7 @@ export const validateUpdateCardCardSetsRequest = (req: UpdateCardCardSetsRequest
 export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promise<UpdateCardCardSetsResponse> => {
     const errors = validateUpdateCardCardSetsRequest(req);
     if (errors.length > 0) {
-        return new UpdateCardCardSetsResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join('\n'),
-            cardData: null,
-            cardSetCardDatas: null,
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/updateCardCardSets', req);
 }
@@ -190,12 +175,7 @@ export const validateUpdateCardSetCardsOrderRequest = (req: UpdateCardSetCardsOr
 export const updateCardSetCardsOrder = async(req : UpdateCardSetCardsOrderRequest) : Promise<UpdateCardSetCardsOrderResponse> => {
     const errors = validateUpdateCardSetCardsOrderRequest(req);
     if (errors.length > 0) {
-        return new UpdateCardSetCardsOrderResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join('\n'),
-            cardSetCardDatas: null,
-        });
+        throw new Error(errors.join('\n'));
     }
 
     return await apiClient.post(UpdateCardSetCardsOrderResponse, '/card-set-cards/updateCardSetCardsOrder', req);

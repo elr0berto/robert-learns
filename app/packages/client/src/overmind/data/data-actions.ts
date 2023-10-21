@@ -74,6 +74,9 @@ export const loadCardSetCards = async ({state,effects,actions} : Context, reques
 }
 
 export const loadCards = async ({state,effects,actions} : Context, cardIds: number[]) => {
+    if (cardIds.length === 0) {
+        return;
+    }
     state.data.loadingCards = true;
 
     const resp = await effects.api.cards.getCards({cardIds});

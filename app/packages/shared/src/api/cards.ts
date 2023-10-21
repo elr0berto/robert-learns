@@ -38,12 +38,7 @@ export const validateGetCardsRequest = (req: GetCardsRequest) : string[] => {
 export const getCards = async(getCardsRequest : GetCardsRequest) : Promise<GetCardsResponse> => {
     const errors = validateGetCardsRequest(getCardsRequest);
     if (errors.length > 0) {
-        return new GetCardsResponse({
-            dataType: true,
-            errorMessage: errors.join(', '),
-            status: ResponseStatus.UnexpectedError,
-            cardDatas: null,
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(GetCardsResponse, '/cards/get', getCardsRequest);
 }
@@ -107,13 +102,7 @@ export const validateCreateCardRequest = (params: CreateCardRequest) : string[] 
 export const createCard = async(params: CreateCardRequest) : Promise<CreateCardResponse> => {
     const errors = validateCreateCardRequest(params);
     if (errors.length > 0) {
-        return new CreateCardResponse({
-            dataType: true,
-            errorMessage: errors.join(', '),
-            status: ResponseStatus.UserError,
-            cardData: null,
-            cardSetCardDatas: null,
-        });
+        throw new Error(errors.join('\n'));
     }
 
     const formData = new FormData();
@@ -154,11 +143,7 @@ export const validateDeleteCardRequest = (params: DeleteCardRequest) : string[] 
 export const deleteCard = async(params: DeleteCardRequest) : Promise<BaseResponse> => {
     const errors = validateDeleteCardRequest(params);
     if (errors.length > 0) {
-        return new BaseResponse({
-            dataType: true,
-            errorMessage: errors.join(', '),
-            status: ResponseStatus.UnexpectedError,
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(BaseResponse, '/cards/delete', params);
 }

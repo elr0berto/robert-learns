@@ -15,7 +15,8 @@ export const open = async ({ state, effects, actions }: Context, cardSetId: numb
     const cardSetIds = state.data.cardSets.filter(cs => cs.workspaceId === state.page.workspaceId).map(cs => cs.id);
     await actions.data.loadCardSetCards({cardSetIds});
     const cardIds = state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
-    await actions.data.loadCards(cardIds);
+
+    await actions.data.loadCards(Array.from(new Set(cardIds)));
 
     state.addCardsFromOtherCardSetsModal.loading = false;
 }

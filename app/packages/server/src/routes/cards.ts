@@ -89,8 +89,15 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
     try {
         const user = await getSignedInUser(req.session);
 
-        const front = sanitizeHtml(req.body.front ?? '');
-        const back = sanitizeHtml(req.body.back ?? '');
+        console.log({front: req.body.front, back: req.body.back});
+
+        // create options for sanitizeHtml to allow img-tags
+        const sanitizeHtmlOptions = {
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+        }
+        const front = sanitizeHtml(req.body.front ?? '', sanitizeHtmlOptions);
+        const back = sanitizeHtml(req.body.back ?? '', sanitizeHtmlOptions);
+        console.log({fronts: front, backs: back});
 
         const cardId: number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
 

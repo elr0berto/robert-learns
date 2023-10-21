@@ -30,12 +30,7 @@ export class GetCardSetsResponse extends BaseResponse {
 export const getCardSets = async(request : GetCardSetsRequest) : Promise<GetCardSetsResponse> => {
     const errors = validateGetCardSetsRequest(request);
     if (errors.length !== 0) {
-        return new GetCardSetsResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join(', '),
-            cardSetDatas: null,
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(GetCardSetsResponse, '/card-sets/get', request);
 }
@@ -79,12 +74,7 @@ export const validateCreateCardSetRequest = (req: CreateCardSetRequest) : string
 export const createCardSet = async(req: CreateCardSetRequest) : Promise<CreateCardSetResponse> => {
     const errors = validateCreateCardSetRequest(req);
     if (errors.length !== 0) {
-        return new CreateCardSetResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join(', '),
-            cardSetData: null,
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(CreateCardSetResponse, '/card-sets/create', req);
 }
@@ -105,11 +95,7 @@ export const validateDeleteCardSetRequest = (req: DeleteCardSetRequest) : string
 export const deleteCardSet = async(params: DeleteCardSetRequest) : Promise<BaseResponse> => {
     const errors = validateDeleteCardSetRequest(params);
     if (errors.length !== 0) {
-        return new BaseResponse({
-            dataType: true,
-            status: ResponseStatus.UnexpectedError,
-            errorMessage: errors.join(', '),
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(BaseResponse, '/card-sets/delete-card-set', params);
 }

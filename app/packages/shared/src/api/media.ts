@@ -14,6 +14,11 @@ export class MediaUploadFileResponse extends BaseResponse {
 }
 
 export const uploadFile = async(workspaceId : number, file: File) : Promise<MediaUploadFileResponse> => {
+    // check that file has a size above 0
+    if (file.size === 0) {
+        throw new Error('File is empty');
+    }
+
     const formData = new FormData();
     formData.append('file', file);
     return await apiClient.post(MediaUploadFileResponse, '/media/uploadFile/'+workspaceId, formData, {

@@ -37,12 +37,7 @@ export const validateGetWorkspaceUsersRequest = (req: GetWorkspaceUsersRequest) 
 export const getWorkspaceUsers = async(req: GetWorkspaceUsersRequest) : Promise<GetWorkspaceUsersResponse> => {
     const errors = validateGetWorkspaceUsersRequest(req);
     if (errors.length > 0) {
-        return new GetWorkspaceUsersResponse({
-            dataType: true,
-            workspaceUserDatas: [],
-            errorMessage: errors.join('.'),
-            status: ResponseStatus.UserError,
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(GetWorkspaceUsersResponse, '/workspace-users/get-workspace-users', req);
 }

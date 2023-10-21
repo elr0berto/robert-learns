@@ -51,5 +51,9 @@ export class SignInResponse extends BaseResponse {
 
 
 export const signIn = async(params: SignInRequest) : Promise<SignInResponse> => {
+    const errors = validateSignInRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
     return await apiClient.post(SignInResponse, '/sign-in', params);
 }

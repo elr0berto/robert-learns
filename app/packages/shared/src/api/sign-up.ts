@@ -45,5 +45,9 @@ export class SignUpResponse extends BaseResponse {
 }
 
 export const signUp = async(params: SignUpRequest) : Promise<SignUpResponse> => {
+    const errors = validateSignUpRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
     return await apiClient.post(SignUpResponse, '/sign-up', params);
 }

@@ -41,6 +41,10 @@ export const validateCreateWorkspaceRequest = (req: CreateWorkspaceRequest) : st
 }
 
 export const createWorkspace = async(params: CreateWorkspaceRequest) : Promise<CreateWorkspaceResponse> => {
+    const errors = validateCreateWorkspaceRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
     return await apiClient.post(CreateWorkspaceResponse, '/workspaces/create', params);
 }
 

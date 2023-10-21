@@ -31,12 +31,7 @@ export const validateUserGetByEmailRequest = (req: UserGetByEmailRequest) : stri
 export const userGetByEmail = async(req: UserGetByEmailRequest) : Promise<UserGetByEmailResponse> => {
     const errors = validateUserGetByEmailRequest(req);
     if (errors.length > 0) {
-        return new UserGetByEmailResponse({
-            dataType: true,
-            errorMessage: errors.join('.'),
-            status: ResponseStatus.UserError,
-            userData: null
-        });
+        throw new Error(errors.join('\n'));
     }
     return await apiClient.post(UserGetByEmailResponse, '/users/getByEmail', req);
 }
@@ -74,16 +69,9 @@ export const validateGetUsersRequest = (req: GetUsersRequest) : string[] => {
 }
 
 export const getUsers = async(req: GetUsersRequest) : Promise<GetUsersResponse> => {
-    console.log('getUsers req', req);
     const errors = validateGetUsersRequest(req);
     if (errors.length > 0) {
-        return new GetUsersResponse({
-            dataType: true,
-            userDatas: null,
-            errorMessage: errors.join('.'),
-            status: ResponseStatus.UserError,
-        });
+        throw new Error(errors.join('\n'));
     }
-    console.log('getUsers req', req);
     return await apiClient.post(GetUsersResponse, '/users/getUsers', req);
 }

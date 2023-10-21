@@ -98,7 +98,10 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
     state.page.loadingCards = true;
 
     await actions.data.loadCardSetCards({cardSetIds: cardSetIds});
-    await actions.data.loadCards(state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId));
+    const cardIds = state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
+    if (cardIds.length > 0) {
+        await actions.data.loadCards(cardIds);
+    }
 
     state.page.loadingCards = false;
 }
