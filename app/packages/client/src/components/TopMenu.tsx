@@ -1,6 +1,6 @@
 import React from 'react';
 import {useActions, useAppState} from "../overmind";
-import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
+import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import {Pages, pageUrls} from "../page-urls";
 
@@ -45,6 +45,7 @@ function TopMenu() {
                             {workspace !== null ? <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(workspace)}>Create card set</NavDropdown.Item> : null}
                         </NavDropdown> : null
                     }
+                    <Button className="mx-lg-5" variant="success" href={pageUrls.drill.url()}>Drill</Button>
                 </Nav>
                 <Nav>
                     {

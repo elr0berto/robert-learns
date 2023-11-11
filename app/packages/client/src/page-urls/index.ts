@@ -21,6 +21,8 @@ export enum Pages {
     WorkspaceCardSet = "workspaceCardSet",
     WorkspaceCreate = "workspaceCreate",
     WorkspaceEdit = "workspaceEdit",
+    Drill = "drill",
+    DrillRun = "drillRun",
 }
 
 function getSlug(str: string) : string {
@@ -87,6 +89,18 @@ const pageUrls = {
         url: (workspace: Workspace) => '/workspace-edit/'+workspace.id+'-'+getSlug(workspace.name),
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showWorkspaceEditPage,
         getPageComponent: () => WorkspaceCreate,
+    },
+    [Pages.Drill]: {
+        route: '/drill',
+        url: () => '/drill',
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showDrillPage,
+        getPageComponent: () => DrillPage,
+    },
+    [Pages.DrillRun]: {
+        route: '/drill-run/:drillRunId-:drillName',
+        url: (drill: Drill, drillRun: DrillRun) => '/drill-run/'+drillRun.id+'-'+getSlug(drill.name),
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showDrillRunPage,
+        getPageComponent: () => DrillRunPage,
     }
 }
 

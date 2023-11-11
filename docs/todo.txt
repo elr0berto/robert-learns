@@ -4,6 +4,19 @@ drills
 -- answers are saved server side, connected to drill-run. this keeps track of stats and of progress of the drill-run for resume.
 -- when drill-run is deleted, answers are saved but with drillRunId = null. this enables stats for each card despite old drill runs themselves being delete.
 
+Drill UI:
+Button in the top menu "Drill"
+- Button opens the drill modal
+- Modal has a dropdown with old drills and an option to create a new drill
+- Dropdown has a button to create a new drill
+- Initally only the dropdown is shown
+- When an existing/old drill is selected, then under the dropdown the "edit mode" for that drill is displayed.
+- When "create a new drill" is selected, then udner the dropdown the "create new drill mode" is displayed.
+- in both edit and create mode you can select card-sets and options for the drill
+- in both edit and create mode you can save the drill
+- in both edit and create mode you can run the drill (running also saves)
+- in both edit and create mode you can change the name of the drill
+
 save stats for right/wrong answers
 style card lists / cards -- maybe use CardGroup
 
