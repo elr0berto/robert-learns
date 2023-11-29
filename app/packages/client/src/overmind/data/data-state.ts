@@ -26,6 +26,11 @@ export type WorkspaceWithCardSetsCount = {
     cardSetsCount: number;
 }
 
+export type WorkspaceWithCardSets = {
+    workspace: Workspace;
+    cardSets: CardSet[];
+}
+
 type DataState = {
     workspaces: Workspace[];
     loadingWorkspaces: boolean;
@@ -42,6 +47,7 @@ type DataState = {
 
     readonly workspacesWithWorkspaceUsers: WorkspaceWithWorkspaceUsers[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
+    readonly workspacesWithCardSets: WorkspaceWithCardSets[];
     readonly cardSetsWithCards: CardSetWithCards[];
     readonly cardsWithCardSets: CardWithCardSets[];
     readonly cardSetsWithCardsWithCardSets: CardSetWithCardsWithCardSets[];
@@ -70,6 +76,12 @@ export const getInitialDataState = () : DataState => ({
         return state.workspaces.map(w => ({
             workspace: w,
             cardSetsCount: state.cardSets.filter(cs => cs.workspaceId === w.id).length,
+        }));
+    }),
+    workspacesWithCardSets: derived((state: DataState) => {
+        return state.workspaces.map(w => ({
+            workspace: w,
+            cardSets: state.cardSets.filter(cs => cs.workspaceId === w.id),
         }));
     }),
     cardSetsWithCards: derived((state: DataState) => {

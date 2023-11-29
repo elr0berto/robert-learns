@@ -1,6 +1,6 @@
 import {useActions, useAppState} from "../../overmind";
 import React from "react";
-import {Container, Dropdown} from "react-bootstrap";
+import {Container, Form} from "react-bootstrap";
 
 function DrillPage() {
     const state = useAppState();
@@ -11,28 +11,44 @@ function DrillPage() {
     }
 
     return <Container>
-        <Dropdown>
-        {state.page.loadingCardSets ?
-            <p>Loading card sets...</p> :
-            <Container>
-                <Row>
-                    {state.page.cardSets.map((cardSet, index) => (
-                        <Col key={index} sm={12} md={6} lg={4} xl={3}>
-                            <Card>
-                                <Card.Body>
-                                    <Card.Title>{cardSet.name}</Card.Title>
-                                    <Card.Text>{cardSet.description}</Card.Text>
-                                    <Card.Link href={pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace as Workspace, cardSet)}>Go to card set</Card.Link>
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-            </Container>
-        }
-        <div className="mt-3 buttons">
-            {state.permission.editWorkspace ? <Button href={pageUrls.workspaceEdit.url(state.page.workspace)}><PencilSquare/> Edit workspace</Button> : null}
-        </div>
+        <Form.Select onChange={event => actions.drillPage.changeDrill(event.target.value)}>
+            <option value={'none'}>Select drill</option>
+            <option value={'new'}>Create new drill</option>
+            {state.page.drills.map(drill => <option key={drill.id} value={drill.id}>{drill.name}</option>)}
+        </Form.Select>
+        {state.drillPage.selectedDrill !== 'none' ?
+            <>
+                <Form.Group controlId="drillName">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control type="text" value={state.drillPage.drillName} onChange={event => actions.drillPage.changeDrillName(event.target.value)}/>
+                </Form.Group>
+                <Form.Group controlId="drillDescription">
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control as="textarea" value={state.drillPage.drillDescription} onChange={event => actions.drillPage.changeDrillDescription(event.target.value)}/>
+                </Form.Group>
+                {state.page.workspacesWithCardSets.map(wwcs =>
+                    <>
+                        <Form.Check
+                            key={wwcs.workspace.id}
+                            type="checkbox"
+                            label={wwcs.workspace.name}
+                            checked={state.drillPage.selectedWorkspaces.includes(wwcs.workspace.id)}
+                            onChange={event => actions.drillPage.toggleWorkspace(wwcs.workspace.id)}
+                        />
+                        {wwcs.cardSets.map(cardSet =>
+                            <Form.Check
+                                style={{marginLeft: '2rem'}}
+                                key={cardSet.id}
+                                type="checkbox"
+                                label={cardSet.name}
+                                checked={state.drillPage.selectedCardSets.includes(cardSet.id)}
+                                onChange={event => actions.drillPage.toggleCardSet(cardSet.id)}
+                            />
+                        )}
+                    </>
+                )}
+            </> :
+        null}
     </Container>;
 }
 

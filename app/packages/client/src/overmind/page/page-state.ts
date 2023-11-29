@@ -4,7 +4,7 @@ import {derived} from "overmind";
 import {config} from "../index";
 import {
     CardSetWithCards, CardSetWithCardsWithCardSets,
-    CardWithCardSets,
+    CardWithCardSets, WorkspaceWithCardSets,
     WorkspaceWithCardSetsCount,
     WorkspaceWithWorkspaceUsers
 } from "../data/data-state";
@@ -19,6 +19,7 @@ type PageState = {
     loadingCards: boolean;
     readonly workspaces: Workspace[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
+    readonly workspacesWithCardSets: WorkspaceWithCardSets[];
     readonly workspace: Workspace | null;
     readonly workspaceWithWorkspaceUsers: WorkspaceWithWorkspaceUsers | null;
     readonly workspaceUser: WorkspaceUser | null;
@@ -44,6 +45,11 @@ export const state: PageState = {
     }),
     workspacesWithCardSetsCounts: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.workspacesWithCardSetsCounts.filter(wwc => {
+            return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
+        });
+    }),
+    workspacesWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.workspacesWithCardSets.filter(wwc => {
             return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
         });
     }),

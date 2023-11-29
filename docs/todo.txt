@@ -2,11 +2,11 @@ drills
 - drill (card-sets & options?) - saved server side
 - drill-run (drill & options?) - saved server side. can be resumed.
 -- answers are saved server side, connected to drill-run. this keeps track of stats and of progress of the drill-run for resume.
--- when drill-run is deleted, answers are saved but with drillRunId = null. this enables stats for each card despite old drill runs themselves being delete.
+-- when drill-run is deleted, answers are saved but with drillRunId = null. this enables stats for each card despite old drill runs themselves being deleted.
 
 Drill UI:
 Button in the top menu "Drill"
-- Button opens the drill modal
+- Button opens the drill page
 - Modal has a dropdown with old drills and an option to create a new drill
 - Dropdown has a button to create a new drill
 - Initally only the dropdown is shown
