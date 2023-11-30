@@ -1,5 +1,5 @@
 import {Pages} from "../../page-urls";
-import {Card, CardSet, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSet, Drill, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {
@@ -17,6 +17,7 @@ type PageState = {
     loadingWorkspaces: boolean;
     loadingCardSets: boolean;
     loadingCards: boolean;
+    loadingDrills: boolean;
     readonly workspaces: Workspace[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
@@ -28,6 +29,7 @@ type PageState = {
     readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
     readonly cards: Card[];
     readonly cardsWithCardSets: CardWithCardSets[];
+    readonly drills: Drill[];
 }
 
 export const state: PageState = {
@@ -38,6 +40,7 @@ export const state: PageState = {
     loadingWorkspaces: true,
     loadingCardSets: true,
     loadingCards: true,
+    loadingDrills: true,
     workspaces: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.workspaces.filter(workspace => {
             return workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === workspace.id && wu.userId === rootState.signIn.userId);
@@ -111,5 +114,8 @@ export const state: PageState = {
             return [];
         }
         return state.cardSetWithCardsWithCardSets?.cardsWithCardSets ?? [];
+    }),
+    drills: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.drills;
     }),
 };

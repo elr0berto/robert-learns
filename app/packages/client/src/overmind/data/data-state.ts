@@ -1,5 +1,13 @@
 import {derived} from "overmind";
-import {Card, User, Workspace, WorkspaceUser, CardSetCard, CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {
+    Card,
+    User,
+    Workspace,
+    WorkspaceUser,
+    CardSetCard,
+    CardSet,
+    Drill
+} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export type CardSetWithCards = {
     cardSet: CardSet;
@@ -44,6 +52,8 @@ type DataState = {
     loadingCardSetCards: boolean;
     cardSets: CardSet[];
     loadingCardSets: boolean;
+    drills: Drill[];
+    loadingDrills: boolean;
 
     readonly workspacesWithWorkspaceUsers: WorkspaceWithWorkspaceUsers[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
@@ -66,6 +76,8 @@ export const getInitialDataState = () : DataState => ({
     loadingCardSetCards: false,
     cardSets: [],
     loadingCardSets: false,
+    drills: [],
+    loadingDrills: false,
     workspacesWithWorkspaceUsers: derived((state: DataState) => {
         return state.workspaces.map(w => ({
             workspace: w,

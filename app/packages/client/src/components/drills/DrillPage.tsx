@@ -6,8 +6,18 @@ function DrillPage() {
     const state = useAppState();
     const actions = useActions();
 
+    const loading : string[] = [];
     if (state.page.loadingDrills) {
-        return <Container>Loading...</Container>;
+        loading.push('drills');
+    }
+    if (state.page.loadingWorkspaces) {
+        loading.push('workspaces');
+    }
+    if (state.page.loadingCardSets) {
+        loading.push('card sets');
+    }
+    if (loading.length > 0) {
+        return <Container>Loading {loading.join(', ')}...</Container>;
     }
 
     return <Container>

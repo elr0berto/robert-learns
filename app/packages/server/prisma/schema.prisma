@@ -118,6 +118,7 @@ model CardSet {
   users   CardSetUser[]
   workspace Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId Int
+  drillCardSets DrillCardSet[]
   order Int @default(0)
 }
 
@@ -128,4 +129,19 @@ model CardSetCard {
   cardSetId Int
   order Int @default(0)
   @@id([cardId, cardSetId])
+}
+
+model Drill {
+  id      Int      @id @default(autoincrement())
+  name    String
+  description String @default("")
+  drillCardSets DrillCardSet[]
+}
+
+model DrillCardSet {
+  drill Drill @relation(fields: [drillId], references: [id])
+  drillId Int
+  cardSet CardSet @relation(fields: [cardSetId], references: [id])
+  cardSetId Int
+  @@id([drillId, cardSetId])
 }

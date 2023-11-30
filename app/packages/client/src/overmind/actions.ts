@@ -5,7 +5,6 @@ import {Payload} from "./page/page-actions";
 import {pageUrls} from "../page-urls";
 import {BaseResponse, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 
-
 export const onInitializeOvermind = async ({ actions, effects, state }: Context) => {
 
     effects.api.apiClient.initialize(() => {},
