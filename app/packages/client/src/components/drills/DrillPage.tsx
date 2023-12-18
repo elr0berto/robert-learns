@@ -21,12 +21,12 @@ function DrillPage() {
     }
 
     return <Container>
-        <Form.Select onChange={event => actions.drillPage.changeDrill(event.target.value)}>
+        <Form.Select value={state.drillPage.selectedDrillId} onChange={event => actions.drillPage.changeDrill(event.target.value)}>
             <option value={'none'}>Select drill</option>
             <option value={'new'}>Create new drill</option>
             {state.page.drills.map(drill => <option key={drill.id} value={drill.id}>{drill.name}</option>)}
         </Form.Select>
-        {state.drillPage.selectedDrill !== 'none' ?
+        {state.drillPage.selectedDrillId !== null ?
             <>
                 <Form.Group controlId="drillName">
                     <Form.Label>Name</Form.Label>
@@ -42,8 +42,8 @@ function DrillPage() {
                             key={wwcs.workspace.id}
                             type="checkbox"
                             label={wwcs.workspace.name}
-                            checked={state.drillPage.selectedWorkspaces.includes(wwcs.workspace.id)}
-                            onChange={event => actions.drillPage.toggleWorkspace(wwcs.workspace.id)}
+                            checked={state.drillPage.selectedWorkspaceIds.includes(wwcs.workspace.id)}
+                            onChange={event => actions.drillPage.toggleWorkspaceId(wwcs.workspace.id)}
                         />
                         {wwcs.cardSets.map(cardSet =>
                             <Form.Check
@@ -51,8 +51,8 @@ function DrillPage() {
                                 key={cardSet.id}
                                 type="checkbox"
                                 label={cardSet.name}
-                                checked={state.drillPage.selectedCardSets.includes(cardSet.id)}
-                                onChange={event => actions.drillPage.toggleCardSet(cardSet.id)}
+                                checked={state.drillPage.selectedCardSetIds.includes(cardSet.id)}
+                                onChange={event => actions.drillPage.toggleCardSetId(cardSet.id)}
                             />
                         )}
                     </>

@@ -22,19 +22,20 @@ model Session {
   id        String   @id
   sid       String   @unique
   data      String   @db.Text
-  expiresAt   DateTime
+  expiresAt DateTime
 }
 
 model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  username String  @unique
-  firstName String
-  lastName String
-  password String
-  admin Boolean @default(false)
+  id         Int             @id @default(autoincrement())
+  email      String          @unique
+  username   String          @unique
+  firstName  String
+  lastName   String
+  password   String
+  admin      Boolean         @default(false)
   workspaces WorkspaceUser[]
-  cardSets CardSetUser[]
+  cardSets   CardSetUser[]
+  drills     Drill[]
 }
 
 enum UserRole {
@@ -45,37 +46,37 @@ enum UserRole {
 }
 
 model WorkspaceUser {
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId Int
-  user    User     @relation(fields: [userId], references: [id])
-  userId  Int
-  role    UserRole
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  role        UserRole
 
   @@id([workspaceId, userId])
 }
 
 model Workspace {
-  id      Int      @id @default(autoincrement())
-  name    String
+  id          Int             @id @default(autoincrement())
+  name        String
   description String
-  users   WorkspaceUser[]
-  cardSets CardSet[]
-  medias  Media[]
-  allowGuests Boolean @default(false)
+  users       WorkspaceUser[]
+  cardSets    CardSet[]
+  medias      Media[]
+  allowGuests Boolean         @default(false)
 }
 
 enum MediaType {
-   AUDIO
-   IMAGE
+  AUDIO
+  IMAGE
 }
 
 model Media {
-  id        Int      @id @default(autoincrement())
-  path      String
-  name      String
-  type      MediaType
-  cards     Card[]
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
+  id          Int       @id @default(autoincrement())
+  path        String
+  name        String
+  type        MediaType
+  cards       Card[]
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId Int
 }
 
@@ -101,47 +102,60 @@ model CardFace {
 }
 
 model CardSetUser {
-  cardSet CardSet @relation(fields: [cardSetId], references: [id])
+  cardSet   CardSet  @relation(fields: [cardSetId], references: [id])
   cardSetId Int
-  user    User     @relation(fields: [userId], references: [id])
-  userId  Int
-  role    UserRole
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  role      UserRole
 
   @@id([cardSetId, userId])
 }
 
 model CardSet {
-  id      Int      @id @default(autoincrement())
-  name    String
-  description String @default("")
-  cards   CardSetCard[]
-  users   CardSetUser[]
-  workspace Workspace @relation(fields: [workspaceId], references: [id])
-  workspaceId Int
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String         @default("")
+  cards         CardSetCard[]
+  users         CardSetUser[]
+  workspace     Workspace      @relation(fields: [workspaceId], references: [id])
+  workspaceId   Int
   drillCardSets DrillCardSet[]
-  order Int @default(0)
+  order         Int            @default(0)
 }
 
 model CardSetCard {
-  card Card @relation(fields: [cardId], references: [id])
-  cardId Int
-  cardSet CardSet @relation(fields: [cardSetId], references: [id])
+  card      Card    @relation(fields: [cardId], references: [id])
+  cardId    Int
+  cardSet   CardSet @relation(fields: [cardSetId], references: [id])
   cardSetId Int
-  order Int @default(0)
+  order     Int     @default(0)
+
   @@id([cardId, cardSetId])
 }
 
 model Drill {
-  id      Int      @id @default(autoincrement())
-  name    String
-  description String @default("")
+  id            Int            @id @default(autoincrement())
+  name          String
+  description   String         @default("")
+  user          User           @relation(fields: [userId], references: [id])
+  userId        Int
   drillCardSets DrillCardSet[]
+  drillRuns     DrillRun[]
 }
 
 model DrillCardSet {
-  drill Drill @relation(fields: [drillId], references: [id])
-  drillId Int
-  cardSet CardSet @relation(fields: [cardSetId], references: [id])
+  drill     Drill   @relation(fields: [drillId], references: [id])
+  drillId   Int
+  cardSet   CardSet @relation(fields: [cardSetId], references: [id])
   cardSetId Int
+
   @@id([drillId, cardSetId])
+}
+
+model DrillRun {
+  id        Int       @id @default(autoincrement())
+  drill     Drill     @relation(fields: [drillId], references: [id])
+  drillId   Int
+  startTime DateTime  @default(now()) @db.Timestamp(0)
+  endTime   DateTime?
 }
