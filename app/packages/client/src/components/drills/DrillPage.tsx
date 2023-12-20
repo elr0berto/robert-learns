@@ -1,6 +1,7 @@
 import {useActions, useAppState} from "../../overmind";
 import React from "react";
 import {Container, Form} from "react-bootstrap";
+import Loading from "../Loading";
 
 function DrillPage() {
     const state = useAppState();
@@ -17,7 +18,9 @@ function DrillPage() {
         loading.push('card sets');
     }
     if (loading.length > 0) {
-        return <Container>Loading {loading.join(', ')}...</Container>;
+        return <Container>
+            <Loading text={'Loading ' + loading.join(', ')+'...'}/>
+        </Container>;
     }
 
     return <Container>

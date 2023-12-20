@@ -7,7 +7,7 @@ import WorkspaceCreate from "../components/workspace/WorkspaceCreate";
 import WorkspacePage from "../components/workspace/WorkspacePage";
 import WorkspaceCardSetCreatePage from "../components/workspace/WorkspaceCardSetCreatePage";
 import WorkspaceCardSetPage from "../components/workspace/WorkspaceCardSetPage";
-import {Drill, Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Drill, DrillRun, Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 import AdminLogsPage from "../components/admin/AdminLogsPage";
 import DrillPage from "../components/drills/DrillPage";
 import DrillRunPage from "../components/drills/DrillRunPage";

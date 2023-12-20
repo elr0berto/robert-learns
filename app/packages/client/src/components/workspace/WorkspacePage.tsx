@@ -4,6 +4,7 @@ import React from "react";
 import {Pages, pageUrls} from "../../page-urls";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {PencilSquare} from "react-bootstrap-icons";
+import Loading from "../Loading";
 
 function WorkspacePage() {
     const state = useAppState();
@@ -11,7 +12,7 @@ function WorkspacePage() {
 
     if (state.page.workspace === null) {
         if (state.page.loadingWorkspaces) {
-            return <Container>Loading...</Container>;
+            return <Container><Loading/></Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }

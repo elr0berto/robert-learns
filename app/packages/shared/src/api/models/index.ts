@@ -10,3 +10,4 @@ export * from './WorkspaceUser.js';
 export * from './UserRole.js';
 export * from './LogEntry.js';
 export * from './Drill.js';
+export * from './DrillRun.js';

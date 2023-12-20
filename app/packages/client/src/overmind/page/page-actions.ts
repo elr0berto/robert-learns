@@ -10,6 +10,8 @@ import {getInitialWorkspaceCardSetState} from "../workspace-card-set/workspace-c
 import {getInitialCreateCardModalState} from "../create-card-modal/create-card-modal-state";
 import {getInitialEditCardCardSetsModalState} from "../edit-card-card-sets-modal/edit-card-card-sets-modal-state";
 import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
+import {getInitialDrillPageState} from "../drill-page/drill-page-state";
+import {getInitialDrillRunPageState} from "../drill-run-page/drill-run-page-state";
 
 export type Payload = {
     params: any,
@@ -155,4 +157,14 @@ export const showWorkspaceCardSetCreatePage = async ({ state, actions }: Context
 export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
     await actions.page.load({page: Pages.WorkspaceCardSetEdit, payload: payload});
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(state.page.cardSet);
+}
+
+export const showDrillPage = async ({ state, actions }: Context) => {
+    actions.page.load({page: Pages.Drill});
+    state.drillPage = getInitialDrillPageState();
+}
+
+export const showDrillRunPage = async ({ state, actions }: Context, payload: Payload) => {
+    actions.page.load({page: Pages.DrillRun, payload: payload});
+    state.drillRunPage = getInitialDrillRunPageState();
 }
