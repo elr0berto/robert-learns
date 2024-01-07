@@ -2,13 +2,19 @@ import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData, CardSet, CardSetData, ResponseStatus} from "./models/index.js";
 
 export type GetCardSetsRequest = {
-    workspaceId: number;
+    workspaceIds: number[];
 }
 
 export const validateGetCardSetsRequest = (req: GetCardSetsRequest) : string[] => {
     const errs : string[] = [];
-    if (req.workspaceId <= 0) {
-        errs.push('Workspace id is missing');
+    if (req.workspaceIds.length <= 0) {
+        errs.push('Workspace ids is missing');
+    }
+
+    //  get unique workspace ids
+    const uniqueWorkspaceIds = req.workspaceIds.filter((v, i, a) => a.indexOf(v) === i);
+    if (uniqueWorkspaceIds.length !== req.workspaceIds.length) {
+        errs.push('Workspace ids must be unique');
     }
 
     return errs;
@@ -32,7 +38,7 @@ export const getCardSets = async(request : GetCardSetsRequest) : Promise<GetCard
     if (errors.length !== 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(GetCardSetsResponse, '/card-sets/get', request);
+    return await apiClient.post(GetCardSetsResponse, '/card-sets/get-card-sets', request);
 }
 
 
@@ -76,7 +82,7 @@ export const createCardSet = async(req: CreateCardSetRequest) : Promise<CreateCa
     if (errors.length !== 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(CreateCardSetResponse, '/card-sets/create', req);
+    return await apiClient.post(CreateCardSetResponse, '/card-sets/create-card-set', req);
 }
 
 export type DeleteCardSetRequest = {

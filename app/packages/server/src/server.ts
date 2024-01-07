@@ -10,6 +10,7 @@ import media from './routes/media.js';
 import cards from './routes/cards.js';
 import users from './routes/users.js';
 import logs from './routes/logs.js';
+import drills from './routes/drills.js';
 
 import session from './session.js';
 import logger from "./logger.js";
@@ -43,6 +44,7 @@ class Server {
         this.express.use('/api/media', media);
         this.express.use('/api/cards', cards);
         this.express.use('/api/users', users);
+        this.express.use('/api/drills', drills);
     }
 
     setupErrorHandler() {

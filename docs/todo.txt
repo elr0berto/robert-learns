@@ -1,3 +1,5 @@
+change all the urls to match with the request-model-names
+
 drills
 - drill (card-sets & options?) - saved server side
 - drill-run (drill & options?) - saved server side. can be resumed.
@@ -34,6 +36,7 @@ test creating cards
 test adding cards to other cardsets
 test adding cards from other cardsets
 
+FUTURE: stop allowing unsigned in users to do anything?! OR create temporary session id's for them so that they can store drill runs etc...
 FUTURE: different modals should have their own urls so that browser back button works
 FUTURE: throw exceptions everywhere instead of "return UnexpectedError"?
 FUTURE: uncaught exception should log all the same stuff as logWithRequest

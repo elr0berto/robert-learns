@@ -11,7 +11,7 @@ import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 
 const media = Router();
 
-media.post('/uploadFile/:workspaceId', upload.single('file'), async (req, res : TypedResponse<MediaUploadFileResponseData>, next) => {
+media.post('/upload-file/:workspaceId', upload.single('file'), async (req, res : TypedResponse<MediaUploadFileResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 

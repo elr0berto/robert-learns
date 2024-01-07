@@ -19,7 +19,7 @@ export type GetLogEntriesRequest = {
 }
 
 export const getLogEntries = async(req: GetLogEntriesRequest) : Promise<GetLogEntriesResponse> => {
-    return await apiClient.post(GetLogEntriesResponse, '/logs/getLogEntries', req);
+    return await apiClient.post(GetLogEntriesResponse, '/logs/get-log-entries', req);
 }
 
 
@@ -106,5 +106,5 @@ export const addLogEntry = async (req: AddLogEntryRequestParams) : Promise<BaseR
         error: errorObject,
         componentStack: req.componentStack,
     }
-    return await apiClient.post(BaseResponse, '/logs/addLogEntry', realReq);
+    return await apiClient.post(BaseResponse, '/logs/add-log-entry', realReq);
 };

@@ -33,7 +33,7 @@ export const userGetByEmail = async(req: UserGetByEmailRequest) : Promise<UserGe
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(UserGetByEmailResponse, '/users/getByEmail', req);
+    return await apiClient.post(UserGetByEmailResponse, '/users/user-get-by-email', req);
 }
 
 export type GetUsersRequest = {
@@ -73,5 +73,5 @@ export const getUsers = async(req: GetUsersRequest) : Promise<GetUsersResponse> 
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(GetUsersResponse, '/users/getUsers', req);
+    return await apiClient.post(GetUsersResponse, '/users/get-users', req);
 }

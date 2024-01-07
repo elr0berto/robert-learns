@@ -3,7 +3,6 @@ import {
     BaseResponseData, Card, CardData,
     CardSetCard,
     CardSetCardData,
-    ResponseStatus
 } from "./models/index.js";
 import {apiClient} from "./ApiClient.js";
 
@@ -58,7 +57,7 @@ export const getCardSetCards = async(req : GetCardSetCardsRequest) : Promise<Get
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(GetCardSetCardsResponse, '/card-set-cards/get', req);
+    return await apiClient.post(GetCardSetCardsResponse, '/card-set-cards/get-card-set-cards', req);
 }
 
 export type CreateCardSetCardsRequest = {
@@ -87,7 +86,7 @@ export const createCardSetCards = async(req : CreateCardSetCardsRequest) : Promi
         throw new Error(errors.join('\n'));
     }
 
-    return await apiClient.post(BaseResponse, '/card-set-cards/create', req);
+    return await apiClient.post(BaseResponse, '/card-set-cards/create-card-set-cards', req);
 }
 
 export type UpdateCardCardSetsResponseData = BaseResponseData & {
@@ -131,7 +130,7 @@ export const updateCardCardSets = async(req : UpdateCardCardSetsRequest) : Promi
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/updateCardCardSets', req);
+    return await apiClient.post(UpdateCardCardSetsResponse, '/card-set-cards/update-card-card-sets', req);
 }
 
 
@@ -178,5 +177,5 @@ export const updateCardSetCardsOrder = async(req : UpdateCardSetCardsOrderReques
         throw new Error(errors.join('\n'));
     }
 
-    return await apiClient.post(UpdateCardSetCardsOrderResponse, '/card-set-cards/updateCardSetCardsOrder', req);
+    return await apiClient.post(UpdateCardSetCardsOrderResponse, '/card-set-cards/update-card-set-cards-order', req);
 }

@@ -19,7 +19,7 @@ import logger, {logWithRequest} from "../logger.js";
 
 const cardSetCards = Router();
 
-cardSetCards.post('/get', async (req : Request<unknown, unknown, GetCardSetCardsRequest>, res : TypedResponse<GetCardSetCardsResponseData>, next) => {
+cardSetCards.post('/get-card-set-cards', async (req : Request<unknown, unknown, GetCardSetCardsRequest>, res : TypedResponse<GetCardSetCardsResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -81,7 +81,7 @@ cardSetCards.post('/get', async (req : Request<unknown, unknown, GetCardSetCards
     }
 });
 
-cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSetCardsRequest>, res : TypedResponse<BaseResponseData>, next) => {
+cardSetCards.post('/create-card-set-cards', async (req : Request<unknown, unknown, CreateCardSetCardsRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -206,7 +206,7 @@ cardSetCards.post('/create', async (req : Request<unknown, unknown, CreateCardSe
     }
 });
 
-cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, UpdateCardCardSetsRequest>, res : TypedResponse<UpdateCardCardSetsResponseData>, next) => {
+cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknown, UpdateCardCardSetsRequest>, res : TypedResponse<UpdateCardCardSetsResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -364,7 +364,7 @@ cardSetCards.post('/updateCardCardSets', async (req : Request<unknown, unknown, 
 });
 
 // updateCardSetCardsOrder
-cardSetCards.post('/updateCardSetCardsOrder', async (req : Request<unknown, unknown, UpdateCardSetCardsOrderRequest>, res : TypedResponse<UpdateCardSetCardsOrderResponseData>, next) => {
+cardSetCards.post('/update-card-set-cards-order', async (req : Request<unknown, unknown, UpdateCardSetCardsOrderRequest>, res : TypedResponse<UpdateCardSetCardsOrderResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
         const errors = validateUpdateCardSetCardsOrderRequest(req.body);

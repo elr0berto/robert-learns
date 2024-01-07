@@ -35,36 +35,41 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
 
     let promises : Promise<void>[] = [];
 
-    promises.push(actions.page.loadWorkspaces());
-
-    console.log('load 1');
-    if (params?.payload?.params?.workspaceId/* || state.page.workspaceId !== null Removed because otherwise deleting workspace doesnt work.*/) {
-        console.log('load 2');
-        if (params?.payload?.params?.workspaceId) {
-            state.page.workspaceId = +params?.payload.params.workspaceId;
-        }
-        if (typeof state.page.workspaceId !== 'number') {
-            throw new Error('workspaceId is ' + typeof state.page.workspaceId);
-        }
-        promises.push(actions.page.loadCardSets(state.page.workspaceId));
-
-        if (params?.payload?.params?.cardSetId/* || state.page.cardSetId !== null: COMMENTED OUT BECAUSE OTHERWISE it gets weird when changing from a cardset-page to the workspace-page. menu thinks cardset is still selected!*/) {
-            if (params?.payload?.params?.cardSetId) {
-                state.page.cardSetId = +params?.payload.params.cardSetId;
-            }
-            if (typeof state.page.cardSetId !== 'number') {
-                throw new Error('cardSetId is ' + typeof state.page.cardSetId);
-            }
-            promises.push(actions.page.loadCards([state.page.cardSetId]));
-        } else {
-            state.page.cardSetId = null;
-        }
-    } else {
-        console.log('load 3');
+    if (params?.page === Pages.Drill) {
+        promises.push(actions.page.loadDrillsPage());
         state.page.workspaceId = null;
         state.page.cardSetId = null;
-    }
+    } else {
+        promises.push(actions.page.loadWorkspaces());
 
+        console.log('load 1');
+        if (params?.payload?.params?.workspaceId/* || state.page.workspaceId !== null Removed because otherwise deleting workspace doesnt work.*/) {
+            console.log('load 2');
+            if (params?.payload?.params?.workspaceId) {
+                state.page.workspaceId = +params?.payload.params.workspaceId;
+            }
+            if (typeof state.page.workspaceId !== 'number') {
+                throw new Error('workspaceId is ' + typeof state.page.workspaceId);
+            }
+            promises.push(actions.page.loadCardSets([state.page.workspaceId]));
+
+            if (params?.payload?.params?.cardSetId/* || state.page.cardSetId !== null: COMMENTED OUT BECAUSE OTHERWISE it gets weird when changing from a cardset-page to the workspace-page. menu thinks cardset is still selected!*/) {
+                if (params?.payload?.params?.cardSetId) {
+                    state.page.cardSetId = +params?.payload.params.cardSetId;
+                }
+                if (typeof state.page.cardSetId !== 'number') {
+                    throw new Error('cardSetId is ' + typeof state.page.cardSetId);
+                }
+                promises.push(actions.page.loadCards([state.page.cardSetId]));
+            } else {
+                state.page.cardSetId = null;
+            }
+        } else {
+            console.log('load 3');
+            state.page.workspaceId = null;
+            state.page.cardSetId = null;
+        }
+    }
     state.page.initializing = false;
 
     await Promise.all(promises);
@@ -88,10 +93,10 @@ export const loadWorkspaces = async ({state,actions} : Context) => {
     state.page.loadingWorkspaces = false;
 }
 
-export const loadCardSets = async ({state,actions} : Context, workspaceId: number) => {
+export const loadCardSets = async ({state,actions} : Context, workspaceIds: number[]) => {
     state.page.loadingCardSets = true;
 
-    await actions.data.loadCardSets(workspaceId);
+    await actions.data.loadCardSets(workspaceIds);
 
     state.page.loadingCardSets = false;
 }
@@ -106,6 +111,20 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
     }
 
     state.page.loadingCards = false;
+}
+
+export const loadDrills = async ({state,actions} : Context) => {
+    state.page.loadingDrills = true;
+
+    await actions.data.loadDrills();
+
+    state.page.loadingDrills = false;
+}
+export const loadDrillsPage = async ({state,actions} : Context) => {
+    const drillsPromise = actions.page.loadDrills();
+    await actions.page.loadWorkspaces();
+    await actions.page.loadCardSets(state.data.workspaces.map(w => w.id));
+    await drillsPromise;
 }
 
 export const showAdminLogsPage = async ({ actions, state, effects }: Context) => {
@@ -160,6 +179,7 @@ export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: 
 }
 
 export const showDrillPage = async ({ state, actions }: Context) => {
+    console.log('showDrillPage');
     actions.page.load({page: Pages.Drill});
     state.drillPage = getInitialDrillPageState();
 }

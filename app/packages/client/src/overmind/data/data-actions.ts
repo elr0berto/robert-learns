@@ -1,5 +1,6 @@
 import { Context } from '..';
 import {Card, CardSet, CardSetCard, User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {GetCardSetsResponse} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 export const clean = ({state} : Context) => {
     // loop over cardSets and remove any cardSets that don't have a workspaceId in state.data.workspaces
@@ -29,16 +30,16 @@ export const loadWorkspaces = async ({state,effects} : Context) => {
     state.data.loadingWorkspaces = false;
 }
 
-export const loadCardSets = async ({state,effects,actions} : Context, workspaceId: number) => {
+export const loadCardSets = async ({state,effects,actions} : Context, workspaceIds: number[]) => {
     state.data.loadingCardSets = true;
 
-    const resp = await effects.api.cardSets.getCardSets({workspaceId});
+    const resp = await effects.api.cardSets.getCardSets({workspaceIds});
 
     if (resp.cardSets === null) {
         throw new Error('resp.cardSets is null');
     }
 
-    actions.data.addOrUpdateCardSetsForWorkspaceId({workspaceId, cardSets: resp.cardSets});
+    actions.data.addOrUpdateCardSetsForWorkspaceIds({workspaceIds, cardSets: resp.cardSets});
 
     state.data.loadingCardSets = false;
 }
@@ -94,7 +95,7 @@ export const loadCards = async ({state,effects,actions} : Context, cardIds: numb
 export const loadCardsWithCardSets = async ({state,effects,actions} : Context, params: {workspaceId: number, cardIds: number[]}) => {
     await actions.data.loadCards(params.cardIds);
     await actions.data.loadCardSetCards({cardIds: params.cardIds});
-    await actions.data.loadCardSets(params.workspaceId);
+    await actions.data.loadCardSets([params.workspaceId]);
     actions.data.clean();
 }
 
@@ -138,8 +139,8 @@ export const addOrUpdateUser = ({state} : Context, user: User) => {
     }
 }
 
-export const addOrUpdateCardSetsForWorkspaceId = ({state} : Context, params: {cardSets: CardSet[], workspaceId: number}) => {
-    state.data.cardSets = state.data.cardSets.filter(cs => cs.workspaceId !== params.workspaceId);
+export const addOrUpdateCardSetsForWorkspaceIds = ({state} : Context, params: {cardSets: CardSet[], workspaceIds: number[]}) => {
+    state.data.cardSets = state.data.cardSets.filter(cs => !params.workspaceIds.includes(cs.workspaceId));
     state.data.cardSets.push(...params.cardSets);
 }
 
@@ -185,4 +186,17 @@ export const deleteCardSet = ({state} : Context, cardSetId: number) => {
     if (cardSetCards.length > 0) {
         throw new Error('cardSetCards.length > 0 when deleting card set id: ' + cardSetId);
     }
+}
+
+export const loadDrills = async ({state,effects} : Context) => {
+    state.data.loadingDrills = true;
+
+    const resp = await effects.api.drills.getDrills();
+
+    if (resp.drills === null) {
+        throw new Error('resp.drills is null');
+    }
+    state.data.drills = resp.drills;
+
+    state.data.loadingDrills = false;
 }

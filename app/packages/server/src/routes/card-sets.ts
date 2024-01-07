@@ -18,7 +18,7 @@ import {logWithRequest} from "../logger.js";
 
 const cardSets = Router();
 
-cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>, next) => {
+cardSets.post('/get-card-sets', async (req : Request<unknown, unknown, GetCardSetsRequest>, res : TypedResponse<GetCardSetsResponseData>, next) => {
     try {
         const errors = validateGetCardSetsRequest(req.body);
 
@@ -34,26 +34,30 @@ cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>
 
         const user = await getSignedInUser(req.session);
 
-        const hasRights = await checkPermissions({
-            user: user,
-            workspaceId: req.body.workspaceId,
-            capability: Capability.ViewWorkspace
-        });
-
-        if (!hasRights) {
-            logWithRequest('error', req, 'User does not have rights to view workspace');
-            return res.json({
-                dataType: true,
-                status: ResponseStatus.UnexpectedError,
-                errorMessage: 'You are not allowed to view this workspace.',
-                cardSetDatas: null,
+        // loop over req.body.workspaceIds and check if user has rights to view each workspace
+        for (const workspaceId of req.body.workspaceIds) {
+            const hasRights = await checkPermissions({
+                user: user,
+                workspaceId: workspaceId,
+                capability: Capability.ViewWorkspace
             });
+
+            if (!hasRights) {
+                logWithRequest('error', req, 'User does not have rights to view workspace', {user, workspaceId, capability: Capability.ViewWorkspace});
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: 'You are not allowed to view this workspace.',
+                    cardSetDatas: null,
+                });
+            }
         }
 
+        // get cardSets for all workspaceIds from prisma
         const cardSets = await prisma.cardSet.findMany({
             where: {
                 workspaceId: {
-                    equals: req.body.workspaceId
+                    in: req.body.workspaceIds
                 }
             },
         });
@@ -72,7 +76,7 @@ cardSets.post('/get', async (req : Request<unknown, unknown, GetCardSetsRequest>
 });
 
 
-cardSets.post('/create', async (req: Request<unknown, unknown, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>, next) => {
+cardSets.post('/create-card-set', async (req: Request<unknown, unknown, CreateCardSetRequest>, res : TypedResponse<CreateCardSetResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 

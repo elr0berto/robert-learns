@@ -27,7 +27,7 @@ import {logWithRequest} from "../logger.js";
 
 const cards = Router();
 
-cards.post('/get', async (req : Request<unknown, unknown, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>, next) => {
+cards.post('/get-cards', async (req : Request<unknown, unknown, GetCardsRequest>, res : TypedResponse<GetCardsResponseData>, next) => {
     try {
         const errors = validateGetCardsRequest(req.body);
         if (errors.length !== 0) {
@@ -85,7 +85,7 @@ interface MulterRequest extends Request {
     file?: Express.Multer.File;
 }
 
-cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: TypedResponse<CreateCardResponseData>, next) => {
+cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res: TypedResponse<CreateCardResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -382,7 +382,7 @@ cards.post('/create', upload.single('audio'),async (req: MulterRequest, res: Typ
 });
 
 
-cards.post('/delete', async (req: Request<unknown, unknown, DeleteCardRequest>, res : TypedResponse<BaseResponseData>, next) => {
+cards.post('/delete-card', async (req: Request<unknown, unknown, DeleteCardRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
         const errors = validateDeleteCardRequest(req.body);
         if (errors.length !== 0) {

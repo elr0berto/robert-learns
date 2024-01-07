@@ -40,7 +40,7 @@ export const getCards = async(getCardsRequest : GetCardsRequest) : Promise<GetCa
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(GetCardsResponse, '/cards/get', getCardsRequest);
+    return await apiClient.post(GetCardsResponse, '/cards/get-cards', getCardsRequest);
 }
 
 export type CreateCardRequest = {
@@ -114,7 +114,7 @@ export const createCard = async(params: CreateCardRequest) : Promise<CreateCardR
     formData.append('back', params.back ?? '');
     formData.append('audio', params.audio ?? '');
     formData.append('audioUpdateStatus', params.audioUpdateStatus);
-    return await apiClient.post(CreateCardResponse, '/cards/create', formData, {
+    return await apiClient.post(CreateCardResponse, '/cards/create-card', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -145,5 +145,5 @@ export const deleteCard = async(params: DeleteCardRequest) : Promise<BaseRespons
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(BaseResponse, '/cards/delete', params);
+    return await apiClient.post(BaseResponse, '/cards/delete-card', params);
 }

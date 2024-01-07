@@ -22,7 +22,7 @@ import logger, {logWithRequest} from "../logger.js";
 
 const workspaces = Router();
 
-workspaces.post('/get', async (req, res : TypedResponse<GetWorkspacesResponseData>, next) => {
+workspaces.post('/get-workspaces', async (req, res : TypedResponse<GetWorkspacesResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
         const workspaces = await prisma.workspace.findMany({
@@ -53,7 +53,7 @@ workspaces.post('/get', async (req, res : TypedResponse<GetWorkspacesResponseDat
     }
 });
 
-workspaces.post('/create', async (req: Request<unknown, unknown, CreateWorkspaceRequest>, res : TypedResponse<CreateWorkspaceResponseData>, next) => {
+workspaces.post('/create-workspace', async (req: Request<unknown, unknown, CreateWorkspaceRequest>, res : TypedResponse<CreateWorkspaceResponseData>, next) => {
     try {
         const signedInUser = await getSignedInUser(req.session);
 

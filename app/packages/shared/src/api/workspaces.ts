@@ -45,7 +45,7 @@ export const createWorkspace = async(params: CreateWorkspaceRequest) : Promise<C
     if (errors.length > 0) {
         throw new Error(errors.join('\n'));
     }
-    return await apiClient.post(CreateWorkspaceResponse, '/workspaces/create', params);
+    return await apiClient.post(CreateWorkspaceResponse, '/workspaces/create-workspace', params);
 }
 
 export type GetWorkspacesResponseData = BaseResponseData & {
@@ -61,7 +61,7 @@ export class GetWorkspacesResponse extends BaseResponse {
 }
 
 export const getWorkspaces = async() : Promise<GetWorkspacesResponse> => {
-    return await apiClient.post(GetWorkspacesResponse, '/workspaces/get');
+    return await apiClient.post(GetWorkspacesResponse, '/workspaces/get-workspaces');
 }
 
 export type DeleteWorkspaceRequest = {

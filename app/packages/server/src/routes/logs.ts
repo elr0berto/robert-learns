@@ -7,7 +7,7 @@ import logger from "../logger.js";
 
 const logs = Router();
 
-logs.post('/getLogEntries', async (req : Request<unknown, unknown, GetLogEntriesRequest>, res : TypedResponse<GetLogEntriesResponseData>, next) => {
+logs.post('/get-log-entries', async (req : Request<unknown, unknown, GetLogEntriesRequest>, res : TypedResponse<GetLogEntriesResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -55,7 +55,7 @@ logs.post('/getLogEntries', async (req : Request<unknown, unknown, GetLogEntries
 });
 
 
-logs.post('/addLogEntry', async (req : Request<unknown, unknown, AddLogEntryRequest>, res : TypedResponse<BaseResponseData>, next) => {
+logs.post('/add-log-entry', async (req : Request<unknown, unknown, AddLogEntryRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 

@@ -13,7 +13,7 @@ export const open = async ({ state, effects, actions }: Context, cardId: number)
     if (state.page.workspaceId === null) {
         throw new Error('Workspace ID is null');
     }
-    await actions.data.loadCardSets(state.page.workspaceId);
+    await actions.data.loadCardSets([state.page.workspaceId]);
 
     state.editCardCardSetsModal.loading = false;
 }

@@ -21,7 +21,7 @@ export const uploadFile = async(workspaceId : number, file: File) : Promise<Medi
 
     const formData = new FormData();
     formData.append('file', file);
-    return await apiClient.post(MediaUploadFileResponse, '/media/uploadFile/'+workspaceId, formData, {
+    return await apiClient.post(MediaUploadFileResponse, '/media/upload-file/'+workspaceId, formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }

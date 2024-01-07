@@ -122,6 +122,14 @@
     "./dist/common": {
       "import": "./dist/common/index.js",
       "types": "./dist/common/index.d.ts"
+    },
+    "./api/drills": {
+      "import": "./dist/api/drills.js",
+      "types": "./dist/api/drills.d.ts"
+    },
+    "./dist/api/drills": {
+      "import": "./dist/api/drills.js",
+      "types": "./dist/api/drills.d.ts"
     }
   },
   "types": "./dist/index.d.ts",

@@ -14,7 +14,7 @@ import {logWithRequest} from "../logger.js";
 
 const signIn = Router();
 
-signIn.post('/check', async (req, res : TypedResponse<SignInCheckResponseData>, next) => {
+signIn.post('/sign-in-check', async (req, res : TypedResponse<SignInCheckResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
         return res.json({

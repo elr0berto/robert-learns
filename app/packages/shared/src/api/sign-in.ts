@@ -16,7 +16,7 @@ export class SignInCheckResponse extends BaseResponse {
 
 
 export const SignInCheck = async () : Promise<SignInCheckResponse> => {
-    return await apiClient.post(SignInCheckResponse, '/sign-in/check');
+    return await apiClient.post(SignInCheckResponse, '/sign-in/sign-in-check');
 };
 
 export type SignInRequest = {

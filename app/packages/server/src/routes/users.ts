@@ -13,7 +13,7 @@ import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 import {logWithRequest} from "../logger.js";
 const users = Router();
 
-users.post('/getByEmail', async (req : Request<unknown,unknown,UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>, next) => {
+users.post('/user-get-by-email', async (req : Request<unknown,unknown,UserGetByEmailRequest>, res : TypedResponse<UserGetByEmailResponseData>, next) => {
     try {
         const signedInUser = await getSignedInUser(req.session);
         if (signedInUser === null) {
@@ -57,7 +57,7 @@ users.post('/getByEmail', async (req : Request<unknown,unknown,UserGetByEmailReq
     }
 });
 
-users.post('/getUsers', async (req : Request<unknown,unknown,GetUsersRequest>, res : TypedResponse<GetUsersResponseData>, next) => {
+users.post('/get-users', async (req : Request<unknown,unknown,GetUsersRequest>, res : TypedResponse<GetUsersResponseData>, next) => {
     try {
         const signedInUser = await getSignedInUser(req.session);
 
