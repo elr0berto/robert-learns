@@ -17,11 +17,22 @@ export const changeDrillDescription = ({ state }: Context, description: string) 
 }
 
 export const toggleWorkspaceId = ({ state }: Context, workspaceId: number) => {
-    const index = state.drillPage.selectedWorkspaceIds.indexOf(workspaceId);
-    if (index === -1) {
-        state.drillPage.selectedWorkspaceIds.push(workspaceId);
+    // get the workspace from state.page.workspacesWithCardSets
+    const workspaceWithCardSets = state.page.workspacesWithCardSets.find(w => w.workspace.id === workspaceId);
+    if (!workspaceWithCardSets) {
+        throw new Error('Workspace with id ' + workspaceId + ' not found.');
+    }
+    const cardSetIds = workspaceWithCardSets.cardSets.map(cs => cs.id);
+
+    // check if workspaceId is in indeterminate state, if so, remove all cardsets
+    const indeterminate = state.drillPage.indeterminateWorkspaceIds.includes(workspaceId);
+    const checked = state.drillPage.selectedWorkspaceIds.includes(workspaceId);
+
+    if (!checked && !indeterminate) {
+        // add the cardSetIds to state.drillPage.selectedCardSetIds if they dont exist in the array yet
+        state.drillPage.selectedCardSetIds = state.drillPage.selectedCardSetIds.concat(cardSetIds.filter(item => !state.drillPage.selectedCardSetIds.includes(item)));
     } else {
-        state.drillPage.selectedWorkspaceIds.splice(index, 1);
+        state.drillPage.selectedCardSetIds = state.drillPage.selectedCardSetIds.filter(item => !cardSetIds.includes(item));
     }
 }
 

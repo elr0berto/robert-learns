@@ -40,7 +40,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         state.page.workspaceId = null;
         state.page.cardSetId = null;
     } else {
-        promises.push(actions.page.loadWorkspaces());
+        promises.push(actions.page.loadWorkspaces(Pages.Front === params?.page));
 
         console.log('load 1');
         if (params?.payload?.params?.workspaceId/* || state.page.workspaceId !== null Removed because otherwise deleting workspace doesnt work.*/) {
@@ -79,19 +79,27 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
     }
 }
 
-export const loadWorkspaces = async ({state,actions} : Context) => {
+export const loadWorkspaces = async ({state,actions} : Context, loadCardSets: boolean) => {
     state.page.loadingWorkspaces = true;
 
     await actions.data.loadWorkspaces();
     if (state.data.workspaces.length > 0) {
+        let loadCardSetsPromise : Promise<void> | null = null;
+        if (loadCardSets) {
+            loadCardSetsPromise = actions.page.loadCardSets(state.data.workspaces.map(w => w.id));
+        }
         await actions.data.loadWorkspaceUsers(state.data.workspaces.map(w => w.id));
         if (state.data.workspaceUsers.length > 0) {
             await actions.data.loadUsers(state.data.workspaceUsers.map(wu => wu.userId));
+        }
+        if (loadCardSetsPromise !== null) {
+            await loadCardSetsPromise;
         }
     }
 
     state.page.loadingWorkspaces = false;
 }
+
 
 export const loadCardSets = async ({state,actions} : Context, workspaceIds: number[]) => {
     state.page.loadingCardSets = true;
@@ -122,8 +130,7 @@ export const loadDrills = async ({state,actions} : Context) => {
 }
 export const loadDrillsPage = async ({state,actions} : Context) => {
     const drillsPromise = actions.page.loadDrills();
-    await actions.page.loadWorkspaces();
-    await actions.page.loadCardSets(state.data.workspaces.map(w => w.id));
+    await actions.page.loadWorkspaces(true);
     await drillsPromise;
 }
 

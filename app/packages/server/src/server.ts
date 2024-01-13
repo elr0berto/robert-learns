@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, {NextFunction, Request, Response} from 'express';
 import signIn from './routes/sign-in.js';
 import signOut from "./routes/sign-out.js";
 import signUp from './routes/sign-up.js';
@@ -48,7 +48,8 @@ class Server {
     }
 
     setupErrorHandler() {
-        this.express.use((err: Error, req: Request, res: Response) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        this.express.use((err: Error, req: Request, res: Response, _: NextFunction) => {  // this needs to be 4 params to be an error handler.......
             console.log('inside logger');
             logger.error(`${req.method} - ${req.url} - ${err.message}`);
 

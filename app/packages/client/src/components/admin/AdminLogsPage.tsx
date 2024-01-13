@@ -1,8 +1,10 @@
 import {useActions, useAppState} from "../../overmind";
 import {Button, Container, Table} from "react-bootstrap";
 import React from "react";
-import ReactJson from 'react-json-view'
-
+import JsonView from 'react18-json-view'
+import 'react18-json-view/src/style.css'
+// If dark mode is needed, import `dark.css`.
+import 'react18-json-view/src/dark.css'
 function AdminLogsPage() {
     const state = useAppState();
     const actions = useActions();
@@ -29,7 +31,7 @@ function AdminLogsPage() {
                     <td>{entry.timestamp}</td>
                     <td>{entry.level}</td>
                     <td>{entry.message}</td>
-                    <td>{entry.meta ? <ReactJson name={false} src={JSON.parse(entry.meta)}/> : null}</td>
+                    <td>{entry.meta ? <JsonView src={JSON.parse(entry.meta)}/> : null}</td>
                 </tr>
             ))}
             </tbody>

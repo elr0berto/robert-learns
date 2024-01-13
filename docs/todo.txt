@@ -1,4 +1,4 @@
-change all the urls to match with the request-model-names
+
 
 drills
 - drill (card-sets & options?) - saved server side
