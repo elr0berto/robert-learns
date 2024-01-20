@@ -8,6 +8,7 @@ type TristateCheckboxProps = {
     checked: boolean,
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     indeterminate: boolean,
+    disabled: boolean,
 }
 function TristateCheckbox(props: TristateCheckboxProps) {
     const checkboxRef = useRef<HTMLInputElement>(null);
@@ -26,6 +27,7 @@ function TristateCheckbox(props: TristateCheckboxProps) {
         checked={props.checked}
         onChange={props.onChange}
         ref={checkboxRef}
+        disabled={props.disabled}
     />
 }
 

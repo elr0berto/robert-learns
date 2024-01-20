@@ -1,5 +1,4 @@
 import {derived} from "overmind";
-import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {config} from "../index";
 
 type DrillPageState = {
@@ -7,8 +6,13 @@ type DrillPageState = {
     drillName: string;
     drillDescription: string;
     selectedCardSetIds: number[];
+    saveAttempted: boolean;
+    saving: boolean;
     readonly selectedWorkspaceIds: number[];
     readonly indeterminateWorkspaceIds: number[];
+    readonly isValid: boolean;
+    readonly errorMessage: string | null;
+    readonly formDisabled: boolean;
 }
 
 export const getInitialDrillPageState = () : DrillPageState => {
@@ -17,6 +21,8 @@ export const getInitialDrillPageState = () : DrillPageState => {
         drillName: '',
         drillDescription: '',
         selectedCardSetIds: [],
+        saveAttempted: false,
+        saving: false,
         selectedWorkspaceIds: derived((state: DrillPageState, rootState: typeof config.state) => {
             const workspaces = rootState.page.workspacesWithCardSets.filter(w => w.cardSets.length > 0);
             let ret : number[] = [];
@@ -45,6 +51,21 @@ export const getInitialDrillPageState = () : DrillPageState => {
             });
 
             return ret;
+        }),
+        isValid: derived((state: DrillPageState) => {
+            return state.drillName.length > 0 && state.selectedCardSetIds.length > 0;
+        }),
+        errorMessage: derived((state: DrillPageState) => {
+            if (state.drillName.length === 0) {
+                return 'Please enter a name for the drill.';
+            }
+            if (state.selectedCardSetIds.length === 0) {
+                return 'Please select at least one card set.';
+            }
+            return null;
+        }),
+        formDisabled: derived((state: DrillPageState) => {
+            return state.saving;
         }),
     };
 }

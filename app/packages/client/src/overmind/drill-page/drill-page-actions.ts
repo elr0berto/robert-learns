@@ -44,3 +44,23 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
         state.drillPage.selectedCardSetIds.splice(index, 1);
     }
 }
+
+export const saveDrill = async ({ state, effects }: Context) => {
+    state.drillPage.saveAttempted = true;
+    if (!state.drillPage.isValid) {
+        return;
+    }
+
+    state.drillPage.saving = true;
+    TODO
+}
+
+export const runDrill = async ({ state, effects }: Context) => {
+    state.drillPage.saveAttempted = true;
+    if (!state.drillPage.isValid) {
+        return;
+    }
+
+    state.drillPage.saving = true;
+    TODO
+}
