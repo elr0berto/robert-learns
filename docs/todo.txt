@@ -1,4 +1,5 @@
-
+show a message after drill has been saved.
+when selecting an existing drill the name and desc and card-set-ids should be selected. 
 
 drills
 - drill (card-sets & options?) - saved server side

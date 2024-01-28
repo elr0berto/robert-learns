@@ -1,5 +1,5 @@
 import { Context } from '..';
-import {Card, CardSet, CardSetCard, User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSet, CardSetCard, Drill, User} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {GetCardSetsResponse} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 export const clean = ({state} : Context) => {
@@ -199,4 +199,13 @@ export const loadDrills = async ({state,effects} : Context) => {
     state.data.drills = resp.drills;
 
     state.data.loadingDrills = false;
+}
+
+export const addOrUpdateDrill = ({state} : Context, drill: Drill) => {
+    const index = state.data.drills.findIndex(d => d.id === drill.id);
+    if (index === -1) {
+        state.data.drills.push(drill);
+    } else {
+        state.data.drills[index] = drill;
+    }
 }

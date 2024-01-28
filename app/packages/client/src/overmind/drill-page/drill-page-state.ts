@@ -53,15 +53,19 @@ export const getInitialDrillPageState = () : DrillPageState => {
             return ret;
         }),
         isValid: derived((state: DrillPageState) => {
-            return state.drillName.length > 0 && state.selectedCardSetIds.length > 0;
+            return state.drillName.trim().length > 0 && state.drillDescription.trim().length > 0 && state.selectedCardSetIds.length > 0;
         }),
         errorMessage: derived((state: DrillPageState) => {
-            if (state.drillName.length === 0) {
+            if (state.drillName.trim().length === 0) {
                 return 'Please enter a name for the drill.';
+            }
+            if (state.drillDescription.trim().length === 0) {
+                return 'Please provide a description.';
             }
             if (state.selectedCardSetIds.length === 0) {
                 return 'Please select at least one card set.';
             }
+
             return null;
         }),
         formDisabled: derived((state: DrillPageState) => {

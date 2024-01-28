@@ -137,8 +137,8 @@ model Drill {
   id            Int            @id @default(autoincrement())
   name          String
   description   String         @default("")
-  user          User?          @relation(fields: [userId], references: [id])
-  userId        Int?
+  user          User           @relation(fields: [userId], references: [id])
+  userId        Int
   drillCardSets DrillCardSet[]
   drillRuns     DrillRun[]
 }

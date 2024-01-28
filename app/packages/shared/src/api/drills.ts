@@ -16,18 +16,38 @@ export class CreateDrillResponse extends BaseResponse {
 
 
 export type CreateDrillRequest = {
-    drillId?: number;
+    drillId: number | null;
     name: string;
     description: string;
+    cardSetIds: number[];
 }
 
 export const validateCreateDrillRequest = (req: CreateDrillRequest) : string[] => {
     const errs : string[] = [];
+    if (req.drillId !== null && req.drillId <= 0) {
+        errs.push('Invalid drill id, should be null or positive number');
+    }
     if (req.name.trim().length === 0) {
         errs.push('You must enter a name');
     }
     if (req.description.trim().length === 0) {
         errs.push('Please provide a description');
+    }
+    if (req.cardSetIds.length === 0) {
+        errs.push('Please select at least one card set');
+    }
+
+    // check that req.cardSetIds are all positive numbers
+    for (const cardSetId of req.cardSetIds) {
+        if (cardSetId <= 0) {
+            errs.push('Invalid card set id, should be positive number');
+        }
+    }
+
+    // check that req.cardSetIds are all unique
+    const uniqueCardSetIds = [...new Set(req.cardSetIds)];
+    if (uniqueCardSetIds.length !== req.cardSetIds.length) {
+        errs.push('Duplicate card set ids');
     }
 
     return errs;

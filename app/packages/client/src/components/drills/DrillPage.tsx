@@ -3,6 +3,7 @@ import React from "react";
 import {Alert, Button, Col, Container, Form, Row} from "react-bootstrap";
 import Loading from "../Loading";
 import TristateCheckbox from "../TristateCheckbox";
+import {pageUrls} from "../../page-urls";
 
 function DrillPage() {
     const state = useAppState();
@@ -21,6 +22,19 @@ function DrillPage() {
     if (loading.length > 0) {
         return <Container>
             <Loading text={'Loading ' + loading.join(', ')+'...'}/>
+        </Container>;
+    }
+
+    if (state.signIn.isGuest) {
+        return <Container className="mt-3">
+            <Row>
+                <Col md={8}>
+                    <h1 className="mb-3">Drill</h1>
+                    <Alert variant="warning">
+                        You need to <a href={pageUrls.signIn.url()}>sign in</a> to create or run drills.
+                    </Alert>
+                </Col>
+            </Row>
         </Container>;
     }
 

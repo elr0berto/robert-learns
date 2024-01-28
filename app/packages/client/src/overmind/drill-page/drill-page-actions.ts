@@ -45,14 +45,32 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
     }
 }
 
-export const saveDrill = async ({ state, effects }: Context) => {
+export const saveDrill = async ({ state, effects, actions }: Context) => {
     state.drillPage.saveAttempted = true;
     if (!state.drillPage.isValid) {
         return;
     }
 
+    if (state.drillPage.selectedDrillId === 'none') {
+        throw new Error('Invalid drill id');
+    }
+
     state.drillPage.saving = true;
-    TODO
+    const resp = await effects.api.drills.createDrill({
+        drillId: state.drillPage.selectedDrillId === 'new' ? null : state.drillPage.selectedDrillId,
+        name: state.drillPage.drillName,
+        description: state.drillPage.drillDescription,
+        cardSetIds: state.drillPage.selectedCardSetIds,
+    });
+
+    if (resp.drill === null) {
+        throw new Error('Drill missing from response.');
+    }
+
+    actions.data.addOrUpdateDrill(resp.drill);
+    state.drillPage.selectedDrillId = resp.drill.id;
+
+    state.drillPage.saving = false;
 }
 
 export const runDrill = async ({ state, effects }: Context) => {
@@ -62,5 +80,5 @@ export const runDrill = async ({ state, effects }: Context) => {
     }
 
     state.drillPage.saving = true;
-    TODO
+
 }
