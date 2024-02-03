@@ -1,5 +1,5 @@
 import { Context } from '..';
-import {Card, CardSet, CardSetCard, Drill, User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {Card, CardSet, CardSetCard, Drill, DrillCardSet, User} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {GetCardSetsResponse} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 export const clean = ({state} : Context) => {
@@ -208,4 +208,22 @@ export const addOrUpdateDrill = ({state} : Context, drill: Drill) => {
     } else {
         state.data.drills[index] = drill;
     }
+}
+
+export const loadDrillCardSets = async ({state,effects} : Context, drillIds: number[]) => {
+    state.data.loadingDrillCardSets = true;
+
+    const resp = await effects.api.drillCardSets.getDrillCardSets({drillIds});
+
+    if (resp.drillCardSets === null) {
+        throw new Error('resp.drillCardSets is null, msg: ' + (resp.errorMessage ?? 'null'));
+    }
+    state.data.drillCardSets = resp.drillCardSets;
+
+    state.data.loadingDrillCardSets = false;
+}
+
+export const addOrUpdateDrillCardSetsForDrillId = ({state} : Context, {drillId, drillCardSets}: {drillId: number, drillCardSets: DrillCardSet[]}) => {
+    state.data.drillCardSets = state.data.drillCardSets.filter(dcs => dcs.drillId !== drillId);
+    state.data.drillCardSets.push(...drillCardSets);
 }

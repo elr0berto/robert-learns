@@ -125,6 +125,9 @@ export const loadDrills = async ({state,actions} : Context) => {
     state.page.loadingDrills = true;
 
     await actions.data.loadDrills();
+    if (state.data.drills.length > 0) {
+        await actions.data.loadDrillCardSets(state.data.drills.map(d => d.id));
+    }
 
     state.page.loadingDrills = false;
 }

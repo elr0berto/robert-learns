@@ -4,7 +4,7 @@ import {derived} from "overmind";
 import {config} from "../index";
 import {
     CardSetWithCards, CardSetWithCardsWithCardSets,
-    CardWithCardSets, WorkspaceWithCardSets,
+    CardWithCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
     WorkspaceWithCardSetsCount,
     WorkspaceWithWorkspaceUsers
 } from "../data/data-state";
@@ -30,6 +30,7 @@ type PageState = {
     readonly cards: Card[];
     readonly cardsWithCardSets: CardWithCardSets[];
     readonly drills: Drill[];
+    readonly drillsWithDrillCardSets: DrillWithDrillCardSets[];
 }
 
 export const state: PageState = {
@@ -117,5 +118,8 @@ export const state: PageState = {
     }),
     drills: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.drills;
+    }),
+    drillsWithDrillCardSets: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.drillsWithDrillCardSets;
     }),
 };

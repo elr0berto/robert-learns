@@ -6,7 +6,7 @@ import {
     WorkspaceUser,
     CardSetCard,
     CardSet,
-    Drill
+    Drill, DrillCardSet
 } from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export type CardSetWithCards = {
@@ -39,6 +39,11 @@ export type WorkspaceWithCardSets = {
     cardSets: CardSet[];
 }
 
+export type DrillWithDrillCardSets = {
+    drill: Drill;
+    drillCardSets: DrillCardSet[];
+}
+
 type DataState = {
     workspaces: Workspace[];
     loadingWorkspaces: boolean;
@@ -54,6 +59,8 @@ type DataState = {
     loadingCardSets: boolean;
     drills: Drill[];
     loadingDrills: boolean;
+    drillCardSets: DrillCardSet[];
+    loadingDrillCardSets: boolean;
 
     readonly workspacesWithWorkspaceUsers: WorkspaceWithWorkspaceUsers[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
@@ -61,6 +68,7 @@ type DataState = {
     readonly cardSetsWithCards: CardSetWithCards[];
     readonly cardsWithCardSets: CardWithCardSets[];
     readonly cardSetsWithCardsWithCardSets: CardSetWithCardsWithCardSets[];
+    readonly drillsWithDrillCardSets: DrillWithDrillCardSets[];
 }
 
 export const getInitialDataState = () : DataState => ({
@@ -78,6 +86,8 @@ export const getInitialDataState = () : DataState => ({
     loadingCardSets: false,
     drills: [],
     loadingDrills: false,
+    drillCardSets: [],
+    loadingDrillCardSets: false,
     workspacesWithWorkspaceUsers: derived((state: DataState) => {
         return state.workspaces.map(w => ({
             workspace: w,
@@ -137,6 +147,12 @@ export const getInitialDataState = () : DataState => ({
                     };
                 })
                 .filter(c => c !== null),
+        }));
+    }),
+    drillsWithDrillCardSets: derived((state: DataState) => {
+        return state.drills.map(d => ({
+            drill: d,
+            drillCardSets: state.drillCardSets.filter(dcs => dcs.drillId === d.id),
         }));
     }),
 });

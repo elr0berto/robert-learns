@@ -1,6 +1,6 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getDrillData, getSignedInUser, TypedResponse} from "../common.js";
+import {getDrillCardSetData, getDrillData, getSignedInUser, TypedResponse} from "../common.js";
 import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     CreateDrillRequest,
@@ -10,6 +10,7 @@ import {
 import {logWithRequest} from "../logger.js";
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
+import {getDrillCardSets} from "@elr0berto/robert-learns-shared/api/drill-card-sets";
 
 const drills = Router();
 
@@ -56,6 +57,7 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Guest users are not allowed to create or edit drills. please sign in first!',
                 drillData: null,
+                drillCardSetDatas: null,
             });
         }
 
@@ -68,12 +70,13 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: errors.join(', '),
                 drillData: null,
+                drillCardSetDatas: null,
             });
         }
 
         // loop over req.body.cardSetIds
         for (const cardSetId of req.body.cardSetIds) {
-            // check if user has permission to edit cardSetId
+            // check if user has permission to view cardSetId
             if (!await checkPermissions({
                 user: signedInUser,
                 cardSetId,
@@ -85,6 +88,7 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: `You are not allowed to view card set ${cardSetId}`,
                     drillData: null,
+                    drillCardSetDatas: null,
                 });
             }
         }
@@ -107,6 +111,9 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                         })),
                     },
                 },
+                include: {
+                    drillCardSets: true,
+                }
             });
 
             return res.json({
@@ -114,6 +121,7 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                 status: ResponseStatus.Success,
                 errorMessage: null,
                 drillData: getDrillData(drill),
+                drillCardSetDatas: drill.drillCardSets.map(dcs => getDrillCardSetData(dcs)),
             });
         } else {
             if (req.body.drillId === null) {
@@ -137,6 +145,7 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                         })),
                     },
                 },
+                include: { drillCardSets: true },
             });
 
             return res.json({
@@ -144,6 +153,7 @@ drills.post('/create-drill', async (req: Request<unknown, unknown, CreateDrillRe
                 status: ResponseStatus.Success,
                 errorMessage: null,
                 drillData: getDrillData(drill),
+                drillCardSetDatas: drill.drillCardSets.map(dcs => getDrillCardSetData(dcs)),
             });
 
         }

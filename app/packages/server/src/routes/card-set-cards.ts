@@ -30,7 +30,7 @@ cardSetCards.post('/get-card-set-cards', async (req : Request<unknown, unknown, 
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: errors.join('\n'),
-                cardSetCardDatas: [],
+                cardSetCardDatas: null,
             });
         }
 
@@ -63,7 +63,7 @@ cardSetCards.post('/get-card-set-cards', async (req : Request<unknown, unknown, 
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'You are not authorized to read cards for this card set',
-                    cardSetCardDatas: [],
+                    cardSetCardDatas: null,
                 });
             }
         }
@@ -218,7 +218,7 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: errors.join('\n'),
                 cardData: null,
-                cardSetCardDatas: [],
+                cardSetCardDatas: null,
             });
         }
 
@@ -244,7 +244,7 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Card does not exist',
                 cardData: null,
-                cardSetCardDatas: [],
+                cardSetCardDatas: null,
             });
         }
 
@@ -256,7 +256,7 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'You are not authorized to edit this card',
                 cardData: null,
-                cardSetCardDatas: [],
+                cardSetCardDatas: null,
             });
         }
 
@@ -279,7 +279,7 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'One or more card sets do not exist',
                 cardData: null,
-                cardSetCardDatas: [],
+                cardSetCardDatas: null,
             });
         }
 
@@ -294,7 +294,7 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'One or more card sets do not belong to the same workspace as the card',
                     cardData: null,
-                    cardSetCardDatas: [],
+                    cardSetCardDatas: null,
                 });
             }
         }

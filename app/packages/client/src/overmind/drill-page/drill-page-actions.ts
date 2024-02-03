@@ -3,8 +3,19 @@ import {Context} from "..";
 export const changeDrill = ({ state }: Context, drillId: string) => {
     if (drillId === 'none' || drillId === 'new') {
         state.drillPage.selectedDrillId = drillId;
+        state.drillPage.drillName = '';
+        state.drillPage.drillDescription = '';
+        state.drillPage.selectedCardSetIds = [];
     } else {
         state.drillPage.selectedDrillId = parseInt(drillId);
+        const drillWithCardSets = state.drillPage.selectedDrillWithDrillCardSets;
+        if (!drillWithCardSets) {
+            throw new Error('DrillWithCardSets with drillId ' + drillId + ' not found.');
+        }
+
+        state.drillPage.drillName = drillWithCardSets.drill.name;
+        state.drillPage.drillDescription = drillWithCardSets.drill.description;
+        state.drillPage.selectedCardSetIds = drillWithCardSets.drillCardSets.map(dcs => dcs.cardSetId);
     }
 }
 
@@ -66,10 +77,18 @@ export const saveDrill = async ({ state, effects, actions }: Context) => {
     if (resp.drill === null) {
         throw new Error('Drill missing from response.');
     }
+    if (resp.drillCardSets === null) {
+        throw new Error('Drill card sets missing from response.');
+    }
 
     actions.data.addOrUpdateDrill(resp.drill);
+    actions.data.addOrUpdateDrillCardSetsForDrillId({drillId: resp.drill.id, drillCardSets: resp.drillCardSets});
+
     state.drillPage.selectedDrillId = resp.drill.id;
 
+    state.notifications.notifications.push({
+        message: 'Drill saved successfully'
+    });
     state.drillPage.saving = false;
 }
 

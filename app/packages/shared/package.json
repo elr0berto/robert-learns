@@ -130,6 +130,14 @@
     "./dist/api/drills": {
       "import": "./dist/api/drills.js",
       "types": "./dist/api/drills.d.ts"
+    },
+    "./api/drill-card-sets": {
+      "import": "./dist/api/drill-card-sets.js",
+      "types": "./dist/api/drill-card-sets.d.ts"
+    },
+    "./dist/api/drill-card-sets": {
+      "import": "./dist/api/drill-card-sets.js",
+      "types": "./dist/api/drill-card-sets.d.ts"
     }
   },
   "types": "./dist/index.d.ts",

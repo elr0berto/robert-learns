@@ -1,5 +1,7 @@
 import {derived} from "overmind";
 import {config} from "../index";
+import {Drill} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {DrillWithDrillCardSets} from "../data/data-state";
 
 type DrillPageState = {
     selectedDrillId: number | 'none' | 'new';
@@ -13,6 +15,7 @@ type DrillPageState = {
     readonly isValid: boolean;
     readonly errorMessage: string | null;
     readonly formDisabled: boolean;
+    readonly selectedDrillWithDrillCardSets: DrillWithDrillCardSets | null;
 }
 
 export const getInitialDrillPageState = () : DrillPageState => {
@@ -70,6 +73,16 @@ export const getInitialDrillPageState = () : DrillPageState => {
         }),
         formDisabled: derived((state: DrillPageState) => {
             return state.saving;
+        }),
+        selectedDrillWithDrillCardSets: derived((state: DrillPageState, rootState: typeof config.state) => {
+            if (state.selectedDrillId === 'new' || state.selectedDrillId === 'none') {
+                return null;
+            }
+            const drillWithCardSets = rootState.page.drillsWithDrillCardSets.find(d => d.drill.id === state.selectedDrillId);
+            if (!drillWithCardSets) {
+                throw new Error('DrillWithCardSets with drillId ' + state.selectedDrillId + ' not found.');
+            }
+            return drillWithCardSets;
         }),
     };
 }

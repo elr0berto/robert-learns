@@ -1,16 +1,19 @@
 import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
-import {Drill, DrillData} from "./models/index.js";
+import {Drill, DrillCardSet, DrillCardSetData, DrillData} from "./models/index.js";
 
 export type CreateDrillResponseData = BaseResponseData & {
     drillData: DrillData | null;
+    drillCardSetDatas: DrillCardSetData[] | null;
 }
 
 export class CreateDrillResponse extends BaseResponse {
     drill: Drill | null;
+    drillCardSets: DrillCardSet[] | null;
     constructor(data: CreateDrillResponseData) {
         super(data);
         this.drill = data.drillData ? new Drill(data.drillData) : null;
+        this.drillCardSets = data.drillCardSetDatas?.map(dcs => new DrillCardSet(dcs)) ?? null;
     }
 }
 
