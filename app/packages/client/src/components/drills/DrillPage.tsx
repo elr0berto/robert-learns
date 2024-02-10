@@ -108,7 +108,7 @@ function DrillPage() {
                         <Button
                             disabled={state.drillPage.formDisabled}
                             className="mt-3"
-                            variant="success" onClick={() => actions.drillPage.saveDrill()}
+                            variant="success" onClick={() => actions.drillPage.saveDrill({run: false})}
                         >
                             Save
                         </Button>

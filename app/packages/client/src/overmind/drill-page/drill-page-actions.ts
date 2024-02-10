@@ -1,5 +1,6 @@
 import {Context} from "..";
-
+import {pageUrls} from "../../page-urls";
+import {Pages} from "../../page-urls";
 export const changeDrill = ({ state }: Context, drillId: string) => {
     if (drillId === 'none' || drillId === 'new') {
         state.drillPage.selectedDrillId = drillId;
@@ -56,7 +57,7 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
     }
 }
 
-export const saveDrill = async ({ state, effects, actions }: Context) => {
+export const saveDrill = async ({ state, effects, actions }: Context, {run} : {run: boolean}) => {
     state.drillPage.saveAttempted = true;
     if (!state.drillPage.isValid) {
         return;
@@ -86,18 +87,23 @@ export const saveDrill = async ({ state, effects, actions }: Context) => {
 
     state.drillPage.selectedDrillId = resp.drill.id;
 
-    state.notifications.notifications.push({
-        message: 'Drill saved successfully'
-    });
+    if (run) {
+        // create a new drill run and open the drill run page with the new drill run
+        const drResp = await effects.api.drillRuns.createDrillRun({drillId: resp.drill.id});
+        if (drResp.drillRun === null) {
+            throw new Error('DrillRun missing from response.');
+        }
+        actions.data.addDrillRun(drResp.drillRun);
+        pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun);
+    } else {
+        state.notifications.notifications.push({
+            message: 'Drill saved successfully'
+        });
+    }
+
     state.drillPage.saving = false;
 }
 
-export const runDrill = async ({ state, effects }: Context) => {
-    state.drillPage.saveAttempted = true;
-    if (!state.drillPage.isValid) {
-        return;
-    }
-
-    state.drillPage.saving = true;
-
+export const runDrill = async ({ state, effects, actions }: Context) => {
+    actions.drillPage.saveDrill({run: true});
 }

@@ -39,12 +39,14 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         promises.push(actions.page.loadDrillsPage());
         state.page.workspaceId = null;
         state.page.cardSetId = null;
+    } else if (Pages.DrillRun) {
+        promises.push(actions.page.loadDrillRunsPage(params?.payload?.params?.drillRunId ?? null));
+        state.page.workspaceId = null;
+        state.page.cardSetId = null;
     } else {
         promises.push(actions.page.loadWorkspaces(Pages.Front === params?.page));
 
-        console.log('load 1');
         if (params?.payload?.params?.workspaceId/* || state.page.workspaceId !== null Removed because otherwise deleting workspace doesnt work.*/) {
-            console.log('load 2');
             if (params?.payload?.params?.workspaceId) {
                 state.page.workspaceId = +params?.payload.params.workspaceId;
             }
@@ -65,7 +67,6 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
                 state.page.cardSetId = null;
             }
         } else {
-            console.log('load 3');
             state.page.workspaceId = null;
             state.page.cardSetId = null;
         }
@@ -135,6 +136,17 @@ export const loadDrillsPage = async ({state,actions} : Context) => {
     const drillsPromise = actions.page.loadDrills();
     await actions.page.loadWorkspaces(true);
     await drillsPromise;
+}
+
+export const loadDrillRunsPage = async ({state,actions} : Context, {drillRunId}: {drillRunId: number | null}) => {
+    if (drillRunId === null) {
+        throw new Error('drillRunId is null');
+    }
+    state.page.loadingDrillRuns = true;
+
+    await actions.data.loadDrillRun({drillRunId: drillRunId});
+
+    state.page.loadingDrillRuns = false;
 }
 
 export const showAdminLogsPage = async ({ actions, state, effects }: Context) => {

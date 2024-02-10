@@ -18,6 +18,7 @@ type PageState = {
     loadingCardSets: boolean;
     loadingCards: boolean;
     loadingDrills: boolean;
+    loadingDrillRuns: boolean;
     readonly workspaces: Workspace[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
@@ -42,6 +43,7 @@ export const state: PageState = {
     loadingCardSets: true,
     loadingCards: true,
     loadingDrills: true,
+    loadingDrillRuns: true,
     workspaces: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.workspaces.filter(workspace => {
             return workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === workspace.id && wu.userId === rootState.signIn.userId);

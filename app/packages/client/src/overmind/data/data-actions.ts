@@ -1,5 +1,13 @@
 import { Context } from '..';
-import {Card, CardSet, CardSetCard, Drill, DrillCardSet, User} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {
+    Card,
+    CardSet,
+    CardSetCard,
+    Drill,
+    DrillCardSet,
+    DrillRun,
+    User
+} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {GetCardSetsResponse} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 export const clean = ({state} : Context) => {
@@ -226,4 +234,31 @@ export const loadDrillCardSets = async ({state,effects} : Context, drillIds: num
 export const addOrUpdateDrillCardSetsForDrillId = ({state} : Context, {drillId, drillCardSets}: {drillId: number, drillCardSets: DrillCardSet[]}) => {
     state.data.drillCardSets = state.data.drillCardSets.filter(dcs => dcs.drillId !== drillId);
     state.data.drillCardSets.push(...drillCardSets);
+}
+
+export const addOrUpdateDrillRun = ({state} : Context, drillRun: DrillRun) => {
+    const index = state.data.drillRuns.findIndex(dr => dr.id === drillRun.id);
+    if (index === -1) {
+        state.data.drillRuns.push(drillRun);
+    } else {
+        state.data.drillRuns[index] = drillRun;
+    }
+}
+
+export const loadDrillRuns = async ({state,effects,actions} : Context, {drillRunIds}: {drillRunIds: number[]}) => {
+    state.data.loadingDrillRuns = true;
+    const resp = await effects.api.drillRuns.getDrillRuns({drillRunIds: drillRunIds});
+
+    if (resp.drillRuns === null) {
+        throw new Error('resp.drillRuns is null');
+    }
+
+    const drillIds = resp.drillRuns.map(dr => dr.drillId);
+    const dResp = await effects.api.drills.getDrills({drillIds: drillIds});
+    if (dResp.drills === null) {
+        throw new Error('dResp.drills is null');
+    }
+    actions.data.addOrUpdateDrills(dResp.drills);
+    actions.data.addOrUpdateDrillRuns(resp.drillRuns);
+
 }
