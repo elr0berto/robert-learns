@@ -11,6 +11,7 @@ import cards from './routes/cards.js';
 import users from './routes/users.js';
 import logs from './routes/logs.js';
 import drills from './routes/drills.js';
+import drillRuns from './routes/drill-runs.js';
 import drillCardSets from './routes/drill-card-sets.js';
 
 import session from './session.js';
@@ -46,6 +47,7 @@ class Server {
         this.express.use('/api/cards', cards);
         this.express.use('/api/users', users);
         this.express.use('/api/drills', drills);
+        this.express.use('/api/drill-runs', drillRuns);
         this.express.use('/api/drill-card-sets', drillCardSets);
     }
 

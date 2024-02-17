@@ -64,6 +64,7 @@ type DataState = {
     drillCardSets: DrillCardSet[];
     loadingDrillCardSets: boolean;
     drillRuns: DrillRun[];
+    loadingDrillRuns: boolean;
     readonly workspacesWithWorkspaceUsers: WorkspaceWithWorkspaceUsers[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
@@ -91,6 +92,7 @@ export const getInitialDataState = () : DataState => ({
     drillCardSets: [],
     loadingDrillCardSets: false,
     drillRuns: [],
+    loadingDrillRuns: false,
     workspacesWithWorkspaceUsers: derived((state: DataState) => {
         return state.workspaces.map(w => ({
             workspace: w,

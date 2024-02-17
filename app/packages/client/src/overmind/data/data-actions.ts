@@ -199,7 +199,7 @@ export const deleteCardSet = ({state} : Context, cardSetId: number) => {
 export const loadDrills = async ({state,effects} : Context) => {
     state.data.loadingDrills = true;
 
-    const resp = await effects.api.drills.getDrills();
+    const resp = await effects.api.drills.getDrills({});
 
     if (resp.drills === null) {
         throw new Error('resp.drills is null');
@@ -207,15 +207,6 @@ export const loadDrills = async ({state,effects} : Context) => {
     state.data.drills = resp.drills;
 
     state.data.loadingDrills = false;
-}
-
-export const addOrUpdateDrill = ({state} : Context, drill: Drill) => {
-    const index = state.data.drills.findIndex(d => d.id === drill.id);
-    if (index === -1) {
-        state.data.drills.push(drill);
-    } else {
-        state.data.drills[index] = drill;
-    }
 }
 
 export const loadDrillCardSets = async ({state,effects} : Context, drillIds: number[]) => {
@@ -236,13 +227,26 @@ export const addOrUpdateDrillCardSetsForDrillId = ({state} : Context, {drillId, 
     state.data.drillCardSets.push(...drillCardSets);
 }
 
-export const addOrUpdateDrillRun = ({state} : Context, drillRun: DrillRun) => {
-    const index = state.data.drillRuns.findIndex(dr => dr.id === drillRun.id);
-    if (index === -1) {
-        state.data.drillRuns.push(drillRun);
-    } else {
-        state.data.drillRuns[index] = drillRun;
-    }
+export const addOrUpdateDrills = ({state} : Context, drills: Drill[]) => {
+    drills.forEach(d => {
+        const index = state.data.drills.findIndex(dr => dr.id === d.id);
+        if (index === -1) {
+            state.data.drills.push(d);
+        } else {
+            state.data.drills[index] = d;
+        }
+    });
+}
+
+export const addOrUpdateDrillRuns = ({state} : Context, drillRuns: DrillRun[]) => {
+    drillRuns.forEach(dr => {
+        const index = state.data.drillRuns.findIndex(d => d.id === dr.id);
+        if (index === -1) {
+            state.data.drillRuns.push(dr);
+        } else {
+            state.data.drillRuns[index] = dr;
+        }
+    });
 }
 
 export const loadDrillRuns = async ({state,effects,actions} : Context, {drillRunIds}: {drillRunIds: number[]}) => {
@@ -260,5 +264,4 @@ export const loadDrillRuns = async ({state,effects,actions} : Context, {drillRun
     }
     actions.data.addOrUpdateDrills(dResp.drills);
     actions.data.addOrUpdateDrillRuns(resp.drillRuns);
-
 }

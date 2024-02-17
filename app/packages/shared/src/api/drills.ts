@@ -76,8 +76,42 @@ export class GetDrillsResponse extends BaseResponse {
     }
 }
 
-export const getDrills = async() : Promise<GetDrillsResponse> => {
-    return await apiClient.post(GetDrillsResponse, '/drills/get-drills');
+export type GetDrillsRequest = {
+    drillIds?: number[];
+}
+
+export const validateGetDrillsRequest = (req: GetDrillsRequest) : string[] => {
+    // check that drillIds have values
+    if (req.drillIds === undefined) {
+        return [];
+    }
+
+    const errs : string[] = [];
+    if (req.drillIds.length === 0) {
+        errs.push('Please select at least one drill or set null');
+    }
+
+    // check that req.drillIds are all positive numbers
+    for (const drillId of req.drillIds) {
+        if (drillId <= 0) {
+            errs.push('Invalid drill id, should be positive number');
+        }
+    }
+
+    // check that drillIds are all unique
+    const uniqueDrillIds = [...new Set(req.drillIds)];
+    if (uniqueDrillIds.length !== req.drillIds.length) {
+        errs.push('Duplicate drill ids');
+    }
+
+    return errs;
+}
+export const getDrills = async(params : GetDrillsRequest) : Promise<GetDrillsResponse> => {
+    const errors = validateGetDrillsRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
+    return await apiClient.post(GetDrillsResponse, '/drills/get-drills', params);
 }
 
 export type DeleteDrillRequest = {

@@ -14,6 +14,7 @@ import {
     WorkspaceUser as PrismaWorkspaceUser,
     Logs as PrismaLogs,
     Drill as PrismaDrill,
+    DrillRun as PrismaDrillRun,
     DrillCardSet as PrismaDrillCardSet,
 } from '@prisma/client';
 import {
@@ -22,7 +23,7 @@ import {
     MediaData,
     UserData,
     WorkspaceData, WorkspaceUserData,
-    CardData, CardFaceData, DrillData, DrillCardSetData,
+    CardData, CardFaceData, DrillData, DrillCardSetData, DrillRunData,
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 
@@ -210,6 +211,16 @@ export const getDrillData = (drill: PrismaDrill) : DrillData => {
         name: drill.name,
         description: drill.description,
         userId: drill.userId,
+    };
+}
+
+export const getDrillRunData = (drillRun: PrismaDrillRun) : DrillRunData => {
+    return {
+        dataType: true,
+        id: drillRun.id,
+        drillId: drillRun.drillId,
+        startTime: drillRun.startTime.toISOString(),
+        endTime: drillRun.endTime?.toISOString() ?? null,
     };
 }
 

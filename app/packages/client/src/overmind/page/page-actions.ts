@@ -39,8 +39,8 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         promises.push(actions.page.loadDrillsPage());
         state.page.workspaceId = null;
         state.page.cardSetId = null;
-    } else if (Pages.DrillRun) {
-        promises.push(actions.page.loadDrillRunsPage(params?.payload?.params?.drillRunId ?? null));
+    } else if (params?.page === Pages.DrillRun) {
+        promises.push(actions.page.loadDrillRunsPage({drillRunId: params?.payload?.params?.drillRunId ?? null}));
         state.page.workspaceId = null;
         state.page.cardSetId = null;
     } else {
@@ -144,7 +144,7 @@ export const loadDrillRunsPage = async ({state,actions} : Context, {drillRunId}:
     }
     state.page.loadingDrillRuns = true;
 
-    await actions.data.loadDrillRun({drillRunId: drillRunId});
+    await actions.data.loadDrillRuns({drillRunIds: [drillRunId]});
 
     state.page.loadingDrillRuns = false;
 }

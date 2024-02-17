@@ -1,7 +1,7 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {getDrillCardSetData, getDrillData, getSignedInUser, TypedResponse} from "../common.js";
-import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     CreateDrillRequest,
     CreateDrillResponseData,
@@ -10,11 +10,12 @@ import {
 import {logWithRequest} from "../logger.js";
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
-import {getDrillCardSets} from "@elr0berto/robert-learns-shared/api/drill-card-sets";
+import {GetDrillsRequest} from "@elr0berto/robert-learns-shared/api/drills";
+import {validateGetDrillsRequest} from "@elr0berto/robert-learns-shared/api/drills";
 
 const drills = Router();
 
-drills.post('/get-drills', async (req, res : TypedResponse<GetDrillsResponseData>, next) => {
+drills.post('/get-drills', async (req: Request<unknown, unknown, GetDrillsRequest>, res : TypedResponse<GetDrillsResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -23,15 +24,46 @@ drills.post('/get-drills', async (req, res : TypedResponse<GetDrillsResponseData
                 dataType: true,
                 status: ResponseStatus.Success,
                 errorMessage: null,
-                drillDatas: [],
+                drillDatas: null,
+            });
+        }
+
+        // validate request
+        const errors = validateGetDrillsRequest(req.body);
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Get drills request validation failed', {errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+                drillDatas: null,
             });
         }
 
         const drills = await prisma.drill.findMany({
-            where: {
+            where: req.body.drillIds === null ? {
                 userId: user.id,
+            } : {
+                id: {
+                    in: req.body.drillIds
+                }
             },
         });
+
+        // check that all drills are owned by user
+        if (req.body.drillIds !== null) {
+            for (const drill of drills) {
+                if (drill.userId !== user.id) {
+                    logWithRequest('error', req, `User ${user.id} is not allowed to view drill ${drill.id}`);
+                    return res.json({
+                        dataType: true,
+                        status: ResponseStatus.UnexpectedError,
+                        errorMessage: `You are not allowed to view drill ${drill.id}`,
+                        drillDatas: null,
+                    });
+                }
+            }
+        }
 
         return res.json({
             dataType: true,

@@ -82,7 +82,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run} : {r
         throw new Error('Drill card sets missing from response.');
     }
 
-    actions.data.addOrUpdateDrill(resp.drill);
+    actions.data.addOrUpdateDrills([resp.drill]);
     actions.data.addOrUpdateDrillCardSetsForDrillId({drillId: resp.drill.id, drillCardSets: resp.drillCardSets});
 
     state.drillPage.selectedDrillId = resp.drill.id;
@@ -93,7 +93,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run} : {r
         if (drResp.drillRun === null) {
             throw new Error('DrillRun missing from response.');
         }
-        actions.data.addDrillRun(drResp.drillRun);
+        actions.data.addOrUpdateDrillRuns([drResp.drillRun]);
         pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun);
     } else {
         state.notifications.notifications.push({
