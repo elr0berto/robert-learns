@@ -94,7 +94,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run} : {r
             throw new Error('DrillRun missing from response.');
         }
         actions.data.addOrUpdateDrillRuns([drResp.drillRun]);
-        pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun);
+        effects.page.router.goTo(pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun));
     } else {
         state.notifications.notifications.push({
             message: 'Drill saved successfully'

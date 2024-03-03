@@ -12,3 +12,4 @@ export * from './LogEntry.js';
 export * from './Drill.js';
 export * from './DrillRun.js';
 export * from './DrillCardSet.js';
+export * from './DrillRunQuestion.js';

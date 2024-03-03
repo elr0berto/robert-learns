@@ -16,14 +16,16 @@ import {
     Drill as PrismaDrill,
     DrillRun as PrismaDrillRun,
     DrillCardSet as PrismaDrillCardSet,
+    DrillRunQuestion as PrismaDrillRunQuestion,
 } from '@prisma/client';
 import {
-    CardSetCardData,
-    CardSetData, LogEntryData,
+    CardSetCardData, CardSetData,
+    CardData, CardFaceData,
+    LogEntryData,
     MediaData,
     UserData,
     WorkspaceData, WorkspaceUserData,
-    CardData, CardFaceData, DrillData, DrillCardSetData, DrillRunData,
+    DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 
@@ -229,5 +231,16 @@ export const getDrillCardSetData = (drillCardSet: PrismaDrillCardSet) : DrillCar
         dataType: true,
         drillId: drillCardSet.drillId,
         cardSetId: drillCardSet.cardSetId,
+    };
+}
+
+export const getDrillRunQuestionData = (drillRunQuestion: PrismaDrillRunQuestion) : DrillRunQuestionData => {
+    return {
+        dataType: true,
+        id: drillRunQuestion.id,
+        drillRunId: drillRunQuestion.drillRunId,
+        cardId: drillRunQuestion.cardId,
+        order: drillRunQuestion.order,
+        correct: drillRunQuestion.correct,
     };
 }

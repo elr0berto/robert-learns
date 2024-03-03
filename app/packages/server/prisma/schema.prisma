@@ -81,11 +81,12 @@ model Media {
 }
 
 model Card {
-  id           Int           @id @default(autoincrement())
-  faces        CardFace[]
-  cardSetCards CardSetCard[]
-  audio        Media?        @relation(fields: [audioId], references: [id])
-  audioId      Int?
+  id                Int                @id @default(autoincrement())
+  faces             CardFace[]
+  cardSetCards      CardSetCard[]
+  audio             Media?             @relation(fields: [audioId], references: [id])
+  audioId           Int?
+  drillRunQuestions DrillRunQuestion[]
 }
 
 enum CardSide {
@@ -153,9 +154,20 @@ model DrillCardSet {
 }
 
 model DrillRun {
-  id        Int       @id @default(autoincrement())
-  drill     Drill     @relation(fields: [drillId], references: [id])
+  id        Int                @id @default(autoincrement())
+  drill     Drill              @relation(fields: [drillId], references: [id])
   drillId   Int
-  startTime DateTime  @default(now()) @db.Timestamp(0)
+  startTime DateTime           @default(now()) @db.Timestamp(0)
   endTime   DateTime?
+  questions DrillRunQuestion[]
+}
+
+model DrillRunQuestion {
+  id         Int      @id @default(autoincrement())
+  drillRun   DrillRun @relation(fields: [drillRunId], references: [id])
+  drillRunId Int
+  card       Card     @relation(fields: [cardId], references: [id])
+  cardId     Int
+  correct    Boolean?
+  order      Int      @default(0)
 }

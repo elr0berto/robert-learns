@@ -40,9 +40,10 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         state.page.workspaceId = null;
         state.page.cardSetId = null;
     } else if (params?.page === Pages.DrillRun) {
-        promises.push(actions.page.loadDrillRunsPage({drillRunId: params?.payload?.params?.drillRunId ?? null}));
+        promises.push(actions.page.loadDrillRunsPage({drillRunId: parseInt(params?.payload?.params?.drillRunId ?? null)}));
         state.page.workspaceId = null;
         state.page.cardSetId = null;
+        state.page.drillRunId = parseInt(params?.payload?.params?.drillRunId ?? null);
     } else {
         promises.push(actions.page.loadWorkspaces(Pages.Front === params?.page));
 
@@ -125,9 +126,11 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
 export const loadDrills = async ({state,actions} : Context) => {
     state.page.loadingDrills = true;
 
-    await actions.data.loadDrills();
-    if (state.data.drills.length > 0) {
-        await actions.data.loadDrillCardSets(state.data.drills.map(d => d.id));
+    if (!state.signIn.isGuest) {
+        await actions.data.loadDrills();
+        if (state.data.drills.length > 0) {
+            await actions.data.loadDrillCardSets(state.data.drills.map(d => d.id));
+        }
     }
 
     state.page.loadingDrills = false;
@@ -139,8 +142,8 @@ export const loadDrillsPage = async ({state,actions} : Context) => {
 }
 
 export const loadDrillRunsPage = async ({state,actions} : Context, {drillRunId}: {drillRunId: number | null}) => {
-    if (drillRunId === null) {
-        throw new Error('drillRunId is null');
+    if (drillRunId === null || isNaN(drillRunId)) {
+        throw new Error('drillRunId is null or NaN');
     }
     state.page.loadingDrillRuns = true;
 

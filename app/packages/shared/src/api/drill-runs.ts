@@ -1,6 +1,6 @@
 import {apiClient} from './ApiClient.js';
 import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
-import {Drill, DrillData, DrillRun, DrillRunData} from "./models/index.js";
+import {Drill, DrillData, DrillRun, DrillRunData, DrillRunQuestion, DrillRunQuestionData} from "./models/index.js";
 
 export type CreateDrillRunResponseData = BaseResponseData & {
     drillRunData: DrillRunData | null;
@@ -39,15 +39,18 @@ export const createDrillRun = async(params: CreateDrillRunRequest) : Promise<Cre
 export type GetDrillRunsResponseData = BaseResponseData & {
     drillRunDatas: DrillRunData[] | null;
     drillDatas: DrillData[] | null;
+    drillRunQuestionDatas: DrillRunQuestionData[] | null;
 }
 
 export class GetDrillRunsResponse extends BaseResponse {
     drillRuns: DrillRun[] | null;
     drills: Drill[] | null;
+    drillRunQuestions: DrillRunQuestion[] | null;
     constructor(data: GetDrillRunsResponseData) {
         super(data);
         this.drillRuns = data.drillRunDatas ? data.drillRunDatas.map(d => new DrillRun(d)) : null;
         this.drills = data.drillDatas ? data.drillDatas.map(d => new Drill(d)) : null;
+        this.drillRunQuestions = data.drillRunQuestionDatas ? data.drillRunQuestionDatas.map(d => new DrillRunQuestion(d)) : null;
     }
 }
 

@@ -264,4 +264,5 @@ export const loadDrillRuns = async ({state,effects,actions} : Context, {drillRun
     }
     actions.data.addOrUpdateDrills(dResp.drills);
     actions.data.addOrUpdateDrillRuns(resp.drillRuns);
+    actions.data.addOrUpdateDrillRunQuestions(resp.drillRunQuestions);
 }

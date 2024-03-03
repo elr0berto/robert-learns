@@ -7,7 +7,6 @@ import 'react-h5-audio-player/lib/styles.css';
 import {EditorInstance} from "../Editor";
 
 function CreateCardModal() {
-    console.log('CreateCardModal');
     const state = useAppState();
     const actions = useActions();
 

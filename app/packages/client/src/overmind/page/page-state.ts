@@ -13,6 +13,7 @@ type PageState = {
     page: Pages | null;
     workspaceId: number | null;
     cardSetId: number | null;
+    drillRunId: number | null;
     initializing: boolean;
     loadingWorkspaces: boolean;
     loadingCardSets: boolean;
@@ -38,6 +39,7 @@ export const state: PageState = {
     page: null,
     workspaceId: null,
     cardSetId: null,
+    drillRunId: null,
     initializing: false,
     loadingWorkspaces: true,
     loadingCardSets: true,

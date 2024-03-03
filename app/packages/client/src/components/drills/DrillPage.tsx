@@ -47,8 +47,8 @@ function DrillPage() {
                     value={state.drillPage.selectedDrillId}
                     onChange={event => actions.drillPage.changeDrill(event.target.value)}
                 >
-                    <option value={'none'}>Select drill</option>
-                    <option value={'new'}>Create new drill</option>
+                    <option key={'none'} value={'none'}>Select drill</option>
+                    <option key={'new'} value={'new'}>Create new drill</option>
                     {state.page.drills.map(drill => <option key={drill.id} value={drill.id}>{drill.name}</option>)}
                 </Form.Select>
                 {state.drillPage.selectedDrillId !== 'none' ?

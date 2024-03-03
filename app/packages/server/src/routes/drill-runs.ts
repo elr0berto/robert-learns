@@ -1,6 +1,6 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getDrillData, getDrillRunData, getSignedInUser, TypedResponse} from "../common.js";
+import {getDrillData, getDrillRunData, getDrillRunQuestionData, getSignedInUser, TypedResponse} from "../common.js";
 import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {logWithRequest} from "../logger.js";
 import {
@@ -23,6 +23,7 @@ drillRuns.post('/get-drill-runs', async (req: Request<unknown, unknown, GetDrill
                 errorMessage: null,
                 drillDatas: null,
                 drillRunDatas: null,
+                drillRunQuestionDatas: null,
             });
         }
 
@@ -36,6 +37,7 @@ drillRuns.post('/get-drill-runs', async (req: Request<unknown, unknown, GetDrill
                 errorMessage: errors.join(', '),
                 drillDatas: null,
                 drillRunDatas: null,
+                drillRunQuestionDatas: null,
             });
         }
 
@@ -47,6 +49,7 @@ drillRuns.post('/get-drill-runs', async (req: Request<unknown, unknown, GetDrill
             },
             include: {
                 drill: true,
+                questions: true,
             }
         });
 
@@ -60,6 +63,7 @@ drillRuns.post('/get-drill-runs', async (req: Request<unknown, unknown, GetDrill
                     errorMessage: `User ${user.id} is not allowed to view drill run ${drillRun.id}`,
                     drillDatas: null,
                     drillRunDatas: null,
+                    drillRunQuestionDatas: null,
                 });
             }
         }
@@ -70,6 +74,7 @@ drillRuns.post('/get-drill-runs', async (req: Request<unknown, unknown, GetDrill
             errorMessage: null,
             drillRunDatas: drillRuns.map(dr => getDrillRunData(dr)),
             drillDatas: drillRuns.map(dr => getDrillData(dr.drill)),
+            drillRunQuestionDatas: drillRuns.flatMap(dr => dr.questions.map(drq => getDrillRunQuestionData(drq))),
         });
     } catch (ex) {
         console.error('/drill-runs/get-drill-runs caught ex', ex);
@@ -103,18 +108,24 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
             });
         }
 
-        const drillRun = await prisma.drillRun.create({
-            data: {
-                drillId: req.body.drillId,
-                // startTime is set to the current time automatically by db.
+        const drill = await prisma.drill.findUnique({
+            where: {
+                id: req.body.drillId
             },
             include: {
-                drill: true,
+                drillCardSets: {
+                    include: {
+                        cardSet: {
+                            include: {
+                                cards: true
+                            }
+                        }
+                    }
+                }
             }
         });
 
-        // check that the drill exists and is owned by the user
-        if (!drillRun.drill) {
+        if (!drill) {
             logWithRequest('error', req, `Drill ${req.body.drillId} does not exist`);
             return res.json({
                 dataType: true,
@@ -124,7 +135,8 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
             });
         }
 
-        if (drillRun.drill.userId !== user.id) {
+        // check that the drill is owned by the user
+        if (drill.userId !== user.id) {
             logWithRequest('error', req, `User ${user.id} is not allowed to create a drill run for drill ${req.body.drillId}`);
             return res.json({
                 dataType: true,
@@ -133,6 +145,26 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
                 drillRunData: null,
             });
         }
+
+        let cardIds = [...new Set(drill.drillCardSets.flatMap(dcs => dcs.cardSet.cards.map(c => c.cardId)))];
+        // randomize the order of cardIds
+        cardIds = cardIds.sort(() => Math.random() - 0.5);
+
+        const drillRun = await prisma.drillRun.create({
+            data: {
+                drillId: req.body.drillId,
+                questions: {
+                    create: cardIds.map((cardId, idx) => ({
+                        cardId: cardId,
+                        order: idx, // randomized order above
+                    })),
+                },
+            },
+            include: {
+                drill: true,
+                questions: true,
+            }
+        });
 
         return res.json({
             dataType: true,
