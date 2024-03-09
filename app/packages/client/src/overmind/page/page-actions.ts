@@ -145,10 +145,10 @@ export const loadDrillRunsPage = async ({state,actions} : Context, {drillRunId}:
     if (drillRunId === null || isNaN(drillRunId)) {
         throw new Error('drillRunId is null or NaN');
     }
+    await actions.page.loadWorkspaces(true);
+
     state.page.loadingDrillRuns = true;
-
     await actions.data.loadDrillRuns({drillRunIds: [drillRunId]});
-
     state.page.loadingDrillRuns = false;
 }
 

@@ -1,5 +1,12 @@
 import {Pages} from "../../page-urls";
-import {Card, CardSet, Drill, Workspace, WorkspaceUser} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {
+    Card,
+    CardSet,
+    Drill,
+    DrillRun,
+    Workspace,
+    WorkspaceUser
+} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {

@@ -5,7 +5,7 @@ import {
     CardSetCard,
     Drill,
     DrillCardSet,
-    DrillRun,
+    DrillRun, DrillRunQuestion,
     User
 } from "@elr0berto/robert-learns-shared/dist/api/models";
 import {GetCardSetsResponse} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
@@ -249,12 +249,26 @@ export const addOrUpdateDrillRuns = ({state} : Context, drillRuns: DrillRun[]) =
     });
 }
 
+export const addOrUpdateDrillRunQuestions = ({state} : Context, drillRunQuestions: DrillRunQuestion[]) => {
+    drillRunQuestions.forEach(drq => {
+        const index = state.data.drillRunQuestions.findIndex(d => d.id === drq.id);
+        if (index === -1) {
+            state.data.drillRunQuestions.push(drq);
+        } else {
+            state.data.drillRunQuestions[index] = drq;
+        }
+    });
+}
+
 export const loadDrillRuns = async ({state,effects,actions} : Context, {drillRunIds}: {drillRunIds: number[]}) => {
     state.data.loadingDrillRuns = true;
     const resp = await effects.api.drillRuns.getDrillRuns({drillRunIds: drillRunIds});
 
     if (resp.drillRuns === null) {
         throw new Error('resp.drillRuns is null');
+    }
+    if (resp.drillRunQuestions === null) {
+        throw new Error('resp.drillRunQuestions is null');
     }
 
     const drillIds = resp.drillRuns.map(dr => dr.drillId);

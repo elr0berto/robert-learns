@@ -8,7 +8,7 @@ import {
     CardSet,
     Drill,
     DrillCardSet,
-    DrillRun,
+    DrillRun, DrillRunQuestion,
 } from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export type CardSetWithCards = {
@@ -65,6 +65,8 @@ type DataState = {
     loadingDrillCardSets: boolean;
     drillRuns: DrillRun[];
     loadingDrillRuns: boolean;
+    drillRunQuestions: DrillRunQuestion[];
+    loadingDrillRunQuestions: boolean;
     readonly workspacesWithWorkspaceUsers: WorkspaceWithWorkspaceUsers[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
@@ -93,6 +95,8 @@ export const getInitialDataState = () : DataState => ({
     loadingDrillCardSets: false,
     drillRuns: [],
     loadingDrillRuns: false,
+    drillRunQuestions: [],
+    loadingDrillRunQuestions: false,
     workspacesWithWorkspaceUsers: derived((state: DataState) => {
         return state.workspaces.map(w => ({
             workspace: w,
