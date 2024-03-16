@@ -179,4 +179,101 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
     }
 });
 
+
+drillRuns.post('/answer-question', async (req: Request<unknown, unknown, AnswerQuestionRequest>, res : TypedResponse<AnswerQuestionResponseData>, next) => {
+    try {
+        const user = await getSignedInUser(req.session);
+
+        if (!user) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'User not signed in',
+                drillRunData: null,
+            });
+        }
+
+        // validate request
+        const errors = validateAnswerQuestionRequest(req.body);
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Answer question request validation failed', {errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+                drillRunData: null,
+            });
+        }
+
+        const drill = await prisma.drill.findUnique({
+            where: {
+                id: req.body.drillId
+            },
+            include: {
+                drillCardSets: {
+                    include: {
+                        cardSet: {
+                            include: {
+                                cards: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!drill) {
+            logWithRequest('error', req, `Drill ${req.body.drillId} does not exist`);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: `Drill ${req.body.drillId} does not exist`,
+                drillRunData: null,
+            });
+        }
+
+        // check that the drill is owned by the user
+        if (drill.userId !== user.id) {
+            logWithRequest('error', req, `User ${user.id} is not allowed to create a drill run for drill ${req.body.drillId}`);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: `User ${user.id} is not allowed to create a drill run for drill ${req.body.drillId}`,
+                drillRunData: null,
+            });
+        }
+
+        let cardIds = [...new Set(drill.drillCardSets.flatMap(dcs => dcs.cardSet.cards.map(c => c.cardId)))];
+        // randomize the order of cardIds
+        cardIds = cardIds.sort(() => Math.random() - 0.5);
+
+        const drillRun = await prisma.drillRun.create({
+            data: {
+                drillId: req.body.drillId,
+                questions: {
+                    create: cardIds.map((cardId, idx) => ({
+                        cardId: cardId,
+                        order: idx, // randomized order above
+                    })),
+                },
+            },
+            include: {
+                drill: true,
+                questions: true,
+            }
+        });
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            drillRunData: getDrillRunData(drillRun),
+        });
+    } catch (ex) {
+        console.error('/drill-runs/answer-question caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
 export default drillRuns;

@@ -3,6 +3,8 @@ import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Col, Container, Form, Row} from "react-bootstrap";
 import Loading from "../Loading";
 import {pageUrls} from "../../page-urls";
+import AudioPlayer from "react-h5-audio-player";
+import 'react-h5-audio-player/lib/styles.css';
 
 function DrillRunPage() {
     const state = useAppState();
@@ -44,12 +46,15 @@ function DrillRunPage() {
                             <div className={"drill-run-question-content" + (state.drillRunPage.contentEmpty ? ' empty' : '')}>
                                 {state.drillRunPage.content}
                             </div>
-                            {state.drillRunPage.twoSided ? <Button onClick={actions.drillRunPage.flip()}>Flip</Button> : null}
-                            {state.drillRunPage.hasAudio ? <Button onClick={actions.drillRunPage.playAudio()}>Play</Button> : null}
+                            {state.drillRunPage.twoSided ? <Button onClick={() => actions.drillRunPage.flip()}>Flip</Button> : null}
+                            {state.drillRunPage.audioSrc ? <AudioPlayer src={state.drillRunPage.audioSrc}/> : null}
                             <div className="drill-run-question-controls">
-                                <Button onClick={actions.drillRunPage.right()}>Right</Button>
-                                <Button onClick={actions.drillRunPage.wrong()}>Wrong</Button>
+                                <Button onClick={() => actions.drillRunPage.right()}>Right</Button>
+                                <Button onClick={() => actions.drillRunPage.wrong()}>Wrong</Button>
                             </div>
+                        </div>
+                        <div className="progress">
+                            {state.drillRunPage.questions.map(q => <div key={q.id} className={q.correct === null ? 'not-answered' : (q.correct ? 'correct' : 'wrong')}/>)}
                         </div>
                     </>
                 }
