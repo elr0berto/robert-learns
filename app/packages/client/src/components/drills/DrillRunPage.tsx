@@ -49,8 +49,8 @@ function DrillRunPage() {
                             {state.drillRunPage.twoSided ? <Button onClick={() => actions.drillRunPage.flip()}>Flip</Button> : null}
                             {state.drillRunPage.audioSrc ? <AudioPlayer src={state.drillRunPage.audioSrc}/> : null}
                             <div className="drill-run-question-controls">
-                                <Button onClick={() => actions.drillRunPage.right()}>Right</Button>
-                                <Button onClick={() => actions.drillRunPage.wrong()}>Wrong</Button>
+                                <Button onClick={() => actions.drillRunPage.answer(true)}>Right</Button>
+                                <Button onClick={() => actions.drillRunPage.answer(false)}>Wrong</Button>
                             </div>
                         </div>
                         <div className="progress">

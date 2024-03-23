@@ -276,7 +276,20 @@ export const loadDrillRuns = async ({state,effects,actions} : Context, {drillRun
     if (dResp.drills === null) {
         throw new Error('dResp.drills is null');
     }
+
+    await actions.data.loadCards(resp.drillRunQuestions.map(drq => drq.cardId));
+
     actions.data.addOrUpdateDrills(dResp.drills);
     actions.data.addOrUpdateDrillRuns(resp.drillRuns);
     actions.data.addOrUpdateDrillRunQuestions(resp.drillRunQuestions);
+}
+
+export const answerDrillRunQuestion = async ({state,effects,actions} : Context, {drillRunQuestionId, correct}: {drillRunQuestionId: number, correct: boolean}) => {
+    // find the drillRunQuestion
+    const drillRunQuestion = state.data.drillRunQuestions.find(drq => drq.id === drillRunQuestionId);
+    if (typeof drillRunQuestion === 'undefined') {
+        throw new Error('drillRunQuestion not found');
+    }
+    // set the answer
+    drillRunQuestion.correct = correct;
 }

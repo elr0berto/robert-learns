@@ -1,12 +1,13 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 import {getDrillData, getDrillRunData, getDrillRunQuestionData, getSignedInUser, TypedResponse} from "../common.js";
-import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {logWithRequest} from "../logger.js";
 import {
+    AnswerDrillRunQuestionRequest,
     CreateDrillRunRequest, CreateDrillRunResponseData,
     GetDrillRunsRequest,
-    GetDrillRunsResponseData, validateCreateDrillRunRequest
+    GetDrillRunsResponseData, validateAnswerDrillRunQuestionRequest, validateCreateDrillRunRequest
 } from "@elr0berto/robert-learns-shared/api/drill-runs";
 import {validateGetDrillRunsRequest} from "@elr0berto/robert-learns-shared/api/drill-runs";
 
@@ -180,7 +181,7 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
 });
 
 
-drillRuns.post('/answer-question', async (req: Request<unknown, unknown, AnswerQuestionRequest>, res : TypedResponse<AnswerQuestionResponseData>, next) => {
+drillRuns.post('/answer-drill-run-question', async (req: Request<unknown, unknown, AnswerDrillRunQuestionRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
 
@@ -189,77 +190,69 @@ drillRuns.post('/answer-question', async (req: Request<unknown, unknown, AnswerQ
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'User not signed in',
-                drillRunData: null,
             });
         }
 
         // validate request
-        const errors = validateAnswerQuestionRequest(req.body);
+        const errors = validateAnswerDrillRunQuestionRequest(req.body);
         if (errors.length !== 0) {
             logWithRequest('error', req, 'Answer question request validation failed', {errors});
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: errors.join(', '),
-                drillRunData: null,
             });
         }
 
-        const drill = await prisma.drill.findUnique({
+        const drillRunQuestion = await prisma.drillRunQuestion.findUnique({
             where: {
-                id: req.body.drillId
+                id: req.body.drillRunQuestionId
             },
             include: {
-                drillCardSets: {
+                drillRun: {
                     include: {
-                        cardSet: {
-                            include: {
-                                cards: true
-                            }
-                        }
+                        drill: true
                     }
-                }
+                },
             }
         });
 
-        if (!drill) {
-            logWithRequest('error', req, `Drill ${req.body.drillId} does not exist`);
+        if (!drillRunQuestion) {
+            logWithRequest('error', req, `DrillRunQuestion ${req.body.drillRunQuestionId} does not exist`);
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                errorMessage: `Drill ${req.body.drillId} does not exist`,
-                drillRunData: null,
+                errorMessage: `DrillRunQuestion ${req.body.drillRunQuestionId} does not exist`,
             });
         }
 
         // check that the drill is owned by the user
-        if (drill.userId !== user.id) {
-            logWithRequest('error', req, `User ${user.id} is not allowed to create a drill run for drill ${req.body.drillId}`);
+        if (drillRunQuestion.drillRun.drill.userId !== user.id) {
+            logWithRequest('error', req, `User ${user.id} is not allowed to answer drill run questions for drill ${req.body.drillRunQuestionId}`);
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
-                errorMessage: `User ${user.id} is not allowed to create a drill run for drill ${req.body.drillId}`,
-                drillRunData: null,
+                errorMessage: `User ${user.id} is not allowed to answer drill run questions for drill ${req.body.drillRunQuestionId}`,
             });
         }
 
-        let cardIds = [...new Set(drill.drillCardSets.flatMap(dcs => dcs.cardSet.cards.map(c => c.cardId)))];
-        // randomize the order of cardIds
-        cardIds = cardIds.sort(() => Math.random() - 0.5);
+        // check that the question has not already been answered
+        if (drillRunQuestion.correct !== null) {
+            logWithRequest('error', req, `DrillRunQuestion ${req.body.drillRunQuestionId} has already been answered`);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: `DrillRunQuestion ${req.body.drillRunQuestionId} has already been answered`,
+            });
+        }
 
-        const drillRun = await prisma.drillRun.create({
-            data: {
-                drillId: req.body.drillId,
-                questions: {
-                    create: cardIds.map((cardId, idx) => ({
-                        cardId: cardId,
-                        order: idx, // randomized order above
-                    })),
-                },
+        // update the question with the answer
+        await prisma.drillRunQuestion.update({
+            where: {
+                id: req.body.drillRunQuestionId
             },
-            include: {
-                drill: true,
-                questions: true,
+            data: {
+                correct: req.body.correct,
             }
         });
 
@@ -267,10 +260,9 @@ drillRuns.post('/answer-question', async (req: Request<unknown, unknown, AnswerQ
             dataType: true,
             status: ResponseStatus.Success,
             errorMessage: null,
-            drillRunData: getDrillRunData(drillRun),
         });
     } catch (ex) {
-        console.error('/drill-runs/answer-question caught ex', ex);
+        console.error('/drill-runs/answer-drill-run-question caught ex', ex);
         next(ex);
         return;
     }

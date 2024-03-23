@@ -88,3 +88,30 @@ export const getDrillRuns = async(params: GetDrillRunsRequest) : Promise<GetDril
 
     return await apiClient.post(GetDrillRunsResponse, '/drill-runs/get-drill-runs', params);
 }
+
+export type AnswerDrillRunQuestionRequest = {
+    drillRunQuestionId: number;
+    correct: boolean;
+}
+
+export const validateAnswerDrillRunQuestionRequest = (req: AnswerDrillRunQuestionRequest) : string[] => {
+    const errs : string[] = [];
+    if (req.drillRunQuestionId <= 0) {
+        errs.push('Invalid drill run question id, should be positive number');
+    }
+
+    if (typeof req.correct !== "boolean") {
+        errs.push('Please specify whether the answer was correct or not');
+    }
+
+    return errs;
+}
+
+export const answerDrillRunQuestion = async(params: AnswerDrillRunQuestionRequest) : Promise<BaseResponse> => {
+    const errors = validateAnswerDrillRunQuestionRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
+
+    return await apiClient.post(BaseResponse, '/drill-runs/answer-drill-run-question', params);
+}

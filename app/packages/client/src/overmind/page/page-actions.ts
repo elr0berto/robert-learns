@@ -149,6 +149,7 @@ export const loadDrillRunsPage = async ({state,actions} : Context, {drillRunId}:
 
     state.page.loadingDrillRuns = true;
     await actions.data.loadDrillRuns({drillRunIds: [drillRunId]});
+
     state.page.loadingDrillRuns = false;
 }
 
