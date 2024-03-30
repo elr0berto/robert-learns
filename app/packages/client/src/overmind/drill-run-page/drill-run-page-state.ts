@@ -14,6 +14,10 @@ type DrillRunPageState = {
     readonly twoSided: boolean;
     readonly hasAudio: boolean;
     readonly audioSrc: string | null;
+    readonly progress: number;
+    readonly progressRights: number;
+    readonly progressWrongs: number;
+    readonly progressTotal: number;
     side: 'front' | 'back';
 }
 
@@ -87,6 +91,22 @@ export const getInitialDrillRunPageState = () : DrillRunPageState => {
         }),
         audioSrc: derived((state: DrillRunPageState, rootState: typeof config.state) => {
             return state.currentCard?.audio?.getUrl() ?? null;
+        }),
+        progress: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+            if (state.currentQuestion === null) {
+                return 0;
+            }
+
+            return state.questions.filter(q => q.correct !== null).length;
+        }),
+        progressRights: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+            return state.questions.filter(q => q.correct === true).length;
+        }),
+        progressWrongs: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+            return state.questions.filter(q => q.correct === false).length;
+        }),
+        progressTotal: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+            return state.questions.length;
         }),
         side: 'front',
     };

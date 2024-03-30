@@ -94,3 +94,26 @@ code {
   display: flex;
   justify-content: space-between;
 }
+
+.drill-run-progress {
+  display: flex;
+  height: 20px;
+  border-radius: 5px;
+
+  > * {
+    flex: 1;
+    background: #e9ecef;
+    border: 1px solid #ced4da;
+  }
+  .numbers {
+    text-align: center;
+    background: transparent;
+    border: none;
+  }
+  .correct {
+    background: #198754;
+  }
+  .wrong {
+    background: #dc3545;
+  }
+}
