@@ -159,6 +159,7 @@ model DrillRun {
   drillId   Int
   startTime DateTime           @default(now()) @db.Timestamp(0)
   endTime   DateTime?
+  isLimited Boolean            @default(false)
   questions DrillRunQuestion[]
 }
 

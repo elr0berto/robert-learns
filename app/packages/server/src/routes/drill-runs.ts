@@ -109,22 +109,70 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
             });
         }
 
-        const drill = await prisma.drill.findUnique({
-            where: {
-                id: req.body.drillId
-            },
-            include: {
-                drillCardSets: {
-                    include: {
-                        cardSet: {
-                            include: {
-                                cards: true
+        let drill = null;
+        let previousDrillRun = null;
+        if (req.body.drillRunId) {
+            previousDrillRun = await prisma.drillRun.findUnique({
+                where: {
+                    id: req.body.drillRunId
+                },
+                include: {
+                    questions: true,
+                    drill: {
+                        include: {
+                            drillCardSets: {
+                                include: {
+                                    cardSet: {
+                                        include: {
+                                            cards: true
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
+            });
+
+            if (!previousDrillRun) {
+                logWithRequest('error', req, `DrillRun ${req.body.drillRunId} does not exist`);
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: `DrillRun ${req.body.drillRunId} does not exist`,
+                    drillRunData: null,
+                });
             }
-        });
+
+            drill = previousDrillRun.drill;
+
+            if (drill.id !== req.body.drillId) {
+                logWithRequest('error', req, `DrillRun ${req.body.drillRunId} does not match drill ${req.body.drillId}`);
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: `DrillRun ${req.body.drillRunId} does not match drill ${req.body.drillId}`,
+                    drillRunData: null,
+                });
+            }
+        } else {
+            drill = await prisma.drill.findUnique({
+                where: {
+                    id: req.body.drillId
+                },
+                include: {
+                    drillCardSets: {
+                        include: {
+                            cardSet: {
+                                include: {
+                                    cards: true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
 
         if (!drill) {
             logWithRequest('error', req, `Drill ${req.body.drillId} does not exist`);
@@ -147,7 +195,19 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
             });
         }
 
-        let cardIds = [...new Set(drill.drillCardSets.flatMap(dcs => dcs.cardSet.cards.map(c => c.cardId)))];
+        let cardIds : number[] = [];
+        let limited : boolean = false;
+        if (previousDrillRun === null) {
+            cardIds = [...new Set(drill.drillCardSets.flatMap(dcs => dcs.cardSet.cards.map(c => c.cardId)))];
+            limited = false;
+        } else if (req.body.wrongOnly) {
+            cardIds = previousDrillRun.questions.filter(drq => !drq.correct).map(drq => drq.cardId);
+            limited = true;
+        } else {
+            cardIds = [...new Set(previousDrillRun.questions.map(drq => drq.cardId))];
+            limited = previousDrillRun.isLimited;
+        }
+
         // randomize the order of cardIds
         cardIds = cardIds.sort(() => Math.random() - 0.5);
 
@@ -160,6 +220,7 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
                         order: idx, // randomized order above
                     })),
                 },
+                isLimited: limited,
             },
             include: {
                 drill: true,

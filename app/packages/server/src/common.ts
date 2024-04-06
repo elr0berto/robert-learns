@@ -223,6 +223,7 @@ export const getDrillRunData = (drillRun: PrismaDrillRun) : DrillRunData => {
         drillId: drillRun.drillId,
         startTime: drillRun.startTime.toISOString(),
         endTime: drillRun.endTime?.toISOString() ?? null,
+        isLimited: drillRun.isLimited,
     };
 }
 

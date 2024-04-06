@@ -5,6 +5,7 @@ export type DrillRunData = DataType & {
     drillId: number;
     startTime: string;
     endTime: string | null;
+    isLimited: boolean;
 }
 
 export class DrillRun {
@@ -12,11 +13,13 @@ export class DrillRun {
     drillId: number;
     startTime: string;
     endTime: string | null;
+    isLimited: boolean;
 
     constructor(data: DrillRunData) {
         this.id = data.id;
         this.drillId = data.drillId;
         this.startTime = data.startTime;
         this.endTime = data.endTime;
+        this.isLimited = data.isLimited;
     }
 }

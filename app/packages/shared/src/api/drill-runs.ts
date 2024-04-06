@@ -17,12 +17,23 @@ export class CreateDrillRunResponse extends BaseResponse {
 
 export type CreateDrillRunRequest = {
     drillId: number;
+    drillRunId?: number;
+    wrongOnly?: boolean;
 }
 
 export const validateCreateDrillRunRequest = (req: CreateDrillRunRequest) : string[] => {
     const errs : string[] = [];
     if (req.drillId <= 0) {
         errs.push('Invalid drill id, should be positive number');
+    }
+
+    // if wrongOnly is set drillRunId must be provided
+    if (req.wrongOnly && !req.drillRunId) {
+        errs.push('Please provide drill run id together with wrongOnly');
+    }
+
+    if (req.drillRunId && typeof req.wrongOnly === 'undefined') {
+        errs.push('Please provide wrongOnly together with drill run id');
     }
 
     return errs;

@@ -33,6 +33,9 @@ function DrillRunPage() {
         </Container>;
     }
 
+    if (state.drillRunPage.drillRun === null) {
+        throw new Error('Drill run not found');
+    }
     return <Container className="mt-3">
         <Row>
             <Col md={8}>
@@ -40,8 +43,9 @@ function DrillRunPage() {
                 {state.drillRunPage.completed ?
                     <>
                         <Alert variant="success">Drill completed. You got {state.drillRunPage.progressRights} right and {state.drillRunPage.progressWrongs} wrong!</Alert>
-                        <Button onClick={() => actions.drillRunPage.runAgain()}>Run Again</Button>
-                        {state.drillRunPage.progressWrongs > 0 ? <Button onClick={() => actions.drillRunPage.runAgainWrongOnly()}>Run Again with only the ones you got wrong</Button> : null}
+                        <Button onClick={() => actions.drillRunPage.runAgain({wrongOnly: false})}>Run Again with the same cards</Button>
+                        {state.drillRunPage.drillRun.isLimited ? <Button onClick={() => actions.drillRunPage.runAgain({reset: true})}>Run Again with all cards</Button> : null}
+                        {state.drillRunPage.progressWrongs > 0 ? <Button onClick={() => actions.drillRunPage.runAgain({wrongOnly: true})}>Run Again with only the ones you got wrong</Button> : null}
                     </> :
                     <>
                         <div className="drill-run-question">

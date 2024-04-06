@@ -1,4 +1,5 @@
-run the drill!
+start creating real cards!
+style drill run page
 
 drills
 - drill (card-sets & options?) - saved server side
