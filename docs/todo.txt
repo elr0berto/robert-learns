@@ -1,3 +1,5 @@
+nginx config not catching sub urls!
+database backup
 start creating real cards!
 style drill run page
 

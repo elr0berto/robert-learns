@@ -34,4 +34,7 @@ server {
         log_not_found off;
     }
 
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
 }
