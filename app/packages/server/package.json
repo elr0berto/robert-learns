@@ -6,7 +6,6 @@
   "engines": {
     "node": ">=14.16"
   },
-  "packageManager": "yarn@3.2.0",
   "dependencies": {
     "@elr0berto/robert-learns-shared": "1.0.0",
     "@prisma/client": "^5.7.1",
@@ -40,9 +39,9 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
-    "build": "tsc --project ./",
-    "startold": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/server.ts",
+    "build": "tsc",
     "start": "tsx watch src/server.ts",
+    "startold": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/server.ts",
     "lint": "nodemon --watch 'src/**/*.ts' --exec 'npx eslint --config .eslintrc.cjs src --ext .ts'",
     "start:prod": "node dist/server.js"
   }

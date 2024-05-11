@@ -37,7 +37,7 @@ export type AddLogEntryRequestParams = {
     message?: string;
     errorCode?: string;
     error?: Error;
-    componentStack?: string;
+    componentStack?: string | null;
 }
 
 export type AddLogEntryRequest = {

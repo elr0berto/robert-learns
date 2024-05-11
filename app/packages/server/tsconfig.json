@@ -21,7 +21,7 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "declaration": true,
+    "declaration": false,
     //"typeRoots": ["./types", "./node_modules/@types"],
     "baseUrl": "./",
     /*"paths": {
