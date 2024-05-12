@@ -48,11 +48,11 @@ export const state: PageState = {
     cardSetId: null,
     drillRunId: null,
     initializing: false,
-    loadingWorkspaces: true,
-    loadingCardSets: true,
-    loadingCards: true,
-    loadingDrills: true,
-    loadingDrillRuns: true,
+    loadingWorkspaces: false,
+    loadingCardSets: false,
+    loadingCards: false,
+    loadingDrills: false,
+    loadingDrillRuns: false,
     workspaces: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.workspaces.filter(workspace => {
             return workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === workspace.id && wu.userId === rootState.signIn.userId);
