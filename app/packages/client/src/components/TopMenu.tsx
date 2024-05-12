@@ -18,8 +18,7 @@ function TopMenu() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    {state.signIn.user === null ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
-                    {state.signIn.user === null ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
+                    <Button variant="success" href={pageUrls.drill.url()}>Drill</Button>
                     <NavDropdown title={state.page.workspace === null ? 'Workspaces' : ('Workspace ' + state.page.workspace.name)}>
                         {state.page.loadingWorkspaces ? <>
                             <NavDropdown.Item key="loading">Loading...</NavDropdown.Item>
@@ -45,15 +44,16 @@ function TopMenu() {
                             {workspace !== null ? <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(workspace)}>Create card set</NavDropdown.Item> : null}
                         </NavDropdown> : null
                     }
-                    <Button className="mx-lg-5" variant="success" href={pageUrls.drill.url()}>Drill</Button>
                 </Nav>
                 <Nav>
+                    {state.signIn.user === null ? <Nav.Link href={pageUrls.signIn.url()}>Sign in</Nav.Link> : null}
+                    {state.signIn.user === null ? <Nav.Link href={pageUrls.signUp.url()}>Sign up</Nav.Link> : null}
                     {
                         state.signIn.status === SignInStatus.SigningOut ?
-                        'Signing out...' :
+                            <Navbar.Text>Signing out...</Navbar.Text> :
                         (
                             state.signIn.user === null ?
-                            'Signed in as guest' :
+                            null :
                             <NavDropdown title={'Signed in as ' + state.signIn.user.username}>
                                 {state.signIn.user.admin ? <NavDropdown.Item href={pageUrls.adminLogs.url()}>Logs</NavDropdown.Item> :null}
                                 <NavDropdown.Item onClick={() => actions.signIn.signOut()}>Sign out</NavDropdown.Item>
