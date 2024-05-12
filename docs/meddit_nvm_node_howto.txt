@@ -1,0 +1,7 @@
+How to git pull:
+eval (ssh-agent -c)
+ssh-add /home/robert/.ssh/github
+
+how to node:
+nvm use lts
+

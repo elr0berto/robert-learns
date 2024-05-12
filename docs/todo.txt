@@ -1,7 +1,7 @@
-nginx config not catching sub urls!
-database backup
 start creating real cards!
-style drill run page
+monit!
+check logs!
+style drill run page for mobile
 
 drills
 - drill (card-sets & options?) - saved server side
@@ -43,3 +43,4 @@ FUTURE: stop allowing unsigned in users to do anything?! OR create temporary ses
 FUTURE: different modals should have their own urls so that browser back button works
 FUTURE: throw exceptions everywhere instead of "return UnexpectedError"?
 FUTURE: uncaught exception should log all the same stuff as logWithRequest
+FUTURE: clean up upload orphans
