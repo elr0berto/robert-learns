@@ -5,6 +5,12 @@ ssh-add /home/robert/.ssh/github
 how to node:
 nvm use lts
 
+how to clear shared:
+nvm use lts
+cd work/robert-learns/app/packages/shared
+rm -rf dist
+yarn build
+
 how to build and deploy client on meddit:
 nvm use lts
 cd work/robert-learns/app/packages/client

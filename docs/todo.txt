@@ -1,10 +1,9 @@
-bug when starting drill: "you got zero wrong blah" while drill is loading.
-bug when reloading drill run
 bug in drill: sound autoplaying.
+show version numbers for front, back and shared (and make it work in prod...)
 
-show version numbers for front and back
 start creating real cards!
 show stats for cards!
+front-page is cached / not reloading javascript?
 should be able to select additional card sets in the create card modal
 be able to sort card-sets
 cloudflare cache?
@@ -12,6 +11,7 @@ monit!
 check logs!
 style drill run page for mobile - make font size dynamic to fit screen?
 drill everything EXCEPT. (for example all consonants except obsolote ones)
+make a build/deploy script
 
 drills
 - drill (card-sets & options?) - saved server side

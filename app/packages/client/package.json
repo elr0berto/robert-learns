@@ -1,6 +1,6 @@
 {
   "name": "@elr0berto/robert-learns-client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@popperjs/core": "^2.11.8",
@@ -29,7 +29,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_VERSION=$(jq -r .version package.json) react-scripts build",
     "lint": "nodemon --watch src --ext js,jsx,ts,tsx --exec 'npx eslint src --ext .js,.jsx,.ts,.tsx'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
