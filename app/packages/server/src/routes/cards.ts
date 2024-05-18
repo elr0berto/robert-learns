@@ -163,6 +163,7 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
             },
             include: {
                 workspace: true,
+                cards: true, // to get the max order
             }
         });
 
@@ -248,10 +249,14 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
                 }
             });
 
+            // get the min order from cardSet.cards
+            const minOrder = cardSet.cards.reduce((acc, card) => Math.min(acc, card.order), Number.MAX_SAFE_INTEGER);
+
             await prisma.cardSetCard.create({
                 data: {
                     cardSetId: parseInt(req.body.cardSetId),
                     cardId: newCard.id,
+                    order: minOrder-1,
                 }
             });
 
