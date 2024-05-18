@@ -1,3 +1,7 @@
+bug when starting drill: "you got zero wrong blah" while drill is loading.
+bug when reloading drill run
+bug in drill: sound autoplaying.
+
 show version numbers for front and back
 start creating real cards!
 show stats for cards!
@@ -7,7 +11,6 @@ cloudflare cache?
 monit!
 check logs!
 style drill run page for mobile - make font size dynamic to fit screen?
-creating a new card adds it to the top of the card set.. should be added to the bottom?
 drill everything EXCEPT. (for example all consonants except obsolote ones)
 
 drills

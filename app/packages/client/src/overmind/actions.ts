@@ -23,7 +23,7 @@ export const onInitializeOvermind = async ({ actions, effects, state }: Context)
             }
     );
 
-    await Promise.all([actions.signIn.check()]);
+    await Promise.all([actions.signIn.check(), actions.version.getVersion()]);
 
     let routes : {[key:string]: (payload : Payload) => Promise<void>} = {};
 

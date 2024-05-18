@@ -20,6 +20,7 @@ import * as editCardCardSetsModal from './edit-card-card-sets-modal';
 import * as adminLogsPage from './admin-logs-page';
 import * as drillPage from './drill-page';
 import * as drillRunPage from './drill-run-page';
+import * as version from './version';
 
 import {merge, namespaced} from "overmind/es/config";
 
@@ -47,6 +48,7 @@ export const config = merge(
         adminLogsPage,
         drillPage,
         drillRunPage,
+        version,
     })
 )
 

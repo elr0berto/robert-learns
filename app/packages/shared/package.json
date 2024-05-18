@@ -146,6 +146,14 @@
     "./dist/api/drill-runs": {
       "import": "./dist/api/drill-runs.js",
       "types": "./dist/api/drill-runs.d.ts"
+    },
+    "./api/version": {
+      "import": "./dist/api/version.js",
+      "types": "./dist/api/version.d.ts"
+    },
+    "./dist/api/version": {
+      "import": "./dist/api/version.js",
+      "types": "./dist/api/version.d.ts"
     }
   },
   "types": "./dist/index.d.ts",

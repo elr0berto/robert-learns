@@ -17,6 +17,9 @@ import drillCardSets from './routes/drill-card-sets.js';
 import session from './session.js';
 import logger from "./logger.js";
 import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
+import {TypedResponse} from "./common.js";
+import {GetDrillsResponseData} from "@elr0berto/robert-learns-shared/api/drills";
+import {GetVersionResponseData} from "@elr0berto/robert-learns-shared/api/version";
 
 class Server {
     public express;
@@ -49,6 +52,14 @@ class Server {
         this.express.use('/api/drills', drills);
         this.express.use('/api/drill-runs', drillRuns);
         this.express.use('/api/drill-card-sets', drillCardSets);
+        this.express.use('/api/version', (_: Request, res: TypedResponse<GetVersionResponseData>) => {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+                version: process.env.npm_package_version ?? 'und',
+            });
+        })
     }
 
     setupErrorHandler() {

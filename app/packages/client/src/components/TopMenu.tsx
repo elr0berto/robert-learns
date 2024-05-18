@@ -14,7 +14,7 @@ function TopMenu() {
     console.log('TopMenu state.page.workspace', state.page.workspace);
     return <Navbar bg="light" expand="lg">
         <Container>
-            <Navbar.Brand href="/">Robert Learns</Navbar.Brand>
+            <Navbar.Brand title={'client: '+process.env.REACT_APP_VERSION + ' server: ' + (state.version.version ?? 'unknown')} href="/">Robert Learns</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">

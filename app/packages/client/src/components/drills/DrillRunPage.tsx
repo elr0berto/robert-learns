@@ -11,6 +11,9 @@ function DrillRunPage() {
     const actions = useActions();
 
     const loading : string[] = [];
+    if (state.page.loadingWorkspaces) {
+        loading.push('workspaces');
+    }
     if (state.page.loadingDrillRuns) {
         loading.push('drill run');
     }

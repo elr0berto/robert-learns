@@ -12,5 +12,6 @@ export * as cardSetCards from './card-set-cards.js';
 export * as drills from './drills.js';
 export * as drillCardSets from './drill-card-sets.js';
 export * as drillRuns from './drill-runs.js';
+export * as version from './version.js';
 export { apiClient } from './ApiClient.js';
 export * as models from './models/index.js';

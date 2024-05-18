@@ -8,6 +8,12 @@ nvm use lts
 how to build and deploy client on meddit:
 nvm use lts
 cd work/robert-learns/app/packages/client
+(git pull)
 yarn build (this builds and deploys.)
 
 how to build/deploy server on meddit:
+nvm use lts
+cd work/robert-learns/app/packages/server
+(git pull)
+yarn build (builds)
+pm2 reload server (reloads the server so that new version can go live)
