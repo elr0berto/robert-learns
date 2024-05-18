@@ -1,7 +1,14 @@
+bug: reloading card-set-page shows incorrect other card sets for each card.
+show version numbers for front and back
 start creating real cards!
+show stats for cards!
+should be able to select additional card sets in the create card modal
+be able to sort card-sets
+cloudflare cache?
 monit!
 check logs!
-style drill run page for mobile
+style drill run page for mobile - make font size dynamic to fit screen?
+creating a new card adds it to the top of the card set.. should be added to the bottom?
 
 drills
 - drill (card-sets & options?) - saved server side

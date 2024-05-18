@@ -72,6 +72,7 @@ export const loadCardSetCards = async ({state,effects,actions} : Context, reques
     } else if (typeof request.cardSetIds !== 'undefined') {
         // loop over cardSetIds
         request.cardSetIds.forEach(cardSetId => {
+
             if (resp.cardSetCards === null) {
                 throw new Error('resp.cardSetCards is null');
             }

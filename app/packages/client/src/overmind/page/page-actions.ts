@@ -117,6 +117,7 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
     await actions.data.loadCardSetCards({cardSetIds: cardSetIds});
     const cardIds = state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
     if (cardIds.length > 0) {
+        await actions.data.loadCardSetCards({cardIds: cardIds}); // load the rest of the card-set-cards for each card.
         await actions.data.loadCards(cardIds);
     }
 
