@@ -18,8 +18,9 @@ import session from './session.js';
 import logger from "./logger.js";
 import {BaseResponseData, ResponseStatus} from "@elr0berto/robert-learns-shared/api/models";
 import {TypedResponse} from "./common.js";
-import {GetDrillsResponseData} from "@elr0berto/robert-learns-shared/api/drills";
 import {GetVersionResponseData} from "@elr0berto/robert-learns-shared/api/version";
+import {RL_SERVER_VERSION} from "./version.js";
+import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/version";
 
 class Server {
     public express;
@@ -57,7 +58,8 @@ class Server {
                 dataType: true,
                 status: ResponseStatus.Success,
                 errorMessage: null,
-                version: process.env.RL_SERVER_VERSION ?? 'und',
+                version: RL_SERVER_VERSION,
+                versionShared: RL_SHARED_VERSION,
             });
         })
     }
