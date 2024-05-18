@@ -54,7 +54,7 @@ function DrillRunPage() {
                         <div className="drill-run-question">
                             <div className={"drill-run-question-content" + (state.drillRunPage.contentEmpty ? ' empty' : '')} dangerouslySetInnerHTML={{__html: state.drillRunPage.content ?? ''}}/>
                             {state.drillRunPage.twoSided ? <Button onClick={() => actions.drillRunPage.flip()}>Reveal/Flip</Button> : null}
-                            {state.drillRunPage.audioSrc ? <AudioPlayer src={state.drillRunPage.audioSrc}/> : null}
+                            {state.drillRunPage.audioSrc ? <AudioPlayer autoPlay={false} autoPlayAfterSrcChange={false} src={state.drillRunPage.audioSrc}/> : null}
                             <div className="drill-run-question-controls">
                                 <Button variant={'success'} onClick={() => actions.drillRunPage.answer(true)}>Right</Button>
                                 <Button className="mx-5" variant={'danger'} onClick={() => actions.drillRunPage.answer(false)}>Wrong</Button>
