@@ -1,7 +1,7 @@
 {
   "name": "@elr0berto/robert-learns-server",
   "type": "module",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
@@ -40,8 +40,8 @@
     "typescript": "^4.9.5"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "tsx watch src/server.ts",
+    "build": "RL_SERVER_VERSION=$(jq -r .version package.json) tsc",
+    "start": "RL_SERVER_VERSION=$(jq -r .version package.json) tsx watch src/server.ts",
     "startold": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/server.ts",
     "lint": "nodemon --watch 'src/**/*.ts' --exec 'npx eslint --config .eslintrc.cjs src --ext .ts'",
     "start:prod": "node dist/server.js"

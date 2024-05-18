@@ -57,7 +57,7 @@ class Server {
                 dataType: true,
                 status: ResponseStatus.Success,
                 errorMessage: null,
-                version: process.env.npm_package_version ?? 'und',
+                version: process.env.RL_SERVER_VERSION ?? 'und',
             });
         })
     }
