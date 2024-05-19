@@ -104,8 +104,8 @@ function CreateCardModal() {
             </Modal.Body>
 
             <Modal.Footer>
-                <Button variant="secondary" onClick={() => actions.createCardModal.closeCreateCardModal()}>Close</Button>
-                <Button variant="primary" onClick={() => {saveEditorContentState(); actions.createCardModal.submit()}}>Save card!</Button>
+                <Button disabled={state.createCardModal.submitting} variant="secondary" onClick={() => actions.createCardModal.closeCreateCardModal()}>Close</Button>
+                <Button disabled={state.createCardModal.submitting} variant="primary" onClick={() => {saveEditorContentState(); actions.createCardModal.submit()}}>Save card!</Button>
             </Modal.Footer>
         </Modal>
     );
