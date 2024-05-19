@@ -115,7 +115,17 @@ server {
         log_not_found off;
     }
 
+   # Set caching headers for static files
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+        try_files $uri =404;
+    }
+
+    # Catch-all location for your React app
     location / {
+        # Set no-cache headers for all other requests
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
         try_files $uri $uri/ /index.html;
     }
 }
