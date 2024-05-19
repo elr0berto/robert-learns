@@ -1,7 +1,10 @@
 bug: create card save button can be spammed
 
 start creating real cards!
+- consonant initial sound in english
+- consonant low/high pairs
 
+fitty
 social logins
 change password
 show stats for cards!
