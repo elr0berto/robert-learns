@@ -12,6 +12,7 @@ export const answer = async ({ state, effects, actions }: Context, correct: bool
     }
 
     const drillRunQuestionId = state.drillRunPage.currentQuestion.id;
+    state.drillRunPage.side = 'front';
     actions.data.answerDrillRunQuestion({drillRunQuestionId, correct});
     await effects.api.drillRuns.answerDrillRunQuestion({drillRunQuestionId,correct});
 }
