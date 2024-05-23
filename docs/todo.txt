@@ -1,3 +1,5 @@
+add user to workspace invalid email crash
+bug: font-sizes are not saved/displayed correctly.
 bug: create card save button can be spammed
 
 start creating real cards!

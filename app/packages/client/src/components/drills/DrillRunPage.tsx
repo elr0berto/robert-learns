@@ -52,7 +52,7 @@ function DrillRunPage() {
                     </> :
                     <>
                         <div className="drill-run-question">
-                            <div className={"drill-run-question-content" + (state.drillRunPage.contentEmpty ? ' empty' : '')} dangerouslySetInnerHTML={{__html: state.drillRunPage.content ?? ''}}/>
+                            <div className={"drill-run-question-content ql-editor" + (state.drillRunPage.contentEmpty ? ' empty' : '')} dangerouslySetInnerHTML={{__html: state.drillRunPage.content ?? ''}}/>
                             {state.drillRunPage.twoSided ? <Button onClick={() => actions.drillRunPage.flip()}>Reveal/Flip</Button> : null}
                             {state.drillRunPage.audioSrc ? <AudioPlayer autoPlay={false} autoPlayAfterSrcChange={false} src={state.drillRunPage.audioSrc}/> : null}
                             <div className="drill-run-question-controls">
