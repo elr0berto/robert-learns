@@ -1,6 +1,8 @@
 add user to workspace invalid email crash
 bug: font-sizes are not saved/displayed correctly.
 bug: create card save button can be spammed
+bug: pressing enter when adding a user to workspace does something weird
+
 
 start creating real cards!
 - consonant initial sound in english
