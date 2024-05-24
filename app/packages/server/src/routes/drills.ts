@@ -40,8 +40,11 @@ drills.post('/get-drills', async (req: Request<unknown, unknown, GetDrillsReques
             });
         }
 
+        console.log('req.body.drillIds', req.body.drillIds);
+
+        const requestBodyHasDrillIds : boolean = req.body.drillIds !== null && req.body.drillIds !== undefined;
         const drills = await prisma.drill.findMany({
-            where: req.body.drillIds === null ? {
+            where: !requestBodyHasDrillIds ? {
                 userId: user.id,
             } : {
                 id: {
