@@ -26,3 +26,7 @@ cd work/robert-learns/app/packages/server
 yarn install (required sometimes)
 yarn build (builds)
 pm2 reload server (reloads the server so that new version can go live)
+
+
+version git issues, overwrite/discard local:
+git checkout -- app/packages/server/src/version.ts
