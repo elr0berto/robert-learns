@@ -1,11 +1,9 @@
-User 4 is not allowed to view drill 1
-add user to workspace invalid email crash
-bug: font-sizes are not saved/displayed correctly.
-bug: create card save button can be spammed
-bug: pressing enter when adding a user to workspace does something weird
 adding users to workspace should not require separate save?
 
+card-set-groups?
+
 start creating real cards!
+- card-sets for regular and irregular
 - consonant initial sound in english
 - consonant low/high pairs
 

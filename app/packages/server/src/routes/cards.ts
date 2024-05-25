@@ -92,8 +92,11 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
         console.log({front: req.body.front, back: req.body.back});
 
         // create options for sanitizeHtml to allow img-tags
+        const allowedAttributes = {...sanitizeHtml.defaults.allowedAttributes};
+        allowedAttributes['*'] = ['class'];
         const sanitizeHtmlOptions = {
             allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+            allowedAttributes: allowedAttributes,
         }
         const front = sanitizeHtml(req.body.front ?? '', sanitizeHtmlOptions);
         const back = sanitizeHtml(req.body.back ?? '', sanitizeHtmlOptions);

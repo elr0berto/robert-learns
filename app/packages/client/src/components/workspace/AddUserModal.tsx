@@ -21,13 +21,14 @@ function AddUserModal(props: Props) {
             <Modal.Title>Add user to workspace</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <Form className="col-lg-5">
+            <Form className="col-lg-5" onSubmit={e => {e.preventDefault(); actions.addUserModal.submit(props.onAdd)}}>
                 <Form.Group className="mb-3" controlId="workspaceName" >
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         type="text"
                         placeholder="Enter users email"
                         value={state.addUserModal.email}
+                        disabled={state.addUserModal.submitting}
                         isInvalid={state.addUserModal.errorMessage !== null}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.addUserModal.changeEmail(event.currentTarget.value)}/>
                     {state.addUserModal.errorMessage !== null ? <Form.Control.Feedback type="invalid">

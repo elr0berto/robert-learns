@@ -21,6 +21,10 @@ export class UserGetByEmailResponse extends BaseResponse {
 export const validateUserGetByEmailRequest = (req: UserGetByEmailRequest) : string[] => {
     const errs : string[] = [];
 
+    if (req.email.trim().length === 0) {
+        errs.push('Email is required.');
+        return errs;
+    }
     if (!validateEmail(req.email)) {
         errs.push('Email is invalid.')
     }

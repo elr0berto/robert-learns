@@ -1,5 +1,6 @@
 import { Context } from '..';
 import {ResponseStatus, UserRole} from "@elr0berto/robert-learns-shared/dist/api/models";
+import {validateUserGetByEmailRequest} from "@elr0berto/robert-learns-shared/dist/api/users";
 
 export const changeEmail = ({ state }: Context, email: string) => {
     state.addUserModal.email = email;
@@ -17,7 +18,14 @@ export const submit = async ({ state, effects, actions }: Context, onAdd: (user:
         state.addUserModal.errorMessage = 'You cannot add your self.';
         return;
     }
-    const response = await effects.api.users.userGetByEmail({email: state.addUserModal.email});
+    const request = {email: state.addUserModal.email};
+    const validationErrors = validateUserGetByEmailRequest(request);
+    if (validationErrors.length > 0) {
+        state.addUserModal.submitting = false;
+        state.addUserModal.errorMessage = validationErrors.join(' ');
+        return;
+    }
+    const response = await effects.api.users.userGetByEmail(request);
     state.addUserModal.submitting = false;
     if (response.status === ResponseStatus.UserError) {
         state.addUserModal.errorMessage = response.errorMessage;
