@@ -7,6 +7,7 @@ start creating real cards!
 - consonant initial sound in english
 - consonant low/high pairs
 
+font-sizes not working inside "add cards from other card sets modal"
 fitty
 social logins
 change password
@@ -17,7 +18,7 @@ monit!
 check logs!
 style drill run page for mobile - make font size dynamic to fit screen?
 drill everything EXCEPT. (for example all consonants except obsolote ones)
-
+favicon
 make a build/deploy script
 
 drills
