@@ -1,1 +1,1 @@
-export const RL_SHARED_VERSION = "1.0.3";
+export const RL_SHARED_VERSION = "1.0.4";

@@ -22,8 +22,12 @@ function CreateCardModal() {
         const frontContent = frontEditorRef.current?.getContent();
         const backContent = backEditorRef.current?.getContent();
 
-        actions.createCardModal.setFrontHtml(frontContent ?? '');
-        actions.createCardModal.setBackHtml(backContent ?? '');
+        if (frontContent !== null && frontContent !== undefined) {
+            actions.createCardModal.setFrontHtml(frontContent ?? ''); // if tab was not open the editor will be null so then we should not set the content because the content will come from the cards initial state / loaded state
+        }
+        if (backContent !== null && backContent !== undefined) {
+            actions.createCardModal.setBackHtml(backContent ?? ''); // if tab was not open the editor will be null so then we should not set the content because the content will come from the cards initial state / loaded state
+        }
     }
 
     // 👇️ create a ref for the file input

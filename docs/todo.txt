@@ -1,12 +1,10 @@
-adding users to workspace should not require separate save?
-
-card-set-groups?
+BUG: editing card does not save back when back tab was not opened.
 
 start creating real cards!
-- card-sets for regular and irregular
 - consonant initial sound in english
 - consonant low/high pairs
 
+ability to go back to previous card in drill.
 font-sizes not working inside "add cards from other card sets modal"
 fitty
 social logins
@@ -20,6 +18,8 @@ style drill run page for mobile - make font size dynamic to fit screen?
 drill everything EXCEPT. (for example all consonants except obsolote ones)
 favicon
 make a build/deploy script
+adding users to workspace should not require separate save?
+card-set-groups?
 
 drills
 - drill (card-sets & options?) - saved server side
