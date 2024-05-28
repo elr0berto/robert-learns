@@ -67,7 +67,6 @@ class Server {
     setupErrorHandler() {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         this.express.use((err: Error, req: Request, res: Response, _: NextFunction) => {  // this needs to be 4 params to be an error handler.......
-            console.log('inside logger');
             logger.error(`${req.method} - ${req.url} - ${err.message}`);
 
             const response : BaseResponseData = {

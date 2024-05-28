@@ -1,9 +1,11 @@
-BUG: editing card does not save back when back tab was not opened.
+BUG: create card crash
 
 start creating real cards!
 - consonant initial sound in english
 - consonant low/high pairs
 
+what to do with "abandoned" drill runs? delete them after a while?
+sign-in-form ENTER key should submit
 ability to go back to previous card in drill.
 font-sizes not working inside "add cards from other card sets modal"
 fitty
