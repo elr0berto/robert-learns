@@ -5,9 +5,13 @@ import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/
 import {logWithRequest} from "../logger.js";
 import {
     AnswerDrillRunQuestionRequest,
-    CreateDrillRunRequest, CreateDrillRunResponseData,
+    CreateDrillRunRequest,
+    CreateDrillRunResponseData,
     GetDrillRunsRequest,
-    GetDrillRunsResponseData, validateAnswerDrillRunQuestionRequest, validateCreateDrillRunRequest
+    GetDrillRunsResponseData, GetLatestUnfinishedDrillRunRequest,
+    GetLatestUnfinishedDrillRunResponse, GetLatestUnfinishedDrillRunResponseData,
+    validateAnswerDrillRunQuestionRequest,
+    validateCreateDrillRunRequest, validateGetLatestUnfinishedDrillRunRequest
 } from "@elr0berto/robert-learns-shared/api/drill-runs";
 import {validateGetDrillRunsRequest} from "@elr0berto/robert-learns-shared/api/drill-runs";
 
@@ -317,6 +321,27 @@ drillRuns.post('/answer-drill-run-question', async (req: Request<unknown, unknow
             }
         });
 
+        // check if all questions are answered
+        const allQuestions = await prisma.drillRunQuestion.findMany({
+            where: {
+                drillRunId: drillRunQuestion.drillRunId
+            }
+        });
+
+        const answeredQuestions = allQuestions.filter(drq => drq.correct !== null);
+        if (answeredQuestions.length === allQuestions.length) {
+            // update the drill run with the end time
+            await prisma.drillRun.update({
+                where: {
+                    id: drillRunQuestion.drillRunId
+                },
+                data: {
+                    endTime: new Date(),
+                }
+            });
+        }
+
+
         return res.json({
             dataType: true,
             status: ResponseStatus.Success,
@@ -324,6 +349,109 @@ drillRuns.post('/answer-drill-run-question', async (req: Request<unknown, unknow
         });
     } catch (ex) {
         console.error('/drill-runs/answer-drill-run-question caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+drillRuns.post('/get-latest-unfinished-drill-run', async (req: Request<unknown, unknown, GetLatestUnfinishedDrillRunRequest>, res : TypedResponse<GetLatestUnfinishedDrillRunResponseData>, next) => {
+    try {
+        const user = await getSignedInUser(req.session);
+
+        if (!user) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+                drillData: null,
+                drillRunData: null,
+                drillRunQuestionDatas: null,
+            });
+        }
+
+        // validate request
+        const errors = validateGetLatestUnfinishedDrillRunRequest(req.body);
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Get latest unfinished drill run request validation failed', {errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+                drillData: null,
+                drillRunData: null,
+                drillRunQuestionDatas: null,
+            });
+        }
+
+        const drill = await prisma.drill.findUnique({
+            where: {
+                id: req.body.drillId
+            },
+            include: {
+                drillRuns: {
+                    where: {
+                        endTime: null
+                    },
+                    include: {
+                        questions: true,
+                    }
+                }
+            }
+        });
+
+        if (!drill) {
+            logWithRequest('error', req, `Drill ${req.body.drillId} does not exist`);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: `Drill ${req.body.drillId} does not exist`,
+                drillData: null,
+                drillRunData: null,
+                drillRunQuestionDatas: null,
+            });
+        }
+
+
+        // check that drill is owned by user
+        if (drill.userId !== user.id) {
+            logWithRequest('error', req, `User ${user.id} is not allowed to view drill ${drill.id}`);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: `User ${user.id} is not allowed to view drill ${drill.id}`,
+                drillData: null,
+                drillRunData: null,
+                drillRunQuestionDatas: null,
+            });
+        }
+
+        if (drill.drillRuns.length === 0) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+                drillData: null,
+                drillRunData: null,
+                drillRunQuestionDatas: null,
+            });
+        }
+
+        // get the latest unfinished drill run based on drillRun.startTime
+        const drillRuns = drill.drillRuns.sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
+
+        // get the first drill run that has not ended
+        const drillRun = drillRuns[0];
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            drillRunData: getDrillRunData(drillRun),
+            drillData: getDrillData(drill),
+            drillRunQuestionDatas: drillRun.questions.map(drq => getDrillRunQuestionData(drq)),
+        });
+    } catch(ex) {
+        console.error('/drill-runs/get-latest-unfinished-drill-run caught ex', ex);
         next(ex);
         return;
     }

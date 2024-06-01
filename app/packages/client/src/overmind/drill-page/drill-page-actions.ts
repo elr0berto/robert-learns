@@ -57,7 +57,11 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
     }
 }
 
-export const saveDrill = async ({ state, effects, actions }: Context, {run} : {run: boolean}) => {
+export const saveDrill = async ({ state, effects, actions }: Context, {run, resume} : {run: boolean, resume?: boolean}) => {
+    console.log('saveDrill');
+    if (!resume) {
+        state.drillPage.possibleResumeDrillRunId = null;
+    }
     state.drillPage.saveAttempted = true;
     if (!state.drillPage.isValid) {
         return;
@@ -68,6 +72,27 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run} : {r
     }
 
     state.drillPage.saving = true;
+
+    // check if there is an unfinished drill run for this drill that we can resume
+    if (run && state.drillPage.selectedDrillId !== 'new' && resume === undefined) {
+        console.log('1');
+        const uResp = await effects.api.drillRuns.getLatestUnfinishedDrillRun({drillId: state.drillPage.selectedDrillId});
+
+        if (uResp.drillRun !== null && uResp.drill !== null && uResp.drillRunQuestions !== null) {
+            console.log('2');
+            actions.data.addOrUpdateDrills([uResp.drill]);
+            actions.data.addOrUpdateDrillRuns([uResp.drillRun]);
+            actions.data.addOrUpdateDrillRunQuestions(uResp.drillRunQuestions);
+            state.drillPage.possibleResumeDrillRunId = uResp.drillRun.id;
+
+            console.log('state.drillPage.possibleResumeDrillRunId', state.drillPage.possibleResumeDrillRunId);
+            if (state.drillPage.possibleResumeDrillRunWithNumbers !== null) {
+                state.drillPage.saving = false;
+                return;
+            }
+        }
+    }
+
     const resp = await effects.api.drills.createDrill({
         drillId: state.drillPage.selectedDrillId === 'new' ? null : state.drillPage.selectedDrillId,
         name: state.drillPage.drillName,
@@ -88,13 +113,20 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run} : {r
     state.drillPage.selectedDrillId = resp.drill.id;
 
     if (run) {
-        // create a new drill run and open the drill run page with the new drill run
-        const drResp = await effects.api.drillRuns.createDrillRun({drillId: resp.drill.id});
-        if (drResp.drillRun === null) {
-            throw new Error('DrillRun missing from response.');
+        if (resume) {
+            if (state.drillPage.possibleResumeDrillRunWithNumbers === null) {
+                throw new Error('No drill run to resume');
+            }
+            effects.page.router.goTo(pageUrls[Pages.DrillRun].url(resp.drill, state.drillPage.possibleResumeDrillRunWithNumbers.drillRun));
+        } else {
+            // create a new drill run and open the drill run page with the new drill run
+            const drResp = await effects.api.drillRuns.createDrillRun({drillId: resp.drill.id});
+            if (drResp.drillRun === null) {
+                throw new Error('DrillRun missing from response.');
+            }
+            actions.data.addOrUpdateDrillRuns([drResp.drillRun]);
+            effects.page.router.goTo(pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun));
         }
-        actions.data.addOrUpdateDrillRuns([drResp.drillRun]);
-        effects.page.router.goTo(pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun));
     } else {
         state.notifications.notifications.push({
             message: 'Drill saved successfully'
@@ -105,5 +137,11 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run} : {r
 }
 
 export const runDrill = async ({ state, effects, actions }: Context) => {
+    console.log('runDrill');
     actions.drillPage.saveDrill({run: true});
+}
+
+export const closeResumeDrillModal = ({ state }: Context) => {
+    console.log('closeResumeDrillModal');
+    state.drillPage.possibleResumeDrillRunId = null;
 }

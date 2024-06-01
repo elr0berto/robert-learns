@@ -1,1 +1,1 @@
-export const RL_SERVER_VERSION = "0.2.0";
+export const RL_SERVER_VERSION = "0.2.1";

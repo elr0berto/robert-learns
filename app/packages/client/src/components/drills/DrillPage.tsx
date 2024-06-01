@@ -4,6 +4,7 @@ import {Alert, Button, Col, Container, Form, Row} from "react-bootstrap";
 import Loading from "../Loading";
 import TristateCheckbox from "../TristateCheckbox";
 import {pageUrls} from "../../page-urls";
+import ResumeDrillRunModal from "./ResumeDrillRunModal";
 
 function DrillPage() {
     const state = useAppState();
@@ -38,7 +39,9 @@ function DrillPage() {
         </Container>;
     }
 
-    return <Container className="mt-3">
+    console.log('state.drillPage.possibleResumeDrillRunWithNumbers', state.drillPage.possibleResumeDrillRunWithNumbers);
+
+    return <Container className="mt-3 mb-5">
         <Row>
             <Col md={8}>
                 <h1 className="mb-3">Drill</h1>
@@ -108,7 +111,7 @@ function DrillPage() {
                         <Button
                             disabled={state.drillPage.formDisabled}
                             className="mt-3"
-                            variant="success" onClick={() => actions.drillPage.saveDrill({run: false})}
+                            variant="outline-success" onClick={() => actions.drillPage.saveDrill({run: false})}
                         >
                             Save
                         </Button>
@@ -124,6 +127,7 @@ function DrillPage() {
                 null}
             </Col>
         </Row>
+        {state.drillPage.possibleResumeDrillRunWithNumbers === null ? null : <ResumeDrillRunModal/>}
     </Container>;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@elr0berto/robert-learns-shared",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "type": "module",
   "main": "./dist/index.js",
   "exports": {

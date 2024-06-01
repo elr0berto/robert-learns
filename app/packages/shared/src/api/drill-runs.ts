@@ -73,9 +73,8 @@ export const validateGetDrillRunsRequest = (req: GetDrillRunsRequest) : string[]
     // check that drillRunIds have values
     const errs : string[] = [];
     if (req.drillRunIds.length === 0) {
-        errs.push('Please select at least one drill run');
+        errs.push('Please select at least one drill run id');
     }
-
     // check that req.drillRunIds are all positive numbers
     for (const drillRunId of req.drillRunIds) {
         if (drillRunId <= 0) {
@@ -91,6 +90,7 @@ export const validateGetDrillRunsRequest = (req: GetDrillRunsRequest) : string[]
 
     return errs;
 }
+
 export const getDrillRuns = async(params: GetDrillRunsRequest) : Promise<GetDrillRunsResponse> => {
     const errors = validateGetDrillRunsRequest(params);
     if (errors.length > 0) {
@@ -125,4 +125,45 @@ export const answerDrillRunQuestion = async(params: AnswerDrillRunQuestionReques
     }
 
     return await apiClient.post(BaseResponse, '/drill-runs/answer-drill-run-question', params);
+}
+
+// getLatestUnfinishedDrillRun
+export type GetLatestUnfinishedDrillRunResponseData = BaseResponseData & {
+    drillData: DrillData | null;
+    drillRunData: DrillRunData | null;
+    drillRunQuestionDatas: DrillRunQuestionData[] | null;
+}
+
+export class GetLatestUnfinishedDrillRunResponse extends BaseResponse {
+    drill: Drill | null;
+    drillRun: DrillRun | null;
+    drillRunQuestions: DrillRunQuestion[] | null;
+    constructor(data: GetLatestUnfinishedDrillRunResponseData) {
+        super(data);
+        this.drill = data.drillData ? new Drill(data.drillData) : null;
+        this.drillRun = data.drillRunData ? new DrillRun(data.drillRunData) : null;
+        this.drillRunQuestions = data.drillRunQuestionDatas ? data.drillRunQuestionDatas.map(d => new DrillRunQuestion(d)) : null;
+    }
+}
+
+export type GetLatestUnfinishedDrillRunRequest = {
+    drillId: number;
+}
+
+export const validateGetLatestUnfinishedDrillRunRequest = (req: GetLatestUnfinishedDrillRunRequest) : string[] => {
+    const errs : string[] = [];
+    if (req.drillId <= 0) {
+        errs.push('Invalid drill id, should be positive number');
+    }
+
+    return errs;
+}
+
+export const getLatestUnfinishedDrillRun = async(params: GetLatestUnfinishedDrillRunRequest) : Promise<GetLatestUnfinishedDrillRunResponse> => {
+    const errors = validateGetLatestUnfinishedDrillRunRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
+
+    return await apiClient.post(GetLatestUnfinishedDrillRunResponse, '/drill-runs/get-latest-unfinished-drill-run', params);
 }
