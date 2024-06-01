@@ -9,7 +9,7 @@ import {
     CreateDrillRunResponseData,
     GetDrillRunsRequest,
     GetDrillRunsResponseData, GetLatestUnfinishedDrillRunRequest,
-    GetLatestUnfinishedDrillRunResponse, GetLatestUnfinishedDrillRunResponseData,
+    GetLatestUnfinishedDrillRunResponseData,
     validateAnswerDrillRunQuestionRequest,
     validateCreateDrillRunRequest, validateGetLatestUnfinishedDrillRunRequest
 } from "@elr0berto/robert-learns-shared/api/drill-runs";
