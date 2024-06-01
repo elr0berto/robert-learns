@@ -1,5 +1,5 @@
 import {apiClient} from './ApiClient.js';
-import {BaseResponse, BaseResponseData, ResponseStatus} from "./models/BaseResponse.js";
+import {BaseResponse, BaseResponseData} from "./models/BaseResponse.js";
 import {Card, CardData} from "./models/Card.js";
 import {CardSetCard, CardSetCardData} from "./models/index.js";
 

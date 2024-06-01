@@ -3,14 +3,13 @@ import {
     Card,
     CardSet,
     Drill,
-    DrillRun,
     Workspace,
     WorkspaceUser
 } from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {
-    CardSetWithCards, CardSetWithCardsWithCardSets,
+    CardSetWithCardsWithCardSets,
     CardWithCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
     WorkspaceWithCardSetsCount,
     WorkspaceWithWorkspaceUsers

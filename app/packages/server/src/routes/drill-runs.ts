@@ -196,7 +196,7 @@ drillRuns.post('/create-drill-run', async (req: Request<unknown, unknown, Create
         }
 
         let cardIds : number[] = [];
-        let limited : boolean = false;
+        let limited = false;
         if (previousDrillRun === null) {
             cardIds = [...new Set(drill.drillCardSets.flatMap(dcs => dcs.cardSet.cards.map(c => c.cardId)))];
             limited = false;

@@ -8,7 +8,6 @@ import {
     DrillRun, DrillRunQuestion,
     User
 } from "@elr0berto/robert-learns-shared/dist/api/models";
-import {GetCardSetsResponse} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 export const clean = ({state} : Context) => {
     // loop over cardSets and remove any cardSets that don't have a workspaceId in state.data.workspaces

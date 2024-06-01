@@ -1,6 +1,6 @@
 import {apiClient} from "./ApiClient.js";
 import {validateEmail} from "../validation/index.js";
-import {BaseResponse, BaseResponseData, ResponseStatus, User, UserData} from "./models/index.js";
+import {BaseResponse, BaseResponseData, User, UserData} from "./models/index.js";
 
 export type UserGetByEmailRequest = {
     email: string;

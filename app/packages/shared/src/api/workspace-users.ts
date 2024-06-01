@@ -1,5 +1,5 @@
 import {apiClient} from "./ApiClient.js";
-import {BaseResponse, BaseResponseData, ResponseStatus, WorkspaceUser, WorkspaceUserData} from "./models/index.js";
+import {BaseResponse, BaseResponseData, WorkspaceUser, WorkspaceUserData} from "./models/index.js";
 
 
 export type GetWorkspaceUsersRequest = {

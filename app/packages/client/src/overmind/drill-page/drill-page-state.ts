@@ -1,6 +1,5 @@
 import {derived} from "overmind";
 import {config} from "../index";
-import {Drill} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {DrillWithDrillCardSets} from "../data/data-state";
 
 type DrillPageState = {

@@ -1,7 +1,7 @@
-import {Request, Router} from 'express';
+import {Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getCardSetCardData, getDrillCardSetData, getDrillData, getSignedInUser, TypedResponse} from "../common.js";
-import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
+import {getDrillCardSetData, getSignedInUser, TypedResponse} from "../common.js";
+import {ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {logWithRequest} from "../logger.js";
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";

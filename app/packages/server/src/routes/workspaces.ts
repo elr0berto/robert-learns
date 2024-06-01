@@ -18,7 +18,7 @@ import {
     Capability
 } from "@elr0berto/robert-learns-shared/permissions";
 import {checkPermissions} from "../permissions.js";
-import logger, {logWithRequest} from "../logger.js";
+import {logWithRequest} from "../logger.js";
 
 const workspaces = Router();
 

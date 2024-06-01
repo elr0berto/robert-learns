@@ -1,5 +1,5 @@
 import {apiClient} from './ApiClient.js';
-import {BaseResponse, BaseResponseData, CardSet, CardSetData, ResponseStatus} from "./models/index.js";
+import {BaseResponse, BaseResponseData, CardSet, CardSetData} from "./models/index.js";
 
 export type GetCardSetsRequest = {
     workspaceIds: number[];

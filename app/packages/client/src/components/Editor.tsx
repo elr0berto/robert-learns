@@ -1,3 +1,4 @@
+import Toolbar from 'quill/modules/toolbar';
 import React, { useCallback } from 'react';
 import { useQuill } from 'react-quilljs';
 
@@ -12,14 +13,12 @@ type Props = {
 }
 
 const Editor = React.forwardRef<EditorInstance, Props>((props: Props, ref: React.Ref<any>) => {
-    console.log('Editor props', props);
     const { initialValue, uploadCallback } = props;
 
     const { quill, quillRef } = useQuill();
 
     // Function to get the content of the editor
     const getContent = useCallback(() => {
-        console.log('Editor.tsx getContent');
         if (quill) {
             return quill.root.innerHTML;
         }
@@ -76,7 +75,14 @@ const Editor = React.forwardRef<EditorInstance, Props>((props: Props, ref: React
     React.useEffect(() => {
         if (quill) {
             // Add custom handler for Image Upload
-            quill.getModule('toolbar').addHandler('image', selectLocalImage);
+            //quill.getModule('toolbar').addHandler('image', selectLocalImage);
+            const toolbar = quill.getModule('toolbar');
+            // check that toolbar is an instance of Toolbar
+            if (toolbar && toolbar instanceof Toolbar && typeof toolbar.addHandler === 'function') {
+                toolbar.addHandler('image', selectLocalImage);
+            } else {
+                throw new Error('toolbar is not an instance of Toolbar');
+            }
         }
     }, [quill,selectLocalImage]);
 
