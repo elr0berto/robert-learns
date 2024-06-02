@@ -4,6 +4,7 @@ import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import {Pages, pageUrls} from "../page-urls";
 import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/dist/version";
+import {PlayFill} from "react-bootstrap-icons";
 
 function TopMenu() {
     const state = useAppState();
@@ -16,10 +17,10 @@ function TopMenu() {
     return <Navbar bg="light" expand="lg">
         <Container>
             <Navbar.Brand title={'client: '+process.env.REACT_APP_VERSION + ' client-shared: ' + RL_SHARED_VERSION + ' server: ' + (state.version.version ?? 'unk') + ' server-shared: ' + (state.version.versionShared ?? 'unk')} href="/">Robert Learns</Navbar.Brand>
+            <Button variant="success" href={pageUrls.drill.url()}><PlayFill/> Drill</Button>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <Button variant="success" href={pageUrls.drill.url()}>Drill</Button>
                     <NavDropdown title={state.page.workspace === null ? 'Workspaces' : ('Workspace ' + state.page.workspace.name)}>
                         {state.page.loadingWorkspaces ? <>
                             <NavDropdown.Item key="loading">Loading...</NavDropdown.Item>

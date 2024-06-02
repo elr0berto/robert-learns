@@ -5,6 +5,7 @@ import Loading from "../Loading";
 import {pageUrls} from "../../page-urls";
 import AudioPlayer from "react-h5-audio-player";
 import 'react-h5-audio-player/lib/styles.css';
+import {ArrowRepeat, CheckCircle, XCircle} from 'react-bootstrap-icons';
 
 function DrillRunPage() {
     const state = useAppState();
@@ -39,10 +40,10 @@ function DrillRunPage() {
     if (state.drillRunPage.drillRun === null) {
         throw new Error('Drill run not found');
     }
-    return <Container className="mt-3">
+    return <Container className="mt-3 mb-5">
         <Row>
-            <Col md={8}>
-                <h1 className="mb-3">Drilling {state.drillRunPage.drill?.name ?? ''}</h1>
+            <Col>
+                <h1 className="mb-3 text-center">Drilling {state.drillRunPage.drill?.name ?? ''}</h1>
                 {state.drillRunPage.completed ?
                     <>
                         <Alert variant="success">Drill completed. You got {state.drillRunPage.progressRights} right and {state.drillRunPage.progressWrongs} wrong!</Alert>
@@ -51,23 +52,39 @@ function DrillRunPage() {
                         {state.drillRunPage.progressWrongs > 0 ? <Button onClick={() => actions.drillRunPage.runAgain({wrongOnly: true})}>Run Again with only the ones you got wrong</Button> : null}
                     </> :
                     <>
-                        <div className="drill-run-question">
-                            <div className={"drill-run-question-content ql-editor" + (state.drillRunPage.contentEmpty ? ' empty' : '')} dangerouslySetInnerHTML={{__html: state.drillRunPage.content ?? ''}}/>
-                            {state.drillRunPage.twoSided ? <Button className="mb-3" onClick={() => actions.drillRunPage.flip()}>Reveal/Flip</Button> : null}
-                            {state.drillRunPage.audioSrc ? <AudioPlayer autoPlay={false} autoPlayAfterSrcChange={false} src={state.drillRunPage.audioSrc}/> : null}
-                            <div className="drill-run-question-controls">
-                                <Button variant={'success'} onClick={() => actions.drillRunPage.answer(true)}>Right</Button>
-                                <Button className="mx-5" variant={'danger'} onClick={() => actions.drillRunPage.answer(false)}>Wrong</Button>
+                        <Row className="justify-content-center">
+                            <Col md={4} className={"drill-run-question" + (state.drillRunPage.switchingCards ? " switching" : '')}>
+                                <div className="switching-overlay"></div>
+                                <div className={"drill-run-card " + state.drillRunPage.side}>
+                                    <div className="side">{state.drillRunPage.side}</div>
+                                    <div
+                                        className={"drill-run-question-content ql-editor" + (state.drillRunPage.contentEmpty ? ' empty' : '')}
+                                        dangerouslySetInnerHTML={{__html: state.drillRunPage.content ?? ''}}/>
+                                    {state.drillRunPage.audioSrc ?
+                                        <AudioPlayer autoPlay={false} autoPlayAfterSrcChange={false}
+                                                     src={state.drillRunPage.audioSrc}/> : null}
+                                </div>
+                                {state.drillRunPage.twoSided ? <Button className="d-block w-100 mb-3"
+                                                                       onClick={() => actions.drillRunPage.flip()}><ArrowRepeat/> Reveal/Flip</Button> : null}
+
+                                <div className="drill-run-question-controls d-flex">
+                                    <Button className="d-block w-100" variant={'success'}
+                                            onClick={() => actions.drillRunPage.answer(true)}><CheckCircle/> Right</Button>
+                                    <Button className="d-block w-100 ms-3" variant={'danger'}
+                                            onClick={() => actions.drillRunPage.answer(false)}><XCircle/> Wrong</Button>
+                                </div>
+                            </Col>
+                        </Row>
+                        <div className="driil-run-progress-wrapper mt-5">
+                            <div className="drill-run-progress">
+                                {state.drillRunPage.questions.map(q =>
+                                    <div
+                                        key={q.id}
+                                        className={q.correct === null ? 'not-answered' : (q.correct ? 'correct' : 'wrong')}
+                                    />
+                                )}
                             </div>
-                        </div>
-                        <div className="drill-run-progress mt-5">
-                            <div className="numbers">{state.drillRunPage.progress} / {state.drillRunPage.progressTotal}</div>
-                            {state.drillRunPage.questions.map(q =>
-                                <div
-                                    key={q.id}
-                                    className={q.correct === null ? 'not-answered' : (q.correct ? 'correct' : 'wrong')}
-                                />
-                            )}
+                            <div className="numbers text-center mt-1">Progress {state.drillRunPage.progress} / {state.drillRunPage.progressTotal}</div>
                         </div>
                     </>
                 }

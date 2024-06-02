@@ -1,4 +1,8 @@
-resume drill - should it try to resume drill runs that refer to old versions of the drill with different card sets?
+stop showing workspaces on front page - show a huge drill button
+make drill button in top menu visible on mobile
+add a play icon to drill button
+
+resume drill - only if the latest drill run is not finished.. dont dig for older drill runs
 
 start creating real cards!
 - consonant initial sound in english

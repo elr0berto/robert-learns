@@ -389,9 +389,6 @@ drillRuns.post('/get-latest-unfinished-drill-run', async (req: Request<unknown, 
             },
             include: {
                 drillRuns: {
-                    where: {
-                        endTime: null
-                    },
                     include: {
                         questions: true,
                     }
@@ -436,11 +433,24 @@ drillRuns.post('/get-latest-unfinished-drill-run', async (req: Request<unknown, 
             });
         }
 
-        // get the latest unfinished drill run based on drillRun.startTime
+        // get the latest drill run based on drillRun.startTime
         const drillRuns = drill.drillRuns.sort((a, b) => b.startTime.getTime() - a.startTime.getTime());
 
-        // get the first drill run that has not ended
+        // get the latest drill run
         const drillRun = drillRuns[0];
+
+        // check if its finished
+        if (drillRun.endTime) {
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+                drillData: null,
+                drillRunData: null,
+                drillRunQuestionDatas: null,
+            });
+        }
+
 
         return res.json({
             dataType: true,

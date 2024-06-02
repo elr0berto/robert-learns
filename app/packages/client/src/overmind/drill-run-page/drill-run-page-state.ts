@@ -19,6 +19,7 @@ type DrillRunPageState = {
     readonly progressWrongs: number;
     readonly progressTotal: number;
     side: 'front' | 'back';
+    switchingCards: boolean;
 }
 
 export const getInitialDrillRunPageState = () : DrillRunPageState => {
@@ -44,14 +45,14 @@ export const getInitialDrillRunPageState = () : DrillRunPageState => {
 
             return rootState.data.drillRunQuestions.filter(drq => drq.drillRunId === rootState.page.drillRunId);
         }),
-        completed: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        completed: derived((state: DrillRunPageState) => {
             if (state.drillRun === null) {
                 return false;
             }
 
             return state.questions.find(q => q.correct === null) === undefined;
         }),
-        currentQuestion: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        currentQuestion: derived((state: DrillRunPageState) => {
             if (state.drillRun === null) {
                 return null;
             }
@@ -65,50 +66,51 @@ export const getInitialDrillRunPageState = () : DrillRunPageState => {
 
             return rootState.data.cards.find(c => c.id === state.currentQuestion?.cardId) ?? null;
         }),
-        content: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        content: derived((state: DrillRunPageState) => {
             if (state.currentCard === null) {
                 return null;
             }
 
             return state.side === 'front' ? state.currentCard.front.content : state.currentCard.back.content;
         }),
-        contentEmpty: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        contentEmpty: derived((state: DrillRunPageState) => {
             return state.content === null || state.content.trim().length === 0;
         }),
-        twoSided: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        twoSided: derived((state: DrillRunPageState) => {
             if (state.currentCard === null) {
                 return false;
             }
 
             return (state.currentCard?.back?.content?.trim().length ?? 0) > 0;
         }),
-        hasAudio: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        hasAudio: derived((state: DrillRunPageState) => {
             if (state.currentCard === null) {
                 return false;
             }
 
             return state.currentCard.audio !== null;
         }),
-        audioSrc: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        audioSrc: derived((state: DrillRunPageState) => {
             return state.currentCard?.audio?.getUrl() ?? null;
         }),
-        progress: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        progress: derived((state: DrillRunPageState) => {
             if (state.currentQuestion === null) {
                 return 0;
             }
 
             return state.questions.filter(q => q.correct !== null).length;
         }),
-        progressRights: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        progressRights: derived((state: DrillRunPageState) => {
             return state.questions.filter(q => q.correct === true).length;
         }),
-        progressWrongs: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        progressWrongs: derived((state: DrillRunPageState) => {
             return state.questions.filter(q => q.correct === false).length;
         }),
-        progressTotal: derived((state: DrillRunPageState, rootState: typeof config.state) => {
+        progressTotal: derived((state: DrillRunPageState) => {
             return state.questions.length;
         }),
         side: 'front',
+        switchingCards: false,
     };
 }
 

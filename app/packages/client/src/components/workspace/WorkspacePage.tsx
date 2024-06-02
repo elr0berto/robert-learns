@@ -17,19 +17,21 @@ function WorkspacePage() {
             return <Container>Workspace not found.</Container>
         }
     }
-    return <Container>
+    return <Container className="mb-5">
         <h1 className="my-5">Workspace {state.page.workspace.name}</h1>
         {state.page.loadingCardSets ?
             <p>Loading card sets...</p> :
             <Container>
                 <Row>
                     {state.page.cardSets.map((cardSet, index) => (
-                        <Col key={index} sm={12} md={6} lg={4} xl={3}>
-                            <Card>
-                                <Card.Body>
+                        <Col key={index} sm={12} md={6} lg={4} xl={3} className="mb-3 d-flex">
+                            <Card className="flex-fill">
+                                <Card.Body className="d-flex flex-column">
                                     <Card.Title>{cardSet.name}</Card.Title>
-                                    <Card.Text>{cardSet.description}</Card.Text>
-                                    <Card.Link href={pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace as Workspace, cardSet)}>Go to card set</Card.Link>
+                                    <Card.Text className="flex-grow-1">{cardSet.description}</Card.Text>
+                                    <Card.Link href={pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace as Workspace, cardSet)}>
+                                        Go to card set
+                                    </Card.Link>
                                 </Card.Body>
                             </Card>
                         </Col>

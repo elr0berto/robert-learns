@@ -12,9 +12,12 @@ export const answer = async ({ state, effects, actions }: Context, correct: bool
     }
 
     const drillRunQuestionId = state.drillRunPage.currentQuestion.id;
+    state.drillRunPage.switchingCards = true;
     state.drillRunPage.side = 'front';
     actions.data.answerDrillRunQuestion({drillRunQuestionId, correct});
-    await effects.api.drillRuns.answerDrillRunQuestion({drillRunQuestionId,correct});
+    effects.api.drillRuns.answerDrillRunQuestion({drillRunQuestionId,correct});
+    await new Promise(r => setTimeout(r, 500));
+    state.drillRunPage.switchingCards = false;
 }
 
 export const runAgain = async ({ state, effects, actions }: Context, {wrongOnly, reset}: {wrongOnly?: boolean, reset?: true}) => {

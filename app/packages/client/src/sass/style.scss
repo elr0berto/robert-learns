@@ -121,3 +121,55 @@ code {
 .ql-editor {
   font-size: 20px;
 }
+
+/* add a border and a shadow to the .drill-run-question container to make it look like a card */
+.drill-run-question {
+
+  .drill-run-card {
+    border: 1px solid #f1f1f1;
+    border-radius: 5px;
+    box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+    .side {
+      text-align: center;
+      color: #9e9e9e;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+    .drill-run-question-content {
+      min-height: 200px;
+    }
+  }
+}
+
+.drill-run-card {
+  transition: transform 0.3s;
+  &.front {
+    transform: rotateY(360deg);
+  }
+}
+.switching {
+  .drill-run-card {
+    transition: none;
+    visibility: hidden;
+  }
+}
+
+.switching-overlay {
+  opacity: 0;
+  background: white;
+}
+.switching {
+  position: relative;
+  .switching-overlay {
+    border-radius: 10px;
+    transition: all 0.5s;
+    opacity: 1;
+    background: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+  }
+}

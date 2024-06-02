@@ -44,7 +44,7 @@ function FrontPage() {
                                 <Card.Title>{item.workspace.name}</Card.Title>
                                 <Card.Subtitle>{item.cardSetsCount} card set(s)</Card.Subtitle>
                                 <Card.Text>{item.workspace.description}</Card.Text>
-                                <Card.Link href={pageUrls[Pages.Workspace].url(item.workspace)}>Go to workspace</Card.Link>
+                                <Card.Link href={pageUrls[Pages.Workspace].url(item.workspace)}>Administer workspace</Card.Link>
                             </Card.Body>
                         </Card>
                     </Col>
