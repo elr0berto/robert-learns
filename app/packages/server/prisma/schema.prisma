@@ -113,15 +113,17 @@ model CardSetUser {
 }
 
 model CardSet {
-  id            Int            @id @default(autoincrement())
-  name          String
-  description   String         @default("")
-  cards         CardSetCard[]
-  users         CardSetUser[]
-  workspace     Workspace      @relation(fields: [workspaceId], references: [id])
-  workspaceId   Int
-  drillCardSets DrillCardSet[]
-  order         Int            @default(0)
+  id                 Int            @id @default(autoincrement())
+  name               String
+  description        String         @default("")
+  cards              CardSetCard[]
+  users              CardSetUser[]
+  workspace          Workspace      @relation(fields: [workspaceId], references: [id])
+  workspaceId        Int
+  drillCardSets      DrillCardSet[]
+  order              Int            @default(0)
+  includedCardSets   CardSetLink[]  @relation("includedCardSets")
+  includedInCardSets CardSetLink[]  @relation("includes")
 }
 
 model CardSetCard {
@@ -171,4 +173,13 @@ model DrillRunQuestion {
   cardId     Int
   correct    Boolean?
   order      Int      @default(0)
+}
+
+model CardSetLink {
+  parentCardSet     CardSet @relation("includedCardSets", fields: [parentCardSetId], references: [id])
+  parentCardSetId   Int
+  includedCardSet   CardSet @relation("includes", fields: [includedCardSetId], references: [id])
+  includedCardSetId Int
+
+  @@id([parentCardSetId, includedCardSetId])
 }

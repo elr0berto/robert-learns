@@ -7,6 +7,7 @@ import {
     CardFace as PrismaCardFace,
     CardSet as PrismaCardSet,
     CardSetCard as PrismaCardSetCard,
+    CardSetLink as PrismaCardSetLink,
     CardSide as PrismaCardSide,
     Media as PrismaMedia,
     User as PrismaUser,
@@ -25,7 +26,7 @@ import {
     MediaData,
     UserData,
     WorkspaceData, WorkspaceUserData,
-    DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData
+    DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData, CardSetLinkData
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 
@@ -203,6 +204,14 @@ export const getCardSetCardData = (cardSetCard: PrismaCardSetCard) : CardSetCard
         cardId: cardSetCard.cardId,
         cardSetId: cardSetCard.cardSetId,
         order: cardSetCard.order
+    };
+}
+
+export const getCardSetLinkData = (cardSetLink: PrismaCardSetLink) : CardSetLinkData => {
+    return {
+        dataType: true,
+        parentCardSetId: cardSetLink.parentCardSetId,
+        includedCardSetId: cardSetLink.includedCardSetId,
     };
 }
 

@@ -8,7 +8,7 @@ import {
     CardSet,
     Drill,
     DrillCardSet,
-    DrillRun, DrillRunQuestion,
+    DrillRun, DrillRunQuestion, CardSetLink,
 } from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export type CardSetWithCards = {
@@ -46,6 +46,11 @@ export type DrillWithDrillCardSets = {
     drillCardSets: DrillCardSet[];
 }
 
+export type CardSetWithChildren = {
+    cardSet: CardSet;
+    children: CardSetWithChildren[];
+}
+
 type DataState = {
     workspaces: Workspace[];
     loadingWorkspaces: boolean;
@@ -59,6 +64,8 @@ type DataState = {
     loadingCardSetCards: boolean;
     cardSets: CardSet[];
     loadingCardSets: boolean;
+    cardSetLinks: CardSetLink[];
+    loadingCardSetLinks: boolean;
     drills: Drill[];
     loadingDrills: boolean;
     drillCardSets: DrillCardSet[];
@@ -74,6 +81,7 @@ type DataState = {
     readonly cardsWithCardSets: CardWithCardSets[];
     readonly cardSetsWithCardsWithCardSets: CardSetWithCardsWithCardSets[];
     readonly drillsWithDrillCardSets: DrillWithDrillCardSets[];
+    readonly cardSetsWithChildren: CardSetWithChildren[];
 }
 
 export const getInitialDataState = () : DataState => ({
@@ -89,6 +97,8 @@ export const getInitialDataState = () : DataState => ({
     loadingCardSetCards: false,
     cardSets: [],
     loadingCardSets: false,
+    cardSetLinks: [],
+    loadingCardSetLinks: false,
     drills: [],
     loadingDrills: false,
     drillCardSets: [],
@@ -164,6 +174,24 @@ export const getInitialDataState = () : DataState => ({
             drillCardSets: state.drillCardSets.filter(dcs => dcs.drillId === d.id),
         }));
     }),
+    cardSetsWithChildren: derived((state: DataState) => {
+        return buildNestedCardSets(state.cardSets, state.cardSetLinks);
+    }),
 });
+
+const buildNestedCardSets = (cardSets: CardSet[], cardSetLinks : CardSetLink[], parentId : number | null  = null) : CardSetWithChildren[] => {
+    return cardSets
+        .filter(cs => {
+            if (parentId === null) {
+                // Top-level card sets have no parent
+                return true;
+            }
+            return cardSetLinks.some(csl => csl.parentCardSetId === parentId && csl.includedCardSetId === cs.id);
+        })
+        .map(cs => ({
+            cardSet: cs,
+            children: buildNestedCardSets(cardSets, cardSetLinks, cs.id)
+        }));
+};
 
 export const state: DataState = getInitialDataState();

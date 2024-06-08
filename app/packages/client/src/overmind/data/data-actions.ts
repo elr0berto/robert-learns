@@ -293,3 +293,16 @@ export const answerDrillRunQuestion = async ({state,effects,actions} : Context, 
     // set the answer
     drillRunQuestion.correct = correct;
 }
+
+export const loadCardSetLinks = async ({state,effects} : Context, {cardSetIds}: {cardSetIds: number[]}) => {
+    state.data.loadingCardSetLinks = true;
+
+    const resp = await effects.api.cardSetLinks.getCardSetLinks({cardSetIds});
+
+    if (resp.cardSetLinks === null) {
+        throw new Error('resp.cardSetLinks is null');
+    }
+    state.data.cardSetLinks = resp.cardSetLinks;
+
+    state.data.loadingCardSetLinks = false;
+}

@@ -100,6 +100,14 @@
       "import": "./dist/api/card-set-cards.js",
       "types": "./dist/api/card-set-cards.d.ts"
     },
+    "./api/card-set-links": {
+      "import": "./dist/api/card-set-links.js",
+      "types": "./dist/api/card-set-links.d.ts"
+    },
+    "./dist/api/card-set-links": {
+      "import": "./dist/api/card-set-links.js",
+      "types": "./dist/api/card-set-links.d.ts"
+    },
     "./api/users": {
       "import": "./dist/api/users.js",
       "types": "./dist/api/users.d.ts"

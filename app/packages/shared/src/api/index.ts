@@ -5,6 +5,7 @@ export * as signUp from './sign-up.js';
 export * as workspaces from './workspaces.js';
 export * as workspaceUsers from './workspace-users.js';
 export * as cardSets from './card-sets.js';
+export * as cardSetLinks from './card-set-links.js';
 export * as cards from './cards.js';
 export * as users from './users.js';
 export * as media from './media.js';

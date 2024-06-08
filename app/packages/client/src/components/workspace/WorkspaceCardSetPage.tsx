@@ -9,6 +9,7 @@ import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import DeleteCardSetModal from "./DeleteCardSetModal";
 import {ArrowLeftRight, DashCircle, PencilSquare} from "react-bootstrap-icons";
+import LinkCardSetsModal from "./LinkCardSetsModal";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -61,6 +62,8 @@ function WorkspaceCardSetPage() {
                 {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-warning" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
                 {state.permission.deleteCardSet ? <Button className="mt-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
                 {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-warning" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
+                {state.permission.editCardSet ? <Button className="mt-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}>+ Link other card sets</Button> : null}
+
             </>
         }
 
@@ -75,6 +78,7 @@ function WorkspaceCardSetPage() {
         <AddCardsFromOtherCardSetsModal/>
         <EditCardCardSetsModal/>
         <DeleteCardSetModal/>
+        <LinkCardSetsModal/>
     </Container>;
 }
 
