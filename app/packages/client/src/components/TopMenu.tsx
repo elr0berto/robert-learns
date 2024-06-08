@@ -16,7 +16,15 @@ function TopMenu() {
     console.log('TopMenu state.page.workspace', state.page.workspace);
     return <Navbar bg="light" expand="lg">
         <Container>
-            <Navbar.Brand title={'client: '+process.env.REACT_APP_VERSION + ' client-shared: ' + RL_SHARED_VERSION + ' server: ' + (state.version.version ?? 'unk') + ' server-shared: ' + (state.version.versionShared ?? 'unk')} href="/">Robert Learns</Navbar.Brand>
+            <Navbar.Brand title={'client: '+process.env.REACT_APP_VERSION + ' client-shared: ' + RL_SHARED_VERSION + ' server: ' + (state.version.version ?? 'unk') + ' server-shared: ' + (state.version.versionShared ?? 'unk')} href="/">
+                <img
+                    src="/favicon-32x32.png" // Update this path to your actual file path
+                    className="d-inline-block align-top"
+                    alt="Robert Learns"
+                />
+                {' '}
+                Robert Learns
+            </Navbar.Brand>
             <Button variant="success" href={pageUrls.drill.url()}><PlayFill/> Drill</Button>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
