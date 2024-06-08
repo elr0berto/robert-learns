@@ -1,8 +1,4 @@
-stop showing workspaces on front page - show a huge drill button
-make drill button in top menu visible on mobile
-add a play icon to drill button
-
-resume drill - only if the latest drill run is not finished.. dont dig for older drill runs
+fix favicon color?
 
 start creating real cards!
 - consonant initial sound in english
