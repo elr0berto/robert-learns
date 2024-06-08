@@ -125,7 +125,8 @@ server {
     # Catch-all location for your React app
     location / {
         # Set no-cache headers for all other requests
-        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        #add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0"; # let cloudflare handle this
+        add_header Cache-Control "public, max-age=3600"; # let cloudflare handle this
         try_files $uri $uri/ /index.html;
     }
 }
