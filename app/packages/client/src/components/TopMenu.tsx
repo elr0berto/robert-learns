@@ -5,6 +5,34 @@ import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import {Pages, pageUrls} from "../page-urls";
 import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/dist/version";
 import {PlayFill} from "react-bootstrap-icons";
+import {CardSetWithChildren} from "../overmind/data/data-state";
+import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
+
+
+const renderCardSets = (cardSetsWithChildren: CardSetWithChildren[], workspace: Workspace) => {
+    return cardSetsWithChildren.map(cardSetWithChildren => {
+        if (cardSetWithChildren.children.length > 0) {
+            return (
+                <NavDropdown
+                    title={cardSetWithChildren.cardSet.name}
+                    id={`dropdown-submenu-${cardSetWithChildren.cardSet.id}`}
+                    key={cardSetWithChildren.cardSet.id}
+                >
+                    {renderCardSets(cardSetWithChildren.children, workspace)}
+                </NavDropdown>
+            );
+        } else {
+            return (
+                <NavDropdown.Item
+                    key={cardSetWithChildren.cardSet.id}
+                    href={pageUrls.workspaceCardSet.url(workspace, cardSetWithChildren.cardSet)}
+                >
+                    {cardSetWithChildren.cardSet.name}
+                </NavDropdown.Item>
+            );
+        }
+    });
+};
 
 function TopMenu() {
     const state = useAppState();
@@ -28,7 +56,7 @@ function TopMenu() {
             <Button variant="success" href={pageUrls.drill.url()}><PlayFill/> Drill</Button>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
+                <Nav className="mr-auto">
                     <NavDropdown title={state.page.workspace === null ? 'Workspaces' : ('Workspace ' + state.page.workspace.name)}>
                         {state.page.loadingWorkspaces ? <>
                             <NavDropdown.Item key="loading">Loading...</NavDropdown.Item>
@@ -49,7 +77,9 @@ function TopMenu() {
                                 state.page.cardSet !== null ?
                                 state.page.cardSet.name :
                                 (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.page.cardSets.length +')' ))}>
-                            {workspace !== null ? state.page.cardSets.map(cardSet => <NavDropdown.Item key={cardSet.id} href={pageUrls.workspaceCardSet.url(workspace, cardSet)}>{cardSet.name}</NavDropdown.Item>) : null}
+                            {workspace !== null
+                                ? renderCardSets(state.page.cardSetsWithChildren, workspace)
+                                : null}
                             {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
                             {workspace !== null ? <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(workspace)}>Create card set</NavDropdown.Item> : null}
                         </NavDropdown> : null

@@ -82,6 +82,28 @@ cardSetLinks.post('/get-card-set-links', async (req : Request<unknown, unknown, 
     }
 });
 
+
+const findAllAncestors = async (parentCardSetId: number): Promise<number[]> => {
+    const ancestors = new Set<number>();
+
+    const findAncestors = async (cardSetId: number) => {
+        const parentLinks = await prisma.cardSetLink.findMany({
+            where: { includedCardSetId: cardSetId },
+        });
+
+        for (const link of parentLinks) {
+            if (!ancestors.has(link.parentCardSetId)) {
+                ancestors.add(link.parentCardSetId);
+                await findAncestors(link.parentCardSetId);
+            }
+        }
+    };
+
+    await findAncestors(parentCardSetId);
+    return Array.from(ancestors);
+};
+
+
 cardSetLinks.post('/set-card-set-links', async (req : Request<unknown, unknown, SetCardSetLinksRequest>, res : TypedResponse<SetCardSetLinksResponseData>, next) => {
     try {
         const user = await getSignedInUser(req.session);
@@ -171,6 +193,25 @@ cardSetLinks.post('/set-card-set-links', async (req : Request<unknown, unknown, 
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'Card set has different workspace',
+                    cardSetLinkDatas: null,
+                });
+            }
+        }
+
+        // Find all ancestors of the parentCardSetId
+        const ancestors = await findAllAncestors(req.body.parentCardSetId);
+
+        // Check for cycles
+        for (const newCardSetId of req.body.cardSetIds) {
+            if (ancestors.includes(newCardSetId)) {
+                logWithRequest('error', req, 'Cyclical link detected', {
+                    parentCardSetId: req.body.parentCardSetId,
+                    includedCardSetId: newCardSetId
+                });
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: `Cyclical link detected for card set ID: ${newCardSetId}`,
                     cardSetLinkDatas: null,
                 });
             }

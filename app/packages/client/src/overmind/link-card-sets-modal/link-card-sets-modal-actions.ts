@@ -24,13 +24,23 @@ export const close = async ({ state }: Context) => {
     state.linkCardSetsModal.cardSetId = null;
 }
 
+
+
 export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
-    const index = state.linkCardSetsModal.selectedCardSetIds.indexOf(cardSetId);
+    const selectedIds = state.linkCardSetsModal.selectedCardSetIds;
+    const index = selectedIds.indexOf(cardSetId);
+
+    let newSelectedIds: number[];
     if (index === -1) {
-        state.linkCardSetsModal.selectedCardSetIds.push(cardSetId);
+        // Add cardSetId
+        newSelectedIds = [...selectedIds, cardSetId];
     } else {
-        state.linkCardSetsModal.selectedCardSetIds.splice(index, 1);
+        // Remove cardSetId
+        newSelectedIds = selectedIds.filter(id => id !== cardSetId);
     }
+
+    // Update the state with the new selected IDs
+    state.linkCardSetsModal.selectedCardSetIds = newSelectedIds;
 }
 
 export const save = async ({ state, effects, actions }: Context) => {

@@ -184,14 +184,15 @@ const buildNestedCardSets = (cardSets: CardSet[], cardSetLinks : CardSetLink[], 
         .filter(cs => {
             if (parentId === null) {
                 // Top-level card sets have no parent
-                return true;
+                return !cardSetLinks.some(csl => csl.includedCardSetId === cs.id);
             }
             return cardSetLinks.some(csl => csl.parentCardSetId === parentId && csl.includedCardSetId === cs.id);
         })
         .map(cs => ({
             cardSet: cs,
             children: buildNestedCardSets(cardSets, cardSetLinks, cs.id)
-        }));
+        }))
+        .sort((a, b) => b.children.length - a.children.length);
 };
 
 export const state: DataState = getInitialDataState();

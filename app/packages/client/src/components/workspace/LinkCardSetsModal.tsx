@@ -19,7 +19,7 @@ function CardSetItem(props: CardSetItemProps) {
                 type="checkbox"
                 id={props.item.cardSet.id.toString()}
                 label={props.item.cardSet.name + (thisCardSet ? ' (this card set)' : '')}
-                disabled={state.linkCardSetsModal.disabled || thisCardSet}
+                disabled={state.linkCardSetsModal.disabled || thisCardSet || props.parentChecked || state.linkCardSetsModal.parentCardSetIds.includes(props.item.cardSet.id)}
                 checked={checked}
                 onChange={() => props.onClick(props.item.cardSet.id)}
             />
@@ -65,7 +65,7 @@ function LinkCardSetsModal() {
                             key={item.cardSet.id}
                             item={item}
                             onClick={actions.linkCardSetsModal.toggleCardSetId}
-                            parentChecked={state.linkCardSetsModal.selectedCardSetIds.includes(item.cardSet.id)}
+                            parentChecked={false}
                         />
                     })}
                 </ListGroup>

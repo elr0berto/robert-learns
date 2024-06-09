@@ -107,6 +107,7 @@ export const loadCardSets = async ({state,actions} : Context, workspaceIds: numb
     state.page.loadingCardSets = true;
 
     await actions.data.loadCardSets(workspaceIds);
+    await actions.data.loadCardSetLinks({cardSetIds: state.data.cardSets.filter(cs => workspaceIds.includes(cs.workspaceId)).map(cs => cs.id)});
 
     state.page.loadingCardSets = false;
 }

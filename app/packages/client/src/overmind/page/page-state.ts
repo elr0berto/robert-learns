@@ -9,7 +9,7 @@ import {
 import {derived} from "overmind";
 import {config} from "../index";
 import {
-    CardSetWithCardsWithCardSets,
+    CardSetWithCardsWithCardSets, CardSetWithChildren,
     CardWithCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
     WorkspaceWithCardSetsCount,
     WorkspaceWithWorkspaceUsers
@@ -34,6 +34,7 @@ type PageState = {
     readonly workspaceUser: WorkspaceUser | null;
     readonly cardSet: CardSet | null;
     readonly cardSets: CardSet[];
+    readonly cardSetsWithChildren: CardSetWithChildren[];
     readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
     readonly cards: Card[];
     readonly cardsWithCardSets: CardWithCardSets[];
@@ -107,6 +108,9 @@ export const state: PageState = {
             return [];
         }
         return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
+    }),
+    cardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.cardSetsWithChildren.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
     }),
     cardSetWithCardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {

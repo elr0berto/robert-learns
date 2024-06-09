@@ -51,9 +51,6 @@ export const validateSetCardSetLinksRequest = (req: SetCardSetLinksRequest) : st
     if (req.parentCardSetId <= 0) {
         errs.push('parentCardSetId is missing');
     }
-    if (req.cardSetIds.length <= 0) {
-        errs.push('cardSetIds ids is missing');
-    }
 
     //  get unique workspace ids
     const unique = req.cardSetIds.filter((v, i, a) => a.indexOf(v) === i);
