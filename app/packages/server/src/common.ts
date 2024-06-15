@@ -129,18 +129,30 @@ export function getCardData(card: PrismaCard & {faces: PrismaCardFace[], audio: 
 }
 
 
-export const deleteCardSetCardAndCardIfNeeded = async (cardSet: PrismaCardSet, card: PrismaCard) : Promise<void> => {
+export const deleteCardSetCardAndCardIfNeeded = async (card: PrismaCard, allCardSets: boolean, cardSetId?: number) : Promise<void> => {
     await prisma.$transaction(async (tx) => {
 
-        // remove the link to the current card set
-        await tx.cardSetCard.delete({
-            where: {
-                cardId_cardSetId: {
-                    cardId: card.id,
-                    cardSetId: cardSet.id
+        if (allCardSets) {
+            // remove the card from all card sets
+            await tx.cardSetCard.deleteMany({
+                where: {
+                    cardId: card.id
                 }
+            });
+        } else {
+            if (cardSetId === undefined) {
+                throw new Error('cardSetId is required when not deleting from specific card set');
             }
-        });
+            // remove the link to the current card set
+            await tx.cardSetCard.delete({
+                where: {
+                    cardId_cardSetId: {
+                        cardId: card.id,
+                        cardSetId: cardSetId
+                    }
+                }
+            });
+        }
 
         // check if card still exists in other card sets
         const cardSetCardsRemaining = await tx.cardSetCard.findMany({
@@ -157,14 +169,18 @@ export const deleteCardSetCardAndCardIfNeeded = async (cardSet: PrismaCardSet, c
                 }
             });
 
+            await tx.drillRunQuestion.deleteMany({
+                where: {
+                    cardId: card.id
+                }
+            });
+
             await tx.card.delete({
                 where: {
                     id: card.id
                 }
             });
         }
-
-        // NOTE: Media will be deleted in a separate cronjob...
     })
 }
 

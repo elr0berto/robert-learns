@@ -404,23 +404,14 @@ cards.post('/delete-card', async (req: Request<unknown, unknown, DeleteCardReque
 
         const user = await getSignedInUser(req.session);
 
-        //const allowed = await canUserDeleteCardsFromCardSetId(user, req.body.cardSetId);
-        const allowed = await checkPermissions({
-            user,
-            cardSetId: req.body.cardSetId,
-            capability: Capability.DeleteCard
-        });
-        if (!allowed) {
-            logWithRequest('error', req, 'user id: ' + (user?.id ?? 'guest') + ' is not allowed to delete card id: ' + req.body.cardId + ' in card set id: ' + req.body.cardSetId, {user, cardId: req.body.cardId, cardSetId: req.body.cardSetId});
-            return res.json({
-                dataType: true,
-                status: ResponseStatus.UnexpectedError,
-                errorMessage: "user id: " + (user?.id ?? 'guest') + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + req.body.cardSetId,
-            });
-        }
 
         const card = await prisma.card.findFirst({
-            where: {id: req.body.cardId},
+            where: {
+                id: req.body.cardId
+            },
+            include: {
+                cardSetCards: true,
+            }
         });
 
         if (card === null) {
@@ -432,23 +423,51 @@ cards.post('/delete-card', async (req: Request<unknown, unknown, DeleteCardReque
             });
         }
 
-        const cardSet = await prisma.cardSet.findFirst({
-            where: {id: req.body.cardSetId},
-            include: {
-                workspace: true
-            }
-        });
+        // get all cardSetIds from card
+        const cardSetIds = card.cardSetCards.map(csc => csc.cardSetId);
 
-        if (cardSet === null) {
-            logWithRequest('error', req, 'card set not found, id: ' + req.body.cardSetId, {cardSetId: req.body.cardSetId});
-            return res.json({
-                dataType: true,
-                status: ResponseStatus.UnexpectedError,
-                errorMessage: "card set not found, id: " + req.body.cardSetId,
-            });
+        for (const cardSetId of cardSetIds) {
+            if (req.body.cardSetId === undefined || cardSetId === req.body.cardSetId) {
+                const allowed = await checkPermissions({
+                    user,
+                    cardSetId: cardSetId,
+                    capability: Capability.DeleteCard
+                });
+                if (!allowed) {
+                    logWithRequest('error', req, 'user id: ' + (user?.id ?? 'guest') + ' is not allowed to delete card id: ' + req.body.cardId + ' in card set id: ' + cardSetId, {
+                        user,
+                        cardId: req.body.cardId,
+                        cardSetId: cardSetId
+                    });
+                    return res.json({
+                        dataType: true,
+                        status: ResponseStatus.UnexpectedError,
+                        errorMessage: "user id: " + (user?.id ?? 'guest') + " is not allowed to delete card id: " + req.body.cardId + " in card set id: " + cardSetId,
+                    });
+                }
+            }
         }
 
-        await deleteCardSetCardAndCardIfNeeded(cardSet, card);
+
+        if (req.body.cardSetId !== undefined) {
+            const cardSet = await prisma.cardSet.findFirst({
+                where: {id: req.body.cardSetId},
+                include: {
+                    workspace: true
+                }
+            });
+
+            if (cardSet === null) {
+                logWithRequest('error', req, 'card set not found, id: ' + req.body.cardSetId, {cardSetId: req.body.cardSetId});
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: "card set not found, id: " + req.body.cardSetId,
+                });
+            }
+        }
+
+        await deleteCardSetCardAndCardIfNeeded(card, req.body.allCardSets, req.body.cardSetId);
 
         return res.json({
             dataType: true,

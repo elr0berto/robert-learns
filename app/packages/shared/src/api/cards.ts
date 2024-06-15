@@ -123,18 +123,27 @@ export const createCard = async(params: CreateCardRequest) : Promise<CreateCardR
 
 
 export type DeleteCardRequest = {
-    cardSetId: number,
     cardId: number,
+    allCardSets: boolean,
+    cardSetId?: number,
 }
 
 export const validateDeleteCardRequest = (params: DeleteCardRequest) : string[] => {
     const errors : string[] = [];
 
-    if (params.cardSetId <= 0) {
-        errors.push('cardSetId is required');
-    }
     if (params.cardId <= 0) {
         errors.push('cardId is required');
+    }
+
+    if (typeof params.allCardSets !== 'boolean') {
+        errors.push('allCardSets must be provided and be boolean');
+    }
+
+    if (!params.allCardSets && (params.cardSetId === undefined || params.cardSetId <= 0)) {
+        errors.push('cardSetId is required when not setting allCardSets');
+    }
+    if (params.allCardSets && params.cardSetId !== undefined) {
+        errors.push('cardSetId can not be set when setting allCardSets');
     }
 
     return errors;
