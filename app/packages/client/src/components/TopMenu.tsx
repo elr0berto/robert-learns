@@ -4,7 +4,7 @@ import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import {Pages, pageUrls} from "../page-urls";
 import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/dist/version";
-import {PlayFill} from "react-bootstrap-icons";
+import {PlayFill, PlusCircle} from "react-bootstrap-icons";
 import {CardSetWithChildren} from "../overmind/data/data-state";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
@@ -73,7 +73,7 @@ function TopMenu() {
                         state.page.page === Pages.WorkspaceCardSetCreate ||
                         state.page.page === Pages.WorkspaceCardSetEdit ||
                         state.page.page === Pages.WorkspaceCardSet) ?
-                        <NavDropdown title={
+                        <NavDropdown className="recursive-nav-dropdown" title={
                                 state.page.cardSet !== null ?
                                 state.page.cardSet.name :
                                 (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.page.cardSets.length +')' ))}>
@@ -81,7 +81,7 @@ function TopMenu() {
                                 ? renderCardSets(state.page.cardSetsWithChildren, workspace)
                                 : null}
                             {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
-                            {workspace !== null ? <NavDropdown.Item href={pageUrls.workspaceCardSetCreate.url(workspace)}>Create card set</NavDropdown.Item> : null}
+                            {workspace !== null ? <NavDropdown.Item as="div"><Button href={pageUrls.workspaceCardSetCreate.url(workspace)}><PlusCircle/> Create card set</Button></NavDropdown.Item> : null}
                         </NavDropdown> : null
                     }
                 </Nav>

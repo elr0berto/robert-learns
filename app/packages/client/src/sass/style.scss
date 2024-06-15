@@ -173,3 +173,81 @@ code {
     z-index: 9999;
   }
 }
+
+
+
+/* twitter bootstrap media query for everything bigger than mobile */
+@media (min-width: 480px) {
+  .recursive-nav-dropdown {
+    > .dropdown-menu {
+      .dropdown-menu {
+        position: relative;
+        left: 1rem;
+      }
+    }
+  }
+}
+@media (max-width: 479px) {
+  .recursive-nav-dropdown {
+    > .dropdown-menu {
+      padding-left: 0.5rem;
+      .dropdown-menu {
+        padding-left: 0.5rem;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.sssworkspace-card-sets {
+  .nav-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  .nav-header {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .nav-link:hover {
+    background-color: #f8f9fa;
+  }
+
+  .card-set-with-children {
+    margin-bottom: 0.5rem;
+  }
+
+  .card-set-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-set-header .mr-2 {
+    margin-right: 0.5rem;
+  }
+
+  .level-0 {
+    margin-left: 0;
+  }
+
+  .level-1 {
+    margin-left: 20px;
+  }
+
+  .level-2 {
+    margin-left: 40px;
+  }
+
+  /* Add more levels as needed */
+}
