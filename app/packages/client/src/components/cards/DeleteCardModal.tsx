@@ -6,7 +6,7 @@ import {CardWithCardSets} from "../../overmind/data/data-state";
 
 type Props = {
     onClose: () => void,
-    onConfirm: () => void,
+    onConfirm: (allCardSets: boolean) => void,
     cardWithCardSets: CardWithCardSets,
     cardSet: CardSet,
     cardBeingDeletedExistsInOtherCardSets: CardSet[],
@@ -35,7 +35,7 @@ function DeleteCardModal(props: Props) {
                     <hr/>
                     {props.cardBeingDeletedExistsInOtherCardSets.length === 0 ?
                         <Alert variant={'danger'}>This card does not exists in any other card-sets! Deleting it means it will be permanently gone! Are you sure?</Alert> :
-                        <Alert variant={'warning'}>This card is also in the following card-sets: <strong>{props.cardBeingDeletedExistsInOtherCardSets.map(cs => cs.name).join(', ')}</strong>. You are now deleting the card from this card-set <i>{props.cardSet.name}</i> it will still remain in those other card-sets. Are you sure?</Alert>}
+                        <Alert variant={'warning'}>This card is also in the following card-sets: <strong>{props.cardBeingDeletedExistsInOtherCardSets.map(cs => cs.name).join(', ')}</strong>.<br/> Would you like to delete it from card-set <i>{props.cardSet.name}</i> or delete it from all card-sets and deleting the card permanently?</Alert>}
                 </>
             }
         </Modal.Body>
@@ -43,9 +43,18 @@ function DeleteCardModal(props: Props) {
             <Button variant="secondary" onClick={props.onClose} disabled={props.confirming || props.loading}>
                 Cancel
             </Button>
-            <Button variant="primary" onClick={props.onConfirm} disabled={props.confirming || props.loading}>
+            {props.cardBeingDeletedExistsInOtherCardSets.length === 0 ?
+            <Button variant="primary" onClick={() => props.onConfirm(false)} disabled={props.confirming || props.loading}>
                 Yes, I am sure
-            </Button>
+            </Button> :
+            <>
+                <Button variant="outline-danger" onClick={() => props.onConfirm(true)} disabled={props.confirming || props.loading}>
+                    Yes, from all card sets
+                </Button>
+                <Button variant="danger" onClick={() => props.onConfirm(false)} disabled={props.confirming || props.loading}>
+                    Yes, from this card set
+                </Button>
+            </>}
         </Modal.Footer>
     </Modal>
 }

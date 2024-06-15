@@ -1,6 +1,7 @@
 import {Context} from "..";
 import {Card, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Pages, pageUrls} from "../../page-urls";
+import {DeleteCardRequest} from "@elr0berto/robert-learns-shared/dist/api/cards";
 
 export const deleteCardSet = async ({state} : Context) => {
     if (state.workspaceCardSet.deletingCardSet) {
@@ -56,7 +57,7 @@ export const deleteCardStart = async ({ state, effects, actions }: Context, card
     state.workspaceCardSet.loadingDeleteCardModal = false;
 }
 
-export const deleteCardConfirm = async ({ state, effects, actions }: Context) => {
+export const deleteCardConfirm = async ({ state, effects, actions }: Context, allCardSets: boolean) => {
     state.workspaceCardSet.confirmingDeleteCard = true;
 
     if (state.page.cardSetId === null) {
@@ -65,7 +66,15 @@ export const deleteCardConfirm = async ({ state, effects, actions }: Context) =>
     if (state.workspaceCardSet.cardIdBeingDeleted === null) {
         throw new Error('Card ID is null');
     }
-    await effects.api.cards.deleteCard({cardId: state.workspaceCardSet.cardIdBeingDeleted, cardSetId: state.page.cardSetId});
+    const req: DeleteCardRequest = {
+        cardId: state.workspaceCardSet.cardIdBeingDeleted,
+        allCardSets: allCardSets,
+    };
+
+    if (!allCardSets) {
+        req.cardSetId = state.page.cardSetId;
+    }
+    await effects.api.cards.deleteCard(req);
 
     actions.data.deleteCard({cardId: state.workspaceCardSet.cardIdBeingDeleted, cardSetId: state.page.cardSetId});
 

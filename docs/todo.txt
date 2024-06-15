@@ -1,4 +1,25 @@
-fix favicon color?
+auto-start pm2 on reboot
+
+bug when trying to delete card "what" from common words/phrases: POST - /api/cards/delete-card - Invalid `prisma.card.delete()` invocation: Foreign key constraint failed on the field: `cardId`
+-- probably in drill runs?
+
+sort card-sets
+sort linked card sets
+include linked card sets in card set view
+include linked card sets in drills
+
+drill except
+
+social logins
+invite system
+- invite users to workspace
+
+reverse cards when drilling
+
+be able to delete a card from all card-sets and the card itself. without having to delete it from every card set manually.
+
+check for duplicates when saving cards
+
 
 start creating real cards!
 - consonant initial sound in english

@@ -68,7 +68,7 @@ function WorkspaceCardSetPage() {
             loading={state.workspaceCardSet.loadingDeleteCardModal}
             cardSet={state.page.cardSet}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}
-            onConfirm={() => actions.workspaceCardSet.deleteCardConfirm()}
+            onConfirm={(allCardSets: boolean) => actions.workspaceCardSet.deleteCardConfirm(allCardSets)}
             confirming={state.workspaceCardSet.confirmingDeleteCard}
             cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets}
             cardWithCardSets={state.workspaceCardSet.cardWithCardSetsBeingDeleted}/> : null}
