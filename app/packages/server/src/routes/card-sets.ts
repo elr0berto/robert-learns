@@ -246,6 +246,7 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
                 include: {
                     workspace: true,
                     cards: true,
+                    includedCardSets: true,
                 },
             });
 
@@ -254,6 +255,14 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
                     dataType: true,
                     status: ResponseStatus.UserError,
                     errorMessage: 'Cannot delete card set with cards. Please delete or move all cards from the card set first.',
+                });
+            }
+
+            if (cardSet.includedCardSets.length > 0) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'Cannot delete card set with included card sets. Please remove all included card sets from the card set first.',
                 });
             }
 

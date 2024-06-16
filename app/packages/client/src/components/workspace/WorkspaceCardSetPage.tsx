@@ -8,7 +8,7 @@ import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsMo
 import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import DeleteCardSetModal from "./DeleteCardSetModal";
-import {ArrowLeftRight, DashCircle, PencilSquare} from "react-bootstrap-icons";
+import {ArrowLeftRight, DashCircle, PencilSquare, PlusCircle} from "react-bootstrap-icons";
 import LinkCardSetsModal from "./LinkCardSetsModal";
 
 function WorkspaceCardSetPage() {
@@ -22,7 +22,7 @@ function WorkspaceCardSetPage() {
             return <Container className="my-5">Workspace not found.</Container>
         }
     }
-    if (state.page.cardSet === null) {
+    if (state.page.cardSet === null || state.page.cardSetWithChildren === null) {
         if (state.page.loadingCardSets) {
             return <Container className="my-5">Loading...</Container>;
         } else {
@@ -31,6 +31,8 @@ function WorkspaceCardSetPage() {
     }
 
     const cardSet : CardSet = state.page.cardSet;
+    const hasCards = state.workspaceCardSet.cardsWithCardSets.length > 0;
+    const hasChildren = state.page.cardSetWithChildren.children.length > 0;
 
     return <Container className="mb-5">
         <h1 className="my-5">
@@ -43,13 +45,12 @@ function WorkspaceCardSetPage() {
                 <Button className={"mb-5 ms-3"} variant="outline-danger" onClick={() => actions.workspaceCardSet.sortCardSetCancel()}>Cancel</Button>
             </> :
             <>
-                {state.permission.createCard ? <Button className="mb-5" variant="outline-success" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}>+ Create card</Button> : null}
-                {state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-success" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
-                {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-warning" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
+                {state.permission.editCardSet ? <Button className="mb-5" variant="outline-primary" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
+                {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}>+ Create card</Button> : null}
+                {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
+                {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
+                {!hasCards && state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}><PlusCircle/> Link other card sets</Button> : null}
                 {state.permission.deleteCardSet ? <Button className="mb-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
-                {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-warning" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
-                {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}>+ Link other card sets</Button> : null}
-
             </>
         }
 
@@ -68,8 +69,6 @@ function WorkspaceCardSetPage() {
             />
         }
 
-
-
         {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsBeingDeleted !== null ? <DeleteCardModal
             loading={state.workspaceCardSet.loadingDeleteCardModal}
             cardSet={state.page.cardSet}
@@ -78,6 +77,7 @@ function WorkspaceCardSetPage() {
             confirming={state.workspaceCardSet.confirmingDeleteCard}
             cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets}
             cardWithCardSets={state.workspaceCardSet.cardWithCardSetsBeingDeleted}/> : null}
+
         <AddCardsFromOtherCardSetsModal/>
         <EditCardCardSetsModal/>
         <DeleteCardSetModal/>

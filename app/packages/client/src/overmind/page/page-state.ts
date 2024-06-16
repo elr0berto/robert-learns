@@ -35,6 +35,7 @@ type PageState = {
     readonly workspaceWithWorkspaceUsers: WorkspaceWithWorkspaceUsers | null;
     readonly workspaceUser: WorkspaceUser | null;
     readonly cardSet: CardSet | null;
+    readonly cardSetWithChildren: CardSetWithChildren | null;
     readonly cardSets: CardSet[];
     readonly cardSetsWithChildren: CardSetWithChildren[];
     readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
@@ -114,6 +115,17 @@ export const state: PageState = {
             return null;
         }
         return ret;
+    }),
+    cardSetWithChildren: derived((state: PageState) => {
+        if (state.cardSet === null) {
+            return null;
+        }
+
+        const cardSetWithChildren = state.cardSetsWithChildren.find(cs => cs.cardSet.id === state.cardSetId);
+        if (cardSetWithChildren === undefined) {
+            throw new Error('CardSetWithChildren not found');
+        }
+        return cardSetWithChildren;
     }),
     cardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {

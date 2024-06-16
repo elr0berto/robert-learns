@@ -1,5 +1,5 @@
-prevent linking cardsets when the parent has cards
-prevent assigning/creating cards to a cardset that has children
+prevent linking cardsets when the parent has cards - server side too!
+prevent assigning/creating cards to a cardset that has children - server side too!
 show parent/ancestor card-sets in card-view
 
 sort linked card sets

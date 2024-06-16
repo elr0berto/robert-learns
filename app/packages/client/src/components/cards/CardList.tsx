@@ -20,7 +20,7 @@ type Props = {
 
 function CardList(props: Props) {
     if (props.cardsWithCardSets.length === 0) {
-        return <div>No cards found in this card set</div>
+        return <div>No cards found in this card set, create cards or add cards from other card sets or link this card set to other card sets</div>
     }
 
 
