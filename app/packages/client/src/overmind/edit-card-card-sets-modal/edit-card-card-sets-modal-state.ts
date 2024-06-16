@@ -2,7 +2,7 @@ import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {validateUpdateCardCardSetsRequest} from "@elr0berto/robert-learns-shared/dist/api/card-set-cards";
-import {CardWithCardSets} from "../data/data-state";
+import {CardSetWithChildren, CardWithCardSets} from "../data/data-state";
 
 
 type EditCardCardSetsModalState = {
@@ -12,7 +12,7 @@ type EditCardCardSetsModalState = {
     submitError: string | null;
     selectedCardSetIds: number[];
     readonly cardWithCardSets: CardWithCardSets | null;
-    readonly cardSets: CardSet[];
+    readonly cardSetsWithChildren: CardSetWithChildren[];
     readonly open: boolean;
     readonly formDisabled: boolean;
     readonly submitDisabled: boolean;
@@ -36,8 +36,8 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
         }
         return ret;
     }),
-    cardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
-        return rootState.page.cardSets;
+    cardSetsWithChildren: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
+        return rootState.page.cardSetsWithChildren;
     }),
     open: derived((state: EditCardCardSetsModalState) => {
         return state.cardId !== null;

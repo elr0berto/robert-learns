@@ -18,6 +18,13 @@ const renderCardSets = (cardSetsWithChildren: CardSetWithChildren[], workspace: 
                     id={`dropdown-submenu-${cardSetWithChildren.cardSet.id}`}
                     key={cardSetWithChildren.cardSet.id}
                 >
+                    <NavDropdown.Item
+                        key={`parent-${cardSetWithChildren.cardSet.id}`}
+                        href={pageUrls.workspaceCardSet.url(workspace, cardSetWithChildren.cardSet)}
+                    >
+                        {cardSetWithChildren.cardSet.name}
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider/>
                     {renderCardSets(cardSetWithChildren.children, workspace)}
                 </NavDropdown>
             );
@@ -56,7 +63,7 @@ function TopMenu() {
             <Button variant="success" href={pageUrls.drill.url()}><PlayFill/> Drill</Button>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mr-auto">
+                <Nav className="me-auto">
                     <NavDropdown title={state.page.workspace === null ? 'Workspaces' : ('Workspace ' + state.page.workspace.name)}>
                         {state.page.loadingWorkspaces ? <>
                             <NavDropdown.Item key="loading">Loading...</NavDropdown.Item>

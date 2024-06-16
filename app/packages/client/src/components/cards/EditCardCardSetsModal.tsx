@@ -2,6 +2,46 @@ import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import React from "react";
 import CardPreview from "./CardPreview";
+import {CardSetWithChildren} from "../../overmind/data/data-state";
+import {Folder} from 'react-bootstrap-icons';
+
+function CardSetCheckbox({cardSetWithChildren, level}: { cardSetWithChildren: CardSetWithChildren, level: number }) {
+    const state = useAppState();
+    const actions = useActions();
+
+    const marginLeft = `${level}rem`;
+
+    return (
+        <>
+            {cardSetWithChildren.children.length > 0 ? (
+                <div className="mb-2" style={{marginLeft, display: 'flex', alignItems: 'center'}}>
+                    <Folder style={{ marginRight: '0.5rem' }} />
+                    <span>{cardSetWithChildren.cardSet.name}</span>
+                </div>
+            ) : (
+                <Form.Group className="mb-2" controlId={'editCardSet' + cardSetWithChildren.cardSet.id} style={{marginLeft}}>
+                    <Form.Check
+                        type="checkbox"
+                        label={cardSetWithChildren.cardSet.name}
+                        checked={state.editCardCardSetsModal.selectedCardSetIds.indexOf(cardSetWithChildren.cardSet.id) !== -1}
+                        disabled={state.editCardCardSetsModal.formDisabled}
+                        onChange={event => actions.editCardCardSetsModal.setSelectedCardSetId({
+                            cardSetId: cardSetWithChildren.cardSet.id,
+                            selected: event.target.checked
+                        })}
+                    />
+                </Form.Group>
+            )}
+
+            {cardSetWithChildren.children.length > 0 ?
+                <div className="mb-3">
+                    {cardSetWithChildren.children.map(child => (
+                        <CardSetCheckbox key={child.cardSet.id} cardSetWithChildren={child} level={level + 1}/>
+                    ))}
+                </div> : null}
+        </>
+    );
+}
 
 function EditCardCardSetsModal() {
     const state = useAppState();
@@ -36,19 +76,8 @@ function EditCardCardSetsModal() {
                     <Col>
                         {state.editCardCardSetsModal.loading ?
                             <div>Loading...</div> :
-                            state.editCardCardSetsModal.cardSets.map(cardSet =>
-                                <Form.Group className="mb-3" controlId={'editCardSet'+cardSet.id}>
-                                    <Form.Check
-                                        type="checkbox"
-                                        label={cardSet.name}
-                                        checked={state.editCardCardSetsModal.selectedCardSetIds.indexOf(cardSet.id) !== -1}
-                                        disabled={state.editCardCardSetsModal.formDisabled}
-                                        onChange={event => actions.editCardCardSetsModal.setSelectedCardSetId({
-                                            cardSetId: cardSet.id,
-                                            selected: event.target.checked
-                                        })}
-                                    />
-                                </Form.Group>
+                            state.editCardCardSetsModal.cardSetsWithChildren.map(cardSetWithChildren =>
+                                <CardSetCheckbox key={cardSetWithChildren.cardSet.id} cardSetWithChildren={cardSetWithChildren} level={0}/>
                             )
                         }
                         {state.editCardCardSetsModal.validationError ? <Alert variant={'danger'}>{state.editCardCardSetsModal.validationError}</Alert> : null}

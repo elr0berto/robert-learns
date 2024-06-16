@@ -140,12 +140,27 @@ cardSetCards.post('/create-card-set-cards', async (req : Request<unknown, unknow
                 id: cardSetId
             },
             include: {
-                workspace: true
+                workspace: true,
+                includedCardSets: true,
             }
         });
 
         if (cardSet === null) {
-            throw new Error('Card set not found, id: ' + cardSetId);
+            logWithRequest('error', req, 'cardSet === null', {cardSetId});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Card set does not exist',
+            });
+        }
+
+        if (cardSet.includedCardSets.length > 0) {
+            logWithRequest('error', req, 'cardset is a parent. parents cant have cards.', {cardSet});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'card set is a parent. parents cant have cards.',
+            });
         }
 
         const cardSetWorkspaceId = cardSet.workspace.id;
@@ -268,6 +283,9 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
                 id: {
                     in: cardSetIds
                 }
+            },
+            include: {
+                includedCardSets: true,
             }
         });
 
@@ -285,14 +303,24 @@ cardSetCards.post('/update-card-card-sets', async (req : Request<unknown, unknow
 
         const cardWorkspaceId = card.cardSetCards[0].cardSet.workspaceId;
 
-        for (const key in cardSets) {
-            const cardSet = cardSets[key];
-
+        for (const cardSet of cardSets) {
             if (cardWorkspaceId !== cardSet.workspaceId) {
+                logWithRequest('error', req, 'cardWorkspaceId !== cardSet.workspaceId', {cardWorkspaceId, cardSet});
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
                     errorMessage: 'One or more card sets do not belong to the same workspace as the card',
+                    cardData: null,
+                    cardSetCardDatas: null,
+                });
+            }
+            if (cardSet.includedCardSets.length > 0) {
+                // card set is a parent. parents cant have cards.
+                logWithRequest('error', req, 'card set is a parent. parents cant have cards.', {cardSet});
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UnexpectedError,
+                    errorMessage: 'One or more card sets are parents. Parents cannot have cards.',
                     cardData: null,
                     cardSetCardDatas: null,
                 });

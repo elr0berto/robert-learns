@@ -9,11 +9,11 @@ export const open = async ({ state, effects, actions }: Context, cardId: number)
     }
     state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.cardWithCardSets.cardSets.map(cs => cs.id);
     state.editCardCardSetsModal.loading = true;
-
     if (state.page.workspaceId === null) {
         throw new Error('Workspace ID is null');
     }
     await actions.data.loadCardSets([state.page.workspaceId]);
+    await actions.data.loadCardSetLinks({cardSetIds: state.data.cardSets.filter(cs => cs.workspaceId === state.page.workspaceId).map(cs => cs.id)});
 
     state.editCardCardSetsModal.loading = false;
 }

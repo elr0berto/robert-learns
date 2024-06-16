@@ -34,6 +34,12 @@ function WorkspaceCardSetPage() {
     const hasCards = state.workspaceCardSet.cardsWithCardSets.length > 0;
     const hasChildren = state.page.cardSetWithChildren.children.length > 0;
 
+    console.log('cardSet', cardSet);
+    console.log('cardSetWithChildren', state.page.cardSetWithChildren);
+
+    console.log('hasCards', hasCards);
+    console.log('hasChildren', hasChildren);
+
     return <Container className="mb-5">
         <h1 className="my-5">
             Card set <i>{state.page.cardSet.name}</i> in workspace <i>{state.page.workspace.name}</i>
@@ -44,6 +50,10 @@ function WorkspaceCardSetPage() {
                 <Button className="mb-5" variant="outline-success" onClick={() => actions.workspaceCardSet.sortCardSetSave()}>Save sort order</Button>
                 <Button className={"mb-5 ms-3"} variant="outline-danger" onClick={() => actions.workspaceCardSet.sortCardSetCancel()}>Cancel</Button>
             </> :
+            null}
+
+        {state.page.loadingCards ?
+            <div>Loading cards...</div> :
             <>
                 {state.permission.editCardSet ? <Button className="mb-5" variant="outline-primary" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
                 {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}>+ Create card</Button> : null}
@@ -51,22 +61,18 @@ function WorkspaceCardSetPage() {
                 {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
                 {!hasCards && state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}><PlusCircle/> Link other card sets</Button> : null}
                 {state.permission.deleteCardSet ? <Button className="mb-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
+                <CardList
+                    thisCardSetId={state.page.cardSet.id}
+                    showActionButtons={state.permission.editCardSet}
+                    cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
+                    onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
+                    onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: card})}
+                    onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
+                    cardsWithCardSets={state.workspaceCardSet.cardsWithCardSets}
+                    sorting={state.workspaceCardSet.sorting}
+                    onSortCard={(cardId, direction) => actions.workspaceCardSet.sortCard({cardId, direction})}
+                />
             </>
-        }
-
-        {state.page.loadingCards ?
-            <div>Loading cards...</div> :
-            <CardList
-                thisCardSetId={state.page.cardSet.id}
-                showActionButtons={state.permission.editCardSet}
-                cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
-                onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
-                onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: card})}
-                onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
-                cardsWithCardSets={state.workspaceCardSet.cardsWithCardSets}
-                sorting={state.workspaceCardSet.sorting}
-                onSortCard={(cardId, direction) => actions.workspaceCardSet.sortCard({cardId, direction})}
-            />
         }
 
         {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsBeingDeleted !== null ? <DeleteCardModal

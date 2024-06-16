@@ -89,8 +89,6 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
     try {
         const user = await getSignedInUser(req.session);
 
-        console.log({front: req.body.front, back: req.body.back});
-
         // create options for sanitizeHtml to allow img-tags
         const allowedAttributes = {...sanitizeHtml.defaults.allowedAttributes};
         allowedAttributes['*'] = ['class'];
@@ -100,7 +98,6 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
         }
         const front = sanitizeHtml(req.body.front ?? '', sanitizeHtmlOptions);
         const back = sanitizeHtml(req.body.back ?? '', sanitizeHtmlOptions);
-        console.log({fronts: front, backs: back});
 
         const cardId: number | null = typeof req.body.cardId !== 'undefined' ? parseInt(req.body.cardId) : null;
 
@@ -167,6 +164,7 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
             include: {
                 workspace: true,
                 cards: true, // to get the max order
+                includedCardSets: true, // to make sure that this is not a parent. parent card sets cant have cards. only children can.
             }
         });
 
@@ -176,6 +174,17 @@ cards.post('/create-card', upload.single('audio'),async (req: MulterRequest, res
                 dataType: true,
                 status: ResponseStatus.UnexpectedError,
                 errorMessage: 'Card set not found',
+                cardData: null,
+                cardSetCardDatas: null,
+            });
+        }
+
+        if (cardSet.includedCardSets.length > 0) {
+            logWithRequest('error', req, 'Card set is a parent card set. Parent card sets cannot have cards.', {cardSet});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Parent card sets cannot have cards.',
                 cardData: null,
                 cardSetCardDatas: null,
             });

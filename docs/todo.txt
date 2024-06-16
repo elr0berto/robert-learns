@@ -1,5 +1,7 @@
-prevent linking cardsets when the parent has cards - server side too!
-prevent assigning/creating cards to a cardset that has children - server side too!
+make add cards from other card sets modal recursive
+debug why add cards from other card sets checkbox is sluggish.
+?? it's because it's re-rendering the whole list of cards every time a card set is selected. this is because the card set is being passed as a prop to the card list component. instead, the card list component should be able to fetch the cards it needs itself. this way, the card list component can be re-used in other places as well.
+
 show parent/ancestor card-sets in card-view
 
 sort linked card sets

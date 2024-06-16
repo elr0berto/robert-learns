@@ -38,6 +38,7 @@ type PageState = {
     readonly cardSetWithChildren: CardSetWithChildren | null;
     readonly cardSets: CardSet[];
     readonly cardSetsWithChildren: CardSetWithChildren[];
+    readonly flatCardSetsWithChildren: CardSetWithChildren[];
     readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
     readonly cards: Card[];
     readonly cardsWithCardSets: CardWithCardSets[];
@@ -72,6 +73,7 @@ export const state: PageState = {
         });
     }),
     workspacesWithCardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
+        console.log('page-state workspacesWithCardSetsWithChildren rootState.data.workspacesWithCardSetsWithChildren', rootState.data.workspacesWithCardSetsWithChildren);
         return rootState.data.workspacesWithCardSetsWithChildren.filter(wwc => {
             return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
         });
@@ -121,11 +123,18 @@ export const state: PageState = {
             return null;
         }
 
-        const cardSetWithChildren = state.cardSetsWithChildren.find(cs => cs.cardSet.id === state.cardSetId);
+        console.log('page-state cardSetWithChildren state.flatCardSetsWithChildren', state.flatCardSetsWithChildren);
+        const cardSetWithChildren = state.flatCardSetsWithChildren.find(cs => cs.cardSet.id === state.cardSetId);
         if (cardSetWithChildren === undefined) {
-            throw new Error('CardSetWithChildren not found');
+            throw new Error('CardSetWithChildren with cardSetId ' + state.cardSetId + ' not found.');
         }
         return cardSetWithChildren;
+    }),
+    flatCardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
+        if (state.workspaceId === null) {
+            return [];
+        }
+        return rootState.data.flatCardSetsWithChildren.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
     }),
     cardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {
@@ -134,6 +143,7 @@ export const state: PageState = {
         return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
     }),
     cardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
+        console.log('page-state cardSetsWithChildren rootState.data.cardSetsWithChildren', rootState.data.cardSetsWithChildren);
         return rootState.data.cardSetsWithChildren.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
     }),
     cardSetWithCardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
