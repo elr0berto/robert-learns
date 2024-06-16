@@ -9,6 +9,7 @@ type TristateCheckboxProps = {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void,
     indeterminate: boolean,
     disabled: boolean,
+    style?: React.CSSProperties,
 }
 function TristateCheckbox(props: TristateCheckboxProps) {
     const checkboxRef = useRef<HTMLInputElement>(null);
@@ -21,6 +22,7 @@ function TristateCheckbox(props: TristateCheckboxProps) {
 
     return <Form.Check
         id={props.id}
+        style={props.style}
         className={props.className}
         type="checkbox"
         label={props.label}

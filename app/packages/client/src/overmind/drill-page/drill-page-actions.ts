@@ -29,33 +29,71 @@ export const changeDrillDescription = ({ state }: Context, description: string) 
 }
 
 export const toggleWorkspaceId = ({ state }: Context, workspaceId: number) => {
-    // get the workspace from state.page.workspacesWithCardSets
     const workspaceWithCardSets = state.page.workspacesWithCardSets.find(w => w.workspace.id === workspaceId);
     if (!workspaceWithCardSets) {
         throw new Error('Workspace with id ' + workspaceId + ' not found.');
     }
     const cardSetIds = workspaceWithCardSets.cardSets.map(cs => cs.id);
 
-    // check if workspaceId is in indeterminate state, if so, remove all cardsets
     const indeterminate = state.drillPage.indeterminateWorkspaceIds.includes(workspaceId);
     const checked = state.drillPage.selectedWorkspaceIds.includes(workspaceId);
 
+    let newSelectedCardSetIds;
     if (!checked && !indeterminate) {
-        // add the cardSetIds to state.drillPage.selectedCardSetIds if they dont exist in the array yet
-        state.drillPage.selectedCardSetIds = state.drillPage.selectedCardSetIds.concat(cardSetIds.filter(item => !state.drillPage.selectedCardSetIds.includes(item)));
+        newSelectedCardSetIds = state.drillPage.selectedCardSetIds.concat(cardSetIds.filter(item => !state.drillPage.selectedCardSetIds.includes(item)));
     } else {
-        state.drillPage.selectedCardSetIds = state.drillPage.selectedCardSetIds.filter(item => !cardSetIds.includes(item));
+        newSelectedCardSetIds = state.drillPage.selectedCardSetIds.filter(item => !cardSetIds.includes(item));
     }
+
+    state.drillPage.selectedCardSetIds = newSelectedCardSetIds;
 }
 
+
 export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
-    const index = state.drillPage.selectedCardSetIds.indexOf(cardSetId);
-    if (index === -1) {
-        state.drillPage.selectedCardSetIds.push(cardSetId);
-    } else {
-        state.drillPage.selectedCardSetIds.splice(index, 1);
+    const cardSetWithChildrenIds = state.drillPage.flatCardSetsWithChildrenIds.find(cs => cs.cardSet.id === cardSetId);
+
+    if (!cardSetWithChildrenIds) {
+        throw new Error('CardSetWithChildrenIds with cardSetId ' + cardSetId + ' not found.');
     }
+
+    let newSelectedCardSetIds : number[] = [];
+    if (cardSetWithChildrenIds.childrenIds.length > 0) {
+        const indeterminate = state.drillPage.indeterminateCardSetIds.includes(cardSetId);
+        const checked = state.drillPage.selectedCardSetIds.includes(cardSetId);
+
+        if (!checked && !indeterminate) {
+            newSelectedCardSetIds = state.drillPage.selectedCardSetIds.concat(cardSetWithChildrenIds.childrenIds.filter(item => !state.drillPage.selectedCardSetIds.includes(item)));
+        } else {
+            newSelectedCardSetIds = state.drillPage.selectedCardSetIds.filter(item => !cardSetWithChildrenIds.childrenIds.includes(item));
+        }
+    } else {
+        const index = state.drillPage.selectedCardSetIds.indexOf(cardSetId);
+        newSelectedCardSetIds = [...state.drillPage.selectedCardSetIds];
+        if (index === -1) {
+            newSelectedCardSetIds.push(cardSetId);
+        } else {
+            newSelectedCardSetIds.splice(index, 1);
+        }
+    }
+
+    let somethingChanged = false;
+    do {
+        somethingChanged = false;
+        state.data.flatCardSetsWithChildrenIds.filter(cs => cs.childrenIds.length > 0).forEach(cs => {
+            if (cs.childrenIds.every(csid => newSelectedCardSetIds.includes(csid))) {
+                if (!newSelectedCardSetIds.includes(cs.cardSet.id)) {
+                    newSelectedCardSetIds.push(cs.cardSet.id);
+                    somethingChanged = true;
+                }
+            } else {
+                newSelectedCardSetIds = newSelectedCardSetIds.filter(item => item !== cs.cardSet.id);
+            }
+        });
+    } while (somethingChanged);
+
+    state.drillPage.selectedCardSetIds = newSelectedCardSetIds;
 }
+
 
 export const saveDrill = async ({ state, effects, actions }: Context, {run, resume} : {run: boolean, resume?: boolean}) => {
     console.log('saveDrill');
@@ -75,20 +113,19 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run, resu
 
     // check if there is an unfinished drill run for this drill that we can resume
     if (run && state.drillPage.selectedDrillId !== 'new' && resume === undefined) {
-        console.log('1');
         const uResp = await effects.api.drillRuns.getLatestUnfinishedDrillRun({drillId: state.drillPage.selectedDrillId});
 
         if (uResp.drillRun !== null && uResp.drill !== null && uResp.drillRunQuestions !== null) {
-            console.log('2');
             actions.data.addOrUpdateDrills([uResp.drill]);
             actions.data.addOrUpdateDrillRuns([uResp.drillRun]);
             actions.data.addOrUpdateDrillRunQuestions(uResp.drillRunQuestions);
             state.drillPage.possibleResumeDrillRunId = uResp.drillRun.id;
 
-            console.log('state.drillPage.possibleResumeDrillRunId', state.drillPage.possibleResumeDrillRunId);
             if (state.drillPage.possibleResumeDrillRunWithNumbers !== null) {
                 state.drillPage.saving = false;
                 return;
+            } else {
+                state.drillPage.possibleResumeDrillRunId = null;
             }
         }
     }

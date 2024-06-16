@@ -1,6 +1,6 @@
 import {derived} from "overmind";
 import {config} from "../index";
-import {DrillWithDrillCardSets} from "../data/data-state";
+import {CardSetWithChildrenIds, DrillWithDrillCardSets} from "../data/data-state";
 import {DrillRun} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 type DrillRunWithNumbers = {
@@ -19,6 +19,7 @@ type DrillPageState = {
     possibleResumeDrillRunId: number | null;
     readonly selectedWorkspaceIds: number[];
     readonly indeterminateWorkspaceIds: number[];
+    readonly indeterminateCardSetIds: number[];
     readonly isValid: boolean;
     readonly errorMessage: string | null;
     readonly formDisabled: boolean;
@@ -26,6 +27,7 @@ type DrillPageState = {
     readonly selectedDrillCardSetIds: number[];
     readonly selectedCardSetsChanged: boolean;
     readonly possibleResumeDrillRunWithNumbers: DrillRunWithNumbers | null;
+    readonly flatCardSetsWithChildrenIds: CardSetWithChildrenIds[];
 }
 
 export const getInitialDrillPageState = () : DrillPageState => {
@@ -61,6 +63,19 @@ export const getInitialDrillPageState = () : DrillPageState => {
                 // Check if at least one, but not all card sets are selected
                 if (selectedCount > 0 && selectedCount < cardSetIds.length) {
                     ret.push(w.workspace.id);
+                }
+            });
+
+            return ret;
+        }),
+        indeterminateCardSetIds: derived((state: DrillPageState) => {
+            const cardSetsWithChildrenIds = state.flatCardSetsWithChildrenIds;
+
+            let ret: number[] = [];
+            cardSetsWithChildrenIds.forEach(cswci => {
+                const selectedCount = cswci.childrenIds.filter(csid => state.selectedCardSetIds.includes(csid)).length;
+                if (selectedCount > 0 && selectedCount < cswci.childrenIds.length) {
+                    ret.push(cswci.cardSet.id);
                 }
             });
 
@@ -102,27 +117,21 @@ export const getInitialDrillPageState = () : DrillPageState => {
             if (state.selectedDrillWithDrillCardSets === null) {
                 return false;
             }
-            if (state.selectedCardSetIds.length === state.selectedDrillWithDrillCardSets.drillCardSets.length) {
-                return false;
+            if (state.selectedCardSetIds.length !== state.selectedDrillWithDrillCardSets.drillCardSets.length) {
+                return true;
             }
 
-            // check that all the state.selectedCardSetIds exist in state.selectedDrillCardSetIds
             return !state.selectedCardSetIds.every(csid => state.selectedDrillCardSetIds.includes(csid));
         }),
         possibleResumeDrillRunWithNumbers: derived((state: DrillPageState, rootState: typeof config.state) => {
-            console.log('a');
+            console.log('selectedCardSetsChanged', state.selectedCardSetsChanged);
             if (state.possibleResumeDrillRunId === null || state.selectedCardSetsChanged) {
-                console.log('b');
-                console.log('state.possibleResumeDrillRunId', state.possibleResumeDrillRunId);
-                console.log('state.selectedCardSetsChanged', state.selectedCardSetsChanged);
                 return null;
             }
-            console.log('c');
             const drillRun = rootState.data.drillRuns.find(dr => dr.id === state.possibleResumeDrillRunId);
             if (!drillRun) {
                 throw new Error('DrillRun with id ' + state.possibleResumeDrillRunId + ' not found.');
             }
-            // questions
             const questions = rootState.data.drillRunQuestions.filter(drq => drq.drillRunId === drillRun.id);
             if (questions.length === 0) {
                 throw new Error('No questions found for drill run with id ' + drillRun.id);
@@ -133,7 +142,10 @@ export const getInitialDrillPageState = () : DrillPageState => {
                 answeredCount: answeredCount,
                 questionCount: questions.length
             };
-        })
+        }),
+        flatCardSetsWithChildrenIds: derived((state: DrillPageState, rootState: typeof config.state) => {
+            return rootState.page.workspacesWithCardSetsWithChildrenIds.flatMap(wwc => wwc.cardSetsWithChildrenIds);
+        }),
     };
 }
 

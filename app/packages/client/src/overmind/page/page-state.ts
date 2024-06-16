@@ -11,7 +11,7 @@ import {config} from "../index";
 import {
     CardSetWithCardsWithCardSets, CardSetWithChildren,
     CardWithCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
-    WorkspaceWithCardSetsCount,
+    WorkspaceWithCardSetsCount, WorkspaceWithCardSetsWithChildren, WorkspaceWithCardSetsWithChildrenIds,
     WorkspaceWithWorkspaceUsers
 } from "../data/data-state";
 
@@ -29,6 +29,8 @@ type PageState = {
     readonly workspaces: Workspace[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
+    readonly workspacesWithCardSetsWithChildren: WorkspaceWithCardSetsWithChildren[];
+    readonly workspacesWithCardSetsWithChildrenIds: WorkspaceWithCardSetsWithChildrenIds[];
     readonly workspace: Workspace | null;
     readonly workspaceWithWorkspaceUsers: WorkspaceWithWorkspaceUsers | null;
     readonly workspaceUser: WorkspaceUser | null;
@@ -65,6 +67,16 @@ export const state: PageState = {
     }),
     workspacesWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.workspacesWithCardSets.filter(wwc => {
+            return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
+        });
+    }),
+    workspacesWithCardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.workspacesWithCardSetsWithChildren.filter(wwc => {
+            return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
+        });
+    }),
+    workspacesWithCardSetsWithChildrenIds: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.workspacesWithCardSetsWithChildrenIds.filter(wwc => {
             return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
         });
     }),

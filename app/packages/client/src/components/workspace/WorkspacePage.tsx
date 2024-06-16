@@ -20,8 +20,8 @@ function CardSetWithChildrenComponent({ cardSetWithChildren, workspace, level }:
         <ListGroup.Item className={`card-set-with-children level-${level}`}>
             <div className="mb-1 d-flex">
                 {cardSetWithChildren.children.length > 0 && (
-                    <div className="me-1" onClick={() => setIsOpen(!isOpen)}>
-                        {isOpen ? <ChevronDown size={24} /> : <ChevronRight size={24}/>}
+                    <div className="me-1 chevron" onClick={() => setIsOpen(!isOpen)}>
+                        {isOpen ? <ChevronDown size={20} /> : <ChevronRight size={20}/>}
                     </div>
                 )}
                 <a href={pageUrls[Pages.WorkspaceCardSet].url(workspace, cardSetWithChildren.cardSet)}>

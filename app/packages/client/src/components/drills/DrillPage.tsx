@@ -5,6 +5,48 @@ import Loading from "../Loading";
 import TristateCheckbox from "../TristateCheckbox";
 import {pageUrls} from "../../page-urls";
 import ResumeDrillRunModal from "./ResumeDrillRunModal";
+import {CardSetWithChildren} from "../../overmind/data/data-state";
+
+
+const CardSetCheckbox = ({cardSetWithChildren, level}: { cardSetWithChildren: CardSetWithChildren, level: number }) => {
+    const state = useAppState();
+    const actions = useActions();
+
+    const marginLeft = `${level}rem`;
+    const isIndeterminate = state.drillPage.indeterminateCardSetIds.includes(cardSetWithChildren.cardSet.id);
+    const isChecked = state.drillPage.selectedCardSetIds.includes(cardSetWithChildren.cardSet.id);
+
+    return (
+        <>
+            {cardSetWithChildren.children.length > 0 ? (
+                <TristateCheckbox
+                    style={{marginLeft}}
+                    key={cardSetWithChildren.cardSet.id}
+                    label={cardSetWithChildren.cardSet.name}
+                    checked={isChecked}
+                    indeterminate={isIndeterminate}
+                    onChange={() => actions.drillPage.toggleCardSetId(cardSetWithChildren.cardSet.id)}
+                    id={"cardSetCheckbox_" + cardSetWithChildren.cardSet.id}
+                    disabled={state.drillPage.formDisabled}
+                />
+            ) : (
+                <Form.Check
+                    style={{marginLeft}}
+                    key={cardSetWithChildren.cardSet.id}
+                    type="checkbox"
+                    label={cardSetWithChildren.cardSet.name}
+                    checked={isChecked}
+                    onChange={() => actions.drillPage.toggleCardSetId(cardSetWithChildren.cardSet.id)}
+                    id={"cardSetCheckbox_" + cardSetWithChildren.cardSet.id}
+                    disabled={state.drillPage.formDisabled}
+                />
+            )}
+            {cardSetWithChildren.children.map(child => (
+                <CardSetCheckbox key={child.cardSet.id} cardSetWithChildren={child} level={level + 1}/>
+            ))}
+        </>
+    );
+}
 
 function DrillPage() {
     const state = useAppState();
@@ -38,8 +80,6 @@ function DrillPage() {
             </Row>
         </Container>;
     }
-
-    console.log('state.drillPage.possibleResumeDrillRunWithNumbers', state.drillPage.possibleResumeDrillRunWithNumbers);
 
     return <Container className="mt-3 mb-5">
         <Row>
@@ -75,7 +115,7 @@ function DrillPage() {
                             />
                         </Form.Group>
                         <div className="mt-3">
-                            {state.page.workspacesWithCardSets.map(wwcs =>
+                            {state.page.workspacesWithCardSetsWithChildren.map(wwcs =>
                                 <>
                                     <TristateCheckbox
                                         className="mt-2"
@@ -87,17 +127,8 @@ function DrillPage() {
                                         indeterminate={state.drillPage.indeterminateWorkspaceIds.includes(wwcs.workspace.id)}
                                         disabled={state.drillPage.formDisabled}
                                     />
-                                    {wwcs.cardSets.map(cardSet =>
-                                        <Form.Check
-                                            style={{marginLeft: '1rem'}}
-                                            key={cardSet.id}
-                                            type="checkbox"
-                                            label={cardSet.name}
-                                            checked={state.drillPage.selectedCardSetIds.includes(cardSet.id)}
-                                            onChange={event => actions.drillPage.toggleCardSetId(cardSet.id)}
-                                            id={"cardSetCheckbox_"+cardSet.id}
-                                            disabled={state.drillPage.formDisabled}
-                                        />
+                                    {wwcs.cardSetsWithChildren.map(cardSetWithChildren =>
+                                        <CardSetCheckbox key={cardSetWithChildren.cardSet.id} cardSetWithChildren={cardSetWithChildren} level={1}/>
                                     )}
                                 </>
                             )}

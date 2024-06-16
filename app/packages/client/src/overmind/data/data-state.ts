@@ -51,6 +51,21 @@ export type CardSetWithChildren = {
     children: CardSetWithChildren[];
 }
 
+export type WorkspaceWithCardSetsWithChildren = {
+    workspace: Workspace;
+    cardSetsWithChildren: CardSetWithChildren[];
+}
+
+export type WorkspaceWithCardSetsWithChildrenIds = {
+    workspace: Workspace;
+    cardSetsWithChildrenIds: CardSetWithChildrenIds[];
+}
+
+export type CardSetWithChildrenIds = {
+    cardSet: CardSet;
+    childrenIds: number[];
+}
+
 type DataState = {
     workspaces: Workspace[];
     loadingWorkspaces: boolean;
@@ -82,6 +97,10 @@ type DataState = {
     readonly cardSetsWithCardsWithCardSets: CardSetWithCardsWithCardSets[];
     readonly drillsWithDrillCardSets: DrillWithDrillCardSets[];
     readonly cardSetsWithChildren: CardSetWithChildren[];
+    readonly workspacesWithCardSetsWithChildren: WorkspaceWithCardSetsWithChildren[];
+    readonly workspacesWithCardSetsWithChildrenIds: WorkspaceWithCardSetsWithChildrenIds[];
+    readonly flatCardSetsWithChildren: CardSetWithChildren[];
+    readonly flatCardSetsWithChildrenIds: CardSetWithChildrenIds[];
 }
 
 export const getInitialDataState = () : DataState => ({
@@ -176,6 +195,63 @@ export const getInitialDataState = () : DataState => ({
     }),
     cardSetsWithChildren: derived((state: DataState) => {
         return buildNestedCardSets(state.cardSets, state.cardSetLinks);
+    }),
+    workspacesWithCardSetsWithChildren: derived((state: DataState) => {
+        return state.workspaces.map(w => ({
+            workspace: w,
+            cardSetsWithChildren: buildNestedCardSets(state.cardSets.filter(cs => cs.workspaceId === w.id), state.cardSetLinks),
+        }));
+    }),
+    workspacesWithCardSetsWithChildrenIds: derived((state: DataState) => {
+        return state.workspaces.map(w => ({
+            workspace: w,
+            cardSetsWithChildrenIds: state.flatCardSetsWithChildrenIds.filter(cs => cs.cardSet.workspaceId === w.id),
+        }));
+    }),
+    flatCardSetsWithChildren: derived((state: DataState) => {
+        const flattenCardSets = (cardSetsWithChildren: CardSetWithChildren[], uniqueIds: Set<number>): CardSetWithChildren[] => {
+            return cardSetsWithChildren.reduce((acc, cs) => {
+                if (!uniqueIds.has(cs.cardSet.id)) {
+                    uniqueIds.add(cs.cardSet.id);
+                    acc.push(cs);
+                }
+                return acc.concat(flattenCardSets(cs.children, uniqueIds));
+            }, [] as CardSetWithChildren[]);
+        };
+
+        const uniqueIds = new Set<number>();
+        return flattenCardSets(state.cardSetsWithChildren, uniqueIds);
+    }),
+    flatCardSetsWithChildrenIds: derived((state: DataState) => {
+        const flattenCardSets = (cardSetsWithChildren: CardSetWithChildren[], uniqueIds: Set<number>): CardSetWithChildrenIds[] => {
+            return cardSetsWithChildren.reduce((acc, cs) => {
+                if (!uniqueIds.has(cs.cardSet.id)) {
+                    uniqueIds.add(cs.cardSet.id);
+                    acc.push({
+                        cardSet: cs.cardSet,
+                        childrenIds: collectAllChildrenIds(cs)
+                    });
+                }
+                return acc.concat(flattenCardSets(cs.children, uniqueIds));
+            }, [] as CardSetWithChildrenIds[]);
+        };
+
+        const collectAllChildrenIds = (cardSetWithChildren: CardSetWithChildren): number[] => {
+            const childrenIds: Set<number> = new Set();
+            const collectIds = (cs: CardSetWithChildren) => {
+                cs.children.forEach(child => {
+                    if (!childrenIds.has(child.cardSet.id)) {
+                        childrenIds.add(child.cardSet.id);
+                        collectIds(child);
+                    }
+                });
+            };
+            collectIds(cardSetWithChildren);
+            return Array.from(childrenIds);
+        };
+
+        const uniqueIds = new Set<number>();
+        return flattenCardSets(state.cardSetsWithChildren, uniqueIds);
     }),
 });
 

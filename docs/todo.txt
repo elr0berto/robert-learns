@@ -1,12 +1,12 @@
-auto-start pm2 on reboot
+prevent linking cardsets when the parent has cards
+prevent assigning/creating cards to a cardset that has children
+show parent/ancestor card-sets in card-view
 
-bug when trying to delete card "what" from common words/phrases: POST - /api/cards/delete-card - Invalid `prisma.card.delete()` invocation: Foreign key constraint failed on the field: `cardId`
--- probably in drill runs?
-
-sort card-sets
 sort linked card sets
 include linked card sets in card set view
-include linked card sets in drills
+
+auto-start pm2 on reboot
+
 
 drill except
 
