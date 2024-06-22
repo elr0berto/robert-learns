@@ -38,7 +38,6 @@ monit!
 check logs!
 style drill run page for mobile - make font size dynamic to fit screen?
 drill everything EXCEPT. (for example all consonants except obsolote ones)
-favicon
 make a build/deploy script
 adding users to workspace should not require separate save?
 card-set-groups?
