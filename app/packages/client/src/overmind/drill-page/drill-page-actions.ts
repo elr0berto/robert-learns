@@ -96,7 +96,6 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
 
 
 export const saveDrill = async ({ state, effects, actions }: Context, {run, resume} : {run: boolean, resume?: boolean}) => {
-    console.log('saveDrill');
     if (!resume) {
         state.drillPage.possibleResumeDrillRunId = null;
     }
@@ -174,11 +173,9 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run, resu
 }
 
 export const runDrill = async ({ state, effects, actions }: Context) => {
-    console.log('runDrill');
     actions.drillPage.saveDrill({run: true});
 }
 
 export const closeResumeDrillModal = ({ state }: Context) => {
-    console.log('closeResumeDrillModal');
     state.drillPage.possibleResumeDrillRunId = null;
 }

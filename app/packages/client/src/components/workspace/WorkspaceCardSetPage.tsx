@@ -34,12 +34,6 @@ function WorkspaceCardSetPage() {
     const hasCards = state.workspaceCardSet.cardsWithCardSets.length > 0;
     const hasChildren = state.page.cardSetWithChildren.children.length > 0;
 
-    console.log('cardSet', cardSet);
-    console.log('cardSetWithChildren', state.page.cardSetWithChildren);
-
-    console.log('hasCards', hasCards);
-    console.log('hasChildren', hasChildren);
-
     return <Container className="mb-5">
         <h1 className="my-5">
             Card set <i>{state.page.cardSet.name}</i> in workspace <i>{state.page.workspace.name}</i>

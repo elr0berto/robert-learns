@@ -11,8 +11,6 @@ import Loading from "./Loading";
 function AppInner() {
     const state = useAppState();
     const actions = useActions();
-    console.log('state.signIn.status', state.signIn.status);
-    console.log('state.signIn.user', state.signIn.user);
 
     if (state.signIn.status === SignInStatus.Checking) {
         return <Container>

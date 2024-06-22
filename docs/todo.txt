@@ -1,11 +1,9 @@
-make add cards from other card sets modal recursive
-debug why add cards from other card sets checkbox is sluggish.
-?? it's because it's re-rendering the whole list of cards every time a card set is selected. this is because the card set is being passed as a prop to the card list component. instead, the card list component should be able to fetch the cards it needs itself. this way, the card list component can be re-used in other places as well.
-
 show parent/ancestor card-sets in card-view
 
 sort linked card sets
 include linked card sets in card set view
+
+clean up cards from parent card sets before going live with card-set-links branch
 
 auto-start pm2 on reboot
 
@@ -44,6 +42,7 @@ favicon
 make a build/deploy script
 adding users to workspace should not require separate save?
 card-set-groups?
+
 
 drills
 - drill (card-sets & options?) - saved server side

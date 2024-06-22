@@ -75,7 +75,6 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
     state.page.initializing = false;
 
     await Promise.all(promises);
-    console.log('load done');
     if (params?.onSuccessCallback) {
         params.onSuccessCallback();
     }
@@ -100,7 +99,6 @@ export const loadWorkspaces = async ({state,actions} : Context, loadCardSets: bo
     }
 
     state.page.loadingWorkspaces = false;
-    console.log('load workspaces done');
 }
 
 
@@ -124,7 +122,6 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
     }
 
     state.page.loadingCards = false;
-    console.log('load cards done');
 }
 
 export const loadDrills = async ({state,actions} : Context) => {
@@ -209,7 +206,6 @@ export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: 
 }
 
 export const showDrillPage = async ({ state, actions }: Context) => {
-    console.log('showDrillPage');
     actions.page.load({page: Pages.Drill});
     state.drillPage = getInitialDrillPageState();
 }

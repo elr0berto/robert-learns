@@ -7,12 +7,12 @@ import {CardWithCardSets} from "../../overmind/data/data-state";
 type Props = {
     uniqueContext: string;
     cardWithCardSets: CardWithCardSets;
-    onDeleteCard: (card: Card) => void;
+    onDeleteCard?: (card: Card) => void;
     beingDeleted: boolean;
     showActionButtons: boolean;
     selected: boolean;
     disabled: boolean;
-    onChange: (selected: boolean) => void;
+    onChange: (cardId: number, selected: boolean) => void;
     thisCardSetId: number;
 }
 
@@ -25,11 +25,11 @@ function CardPreviewSelectable(props: Props) {
             cardWithCardSets={props.cardWithCardSets}
             showActionButtons={props.showActionButtons}
             onEditCard={() => {}}
-            onDeleteCard={props.onDeleteCard}
+            onDeleteCard={props.onDeleteCard ? props.onDeleteCard : () => {}}
             beingDeleted={props.beingDeleted}
             showCardSetsPreview={false}
             onEditCardSets={() => {}}
-            onClick={() => props.onChange(!props.selected)}
+            onClick={() => props.onChange(props.cardWithCardSets.card.id, !props.selected)}
         />
         <Form.Group className="mb-3" controlId={'checkbox-card-'+props.uniqueContext+'-'+props.cardWithCardSets.card.id}>
             <Form.Check
@@ -37,7 +37,7 @@ function CardPreviewSelectable(props: Props) {
                 label={"Add card" + (props.disabled ? " (already in current card set)" : '')}
                 checked={props.selected}
                 disabled={props.disabled}
-                onChange={event=> props.onChange(event.target.checked)}
+                onChange={event=> props.onChange(props.cardWithCardSets.card.id, event.target.checked)}
             />
         </Form.Group>
     </div>;

@@ -47,8 +47,6 @@ function TopMenu() {
 
     const workspace = state.page.workspace;
 
-    console.log('TopMenu page: ' + state.page.page);
-    console.log('TopMenu state.page.workspace', state.page.workspace);
     return <Navbar bg="light" expand="lg">
         <Container>
             <Navbar.Brand title={'client: '+process.env.REACT_APP_VERSION + ' client-shared: ' + RL_SHARED_VERSION + ' server: ' + (state.version.version ?? 'unk') + ' server-shared: ' + (state.version.versionShared ?? 'unk')} href="/">

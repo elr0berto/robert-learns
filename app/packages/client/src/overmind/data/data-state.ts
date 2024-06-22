@@ -209,7 +209,6 @@ export const getInitialDataState = () : DataState => ({
         }));
     }),
     flatCardSetsWithChildren: derived((state: DataState) => {
-        console.log('data-state flatCardSetsWithChildren');
         const flattenCardSets = (cardSetsWithChildren: CardSetWithChildren[], uniqueIds: Set<number>): CardSetWithChildren[] => {
             return cardSetsWithChildren.reduce((acc, cs) => {
                 if (!uniqueIds.has(cs.cardSet.id)) {
@@ -224,7 +223,6 @@ export const getInitialDataState = () : DataState => ({
         return flattenCardSets(state.cardSetsWithChildren, uniqueIds);
     }),
     flatCardSetsWithChildrenIds: derived((state: DataState) => {
-        console.log('data-state flatCardSetsWithChildrenIds');
         const flattenCardSets = (cardSetsWithChildren: CardSetWithChildren[], uniqueIds: Set<number>): CardSetWithChildrenIds[] => {
             return cardSetsWithChildren.reduce((acc, cs) => {
                 if (!uniqueIds.has(cs.cardSet.id)) {

@@ -25,13 +25,11 @@ export const close = async ({ state }: Context) => {
 }
 
 export const setSelected = async ({ state }: Context, {cardId, selected}: {cardId: number, selected: boolean}) => {
-    console.log('setSelected 1');
     if (selected) {
         state.addCardsFromOtherCardSetsModal.selectedCardIds = [...state.addCardsFromOtherCardSetsModal.selectedCardIds, cardId];
     } else {
         state.addCardsFromOtherCardSetsModal.selectedCardIds = state.addCardsFromOtherCardSetsModal.selectedCardIds.filter(id => id !== cardId);
     }
-    console.log('setSelected 2');
 }
 
 export const save = async ({ state, effects, actions }: Context,) => {

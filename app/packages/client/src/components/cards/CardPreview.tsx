@@ -26,7 +26,6 @@ function CardPreview(props: Props) {
         <CardPreviewFace content={props.cardWithCardSets.card.back?.content ?? ''}/>
         {props.cardWithCardSets.card.audio !== null ? <AudioPlayer
             src={props.cardWithCardSets.card.audio.getUrl()}
-            onPlay={e => console.log("onPlay")}
         /> : null}
         {props.showCardSetsPreview ? <>
             <hr/>

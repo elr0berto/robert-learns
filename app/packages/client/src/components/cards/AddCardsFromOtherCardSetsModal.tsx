@@ -1,10 +1,12 @@
 import {useActions, useAppState} from "../../overmind";
 import {Accordion, Alert, Button, Modal} from "react-bootstrap";
-import React from "react";
+import React, {useCallback} from "react";
 import CardPreviewSelectable from "./CardPreviewSelectable";
 import {
     CardSetWithCardsAndChildren
 } from "../../overmind/add-cards-from-other-card-sets-modal/add-cards-from-other-card-sets-modal-state";
+
+const MemoizedCardPreviewSelectable = React.memo(CardPreviewSelectable);
 
 function AddCardsFromOtherCardSetsModal() {
     const state = useAppState();
@@ -14,23 +16,26 @@ function AddCardsFromOtherCardSetsModal() {
         throw new Error('state.page.cardSet is null');
     }
 
+    const changeSelected = useCallback((cardId: number, selected: boolean) => {
+        actions.addCardsFromOtherCardSetsModal.setSelected({cardId, selected});
+    }, [actions.addCardsFromOtherCardSetsModal]);
+
     const renderAccordionItems = (cardSetWithCardsAndChildren: CardSetWithCardsAndChildren[]) => {
         return cardSetWithCardsAndChildren.map(cardSetWithCardsAndChildren => (
             <Accordion.Item eventKey={cardSetWithCardsAndChildren.cardSet.id.toString()} key={cardSetWithCardsAndChildren.cardSet.id}>
                 <Accordion.Header>{cardSetWithCardsAndChildren.cardSet.name}</Accordion.Header>
                 <Accordion.Body>
                     {cardSetWithCardsAndChildren.children.length === 0 && cardSetWithCardsAndChildren.cards.map(card => (
-                        <CardPreviewSelectable
+                        <MemoizedCardPreviewSelectable
                             thisCardSetId={cardSetWithCardsAndChildren.cardSet.id}
                             uniqueContext={cardSetWithCardsAndChildren.cardSet.id.toString()}
                             key={card.cardWithCardSets.card.id}
                             disabled={card.alreadyInCurrentCardSet}
-                            selected={card.alreadyInCurrentCardSet || card.selected}
+                            selected={card.alreadyInCurrentCardSet || state.addCardsFromOtherCardSetsModal.selectedCardIds.includes(card.cardWithCardSets.card.id)}
                             cardWithCardSets={card.cardWithCardSets}
                             showActionButtons={false}
-                            onDeleteCard={() => {}}
                             beingDeleted={false}
-                            onChange={(selected => actions.addCardsFromOtherCardSetsModal.setSelected({cardId: card.cardWithCardSets.card.id, selected: selected}))}
+                            onChange={changeSelected}
                         />
                     ))}
                     {cardSetWithCardsAndChildren.children.length > 0 && (

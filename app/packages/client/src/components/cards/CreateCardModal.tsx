@@ -35,7 +35,6 @@ function CreateCardModal() {
     const resetFileInput = () => {
         if (inputRef?.current !== null) {
             // 👇️ reset input value
-            console.log('resetting input');
             inputRef.current.value = '';
         }
     };
@@ -90,7 +89,6 @@ function CreateCardModal() {
                                 {state.createCardModal.audioFileDataURL !== null ? <>
                                     <AudioPlayer
                                         src={state.createCardModal.audioFileDataURL}
-                                        onPlay={e => console.log("onPlay")}
                                     />
                                     <Button variant={"danger"} onClick={() => { resetFileInput(); actions.createCardModal.setAudioFile(null); }}>Remove audio</Button>
                                 </> : null}

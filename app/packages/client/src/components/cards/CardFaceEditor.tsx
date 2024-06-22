@@ -7,8 +7,6 @@ type Props = {
 };
 
 const CardFaceEditor = React.forwardRef<EditorInstance, Props>((props: Props, ref: React.Ref<any>) => {
-    console.log('CardFaceEditor');
-
     const editorRef = useRef<EditorInstance | null>(null);
 
     React.useImperativeHandle(ref, () => ({

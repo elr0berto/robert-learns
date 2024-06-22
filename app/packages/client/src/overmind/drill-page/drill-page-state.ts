@@ -124,7 +124,6 @@ export const getInitialDrillPageState = () : DrillPageState => {
             return !state.selectedCardSetIds.every(csid => state.selectedDrillCardSetIds.includes(csid));
         }),
         possibleResumeDrillRunWithNumbers: derived((state: DrillPageState, rootState: typeof config.state) => {
-            console.log('selectedCardSetsChanged', state.selectedCardSetsChanged);
             if (state.possibleResumeDrillRunId === null || state.selectedCardSetsChanged) {
                 return null;
             }

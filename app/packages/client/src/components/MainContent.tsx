@@ -5,8 +5,6 @@ import {Container} from "react-bootstrap";
 function MainContent() {
     const state = useAppState();
 
-    console.log('state.page.page', state.page.page);
-
     if (state.page.page === null) {
         return null;
     }

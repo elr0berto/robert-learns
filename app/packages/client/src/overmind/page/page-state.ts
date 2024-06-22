@@ -73,7 +73,6 @@ export const state: PageState = {
         });
     }),
     workspacesWithCardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
-        console.log('page-state workspacesWithCardSetsWithChildren rootState.data.workspacesWithCardSetsWithChildren', rootState.data.workspacesWithCardSetsWithChildren);
         return rootState.data.workspacesWithCardSetsWithChildren.filter(wwc => {
             return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
         });
@@ -142,7 +141,6 @@ export const state: PageState = {
         return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
     }),
     cardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
-        console.log('page-state cardSetsWithChildren rootState.data.cardSetsWithChildren', rootState.data.cardSetsWithChildren);
         return rootState.data.cardSetsWithChildren.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
     }),
     cardSetWithCardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {

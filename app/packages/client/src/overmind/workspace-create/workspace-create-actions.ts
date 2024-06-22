@@ -118,8 +118,5 @@ export const deleteWorkspaceConfirm = async ({state,effects,actions} : Context) 
     });
 
     actions.data.deleteWorkspace(workspaceId);
-    console.log('deleted workspace from data!', state.data.workspaces);
-    console.log('deleted workspace from data!!', state.page.workspaceId);
     effects.page.router.goTo(pageUrls[Pages.Front].url());
-
 }

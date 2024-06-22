@@ -5,7 +5,6 @@ import {CardSetWithChildren, CardWithCardSets} from "../data/data-state";
 
 type CardFromOtherCardSet = {
     cardWithCardSets: CardWithCardSets;
-    selected: boolean;
     alreadyInCurrentCardSet: boolean;
 }
 
@@ -54,7 +53,6 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
                         }
                         return {
                             cardWithCardSets: cwcs,
-                            selected: state.selectedCardIds.includes(cwcs.card.id),
                             alreadyInCurrentCardSet: rootState.page.cardSetWithCardsWithCardSets.cardsWithCardSets.map(c => c.card.id).includes(cwcs.card.id),
                         }
                     }),
