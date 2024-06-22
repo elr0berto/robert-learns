@@ -16,10 +16,11 @@ type Props = {
     thisCardSetId?: number;
     showCardSetsPreview: boolean;
     onEditCardSets: (card: Card) => void;
+    onClick?: () => void;
 }
 
 function CardPreview(props: Props) {
-    return <div className="card-preview border p-2">
+    return <div className="card-preview border p-2" onClick={props.onClick ? props.onClick : () => {}}>
         <CardPreviewFace content={props.cardWithCardSets.card.front?.content ?? ''}/>
         <hr/>
         <CardPreviewFace content={props.cardWithCardSets.card.back?.content ?? ''}/>

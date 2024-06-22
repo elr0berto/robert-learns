@@ -163,7 +163,6 @@ export const getInitialDataState = () : DataState => ({
         }));
     }),
     cardSetsWithCardsWithCardSets: derived((state: DataState) => {
-        console.log('data-state cardSetsWithCardsWithCardSets');
         return state.cardSets.map(cs => ({
             cardSet: cs,
             cardsWithCardSets: state.cardSetCards.filter(csc => csc.cardSetId === cs.id && state.cards.find(c => c.id === csc.cardId) !== undefined)
@@ -195,11 +194,9 @@ export const getInitialDataState = () : DataState => ({
         }));
     }),
     cardSetsWithChildren: derived((state: DataState) => {
-        console.log('data-state cardSetsWithChildren');
         return buildNestedCardSets(state.cardSets, state.cardSetLinks);
     }),
     workspacesWithCardSetsWithChildren: derived((state: DataState) => {
-        console.log('data-state cardSetsWithChildrenworkspacesWithCardSetsWithChildren');
         return state.workspaces.map(w => ({
             workspace: w,
             cardSetsWithChildren: buildNestedCardSets(state.cardSets.filter(cs => cs.workspaceId === w.id), state.cardSetLinks),

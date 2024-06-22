@@ -123,7 +123,6 @@ export const state: PageState = {
             return null;
         }
 
-        console.log('page-state cardSetWithChildren state.flatCardSetsWithChildren', state.flatCardSetsWithChildren);
         const cardSetWithChildren = state.flatCardSetsWithChildren.find(cs => cs.cardSet.id === state.cardSetId);
         if (cardSetWithChildren === undefined) {
             throw new Error('CardSetWithChildren with cardSetId ' + state.cardSetId + ' not found.');
