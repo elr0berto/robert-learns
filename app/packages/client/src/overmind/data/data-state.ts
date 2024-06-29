@@ -21,9 +21,25 @@ export type CardWithCardSets = {
     cardSets: CardSet[];
 }
 
+export type CardSetWithFlatAncestorCardSets = {
+    cardSet: CardSet;
+    flatAncestorCardSets: CardSet[];
+}
+
+export type CardWithCardSetsWithFlatAncestorCardSets = {
+    card: Card;
+    cardSetsWithFlatAncestorCardSets: CardSetWithFlatAncestorCardSets[];
+}
+
 export type CardSetWithCardsWithCardSets = {
     cardSet: CardSet;
     cardsWithCardSets: CardWithCardSets[];
+}
+
+export type CardSetWithCardsWithCardSetsWithFlatAncestorCardSets = {
+    cardSet: CardSet;
+    cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
+
 }
 
 export type WorkspaceWithWorkspaceUsers = {
@@ -94,7 +110,10 @@ type DataState = {
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
     readonly cardSetsWithCards: CardSetWithCards[];
     readonly cardsWithCardSets: CardWithCardSets[];
+    readonly cardSetsWithFlatAncestorCardSets: CardSetWithFlatAncestorCardSets[];
+    readonly cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
     readonly cardSetsWithCardsWithCardSets: CardSetWithCardsWithCardSets[];
+    readonly cardSetsWithCardsWithCardSetsWithFlatAncestorCardSets: CardSetWithCardsWithCardSetsWithFlatAncestorCardSets[];
     readonly drillsWithDrillCardSets: DrillWithDrillCardSets[];
     readonly cardSetsWithChildren: CardSetWithChildren[];
     readonly workspacesWithCardSetsWithChildren: WorkspaceWithCardSetsWithChildren[];
@@ -162,6 +181,39 @@ export const getInitialDataState = () : DataState => ({
             }),
         }));
     }),
+    cardSetsWithFlatAncestorCardSets: derived((state: DataState) => {
+        const getAncestorCardSets = (cardSetId: number, ancestors: CardSet[] = []): CardSet[] => {
+            const parentLinks = state.cardSetLinks.filter(link => link.includedCardSetId === cardSetId);
+            parentLinks.forEach(link => {
+                const parentCardSet = state.cardSets.find(cs => cs.id === link.parentCardSetId);
+                if (parentCardSet) {
+                    ancestors.push(parentCardSet);
+                    getAncestorCardSets(parentCardSet.id, ancestors);
+                } else {
+                    throw new Error(`Parent card set with id ${link.parentCardSetId} not found`);
+                }
+            });
+
+            return ancestors;
+        };
+
+        return state.cardSets.map(cs => ({
+            cardSet: cs,
+            flatAncestorCardSets: getAncestorCardSets(cs.id),
+        }));
+    }),
+    cardsWithCardSetsWithFlatAncestorCardSets: derived((state: DataState) => {
+        return state.cardsWithCardSets.map(cwcs => ({
+            card: cwcs.card,
+            cardSetsWithFlatAncestorCardSets: cwcs.cardSets.map(cs => {
+                const ancestorData = state.cardSetsWithFlatAncestorCardSets.find(csfacs => csfacs.cardSet.id === cs.id);
+                if (ancestorData === undefined) {
+                    throw new Error(`CardSet with id ${cs.id} not found`);
+                }
+                return ancestorData;
+            }),
+        }));
+    }),
     cardSetsWithCardsWithCardSets: derived((state: DataState) => {
         return state.cardSets.map(cs => ({
             cardSet: cs,
@@ -185,6 +237,18 @@ export const getInitialDataState = () : DataState => ({
                     };
                 })
                 .filter(c => c !== null),
+        }));
+    }),
+    cardSetsWithCardsWithCardSetsWithFlatAncestorCardSets: derived((state: DataState) => {
+        return state.cardSetsWithCardsWithCardSets.map(cs => ({
+            cardSet: cs.cardSet,
+            cardsWithCardSetsWithFlatAncestorCardSets: cs.cardsWithCardSets.map(cwcs => {
+                const ret = state.cardsWithCardSetsWithFlatAncestorCardSets.find(x => x.card.id === cwcs.card.id);
+                if (ret === undefined) {
+                    throw new Error('Card not found: ' + cwcs.card.id);
+                }
+                return ret;
+            }),
         }));
     }),
     drillsWithDrillCardSets: derived((state: DataState) => {

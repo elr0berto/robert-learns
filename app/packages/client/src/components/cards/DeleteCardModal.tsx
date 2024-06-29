@@ -2,14 +2,17 @@ import {Alert, Button, Modal} from "react-bootstrap";
 import React from "react";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import CardPreview from "./CardPreview";
-import {CardWithCardSets} from "../../overmind/data/data-state";
+import {
+    CardSetWithFlatAncestorCardSets,
+    CardWithCardSetsWithFlatAncestorCardSets
+} from "../../overmind/data/data-state";
 
 type Props = {
     onClose: () => void,
     onConfirm: (allCardSets: boolean) => void,
-    cardWithCardSets: CardWithCardSets,
+    cardWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets,
     cardSet: CardSet,
-    cardBeingDeletedExistsInOtherCardSets: CardSet[],
+    cardBeingDeletedExistsInOtherCardSets: CardSetWithFlatAncestorCardSets[],
     confirming: boolean;
     loading: boolean;
 }
@@ -25,7 +28,7 @@ function DeleteCardModal(props: Props) {
                 <>
                     <CardPreview
                         thisCardSetId={props.cardSet.id}
-                        cardWithCardSets={props.cardWithCardSets}
+                        cardWithCardSetsWithFlatAncestorCardSets={props.cardWithCardSetsWithFlatAncestorCardSets}
                         showActionButtons={false}
                         onDeleteCard={() => {}}
                         onEditCard={() => {}}
@@ -35,7 +38,7 @@ function DeleteCardModal(props: Props) {
                     <hr/>
                     {props.cardBeingDeletedExistsInOtherCardSets.length === 0 ?
                         <Alert variant={'danger'}>This card does not exists in any other card-sets! Deleting it means it will be permanently gone! Are you sure?</Alert> :
-                        <Alert variant={'warning'}>This card is also in the following card-sets: <strong>{props.cardBeingDeletedExistsInOtherCardSets.map(cs => cs.name).join(', ')}</strong>.<br/> Would you like to delete it from card-set <i>{props.cardSet.name}</i> or delete it from all card-sets and deleting the card permanently?</Alert>}
+                        <Alert variant={'warning'}>This card is also in the following card-sets: <strong>{props.cardBeingDeletedExistsInOtherCardSets.map(cs => cs.cardSet.name).join(', ')}</strong>.<br/> Would you like to delete it from card-set <i>{props.cardSet.name}</i> or delete it from all card-sets and deleting the card permanently?</Alert>}
                 </>
             }
         </Modal.Body>

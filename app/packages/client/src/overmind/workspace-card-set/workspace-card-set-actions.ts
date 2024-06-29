@@ -92,7 +92,7 @@ export const deleteCardCancel = async ({ state }: Context) => {
 
 export const sortCardSet = async ({ state }: Context) => {
     state.workspaceCardSet.sorting = true;
-    state.workspaceCardSet.newSorting = state.workspaceCardSet.cardsWithCardSets.map(cwcs => cwcs.card.id);
+    state.workspaceCardSet.newSorting = state.workspaceCardSet.cardsWithCardSetsWithFlatAncestorCardSets.map(cwcs => cwcs.card.id);
 }
 
 export type SortDirection = 'first' | 'last' | 'up' | 'down';

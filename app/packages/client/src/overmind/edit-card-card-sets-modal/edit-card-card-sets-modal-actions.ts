@@ -4,10 +4,10 @@ import {getInitialEditCardCardSetsModalState} from "./edit-card-card-sets-modal-
 export const open = async ({ state, effects, actions }: Context, cardId: number) => {
     state.editCardCardSetsModal = getInitialEditCardCardSetsModalState();
     state.editCardCardSetsModal.cardId = cardId;
-    if (state.editCardCardSetsModal.cardWithCardSets === null) {
+    if (state.editCardCardSetsModal.cardWithCardSetsWithFlatAncestorCardSets === null) {
         throw new Error('Card with card sets is null');
     }
-    state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.cardWithCardSets.cardSets.map(cs => cs.id);
+    state.editCardCardSetsModal.selectedCardSetIds = state.editCardCardSetsModal.cardWithCardSetsWithFlatAncestorCardSets.cardSetsWithFlatAncestorCardSets.map(cs => cs.cardSet.id);
     state.editCardCardSetsModal.loading = true;
     if (state.page.workspaceId === null) {
         throw new Error('Workspace ID is null');
@@ -38,13 +38,13 @@ export const save = async ({ state, effects, actions }: Context,) => {
     }
     const resp = await effects.api.cardSetCards.updateCardCardSets({cardId: state.editCardCardSetsModal.cardId, cardSetIds: state.editCardCardSetsModal.selectedCardSetIds});
 
-    if (state.editCardCardSetsModal.cardWithCardSets === null) {
+    if (state.editCardCardSetsModal.cardWithCardSetsWithFlatAncestorCardSets === null) {
         throw new Error('Card with card sets is null');
     }
     if (resp.cardSetCards === null) {
         throw new Error('Card set cards is null');
     }
-    actions.data.addOrUpdateCardSetCardsForCard({card: state.editCardCardSetsModal.cardWithCardSets.card, cardSetCards: resp.cardSetCards });
+    actions.data.addOrUpdateCardSetCardsForCard({card: state.editCardCardSetsModal.cardWithCardSetsWithFlatAncestorCardSets.card, cardSetCards: resp.cardSetCards });
 
     state.editCardCardSetsModal.submitting = false;
     state.editCardCardSetsModal.cardId = null;

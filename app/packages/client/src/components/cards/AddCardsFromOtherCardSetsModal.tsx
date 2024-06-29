@@ -29,10 +29,10 @@ function AddCardsFromOtherCardSetsModal() {
                         <MemoizedCardPreviewSelectable
                             thisCardSetId={cardSetWithCardsAndChildren.cardSet.id}
                             uniqueContext={cardSetWithCardsAndChildren.cardSet.id.toString()}
-                            key={card.cardWithCardSets.card.id}
+                            key={card.cardWithCardSetsWithFlatAncestorCardSets.card.id}
                             disabled={card.alreadyInCurrentCardSet}
-                            selected={card.alreadyInCurrentCardSet || state.addCardsFromOtherCardSetsModal.selectedCardIds.includes(card.cardWithCardSets.card.id)}
-                            cardWithCardSets={card.cardWithCardSets}
+                            selected={card.alreadyInCurrentCardSet || state.addCardsFromOtherCardSetsModal.selectedCardIds.includes(card.cardWithCardSetsWithFlatAncestorCardSets.card.id)}
+                            cardWithCardSetsWithFlatAncestorCardSets={card.cardWithCardSetsWithFlatAncestorCardSets}
                             showActionButtons={false}
                             beingDeleted={false}
                             onChange={changeSelected}

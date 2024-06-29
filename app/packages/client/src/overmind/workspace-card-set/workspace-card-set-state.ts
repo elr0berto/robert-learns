@@ -1,7 +1,9 @@
 import {derived} from "overmind";
 import {config} from "../index.js";
-import {CardSet } from "@elr0berto/robert-learns-shared/dist/api/models";
-import {CardWithCardSets} from "../data/data-state";
+import {
+    CardSetWithFlatAncestorCardSets,
+    CardWithCardSetsWithFlatAncestorCardSets
+} from "../data/data-state";
 
 type WorkspaceCardSetState = {
     deleteCardSetModalOpen: boolean;
@@ -9,12 +11,12 @@ type WorkspaceCardSetState = {
     deleteCardSetError: string | null;
     loadingDeleteCardModal: boolean;
     cardIdBeingDeleted: number | null;
-    readonly cardWithCardSetsBeingDeleted: CardWithCardSets | null;
-    readonly cardBeingDeletedExistsInOtherCardSets: CardSet[];
+    readonly cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted: CardWithCardSetsWithFlatAncestorCardSets | null;
+    readonly cardBeingDeletedExistsInOtherCardSets: CardSetWithFlatAncestorCardSets[];
     confirmingDeleteCard: boolean;
     readonly showConfirmDeleteModal: boolean;
     sorting: boolean;
-    readonly cardsWithCardSets: CardWithCardSets[];
+    readonly cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
     newSorting: number[] | null;
     savingSorting: boolean;
 }
@@ -25,19 +27,19 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
     deleteCardSetError: null,
     loadingDeleteCardModal: false,
     cardIdBeingDeleted: null,
-    cardWithCardSetsBeingDeleted: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
+    cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
         if (state.cardIdBeingDeleted === null) {
             return null;
         }
 
-        const ret = rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardIdBeingDeleted);
+        const ret = rootState.page.cardsWithCardSetsWithFlatAncestorCardSets.find(c => c.card.id === state.cardIdBeingDeleted);
         if (ret === undefined) {
             throw new Error('Card not found: ' + state.cardIdBeingDeleted);
         }
         return ret;
     }),
     cardBeingDeletedExistsInOtherCardSets: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
-        if (state.cardWithCardSetsBeingDeleted === null) {
+        if (state.cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted === null) {
             return [];
         }
 
@@ -45,24 +47,24 @@ export const getInitialWorkspaceCardSetState = (): WorkspaceCardSetState => ({
         if (cardSet === null) {
             throw new Error('Card set is null');
         }
-        return state.cardWithCardSetsBeingDeleted.cardSets.filter(cs => cs.id !== cardSet.id);
+        return state.cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted.cardSetsWithFlatAncestorCardSets.filter(cs => cs.cardSet.id !== cardSet.id);
     }),
     confirmingDeleteCard: false,
     showConfirmDeleteModal: derived((state: WorkspaceCardSetState) => {
         return state.cardIdBeingDeleted !== null;
     }),
     sorting: false,
-    cardsWithCardSets: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
+    cardsWithCardSetsWithFlatAncestorCardSets: derived((state: WorkspaceCardSetState, rootState: typeof config.state) => {
         if (state.newSorting !== null) {
             return state.newSorting.map(id => {
-                const cardWithCardSets = rootState.page.cardsWithCardSets.find(cwcs => cwcs.card.id === id);
-                if (cardWithCardSets === undefined) {
+                const cardWithCardSetsWithFlatAncestorCardSets = rootState.page.cardsWithCardSetsWithFlatAncestorCardSets.find(cwcs => cwcs.card.id === id);
+                if (cardWithCardSetsWithFlatAncestorCardSets === undefined) {
                     throw new Error('Could not find card with card sets');
                 }
-                return cardWithCardSets;
+                return cardWithCardSetsWithFlatAncestorCardSets;
             });
         }
-        return rootState.page.cardsWithCardSets;
+        return rootState.page.cardsWithCardSetsWithFlatAncestorCardSets;
     }),
     newSorting: null,
     savingSorting: false,

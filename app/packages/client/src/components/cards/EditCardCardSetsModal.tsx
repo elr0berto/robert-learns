@@ -51,7 +51,7 @@ function EditCardCardSetsModal() {
         return null;
     }
 
-    if (state.editCardCardSetsModal.cardWithCardSets === null) {
+    if (state.editCardCardSetsModal.cardWithCardSetsWithFlatAncestorCardSets === null) {
         throw new Error('state.editCardCardSetsModal.cardWithCardSets is null');
     }
 
@@ -64,7 +64,7 @@ function EditCardCardSetsModal() {
                 <Row>
                     <Col>
                         <CardPreview
-                            cardWithCardSets={state.editCardCardSetsModal.cardWithCardSets}
+                            cardWithCardSetsWithFlatAncestorCardSets={state.editCardCardSetsModal.cardWithCardSetsWithFlatAncestorCardSets}
                             showActionButtons={false}
                             onDeleteCard={() => {}}
                             beingDeleted={false}

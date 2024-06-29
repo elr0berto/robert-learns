@@ -79,7 +79,7 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
     let somethingChanged = false;
     do {
         somethingChanged = false;
-        state.data.flatCardSetsWithChildrenIds.filter(cs => cs.childrenIds.length > 0).forEach(cs => {
+        for (const cs of state.drillPage.flatCardSetsWithChildrenIds.filter(cs => cs.childrenIds.length > 0)) {
             if (cs.childrenIds.every(csid => newSelectedCardSetIds.includes(csid))) {
                 if (!newSelectedCardSetIds.includes(cs.cardSet.id)) {
                     newSelectedCardSetIds.push(cs.cardSet.id);
@@ -88,7 +88,7 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
             } else {
                 newSelectedCardSetIds = newSelectedCardSetIds.filter(item => item !== cs.cardSet.id);
             }
-        });
+        }
     } while (somethingChanged);
 
     state.drillPage.selectedCardSetIds = newSelectedCardSetIds;

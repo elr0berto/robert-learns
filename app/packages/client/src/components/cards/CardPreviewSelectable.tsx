@@ -2,11 +2,11 @@ import React from 'react';
 import {Card} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Form} from "react-bootstrap";
 import CardPreview from "./CardPreview";
-import {CardWithCardSets} from "../../overmind/data/data-state";
+import {CardWithCardSetsWithFlatAncestorCardSets} from "../../overmind/data/data-state";
 
 type Props = {
     uniqueContext: string;
-    cardWithCardSets: CardWithCardSets;
+    cardWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets;
     onDeleteCard?: (card: Card) => void;
     beingDeleted: boolean;
     showActionButtons: boolean;
@@ -22,22 +22,22 @@ function CardPreviewSelectable(props: Props) {
     >
         <CardPreview
             thisCardSetId={props.thisCardSetId}
-            cardWithCardSets={props.cardWithCardSets}
+            cardWithCardSetsWithFlatAncestorCardSets={props.cardWithCardSetsWithFlatAncestorCardSets}
             showActionButtons={props.showActionButtons}
             onEditCard={() => {}}
             onDeleteCard={props.onDeleteCard ? props.onDeleteCard : () => {}}
             beingDeleted={props.beingDeleted}
             showCardSetsPreview={false}
             onEditCardSets={() => {}}
-            onClick={() => props.onChange(props.cardWithCardSets.card.id, !props.selected)}
+            onClick={() => props.onChange(props.cardWithCardSetsWithFlatAncestorCardSets.card.id, !props.selected)}
         />
-        <Form.Group className="mb-3" controlId={'checkbox-card-'+props.uniqueContext+'-'+props.cardWithCardSets.card.id}>
+        <Form.Group className="mb-3" controlId={'checkbox-card-'+props.uniqueContext+'-'+props.cardWithCardSetsWithFlatAncestorCardSets.card.id}>
             <Form.Check
                 type="checkbox"
                 label={"Add card" + (props.disabled ? " (already in current card set)" : '')}
                 checked={props.selected}
                 disabled={props.disabled}
-                onChange={event=> props.onChange(props.cardWithCardSets.card.id, event.target.checked)}
+                onChange={event=> props.onChange(props.cardWithCardSetsWithFlatAncestorCardSets.card.id, event.target.checked)}
             />
         </Form.Group>
     </div>;

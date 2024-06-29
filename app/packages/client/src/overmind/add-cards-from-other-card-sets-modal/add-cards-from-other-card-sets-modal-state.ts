@@ -1,10 +1,10 @@
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
-import {CardSetWithChildren, CardWithCardSets} from "../data/data-state";
+import {CardSetWithChildren, CardWithCardSetsWithFlatAncestorCardSets} from "../data/data-state";
 
 type CardFromOtherCardSet = {
-    cardWithCardSets: CardWithCardSets;
+    cardWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets;
     alreadyInCurrentCardSet: boolean;
 }
 
@@ -41,19 +41,19 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
                 throw new Error('Card set is null');
             }
             return cardSetsWithChildren.filter(cs => cs.cardSet.id !== cardSet.id).map(cs => {
-                const cardSetWithCardsWithCardSets = rootState.data.cardSetsWithCardsWithCardSets.find(cscwcs => cscwcs.cardSet.id === cs.cardSet.id);
-                if (cardSetWithCardsWithCardSets === undefined) {
+                const cardSetWithCardsWithCardSetsWithFlatAncestorCardSets = rootState.data.cardSetsWithCardsWithCardSetsWithFlatAncestorCardSets.find(cscwcs => cscwcs.cardSet.id === cs.cardSet.id);
+                if (cardSetWithCardsWithCardSetsWithFlatAncestorCardSets === undefined) {
                     throw new Error(`Could not find card set with cards with card sets for card set ${cs.cardSet.id}`);
                 }
                 return {
                     cardSet: cs.cardSet,
-                    cards: cardSetWithCardsWithCardSets.cardsWithCardSets.map(cwcs => {
-                        if (rootState.page.cardSetWithCardsWithCardSets === null) {
+                    cards: cardSetWithCardsWithCardSetsWithFlatAncestorCardSets.cardsWithCardSetsWithFlatAncestorCardSets.map(cwcs => {
+                        if (rootState.page.cardSetWithCardsWithCardSetsWithFlatAncestorCardSets === null) {
                             throw new Error(`Could not find current card set with cards`);
                         }
                         return {
-                            cardWithCardSets: cwcs,
-                            alreadyInCurrentCardSet: rootState.page.cardSetWithCardsWithCardSets.cardsWithCardSets.map(c => c.card.id).includes(cwcs.card.id),
+                            cardWithCardSetsWithFlatAncestorCardSets: cwcs,
+                            alreadyInCurrentCardSet: rootState.page.cardSetWithCardsWithCardSetsWithFlatAncestorCardSets.cardsWithCardSetsWithFlatAncestorCardSets.map(c => c.card.id).includes(cwcs.card.id),
                         }
                     }),
                     children: getChildren(cs.children)

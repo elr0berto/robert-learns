@@ -31,7 +31,7 @@ function WorkspaceCardSetPage() {
     }
 
     const cardSet : CardSet = state.page.cardSet;
-    const hasCards = state.workspaceCardSet.cardsWithCardSets.length > 0;
+    const hasCards = state.workspaceCardSet.cardsWithCardSetsWithFlatAncestorCardSets.length > 0;
     const hasChildren = state.page.cardSetWithChildren.children.length > 0;
 
     return <Container className="mb-5">
@@ -58,25 +58,25 @@ function WorkspaceCardSetPage() {
                 <CardList
                     thisCardSetId={state.page.cardSet.id}
                     showActionButtons={state.permission.editCardSet}
-                    cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsBeingDeleted?.card ?? null}
+                    cardBeingDeleted={state.workspaceCardSet.cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted?.card ?? null}
                     onDeleteCard={card => actions.workspaceCardSet.deleteCardStart(card)}
                     onEditCard={card => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: card})}
                     onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
-                    cardsWithCardSets={state.workspaceCardSet.cardsWithCardSets}
+                    cardsWithCardSetsWithFlatAncestorCardSets={state.workspaceCardSet.cardsWithCardSetsWithFlatAncestorCardSets}
                     sorting={state.workspaceCardSet.sorting}
                     onSortCard={(cardId, direction) => actions.workspaceCardSet.sortCard({cardId, direction})}
                 />
             </>
         }
 
-        {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsBeingDeleted !== null ? <DeleteCardModal
+        {state.workspaceCardSet.showConfirmDeleteModal && state.workspaceCardSet.cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted !== null ? <DeleteCardModal
             loading={state.workspaceCardSet.loadingDeleteCardModal}
             cardSet={state.page.cardSet}
             onClose={() => actions.workspaceCardSet.deleteCardCancel()}
             onConfirm={(allCardSets: boolean) => actions.workspaceCardSet.deleteCardConfirm(allCardSets)}
             confirming={state.workspaceCardSet.confirmingDeleteCard}
             cardBeingDeletedExistsInOtherCardSets={state.workspaceCardSet.cardBeingDeletedExistsInOtherCardSets}
-            cardWithCardSets={state.workspaceCardSet.cardWithCardSetsBeingDeleted}/> : null}
+            cardWithCardSetsWithFlatAncestorCardSets={state.workspaceCardSet.cardWithCardSetsWithFlatAncestorCardSetsBeingDeleted}/> : null}
 
         <AddCardsFromOtherCardSetsModal/>
         <EditCardCardSetsModal/>

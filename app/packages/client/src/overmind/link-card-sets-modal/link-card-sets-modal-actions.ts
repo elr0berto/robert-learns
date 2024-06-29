@@ -1,6 +1,5 @@
 import {Context} from "..";
 import {getInitialLinkCardSetsModalState} from "./link-card-sets-modal-state";
-import {Pages, pageUrls} from "../../page-urls";
 
 export const open = async ({ state, actions }: Context, cardSetId: number) => {
     state.linkCardSetsModal = getInitialLinkCardSetsModalState(cardSetId);

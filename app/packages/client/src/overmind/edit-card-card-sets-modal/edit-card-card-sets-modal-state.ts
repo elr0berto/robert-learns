@@ -1,8 +1,7 @@
-import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
 import {validateUpdateCardCardSetsRequest} from "@elr0berto/robert-learns-shared/dist/api/card-set-cards";
-import {CardSetWithChildren, CardWithCardSets} from "../data/data-state";
+import {CardSetWithChildren, CardWithCardSetsWithFlatAncestorCardSets} from "../data/data-state";
 
 
 type EditCardCardSetsModalState = {
@@ -11,7 +10,7 @@ type EditCardCardSetsModalState = {
     submitting: boolean;
     submitError: string | null;
     selectedCardSetIds: number[];
-    readonly cardWithCardSets: CardWithCardSets | null;
+    readonly cardWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets | null;
     readonly cardSetsWithChildren: CardSetWithChildren[];
     readonly open: boolean;
     readonly formDisabled: boolean;
@@ -26,11 +25,11 @@ export const getInitialEditCardCardSetsModalState = (): EditCardCardSetsModalSta
     submitting: false,
     submitError: null,
     selectedCardSetIds: [],
-    cardWithCardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
+    cardWithCardSetsWithFlatAncestorCardSets: derived((state: EditCardCardSetsModalState, rootState: typeof config.state) => {
         if (state.cardId === null) {
             return null;
         }
-        const ret = rootState.page.cardsWithCardSets.find(c => c.card.id === state.cardId);
+        const ret = rootState.page.cardsWithCardSetsWithFlatAncestorCardSets.find(c => c.card.id === state.cardId);
         if (ret === undefined) {
             throw new Error('Card not found: ' + state.cardId);
         }

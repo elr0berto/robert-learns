@@ -9,8 +9,8 @@ import {
 import {derived} from "overmind";
 import {config} from "../index";
 import {
-    CardSetWithCardsWithCardSets, CardSetWithChildren,
-    CardWithCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
+    CardSetWithCardsWithCardSets, CardSetWithCardsWithCardSetsWithFlatAncestorCardSets, CardSetWithChildren,
+    CardWithCardSets, CardWithCardSetsWithFlatAncestorCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
     WorkspaceWithCardSetsCount, WorkspaceWithCardSetsWithChildren, WorkspaceWithCardSetsWithChildrenIds,
     WorkspaceWithWorkspaceUsers
 } from "../data/data-state";
@@ -40,8 +40,10 @@ type PageState = {
     readonly cardSetsWithChildren: CardSetWithChildren[];
     readonly flatCardSetsWithChildren: CardSetWithChildren[];
     readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
+    readonly cardSetWithCardsWithCardSetsWithFlatAncestorCardSets: CardSetWithCardsWithCardSetsWithFlatAncestorCardSets | null;
     readonly cards: Card[];
     readonly cardsWithCardSets: CardWithCardSets[];
+    readonly cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
     readonly drills: Drill[];
     readonly drillsWithDrillCardSets: DrillWithDrillCardSets[];
 }
@@ -149,6 +151,12 @@ export const state: PageState = {
         }
         return rootState.data.cardSetsWithCardsWithCardSets.find(cs => cs.cardSet.id === state.cardSetId) ?? null;
     }),
+    cardSetWithCardsWithCardSetsWithFlatAncestorCardSets: derived((state: PageState, rootState: typeof config.state) => {
+        if (state.cardSetId === null) {
+            return null;
+        }
+        return rootState.data.cardSetsWithCardsWithCardSetsWithFlatAncestorCardSets.find(cs => cs.cardSet.id === state.cardSetId) ?? null;
+    }),
     cards: derived((state: PageState) => {
         if (state.cardSetId === null) {
             return [];
@@ -160,6 +168,12 @@ export const state: PageState = {
             return [];
         }
         return state.cardSetWithCardsWithCardSets?.cardsWithCardSets ?? [];
+    }),
+    cardsWithCardSetsWithFlatAncestorCardSets: derived((state: PageState) => {
+        if (state.cardSetId === null) {
+            return [];
+        }
+        return state.cardSetWithCardsWithCardSetsWithFlatAncestorCardSets?.cardsWithCardSetsWithFlatAncestorCardSets ?? [];
     }),
     drills: derived((state: PageState, rootState: typeof config.state) => {
         return rootState.data.drills;
