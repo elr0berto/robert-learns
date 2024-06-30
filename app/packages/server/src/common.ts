@@ -211,6 +211,7 @@ export const getCardSetData = (cardSet: PrismaCardSet) : CardSetData => {
         name: cardSet.name,
         description: cardSet.description,
         workspaceId: cardSet.workspaceId,
+        order: cardSet.order,
     };
 }
 
@@ -228,6 +229,7 @@ export const getCardSetLinkData = (cardSetLink: PrismaCardSetLink) : CardSetLink
         dataType: true,
         parentCardSetId: cardSetLink.parentCardSetId,
         includedCardSetId: cardSetLink.includedCardSetId,
+        order: cardSetLink.order,
     };
 }
 

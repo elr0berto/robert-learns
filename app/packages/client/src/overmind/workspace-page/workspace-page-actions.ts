@@ -1,7 +1,10 @@
 import { Context } from '..';
-import {CardSetIdsPerCardSetId, CardSetIdsPerCardSetIdKeyType} from "./workspace-page-state";
 import {CardSetWithChildren} from "../data/data-state";
 import {SortDirection, sortWithDirection} from "@elr0berto/robert-learns-shared/dist/common";
+import {
+    CardSetIdsPerCardSetId,
+    CardSetIdsPerCardSetIdKeyType
+} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 const convertCardSetIdsPerCardSetId = (cardSetsWithChildren: CardSetWithChildren[]): CardSetIdsPerCardSetId => {
     const result: CardSetIdsPerCardSetId = {0: []};
@@ -53,6 +56,9 @@ export const sortCardSet = async ({ state }: Context, {cardSetId, parentId, dire
 }
 
 export const sortCardSetsSave = async ({ state, effects, actions }: Context) => {
+    if (state.workspacePage.newSorting === null) {
+        throw new Error('newSorting is null');
+    }
     state.workspacePage.savingSorting = true;
     await effects.api.cardSets.updateCardSetsOrder({
         newSorting: state.workspacePage.newSorting,

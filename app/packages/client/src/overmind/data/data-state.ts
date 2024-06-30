@@ -319,7 +319,7 @@ export const getInitialDataState = () : DataState => ({
     }),
 });
 
-const buildNestedCardSets = (cardSets: CardSet[], cardSetLinks : CardSetLink[], parentId : number | null  = null) : CardSetWithChildren[] => {
+const buildNestedCardSets = (cardSets: CardSet[], cardSetLinks : CardSetLink[], parentId : number | null = null) : CardSetWithChildren[] => {
     return cardSets
         .filter(cs => {
             if (parentId === null) {
@@ -332,7 +332,19 @@ const buildNestedCardSets = (cardSets: CardSet[], cardSetLinks : CardSetLink[], 
             cardSet: cs,
             children: buildNestedCardSets(cardSets, cardSetLinks, cs.id)
         }))
-        .sort((a, b) => b.children.length - a.children.length);
+        .sort((a, b) => {
+            if (parentId === null) {
+                // Top-level card sets are sorted by cardSet.order
+                return b.cardSet.order - a.cardSet.order;
+            }
+            // Nested card sets are sorted by card-set-link order
+            const aLink = cardSetLinks.find(csl => csl.parentCardSetId === parentId && csl.includedCardSetId === a.cardSet.id);
+            const bLink = cardSetLinks.find(csl => csl.parentCardSetId === parentId && csl.includedCardSetId === b.cardSet.id);
+            if (aLink === undefined || bLink === undefined) {
+                throw new Error('CardSetLink not found');
+            }
+            return bLink.order - aLink.order;
+        });
 };
 
 export const state: DataState = getInitialDataState();

@@ -5,6 +5,7 @@ export type CardSetData = DataType & {
     name: string;
     description: string;
     workspaceId: number;
+    order: number;
 }
 
 export class CardSet {
@@ -12,11 +13,13 @@ export class CardSet {
     name: string;
     description: string;
     workspaceId: number;
+    order: number;
 
     constructor(data: CardSetData) {
         this.id = data.id;
         this.name = data.name;
         this.description = data.description;
         this.workspaceId = data.workspaceId;
+        this.order = data.order;
     }
 }

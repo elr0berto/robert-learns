@@ -1,6 +1,10 @@
 import {CardSetWithChildren} from "../data/data-state";
 import {derived} from "overmind";
 import {config} from "../index";
+import {
+    CardSetIdsPerCardSetId,
+    CardSetIdsPerCardSetIdKeyType
+} from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
 
 type WorkspacePageState = {

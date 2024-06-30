@@ -337,7 +337,9 @@ cardSets.post('/update-card-sets-order', async (req: Request<unknown, unknown, U
         }
 
         const workspaceIds = cardSets.map(cs => cs.workspaceId);
-        if (workspaceIds.length !== 1) {
+        // get distinct workspaceIds
+        const uniqueWorkspaceIds = [...new Set(workspaceIds)];
+        if (uniqueWorkspaceIds.length !== 1) {
             logWithRequest('error', req, 'Card sets are in different workspaces', {workspaceIds});
             return res.json({
                 dataType: true,
@@ -346,7 +348,7 @@ cardSets.post('/update-card-sets-order', async (req: Request<unknown, unknown, U
             });
 
         }
-        const workspaceId = workspaceIds[0];
+        const workspaceId = uniqueWorkspaceIds[0];
 
         if (!await checkPermissions({
             user: signedInUser,
@@ -361,10 +363,90 @@ cardSets.post('/update-card-sets-order', async (req: Request<unknown, unknown, U
             });
         }
 
-        dsdasdasdasdsad
-        // check that the card-set-links exists for each list of card-set-ids except root.
-        // start with saving root-card-sets first in the CardSet.order column
-        // then save the children card-sets in their card-set-links.
+        for (const parentId of Object.keys(req.body.newSorting).map(id => parseInt(id))) {
+            if (parentId === 0) {
+                // check that there are no card-set-links for the root card-sets
+                const cardSetLinks = await prisma.cardSetLink.findMany({
+                    where: {
+                        includedCardSetId: {
+                            in: req.body.newSorting[parentId]
+                        }
+                    }
+                });
+                if (cardSetLinks.length > 0) {
+                    logWithRequest('error', req, 'Root card set is included in other card sets', {cardSetLinks});
+                    return res.json({
+                        dataType: true,
+                        status: ResponseStatus.UserError,
+                        errorMessage: 'Root card set is included in other card sets',
+                    });
+                }
+            } else {
+                // get all card-set-links for parent
+                const cardSetLinks = await prisma.cardSetLink.findMany({
+                    where: {
+                        parentCardSetId: parentId
+                    }
+                });
+                if (cardSetLinks.length !== req.body.newSorting[parentId].length) {
+                    logWithRequest('error', req, 'Card set links do not match new sorting', {cardSetLinks, newSorting: req.body.newSorting[parentId]});
+                    return res.json({
+                        dataType: true,
+                        status: ResponseStatus.UserError,
+                        errorMessage: 'Card set links do not match new sorting',
+                    });
+                }
+
+                // check that all card-set-links are in the new sorting
+                for (const cardSetLink of cardSetLinks) {
+                    if (!req.body.newSorting[parentId].includes(cardSetLink.includedCardSetId)) {
+                        logWithRequest('error', req, 'Card set link not in new sorting', {cardSetLink, newSorting: req.body.newSorting[parentId]});
+                        return res.json({
+                            dataType: true,
+                            status: ResponseStatus.UserError,
+                            errorMessage: 'Card set link not in new sorting',
+                        });
+                    }
+                }
+            }
+        }
+
+        // all checks passed, now save the new sorting
+        for (const parentId of Object.keys(req.body.newSorting).map(id => parseInt(id))) {
+            const cardSetIds = req.body.newSorting[parentId].reverse();
+            if (parentId === 0) {
+                for (const cardSetId of cardSetIds) {
+                    await prisma.cardSet.update({
+                        where: {
+                            id: cardSetId
+                        },
+                        data: {
+                            order: cardSetIds.indexOf(cardSetId)
+                        }
+                    });
+                }
+            } else {
+                for (const cardSetId of cardSetIds) {
+                    await prisma.cardSetLink.update({
+                        where: {
+                            parentCardSetId_includedCardSetId: {
+                                parentCardSetId: parentId,
+                                includedCardSetId: cardSetId,
+                            }
+                        },
+                        data: {
+                            order: cardSetIds.indexOf(cardSetId)
+                        }
+                    });
+                }
+            }
+        }
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+        });
     } catch (ex) {
         console.error('/card-set/update-card-sets-order caught ex', ex);
         next(ex);
