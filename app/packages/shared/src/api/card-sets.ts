@@ -105,3 +105,53 @@ export const deleteCardSet = async(params: DeleteCardSetRequest) : Promise<BaseR
     }
     return await apiClient.post(BaseResponse, '/card-sets/delete-card-set', params);
 }
+
+
+export type CardSetIdsPerCardSetIdKeyType = number;
+export type CardSetIdsPerCardSetId = {
+    [key in CardSetIdsPerCardSetIdKeyType as key]: number[];
+};
+
+
+export type UpdateCardSetsOrderRequest = {
+    newSorting: CardSetIdsPerCardSetId;
+}
+
+export const validateUpdateCardSetsOrderRequest = (req: UpdateCardSetsOrderRequest) : string[] => {
+    const errs : string[] = [];
+    if (!req.newSorting || Object.keys(req.newSorting).length === 0) {
+        errs.push('New sorting is missing');
+    }
+
+    if (!req.newSorting[0]) {
+        errs.push('Root card set id is missing');
+    }
+
+    for(const parentId in req.newSorting) {
+        const asInt = parseInt(parentId);
+        if (isNaN(asInt)) {
+            errs.push('Parent id ' + parentId + ' is not a number');
+        }
+        if (asInt < 0) {
+            errs.push('Parent id ' + parentId + ' must be greater than or equal to 0');
+        }
+        if (req.newSorting[parentId].length === 0) {
+            errs.push('Card set ids for parent id ' + parentId + ' is missing');
+        }
+        // check for duplicates
+        const uniqueCardSetIds = req.newSorting[parentId].filter((v, i, a) => a.indexOf(v) === i);
+        if (uniqueCardSetIds.length !== req.newSorting[parentId].length) {
+            errs.push('Card set ids for parent id ' + parentId + ' must be unique');
+        }
+    }
+
+    return errs;
+}
+
+export const updateCardSetsOrder = async(req: UpdateCardSetsOrderRequest) : Promise<BaseResponse> => {
+    const errors = validateUpdateCardSetsOrderRequest(req);
+    if (errors.length !== 0) {
+        throw new Error(errors.join('\n'));
+    }
+    return await apiClient.post(BaseResponse, '/card-sets/update-card-sets-order', req);
+}

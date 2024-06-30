@@ -10,6 +10,7 @@ import * as notifications from './notifications';
 import * as signIn from './sign-in';
 import * as signUp from './sign-up';
 import * as permission from './permission';
+import * as workspacePage from './workspace-page';
 import * as workspaceCreate from './workspace-create';
 import * as workspaceCardSetCreate from './workspace-card-set-create';
 import * as workspaceCardSet from './workspace-card-set';
@@ -39,6 +40,7 @@ export const config = merge(
         signIn,
         signUp,
         permission,
+        workspacePage,
         workspaceCreate,
         workspaceCardSetCreate,
         workspaceCardSet,

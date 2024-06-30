@@ -27,3 +27,45 @@ export function role1IsAtLeastRole2(role1: UserRole, role2: UserRole) {
     const role2Index = allRoles.indexOf(role2);
     return role1Index <= role2Index;
 }
+
+export type SortDirection = 'first' | 'last' | 'up' | 'down';
+export function sortWithDirection(itemIds: number[], itemId: number, direction: SortDirection) {
+    const copy = [...itemIds];
+
+    const index = copy.indexOf(itemId);
+
+    if (index === -1) {
+        throw new Error('cardId not found in newSorting');
+    }
+
+    switch (direction) {
+        case 'first':
+            // Move item to the beginning of the array
+            copy.splice(index, 1);
+            copy.unshift(itemId);
+            break;
+        case 'last':
+            // Move item to the end of the array
+            copy.splice(index, 1);
+            copy.push(itemId);
+            break;
+        case 'up':
+            // Move item up one position
+            if (index > 0) {
+                const temp = copy[index - 1];
+                copy[index - 1] = itemId;
+                copy[index] = temp;
+            }
+            break;
+        case 'down':
+            // Move card down one position
+            if (index < copy.length - 1) {
+                const temp = copy[index + 1];
+                copy[index + 1] = itemId;
+                copy[index] = temp;
+            }
+            break;
+    }
+
+    return copy;
+}

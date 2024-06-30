@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `CardSetLink` ADD COLUMN `order` INTEGER NOT NULL DEFAULT 0;

@@ -6,10 +6,10 @@ import {
     CreateCardSetRequest,
     CreateCardSetResponseData, DeleteCardSetRequest,
     GetCardSetsRequest,
-    GetCardSetsResponseData,
+    GetCardSetsResponseData, UpdateCardSetsOrderRequest,
     validateCreateCardSetRequest,
     validateDeleteCardSetRequest,
-    validateGetCardSetsRequest
+    validateGetCardSetsRequest, validateUpdateCardSetsOrderRequest
 } from '@elr0berto/robert-learns-shared/api/card-sets';
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
@@ -203,6 +203,17 @@ cardSets.post('/create-card-set', async (req: Request<unknown, unknown, CreateCa
 
 cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCardSetRequest>, res : TypedResponse<BaseResponseData>, next) => {
     try {
+        const signedInUser = await getSignedInUser(req.session);
+
+        if (signedInUser === null) {
+            logWithRequest('error', req, 'Guest users are not allowed to delete card sets');
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Guest users are not allowed to delete card sets.',
+            });
+        }
+
         const errors = validateDeleteCardSetRequest(req.body);
 
         if (errors.length !== 0) {
@@ -214,16 +225,7 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
             });
         }
 
-        const signedInUser = await getSignedInUser(req.session);
 
-        if (signedInUser === null) {
-            logWithRequest('error', req, 'Guest users are not allowed to delete workspaces');
-            return res.json({
-                dataType: true,
-                status: ResponseStatus.UnexpectedError,
-                errorMessage: 'Guest users are not allowed to delete workspaces.',
-            });
-        }
 
         if (!await checkPermissions({
             user: signedInUser,
@@ -282,6 +284,89 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
         return resp;
     } catch (ex) {
         console.error('/card-set/delete-card-set caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+cardSets.post('/update-card-sets-order', async (req: Request<unknown, unknown, UpdateCardSetsOrderRequest>, res : TypedResponse<BaseResponseData>, next) => {
+    try {
+        const signedInUser = await getSignedInUser(req.session);
+
+        if (signedInUser === null) {
+            logWithRequest('error', req, 'Guest users are not allowed to sort card sets');
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Guest users are not allowed to sort card sets.',
+            });
+        }
+
+        const errors = validateUpdateCardSetsOrderRequest(req.body);
+
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Invalid update card sets order request', {errors: errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+            });
+        }
+
+        const parentIds = Object.keys(req.body.newSorting).map(id => parseInt(id)).filter(id => id !== 0);
+        const cardSetIds = Object.values(req.body.newSorting).flat();
+        // combine all ids into one array
+        const allIds = parentIds.concat(cardSetIds);
+        // get distinct ids as array
+        const uniqueIds = [...new Set(allIds)];
+        const cardSets = await prisma.cardSet.findMany({
+            where: {
+                id: {
+                    in: uniqueIds
+                }
+            },
+        });
+
+        if (cardSets.length !== uniqueIds.length) {
+            logWithRequest('error', req, 'Card set ids do not match card sets', {cardSets, uniqueIds});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Card set ids do not match card sets',
+            });
+        }
+
+        const workspaceIds = cardSets.map(cs => cs.workspaceId);
+        if (workspaceIds.length !== 1) {
+            logWithRequest('error', req, 'Card sets are in different workspaces', {workspaceIds});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Card sets are in different workspaces',
+            });
+
+        }
+        const workspaceId = workspaceIds[0];
+
+        if (!await checkPermissions({
+            user: signedInUser,
+            workspaceId: workspaceId,
+            capability: Capability.EditWorkspace,
+        })) {
+            logWithRequest('error', req, 'User does not have rights to sort card sets', {user: signedInUser, workspaceId, capability: Capability.EditWorkspace});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'You are not allowed to sort card sets in this workspace',
+            });
+        }
+
+        dsdasdasdasdsad
+        // check that the card-set-links exists for each list of card-set-ids except root.
+        // start with saving root-card-sets first in the CardSet.order column
+        // then save the children card-sets in their card-set-links.
+    } catch (ex) {
+        console.error('/card-set/update-card-sets-order caught ex', ex);
         next(ex);
         return;
     }

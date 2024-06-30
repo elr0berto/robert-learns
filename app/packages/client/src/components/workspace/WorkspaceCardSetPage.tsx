@@ -41,8 +41,8 @@ function WorkspaceCardSetPage() {
 
         {state.workspaceCardSet.sorting ?
             <>
-                <Button className="mb-5" variant="outline-success" onClick={() => actions.workspaceCardSet.sortCardSetSave()}>Save sort order</Button>
-                <Button className={"mb-5 ms-3"} variant="outline-danger" onClick={() => actions.workspaceCardSet.sortCardSetCancel()}>Cancel</Button>
+                <Button disabled={state.workspaceCardSet.savingSorting} className="mb-5" variant="outline-success" onClick={() => actions.workspaceCardSet.sortCardSetSave()}>Save sort order</Button>
+                <Button disabled={state.workspaceCardSet.savingSorting} className={"mb-5 ms-3"} variant="outline-danger" onClick={() => actions.workspaceCardSet.sortCardSetCancel()}>Cancel</Button>
             </> :
             null}
 
@@ -64,6 +64,7 @@ function WorkspaceCardSetPage() {
                     onEditCardCardSets={card => actions.editCardCardSetsModal.open(card.id)}
                     cardsWithCardSetsWithFlatAncestorCardSets={state.workspaceCardSet.cardsWithCardSetsWithFlatAncestorCardSets}
                     sorting={state.workspaceCardSet.sorting}
+                    savingSorting={state.workspaceCardSet.savingSorting}
                     onSortCard={(cardId, direction) => actions.workspaceCardSet.sortCard({cardId, direction})}
                 />
             </>

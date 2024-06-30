@@ -4,7 +4,7 @@ import CardPreview from "./CardPreview";
 import {Button, Col, Container, Row} from "react-bootstrap";
 import { CardWithCardSetsWithFlatAncestorCardSets} from "../../overmind/data/data-state";
 import {ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight} from "react-bootstrap-icons";
-import {SortDirection} from "../../overmind/workspace-card-set/workspace-card-set-actions";
+import {SortDirection} from "@elr0berto/robert-learns-shared/dist/common";
 
 type Props = {
     cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
@@ -15,6 +15,7 @@ type Props = {
     showActionButtons: boolean;
     thisCardSetId: number;
     sorting?: boolean;
+    savingSorting?: boolean;
     onSortCard?: (cardId: number, direction: SortDirection) => void;
 }
 
@@ -40,10 +41,10 @@ function CardList(props: Props) {
                     />
                     {props.sorting ?
                         <div className="sort-buttons">
-                            <Button onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'first') : null}><ChevronDoubleLeft/></Button>
-                            <Button onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'up') : null}><ChevronLeft/></Button>
-                            <Button onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'down') : null}><ChevronRight/></Button>
-                            <Button onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'last') : null}><ChevronDoubleRight/></Button>
+                            <Button disabled={props.savingSorting ?? false} onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'first') : null}><ChevronDoubleLeft/></Button>
+                            <Button disabled={props.savingSorting ?? false} onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'up') : null}><ChevronLeft/></Button>
+                            <Button disabled={props.savingSorting ?? false} onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'down') : null}><ChevronRight/></Button>
+                            <Button  disabled={props.savingSorting ?? false} onClick={() => props.onSortCard ? props.onSortCard(cardWithCardSetsWithFlatAncestorCardSets.card.id, 'last') : null}><ChevronDoubleRight/></Button>
                         </div> : null}
                 </Col>
             )}

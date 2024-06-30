@@ -2,6 +2,7 @@ import {Context} from "..";
 import {Card, ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {Pages, pageUrls} from "../../page-urls";
 import {DeleteCardRequest} from "@elr0berto/robert-learns-shared/dist/api/cards";
+import {SortDirection, sortWithDirection} from "@elr0berto/robert-learns-shared/dist/common";
 
 export const deleteCardSet = async ({state} : Context) => {
     if (state.workspaceCardSet.deletingCardSet) {
@@ -95,48 +96,12 @@ export const sortCardSet = async ({ state }: Context) => {
     state.workspaceCardSet.newSorting = state.workspaceCardSet.cardsWithCardSetsWithFlatAncestorCardSets.map(cwcs => cwcs.card.id);
 }
 
-export type SortDirection = 'first' | 'last' | 'up' | 'down';
 export const sortCard = async ({ state }: Context, {cardId, direction}: {cardId: number, direction: SortDirection}) => {
     if (state.workspaceCardSet.newSorting === null) {
         throw new Error('newSorting is null');
     }
 
-    // move the cardId in state.workspaceCardSet.newSorting to the correct position
-    const index = state.workspaceCardSet.newSorting.indexOf(cardId);
-
-    // If the cardId isn't found, we can't do anything
-    if (index === -1) {
-        throw new Error('cardId not found in newSorting');
-    }
-
-    switch (direction) {
-        case 'first':
-            // Move card to the beginning of the array
-            state.workspaceCardSet.newSorting.splice(index, 1);
-            state.workspaceCardSet.newSorting.unshift(cardId);
-            break;
-        case 'last':
-            // Move card to the end of the array
-            state.workspaceCardSet.newSorting.splice(index, 1);
-            state.workspaceCardSet.newSorting.push(cardId);
-            break;
-        case 'up':
-            // Move card up one position
-            if (index > 0) {
-                const temp = state.workspaceCardSet.newSorting[index - 1];
-                state.workspaceCardSet.newSorting[index - 1] = cardId;
-                state.workspaceCardSet.newSorting[index] = temp;
-            }
-            break;
-        case 'down':
-            // Move card down one position
-            if (index < state.workspaceCardSet.newSorting.length - 1) {
-                const temp = state.workspaceCardSet.newSorting[index + 1];
-                state.workspaceCardSet.newSorting[index + 1] = cardId;
-                state.workspaceCardSet.newSorting[index] = temp;
-            }
-            break;
-    }
+    state.workspaceCardSet.newSorting = sortWithDirection(state.workspaceCardSet.newSorting, cardId, direction);
 }
 
 export const sortCardSetSave = async ({ state, effects, actions }: Context) => {
