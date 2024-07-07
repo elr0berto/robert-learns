@@ -5,7 +5,7 @@ import Loading from "../Loading";
 import {pageUrls} from "../../page-urls";
 import AudioPlayer from "react-h5-audio-player";
 import 'react-h5-audio-player/lib/styles.css';
-import {ArrowRepeat, CheckCircle, XCircle} from 'react-bootstrap-icons';
+import {ArrowRepeat, CheckCircle, XCircle, CollectionPlay} from 'react-bootstrap-icons';
 
 function DrillRunPage() {
     const state = useAppState();
@@ -47,9 +47,9 @@ function DrillRunPage() {
                 {state.drillRunPage.completed ?
                     <>
                         <Alert variant="success">Drill completed. You got {state.drillRunPage.progressRights} right and {state.drillRunPage.progressWrongs} wrong!</Alert>
-                        <Button onClick={() => actions.drillRunPage.runAgain({wrongOnly: false})}>Run Again with the same cards</Button>
-                        {state.drillRunPage.drillRun.isLimited ? <Button onClick={() => actions.drillRunPage.runAgain({reset: true})}>Run Again with all cards</Button> : null}
-                        {state.drillRunPage.progressWrongs > 0 ? <Button onClick={() => actions.drillRunPage.runAgain({wrongOnly: true})}>Run Again with only the ones you got wrong</Button> : null}
+                        <Button variant={"outline-primary"} className="me-1" onClick={() => actions.drillRunPage.runAgain({wrongOnly: false})}><CollectionPlay/> Run again with the <strong>same</strong> cards</Button>
+                        {state.drillRunPage.drillRun.isLimited ? <Button variant={"outline-primary"} className="me-1" onClick={() => actions.drillRunPage.runAgain({reset: true})}><CollectionPlay/> Run again with <strong>all</strong> cards</Button> : null}
+                        {state.drillRunPage.progressWrongs > 0 ? <Button variant={"outline-primary"} className="me-1" onClick={() => actions.drillRunPage.runAgain({wrongOnly: true})}><CollectionPlay/> Run again with only the ones you got <strong>wrong</strong></Button> : null}
                     </> :
                     <>
                         <Row className="justify-content-center">

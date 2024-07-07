@@ -4,7 +4,7 @@ import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import {Pages, pageUrls} from "../page-urls";
 import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/dist/version";
-import {PlayFill, PlusCircle} from "react-bootstrap-icons";
+import {CollectionPlayFill, FolderPlus} from "react-bootstrap-icons";
 import {CardSetWithChildren} from "../overmind/data/data-state";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
@@ -58,7 +58,7 @@ function TopMenu() {
                 {' '}
                 Robert Learns
             </Navbar.Brand>
-            <Button variant="success" href={pageUrls.drill.url()}><PlayFill/> Drill</Button>
+            <Button variant="success" href={pageUrls.drill.url()}><CollectionPlayFill/> Drill</Button>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
@@ -70,7 +70,7 @@ function TopMenu() {
                             {state.page.workspaces.map(workspace => <NavDropdown.Item key={workspace.id} href={pageUrls.workspace.url(workspace)}>{workspace.name}</NavDropdown.Item>)}
                             {state.page.workspaces.length > 0 ? <NavDropdown.Divider/> : null}
                         </>}
-                        <NavDropdown.Item href={pageUrls.workspaceCreate.url()}>Create workspace</NavDropdown.Item>
+                        <NavDropdown.Item as="div"><Button href={pageUrls.workspaceCreate.url()}><FolderPlus/> Create workspace</Button></NavDropdown.Item>
                     </NavDropdown>
                     {
                         (
@@ -86,7 +86,7 @@ function TopMenu() {
                                 ? renderCardSets(state.page.cardSetsWithChildren, workspace)
                                 : null}
                             {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
-                            {workspace !== null ? <NavDropdown.Item as="div"><Button href={pageUrls.workspaceCardSetCreate.url(workspace)}><PlusCircle/> Create card set</Button></NavDropdown.Item> : null}
+                            {workspace !== null ? <NavDropdown.Item as="div"><Button href={pageUrls.workspaceCardSetCreate.url(workspace)}><FolderPlus/> Create card set</Button></NavDropdown.Item> : null}
                         </NavDropdown> : null
                     }
                 </Nav>
