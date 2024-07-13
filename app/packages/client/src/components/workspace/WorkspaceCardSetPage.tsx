@@ -8,7 +8,15 @@ import AddCardsFromOtherCardSetsModal from "../cards/AddCardsFromOtherCardSetsMo
 import EditCardCardSetsModal from "../cards/EditCardCardSetsModal";
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import DeleteCardSetModal from "./DeleteCardSetModal";
-import {ArrowLeftRight, DashCircle, FilePlus, PencilSquare, PlusCircle} from "react-bootstrap-icons";
+import {
+    ArrowLeftRight,
+    Check2Circle,
+    DashCircle,
+    FilePlus,
+    PencilSquare,
+    PlusCircle,
+    XCircle
+} from "react-bootstrap-icons";
 import LinkCardSetsModal from "./LinkCardSetsModal";
 import CardSetTree from "./CardSetTree";
 
@@ -42,20 +50,23 @@ function WorkspaceCardSetPage() {
 
         {state.workspaceCardSet.sorting ?
             <>
-                <Button disabled={state.workspaceCardSet.savingSorting} className="mb-5" variant="outline-success" onClick={() => actions.workspaceCardSet.sortCardSetSave()}>Save sort order</Button>
-                <Button disabled={state.workspaceCardSet.savingSorting} className={"mb-5 ms-3"} variant="outline-danger" onClick={() => actions.workspaceCardSet.sortCardSetCancel()}>Cancel</Button>
+                <Button disabled={state.workspaceCardSet.savingSorting} className="mb-5" variant="primary" onClick={() => actions.workspaceCardSet.sortCardSetSave()}><Check2Circle/> Save sort order</Button>
+                <Button disabled={state.workspaceCardSet.savingSorting} className={"mb-5 ms-3"} variant="outline-danger" onClick={() => actions.workspaceCardSet.sortCardSetCancel()}><XCircle/> Cancel</Button>
             </> :
             null}
 
         {state.page.loadingCards ?
             <div>Loading cards...</div> :
             <>
-                {state.permission.editCardSet ? <Button className="mb-5" variant="outline-primary" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
-                {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}><FilePlus/> Create card</Button> : null}
-                {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
-                {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
-                {!hasCards && state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}><PlusCircle/> Link other card sets</Button> : null}
-                {state.permission.deleteCardSet ? <Button className="mb-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
+                {!state.workspaceCardSet.sorting ?
+                    <>
+                        {state.permission.editCardSet ? <Button className="mb-5" variant="outline-primary" href={pageUrls.workspaceCardSetEdit.url(state.page.workspace, state.page.cardSet)}><PencilSquare/> Edit card set</Button> : null}
+                        {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.createCardModal.openCreateCardModal({cardSetId: cardSet.id, card: null})}><FilePlus/> Create card</Button> : null}
+                        {!hasChildren && state.permission.createCard ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.addCardsFromOtherCardSetsModal.open(cardSet.id)}>+ Add cards from other card sets</Button> : null}
+                        {state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.workspaceCardSet.sortCardSet()}><ArrowLeftRight/> Sort card set</Button> : null}
+                        {!hasCards && state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}><PlusCircle/> Link other card sets</Button> : null}
+                        {state.permission.deleteCardSet ? <Button className="mb-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
+                    </> : null}
                 {hasChildren && <CardSetTree cardSetsWithChildren={[state.page.cardSetWithChildren]} level={0} defaultOpen={true}/>}
                 {!hasChildren && <CardList
                     thisCardSetId={state.page.cardSet.id}

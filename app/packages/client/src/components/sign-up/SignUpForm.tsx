@@ -6,7 +6,14 @@ function SignUpForm() {
     const state = useAppState();
     const actions = useActions();
 
-    return <Form className="col-lg-5">
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!state.signUp.submitDisabled) {
+            actions.signUp.submit();
+        }
+    };
+
+    return <Form className="col-lg-5" onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formBasicFirstName">
             <Form.Label>First Name</Form.Label>
             <Form.Control type="text" placeholder="Enter first name" value={state.signUp.firstName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.signUp.changeFirstName(event.currentTarget.value)}/>
@@ -32,7 +39,7 @@ function SignUpForm() {
             <Form.Control type="password" placeholder="Enter password again" value={state.signUp.password2} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.signUp.changePassword2(event.currentTarget.value)}/>
         </Form.Group>
         {state.signUp.showErrors ? <Alert variant="danger">{state.signUp.allErrors.map((err,i) => <p key={i}>{err}</p>)}</Alert> : null}
-        <Button disabled={state.signUp.submitDisabled} onClick={() => actions.signUp.submit()}>Sign up</Button>
+        <Button disabled={state.signUp.submitDisabled} type="submit">Sign up</Button>
     </Form>;
 }
 export default SignUpForm;

@@ -185,6 +185,11 @@ code {
         left: 1rem;
       }
     }
+    .nav-item {
+      .dropdown-toggle {
+        padding-left: 1rem;
+      }
+    }
   }
 }
 @media (max-width: 479px) {

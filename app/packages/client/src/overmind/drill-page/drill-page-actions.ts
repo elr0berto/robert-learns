@@ -76,7 +76,7 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
         }
     }
 
-    let somethingChanged = false;
+    /*let somethingChanged = false;
     do {
         somethingChanged = false;
         for (const cs of state.drillPage.flatCardSetsWithChildrenIds.filter(cs => cs.childrenIds.length > 0)) {
@@ -91,7 +91,36 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
         }
     } while (somethingChanged);
 
-    state.drillPage.selectedCardSetIds = newSelectedCardSetIds;
+    state.drillPage.selectedCardSetIds = newSelectedCardSetIds;*/
+
+    const updateParentSelections = (selectedIds: number[]): number[] => {
+        let updatedSelectedIds = [...selectedIds];
+        let somethingChanged = false;
+
+        const updateSelections = (cs: { cardSet: { id: number }, childrenIds: number[] }) => {
+            if (cs.childrenIds.every(csid => updatedSelectedIds.includes(csid))) {
+                if (!updatedSelectedIds.includes(cs.cardSet.id)) {
+                    updatedSelectedIds.push(cs.cardSet.id);
+                    somethingChanged = true;
+                }
+            } else {
+                const previousLength = updatedSelectedIds.length;
+                updatedSelectedIds = updatedSelectedIds.filter(item => item !== cs.cardSet.id);
+                if (previousLength !== updatedSelectedIds.length) {
+                    somethingChanged = true;
+                }
+            }
+        };
+
+        do {
+            somethingChanged = false;
+            state.drillPage.flatCardSetsWithChildrenIds.filter(cs => cs.childrenIds.length > 0).forEach(updateSelections);
+        } while (somethingChanged);
+
+        return updatedSelectedIds;
+    };
+
+    state.drillPage.selectedCardSetIds = updateParentSelections(newSelectedCardSetIds);
 }
 
 

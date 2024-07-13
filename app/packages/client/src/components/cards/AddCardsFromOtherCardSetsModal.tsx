@@ -25,7 +25,7 @@ function AddCardsFromOtherCardSetsModal() {
             <Accordion.Item eventKey={cardSetWithCardsAndChildren.cardSet.id.toString()} key={cardSetWithCardsAndChildren.cardSet.id}>
                 <Accordion.Header>{cardSetWithCardsAndChildren.cardSet.name}</Accordion.Header>
                 <Accordion.Body>
-                    {cardSetWithCardsAndChildren.children.length === 0 && cardSetWithCardsAndChildren.cards.map(card => (
+                    {cardSetWithCardsAndChildren.children.length === 0 && cardSetWithCardsAndChildren.cards.length > 0 && cardSetWithCardsAndChildren.cards.map(card => (
                         <MemoizedCardPreviewSelectable
                             thisCardSetId={cardSetWithCardsAndChildren.cardSet.id}
                             uniqueContext={cardSetWithCardsAndChildren.cardSet.id.toString()}
@@ -38,6 +38,9 @@ function AddCardsFromOtherCardSetsModal() {
                             onChange={changeSelected}
                         />
                     ))}
+                    {cardSetWithCardsAndChildren.children.length === 0 && cardSetWithCardsAndChildren.cards.length === 0 && (
+                        <Alert variant={'info'}>No cards found.</Alert>
+                    )}
                     {cardSetWithCardsAndChildren.children.length > 0 && (
                         <Accordion className="w-100">
                             {renderAccordionItems(cardSetWithCardsAndChildren.children)}

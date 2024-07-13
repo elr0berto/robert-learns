@@ -1,5 +1,5 @@
 import {apiClient} from './ApiClient.js';
-import {BaseResponse, BaseResponseData, CardSet, CardSetData, CardSetLink, CardSetLinkData} from "./models/index.js";
+import {BaseResponse, BaseResponseData, CardSetLink, CardSetLinkData} from "./models/index.js";
 
 export type GetCardSetLinksRequest = {
     cardSetIds: number[];

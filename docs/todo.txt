@@ -1,15 +1,14 @@
-test everything!
+clean up cards from parent card sets before going live with card-set-links branch
+delete from CardSetCard where CardSetCard.cardSetId in (
+select cs.Id from CardSet cs
+where exists (select 1 from CardSetLink where parentCardSetId = cs.Id limit 1))
+
 go live with card-set-links branch
 
 show the number of cards in each card set in the tree-view
 show the number of cards in each drill and prevent drilling with zero cards
 
 when creating or editing a card set there should be a "parents" multi choice select box
-
-clean up cards from parent card sets before going live with card-set-links branch
-delete from CardSetCard where CardSetCard.cardSetId in (
-select cs.Id from CardSet cs
-where exists (select 1 from CardSetLink where parentCardSetId = cs.Id limit 1))
 
 
 add a "create card set"-button in the workspace view.

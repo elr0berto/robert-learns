@@ -28,6 +28,7 @@ function WorkspacePage() {
                     <Button
                         href={pageUrls.workspaceEdit.url(state.page.workspace)}
                         className={"me-2"}
+                        variant="outline-primary"
                     >
                         <PencilSquare/> Edit workspace
                     </Button> : null}
@@ -35,12 +36,14 @@ function WorkspacePage() {
                     <Button
                         href={pageUrls.workspaceCardSetCreate.url(state.page.workspace)}
                         className={"me-2"}
+                        variant="outline-primary"
                     >
                         <FolderPlus/> Create card set
                     </Button> : null}
                 {state.permission.editWorkspace && state.page.cardSetsWithChildren.length > 0 ?
                     <Button
                         onClick={actions.workspacePage.sortCardSets}
+                        variant="outline-primary"
                     >
                         <ArrowLeftRight/> Sort card sets
                     </Button> : null}
