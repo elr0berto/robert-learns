@@ -1,3 +1,7 @@
+editing card set should show a loading screen while loading the info..
+
+sort card set button should not exist in card-sets-with children / without cards
+
 clean up cards from parent card sets before going live with card-set-links branch
 delete from CardSetCard where CardSetCard.cardSetId in (
 select cs.Id from CardSet cs
