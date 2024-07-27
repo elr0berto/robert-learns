@@ -16,10 +16,12 @@ type WorkspaceCardSetCreateFormState = {
     readonly allErrors: string[];
 }
 type WorkspaceCardSetCreateState = {
+    loading: boolean;
     form: WorkspaceCardSetCreateFormState;
 }
 
 export const getInitialWorkspaceCardSetCreateState = (cardSet: CardSet | null): WorkspaceCardSetCreateState => ({
+    loading: false,
     form: {
         name: cardSet?.name ?? '',
         description: cardSet?.description ?? '',

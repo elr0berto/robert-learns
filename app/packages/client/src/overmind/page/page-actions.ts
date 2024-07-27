@@ -199,13 +199,17 @@ export const showWorkspaceCardSetPage = async ({ state, actions }: Context, payl
 }
 
 export const showWorkspaceCardSetCreatePage = async ({ state, actions }: Context, payload: Payload) => {
+    state.workspaceCardSetCreate.loading = true;
     actions.page.load({page: Pages.WorkspaceCardSetCreate, payload: payload});
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(null);
+    state.workspaceCardSetCreate.loading = false;
 }
 
 export const showWorkspaceCardSetEditPage = async ({ state, effects, actions }: Context, payload: Payload) => {
+    state.workspaceCardSetCreate.loading = true;
     await actions.page.load({page: Pages.WorkspaceCardSetEdit, payload: payload});
     state.workspaceCardSetCreate = getInitialWorkspaceCardSetCreateState(state.page.cardSet);
+    state.workspaceCardSetCreate.loading = false;
 }
 
 export const showDrillPage = async ({ state, actions }: Context) => {

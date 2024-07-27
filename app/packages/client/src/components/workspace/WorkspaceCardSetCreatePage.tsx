@@ -31,6 +31,9 @@ function WorkspaceCardSetCreatePage() {
         }
     }
 
+    if (state.workspaceCardSetCreate.loading) {
+        return <Container><Loading text="Loading..."/></Container>;
+    }
 
     return <Container>
         <h1 className="my-5">{scope === 'edit' ? 'Edit card set ' + (state.page.cardSet?.name ?? 'ERROR') : 'Create a card set'} in workspace {state.page.workspace.name}</h1>
