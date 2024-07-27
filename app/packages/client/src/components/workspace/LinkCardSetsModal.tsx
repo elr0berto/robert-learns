@@ -2,6 +2,7 @@ import {Alert, Button, Form, ListGroup, Modal} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import {CardSetWithChildren} from "../../overmind/data/data-state";
+import Loading from "../Loading";
 
 type CardSetItemProps = {
     item: CardSetWithChildren;
@@ -58,7 +59,7 @@ function LinkCardSetsModal() {
         </Modal.Header>
         <Modal.Body>
             {state.linkCardSetsModal.loading ?
-                <Alert variant="info">Loading...</Alert> :
+                <Loading/> :
                 <ListGroup>
                     {state.data.cardSetsWithChildren.map(item => {
                         return <CardSetItem

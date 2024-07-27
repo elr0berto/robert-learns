@@ -2,6 +2,7 @@ import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Container, Form} from "react-bootstrap";
 import React from "react";
 import {Pages} from "../../page-urls";
+import Loading from "../Loading";
 
 function WorkspaceCardSetCreatePage() {
     const state = useAppState();
@@ -11,7 +12,7 @@ function WorkspaceCardSetCreatePage() {
 
     if (state.page.workspace === null) {
         if (state.page.loadingWorkspaces) {
-            return <Container>Loading workspaces...</Container>;
+            return <Container><Loading text="Loading workspaces..."/></Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }
@@ -22,9 +23,9 @@ function WorkspaceCardSetCreatePage() {
         return <Container className="my-5"><Alert variant="danger">You are not allowed to {scope} Card Sets in this workspace</Alert></Container>;
     }
 
-    if (scope === 'edit' && state.page.cardSet === null) {
+    if (scope === 'edit' && (state.page.cardSet === null || state.page.loadingCardSets)) {
         if (state.page.loadingCardSets) {
-            return <Container>Loading card set...</Container>;
+            return <Container><Loading text="Loading card set..."/></Container>;
         } else {
             return <Container>Card set not found.</Container>
         }

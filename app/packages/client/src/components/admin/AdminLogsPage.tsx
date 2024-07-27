@@ -5,12 +5,13 @@ import JsonView from 'react18-json-view'
 import 'react18-json-view/src/style.css'
 // If dark mode is needed, import `dark.css`.
 import 'react18-json-view/src/dark.css'
+import Loading from "../Loading";
 function AdminLogsPage() {
     const state = useAppState();
     const actions = useActions();
 
     if (state.adminLogsPage.loading) {
-        return <Container>Loading...</Container>;
+        return <Container><Loading/></Container>;
     }
     return <Container>
         <h1 className="my-5">Logs</h1>

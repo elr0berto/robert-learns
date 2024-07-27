@@ -19,6 +19,7 @@ import {
 } from "react-bootstrap-icons";
 import LinkCardSetsModal from "./LinkCardSetsModal";
 import CardSetTree from "./CardSetTree";
+import Loading from "../Loading";
 
 function WorkspaceCardSetPage() {
     const state = useAppState();
@@ -26,7 +27,7 @@ function WorkspaceCardSetPage() {
 
     if (state.page.workspace === null) {
         if (state.page.loadingWorkspaces) {
-            return <Container className="my-5">Loading...</Container>;
+            return <Container className="my-5"><Loading text="Loading workspaces..."/></Container>;
         } else {
             return <Container className="my-5">Workspace not found.</Container>
         }
@@ -56,7 +57,7 @@ function WorkspaceCardSetPage() {
             null}
 
         {state.page.loadingCards ?
-            <div>Loading cards...</div> :
+            <Loading text="Loading cards..."/> :
             <>
                 {!state.workspaceCardSet.sorting ?
                     <>

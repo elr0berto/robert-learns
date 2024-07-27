@@ -3,6 +3,7 @@ import React from "react";
 import {useActions, useAppState} from "../../overmind";
 import AddUserModal from "./AddUserModal";
 import DeleteWorkspaceModal from "./DeleteWorkspaceModal";
+import Loading from "../Loading";
 
 function WorkspaceCreate() {
     const state = useAppState();
@@ -20,7 +21,7 @@ function WorkspaceCreate() {
 
     if (scope === 'edit') {
         if (state.page.loadingWorkspaces) {
-            return <Container>Loading...</Container>;
+            return <Container><Loading text="Loading workspaces..."/></Container>;
         }
         if (state.page.workspace === null) {
             return <Container>Workspace not found.</Container>

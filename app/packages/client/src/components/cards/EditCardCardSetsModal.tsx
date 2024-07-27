@@ -4,6 +4,7 @@ import React from "react";
 import CardPreview from "./CardPreview";
 import {CardSetWithChildren} from "../../overmind/data/data-state";
 import {Folder} from 'react-bootstrap-icons';
+import Loading from "../Loading";
 
 function CardSetCheckbox({cardSetWithChildren, level}: { cardSetWithChildren: CardSetWithChildren, level: number }) {
     const state = useAppState();
@@ -75,7 +76,7 @@ function EditCardCardSetsModal() {
                     </Col>
                     <Col>
                         {state.editCardCardSetsModal.loading ?
-                            <div>Loading...</div> :
+                            <Loading/> :
                             state.editCardCardSetsModal.cardSetsWithChildren.map(cardSetWithChildren =>
                                 <CardSetCheckbox key={cardSetWithChildren.cardSet.id} cardSetWithChildren={cardSetWithChildren} level={0}/>
                             )

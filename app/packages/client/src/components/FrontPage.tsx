@@ -2,12 +2,13 @@ import React from 'react';
 import {useAppState} from "../overmind";
 import {Alert, Card, Col, Container, Row} from "react-bootstrap";
 import {Pages, pageUrls} from "../page-urls";
+import Loading from "./Loading";
 
 function FrontPage() {
     const state = useAppState();
 
     if (state.page.loadingWorkspaces) {
-        return <Container>Loading...</Container>;
+        return <Container><Loading text="Loading workspaces..."/></Container>;
     }
 
     // Display welcome message always at the top

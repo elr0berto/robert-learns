@@ -15,7 +15,7 @@ function WorkspacePage() {
 
     if (state.page.workspace === null) {
         if (state.page.loadingWorkspaces) {
-            return <Container><Loading /></Container>;
+            return <Container><Loading text="Loading workspaces..."/></Container>;
         } else {
             return <Container>Workspace not found.</Container>
         }
@@ -49,7 +49,7 @@ function WorkspacePage() {
                     </Button> : null}
             </div>
             {state.page.loadingCardSets ?
-                <p>Loading card sets...</p> :
+                <Loading text="Loading card sets..."/> :
                 <div className="workspace-card-sets">
                     <CardSetTree cardSetsWithChildren={state.workspacePage.cardSetsWithChildren} level={0} defaultOpen={false}/>
                 </div>

@@ -6,6 +6,7 @@ import {
     CardSetWithFlatAncestorCardSets,
     CardWithCardSetsWithFlatAncestorCardSets
 } from "../../overmind/data/data-state";
+import Loading from "../Loading";
 
 type Props = {
     onClose: () => void,
@@ -24,7 +25,7 @@ function DeleteCardModal(props: Props) {
         <Modal.Body>
             {
                 props.loading ?
-                'Loading...' :
+                <Loading/> :
                 <>
                     <CardPreview
                         thisCardSetId={props.cardSet.id}

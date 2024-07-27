@@ -5,6 +5,7 @@ import CardPreviewSelectable from "./CardPreviewSelectable";
 import {
     CardSetWithCardsAndChildren
 } from "../../overmind/add-cards-from-other-card-sets-modal/add-cards-from-other-card-sets-modal-state";
+import Loading from "../Loading";
 
 const MemoizedCardPreviewSelectable = React.memo(CardPreviewSelectable);
 
@@ -57,7 +58,7 @@ function AddCardsFromOtherCardSetsModal() {
         </Modal.Header>
         <Modal.Body>
             {state.addCardsFromOtherCardSetsModal.loading ?
-                <Alert variant={'info'}>Loading...</Alert> :
+                <Loading/> :
                 (state.addCardsFromOtherCardSetsModal.otherCardSetsWithCardsAndChildren.length === 0 ?
                     <Alert variant={'info'}>No other card sets with cards found.</Alert> :
                     <Accordion>
