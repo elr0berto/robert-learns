@@ -208,3 +208,25 @@ export const runDrill = async ({ state, effects, actions }: Context) => {
 export const closeResumeDrillModal = ({ state }: Context) => {
     state.drillPage.possibleResumeDrillRunId = null;
 }
+
+export const toggleExpandWorkspaceId = ({ state }: Context, workspaceId: number) => {
+    let newExpandedWorkspaceIds = [...state.drillPage.expandedWorkspaceIds];
+    const index = newExpandedWorkspaceIds.indexOf(workspaceId);
+    if (index === -1) {
+        newExpandedWorkspaceIds.push(workspaceId);
+    } else {
+        newExpandedWorkspaceIds.splice(index, 1);
+    }
+    state.drillPage.expandedWorkspaceIds = newExpandedWorkspaceIds;
+}
+
+export const toggleExpandCardSetId = ({ state }: Context, cardSetId: number) => {
+    let newExpandedCardSetIds = [...state.drillPage.expandedCardSetIds];
+    const index = newExpandedCardSetIds.indexOf(cardSetId);
+    if (index === -1) {
+        newExpandedCardSetIds.push(cardSetId);
+    } else {
+        newExpandedCardSetIds.splice(index, 1);
+    }
+    state.drillPage.expandedCardSetIds = newExpandedCardSetIds;
+}

@@ -17,6 +17,8 @@ type DrillPageState = {
     saveAttempted: boolean;
     saving: boolean;
     possibleResumeDrillRunId: number | null;
+    expandedWorkspaceIds: number[];
+    expandedCardSetIds: number[];
     readonly selectedWorkspaceIds: number[];
     readonly indeterminateWorkspaceIds: number[];
     readonly indeterminateCardSetIds: number[];
@@ -39,6 +41,8 @@ export const getInitialDrillPageState = () : DrillPageState => {
         saveAttempted: false,
         saving: false,
         possibleResumeDrillRunId: null,
+        expandedWorkspaceIds: [],
+        expandedCardSetIds: [],
         selectedWorkspaceIds: derived((state: DrillPageState, rootState: typeof config.state) => {
             const workspaces = rootState.page.workspacesWithCardSets.filter(w => w.cardSets.length > 0);
             let ret : number[] = [];

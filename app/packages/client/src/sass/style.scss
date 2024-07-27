@@ -209,3 +209,14 @@ code {
     cursor: pointer;
   }
 }
+
+.expand-toggle {
+  position: relative;
+  top: -0.1rem;
+}
+
+.expand-toggle-filler {
+  svg {
+    opacity: 0;
+  }
+}
