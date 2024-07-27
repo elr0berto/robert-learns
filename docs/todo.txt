@@ -1,5 +1,5 @@
 look for cards not in any card sets
-
+"expand all" button in drill page tree
 show the number of cards in each card set in the tree-view
 show the number of cards in each drill and prevent drilling with zero cards
 show stats for each card
