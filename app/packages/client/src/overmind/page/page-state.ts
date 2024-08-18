@@ -9,10 +9,16 @@ import {
 import {derived} from "overmind";
 import {config} from "../index";
 import {
-    CardSetWithCardsWithCardSets, CardSetWithCardsWithCardSetsWithFlatAncestorCardSets, CardSetWithChildren,
-    CardWithCardSets, CardWithCardSetsWithFlatAncestorCardSets, DrillWithDrillCardSets, WorkspaceWithCardSets,
-    WorkspaceWithCardSetsCount, WorkspaceWithCardSetsWithChildren, WorkspaceWithCardSetsWithChildrenIds,
-    WorkspaceWithWorkspaceUsers
+    CardSetWithCardsWithCardSets,
+    CardSetWithCardsWithCardSetsWithFlatAncestorCardSets,
+    CardWithCardSets,
+    CardWithCardSetsWithFlatAncestorCardSets,
+    DrillWithDrillCardSets,
+    WorkspaceWithCardSets,
+    WorkspaceWithCardSetsCount,
+    WorkspaceWithCardCountAndCardSetsWithChildrenAndCardCounts,
+    WorkspaceWithCardSetsWithChildrenIds,
+    WorkspaceWithWorkspaceUsers, CardSetWithChildrenAndCardCounts
 } from "../data/data-state";
 
 type PageState = {
@@ -29,16 +35,16 @@ type PageState = {
     readonly workspaces: Workspace[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
-    readonly workspacesWithCardSetsWithChildren: WorkspaceWithCardSetsWithChildren[];
+    readonly workspacesWithCardCountsWithCardSetsWithChildrenAndCardCounts: WorkspaceWithCardCountAndCardSetsWithChildrenAndCardCounts[];
     readonly workspacesWithCardSetsWithChildrenIds: WorkspaceWithCardSetsWithChildrenIds[];
     readonly workspace: Workspace | null;
     readonly workspaceWithWorkspaceUsers: WorkspaceWithWorkspaceUsers | null;
     readonly workspaceUser: WorkspaceUser | null;
     readonly cardSet: CardSet | null;
-    readonly cardSetWithChildren: CardSetWithChildren | null;
+    readonly cardSetWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts | null;
     readonly cardSets: CardSet[];
-    readonly cardSetsWithChildren: CardSetWithChildren[];
-    readonly flatCardSetsWithChildren: CardSetWithChildren[];
+    readonly cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[];
+    readonly flatCardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[];
     readonly cardSetWithCardsWithCardSets: CardSetWithCardsWithCardSets | null;
     readonly cardSetWithCardsWithCardSetsWithFlatAncestorCardSets: CardSetWithCardsWithCardSetsWithFlatAncestorCardSets | null;
     readonly cards: Card[];
@@ -74,9 +80,9 @@ export const state: PageState = {
             return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
         });
     }),
-    workspacesWithCardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
-        return rootState.data.workspacesWithCardSetsWithChildren.filter(wwc => {
-            return wwc.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspace.id && wu.userId === rootState.signIn.userId);
+    workspacesWithCardCountsWithCardSetsWithChildrenAndCardCounts: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.workspacesWithCardCountsWithCardSetsWithChildrenAndCardCounts.filter(wwc => {
+            return wwc.workspaceWithCardCount.workspace.allowGuests || rootState.data.workspaceUsers.some(wu => wu.workspaceId === wwc.workspaceWithCardCount.workspace.id && wu.userId === rootState.signIn.userId);
         });
     }),
     workspacesWithCardSetsWithChildrenIds: derived((state: PageState, rootState: typeof config.state) => {
@@ -119,22 +125,22 @@ export const state: PageState = {
         }
         return ret;
     }),
-    cardSetWithChildren: derived((state: PageState) => {
+    cardSetWithChildrenAndCardCounts: derived((state: PageState) => {
         if (state.cardSet === null) {
             return null;
         }
 
-        const cardSetWithChildren = state.flatCardSetsWithChildren.find(cs => cs.cardSet.id === state.cardSetId);
-        if (cardSetWithChildren === undefined) {
-            throw new Error('CardSetWithChildren with cardSetId ' + state.cardSetId + ' not found.');
+        const cardSetWithChildrenAndCardCounts = state.flatCardSetsWithChildrenAndCardCounts.find(cs => cs.cardSet.id === state.cardSetId);
+        if (cardSetWithChildrenAndCardCounts === undefined) {
+            throw new Error('Could not find card set with children and card counts for card set ' + state.cardSetId);
         }
-        return cardSetWithChildren;
+        return cardSetWithChildrenAndCardCounts;
     }),
-    flatCardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
+    flatCardSetsWithChildrenAndCardCounts: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {
             return [];
         }
-        return rootState.data.flatCardSetsWithChildren.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
+        return rootState.data.flatCardSetsWithChildrenAndCardCounts.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
     }),
     cardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.workspaceId === null) {
@@ -142,8 +148,8 @@ export const state: PageState = {
         }
         return rootState.data.cardSets.filter(cs => cs.workspaceId === state.workspaceId);
     }),
-    cardSetsWithChildren: derived((state: PageState, rootState: typeof config.state) => {
-        return rootState.data.cardSetsWithChildren.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
+    cardSetsWithChildrenAndCardCounts: derived((state: PageState, rootState: typeof config.state) => {
+        return rootState.data.cardSetsWithChildrenAndCardCounts.filter(cs => cs.cardSet.workspaceId === state.workspaceId);
     }),
     cardSetWithCardsWithCardSets: derived((state: PageState, rootState: typeof config.state) => {
         if (state.cardSetId === null) {

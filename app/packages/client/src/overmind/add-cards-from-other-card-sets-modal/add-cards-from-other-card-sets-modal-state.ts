@@ -1,7 +1,7 @@
 import {CardSet} from "@elr0berto/robert-learns-shared/dist/api/models";
 import {derived} from "overmind";
 import {config} from "../index";
-import {CardSetWithChildren, CardWithCardSetsWithFlatAncestorCardSets} from "../data/data-state";
+import {CardSetWithChildrenAndCardCounts, CardWithCardSetsWithFlatAncestorCardSets} from "../data/data-state";
 
 type CardFromOtherCardSet = {
     cardWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets;
@@ -36,11 +36,11 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
             return [];
         }
 
-        function getChildren(cardSetsWithChildren: CardSetWithChildren[]): CardSetWithCardsAndChildren[] {
+        function getChildren(cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[]): CardSetWithCardsAndChildren[] {
             if (cardSet === null) {
                 throw new Error('Card set is null');
             }
-            return cardSetsWithChildren.filter(cs => cs.cardSet.id !== cardSet.id).map(cs => {
+            return cardSetsWithChildrenAndCardCounts.filter(cs => cs.cardSet.id !== cardSet.id).map(cs => {
                 const cardSetWithCardsWithCardSetsWithFlatAncestorCardSets = rootState.data.cardSetsWithCardsWithCardSetsWithFlatAncestorCardSets.find(cscwcs => cscwcs.cardSet.id === cs.cardSet.id);
                 if (cardSetWithCardsWithCardSetsWithFlatAncestorCardSets === undefined) {
                     throw new Error(`Could not find card set with cards with card sets for card set ${cs.cardSet.id}`);
@@ -61,7 +61,7 @@ export const getInitialAddCardsFromOtherCardSetsModalState = (): AddCardsFromOth
             });
         }
 
-        return getChildren(rootState.page.cardSetsWithChildren);
+        return getChildren(rootState.page.cardSetsWithChildrenAndCardCounts);
     }),
     disabled: derived((state: AddCardsFromOtherCardSetsModalState) => {
         return state.loading || state.submitting;

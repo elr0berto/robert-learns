@@ -25,24 +25,19 @@ function WorkspaceCardSetPage() {
     const state = useAppState();
     const actions = useActions();
 
-    if (state.page.workspace === null) {
-        if (state.page.loadingWorkspaces) {
-            return <Container className="my-5"><Loading text="Loading workspaces..."/></Container>;
-        } else {
-            return <Container className="my-5">Workspace not found.</Container>
-        }
+    if (state.page.loadingWorkspaces) {
+        return <Container className="my-5"><Loading text="Loading workspaces..."/></Container>;
+    } else if (state.page.workspace === null) {
+        return <Container className="my-5">Workspace not found.</Container>
     }
-    if (state.page.cardSet === null || state.page.cardSetWithChildren === null) {
-        if (state.page.loadingCardSets) {
-            return <Container className="my-5">Loading...</Container>;
-        } else {
-            return <Container className="my-5">Card set not found.</Container>
-        }
+
+    if (state.page.cardSet === null || state.page.cardSetWithChildrenAndCardCounts === null) {
+        return <Container className="my-5">Card set not found.</Container>
     }
 
     const cardSet : CardSet = state.page.cardSet;
     const hasCards = state.workspaceCardSet.cardsWithCardSetsWithFlatAncestorCardSets.length > 0;
-    const hasChildren = state.page.cardSetWithChildren.children.length > 0;
+    const hasChildren = state.page.cardSetWithChildrenAndCardCounts.children.length > 0;
 
     return <Container className="mb-5">
         <h1 className="my-5">
@@ -68,7 +63,7 @@ function WorkspaceCardSetPage() {
                         {!hasCards && state.permission.editCardSet ? <Button className="mb-5 ms-3" variant="outline-primary" onClick={() => actions.linkCardSetsModal.open(cardSet.id)}><PlusCircle/> Link other card sets</Button> : null}
                         {state.permission.deleteCardSet ? <Button className="mb-5 ms-3" variant="outline-danger" onClick={() => actions.workspaceCardSet.deleteCardSet()}><DashCircle/> Delete card set</Button> : null}
                     </> : null}
-                {hasChildren && <CardSetTree cardSetsWithChildren={[state.page.cardSetWithChildren]} level={0} defaultOpen={true}/>}
+                {hasChildren && <CardSetTree cardSetsWithChildrenAndCardCounts={[state.page.cardSetWithChildrenAndCardCounts]} level={0} defaultOpen={true}/>}
                 {!hasChildren && <CardList
                     thisCardSetId={state.page.cardSet.id}
                     showActionButtons={state.permission.editCardSet}

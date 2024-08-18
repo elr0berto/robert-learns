@@ -3,10 +3,10 @@ import React, {useState} from "react";
 import {Button, ListGroup} from "react-bootstrap";
 import {ChevronDoubleDown, ChevronDoubleUp, ChevronDown, ChevronRight, ChevronUp} from "react-bootstrap-icons";
 import {Pages, pageUrls} from "../../page-urls";
-import {CardSetWithChildren} from "../../overmind/data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../../overmind/data/data-state";
 
-interface CardSetWithChildrenProps {
-    cardSetWithChildren: CardSetWithChildren;
+interface CardSetWithChildrenAndCardCountsProps {
+    cardSetWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts;
     level: number;
     parentId: number;
     siblingsCount: number;
@@ -15,7 +15,7 @@ interface CardSetWithChildrenProps {
     defaultOpen: boolean;
 }
 
-function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
+function CardSetWithChildrenAndCardCountsComponent(props: CardSetWithChildrenAndCardCountsProps) {
     const state = useAppState();
     const actions = useActions();
 
@@ -27,13 +27,13 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
     return (
         <ListGroup.Item className={`card-set-with-children level-${props.level}`}>
             <div className="mb-1 d-flex">
-                {props.cardSetWithChildren.children.length > 0 && (
+                {props.cardSetWithChildrenAndCardCounts.children.length > 0 && (
                     <div className="me-1 chevron" onClick={() => setIsOpen(!isOpen)}>
                         {isOpen ? <ChevronDown size={20}/> : <ChevronRight size={20}/>}
                     </div>
                 )}
-                <a href={pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace, props.cardSetWithChildren.cardSet)}>
-                    {props.cardSetWithChildren.cardSet.name}
+                <a href={pageUrls[Pages.WorkspaceCardSet].url(state.page.workspace, props.cardSetWithChildrenAndCardCounts.cardSet)}>
+                    {props.cardSetWithChildrenAndCardCounts.cardSet.name} ({props.cardSetWithChildrenAndCardCounts.cardCount})
                 </a>
                 {state.workspacePage.sorting && props.siblingsCount > 1 ?
                     <>
@@ -42,7 +42,7 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
                             className="ms-2"
                             size="sm"
                             onClick={() => actions.workspacePage.sortCardSet({
-                                cardSetId: props.cardSetWithChildren.cardSet.id,
+                                cardSetId: props.cardSetWithChildrenAndCardCounts.cardSet.id,
                                 parentId: props.parentId,
                                 direction: 'first'
                             })}
@@ -54,7 +54,7 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
                             className="ms-2"
                             size="sm"
                             onClick={() => actions.workspacePage.sortCardSet({
-                                cardSetId: props.cardSetWithChildren.cardSet.id,
+                                cardSetId: props.cardSetWithChildrenAndCardCounts.cardSet.id,
                                 parentId: props.parentId,
                                 direction: 'up'
                             })}
@@ -66,7 +66,7 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
                             className="ms-2"
                             size="sm"
                             onClick={() => actions.workspacePage.sortCardSet({
-                                cardSetId: props.cardSetWithChildren.cardSet.id,
+                                cardSetId: props.cardSetWithChildrenAndCardCounts.cardSet.id,
                                 parentId: props.parentId,
                                 direction: 'down'
                             })}
@@ -78,7 +78,7 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
                             className="ms-2"
                             size="sm"
                             onClick={() => actions.workspacePage.sortCardSet({
-                                cardSetId: props.cardSetWithChildren.cardSet.id,
+                                cardSetId: props.cardSetWithChildrenAndCardCounts.cardSet.id,
                                 parentId: props.parentId,
                                 direction: 'last'
                             })}
@@ -88,17 +88,17 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
                     </> : null}
 
             </div>
-            {isOpen && props.cardSetWithChildren.children.length > 0 && (
+            {isOpen && props.cardSetWithChildrenAndCardCounts.children.length > 0 && (
                 <ListGroup className="mt-2">
-                    {props.cardSetWithChildren.children.map(child => (
-                        <CardSetWithChildrenComponent
+                    {props.cardSetWithChildrenAndCardCounts.children.map(child => (
+                        <CardSetWithChildrenAndCardCountsComponent
                             key={child.cardSet.id}
-                            cardSetWithChildren={child}
+                            cardSetWithChildrenAndCardCounts={child}
                             level={props.level + 1}
-                            parentId={props.cardSetWithChildren.cardSet.id}
-                            siblingsCount={props.cardSetWithChildren.children.length}
-                            first={props.cardSetWithChildren.children.indexOf(child) === 0}
-                            last={props.cardSetWithChildren.children.indexOf(child) === props.cardSetWithChildren.children.length - 1}
+                            parentId={props.cardSetWithChildrenAndCardCounts.cardSet.id}
+                            siblingsCount={props.cardSetWithChildrenAndCardCounts.children.length}
+                            first={props.cardSetWithChildrenAndCardCounts.children.indexOf(child) === 0}
+                            last={props.cardSetWithChildrenAndCardCounts.children.indexOf(child) === props.cardSetWithChildrenAndCardCounts.children.length - 1}
                             defaultOpen={props.defaultOpen}
                         />
                     ))}
@@ -109,22 +109,22 @@ function CardSetWithChildrenComponent(props: CardSetWithChildrenProps) {
 }
 
 type CardSetTreeProps = {
-    cardSetsWithChildren: CardSetWithChildren[];
+    cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[];
     level: number;
     defaultOpen: boolean;
 }
 function CardSetTree(props: CardSetTreeProps) {
     return (
         <ListGroup>
-            {props.cardSetsWithChildren.map(cardSetWithChildren => (
-                <CardSetWithChildrenComponent
-                    key={cardSetWithChildren.cardSet.id}
-                    cardSetWithChildren={cardSetWithChildren}
+            {props.cardSetsWithChildrenAndCardCounts.map(cardSetWithChildrenAndCardCounts => (
+                <CardSetWithChildrenAndCardCountsComponent
+                    key={cardSetWithChildrenAndCardCounts.cardSet.id}
+                    cardSetWithChildrenAndCardCounts={cardSetWithChildrenAndCardCounts}
                     level={props.level}
                     parentId={0}
-                    siblingsCount={props.cardSetsWithChildren.length}
-                    first={props.cardSetsWithChildren.indexOf(cardSetWithChildren) === 0}
-                    last={props.cardSetsWithChildren.indexOf(cardSetWithChildren) === props.cardSetsWithChildren.length - 1}
+                    siblingsCount={props.cardSetsWithChildrenAndCardCounts.length}
+                    first={props.cardSetsWithChildrenAndCardCounts.indexOf(cardSetWithChildrenAndCardCounts) === 0}
+                    last={props.cardSetsWithChildrenAndCardCounts.indexOf(cardSetWithChildrenAndCardCounts) === props.cardSetsWithChildrenAndCardCounts.length - 1}
                     defaultOpen={props.defaultOpen}
                 />
             ))}

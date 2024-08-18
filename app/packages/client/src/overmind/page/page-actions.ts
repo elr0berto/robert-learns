@@ -45,7 +45,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         state.page.cardSetId = null;
         state.page.drillRunId = parseInt(params?.payload?.params?.drillRunId ?? null);
     } else {
-        promises.push(actions.page.loadWorkspaces(Pages.Front === params?.page));
+        promises.push(actions.page.loadWorkspaces({loadCardSets: params?.page === Pages.Front || params?.page === Pages.Workspace || params?.page === Pages.WorkspaceCardSet, loadCards: params?.page === Pages.Workspace || params?.page === Pages.WorkspaceCardSet}));
 
         if (params?.payload?.params?.workspaceId/* || state.page.workspaceId !== null Removed because otherwise deleting workspace doesnt work.*/) {
             if (params?.payload?.params?.workspaceId) {
@@ -54,7 +54,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
             if (typeof state.page.workspaceId !== 'number') {
                 throw new Error('workspaceId is ' + typeof state.page.workspaceId);
             }
-            promises.push(actions.page.loadCardSets([state.page.workspaceId]));
+            //promises.push(actions.page.loadCardSets([state.page.workspaceId]));
 
             if (params?.payload?.params?.cardSetId/* || state.page.cardSetId !== null: COMMENTED OUT BECAUSE OTHERWISE it gets weird when changing from a cardset-page to the workspace-page. menu thinks cardset is still selected!*/) {
                 if (params?.payload?.params?.cardSetId) {
@@ -63,7 +63,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
                 if (typeof state.page.cardSetId !== 'number') {
                     throw new Error('cardSetId is ' + typeof state.page.cardSetId);
                 }
-                promises.push(actions.page.loadCards([state.page.cardSetId]));
+                //promises.push(actions.page.loadCards([state.page.cardSetId]));
             } else {
                 state.page.cardSetId = null;
             }
@@ -80,7 +80,7 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
     }
 }
 
-export const loadWorkspaces = async ({state,actions} : Context, loadCardSets: boolean) => {
+export const loadWorkspaces = async ({state,actions} : Context, {loadCardSets, loadCards}: {loadCardSets: boolean, loadCards: boolean}) => {
     state.page.loadingWorkspaces = true;
 
     await actions.data.loadWorkspaces();
@@ -95,6 +95,10 @@ export const loadWorkspaces = async ({state,actions} : Context, loadCardSets: bo
         }
         if (loadCardSetsPromise !== null) {
             await loadCardSetsPromise;
+
+            if (loadCards) {
+                await actions.page.loadCards(state.data.cardSets.map(cs => cs.id));
+            }
         }
     }
 
@@ -118,8 +122,10 @@ export const loadCards = async ({state,actions} : Context, cardSetIds: number[])
     state.page.loadingCards = true;
 
     await actions.data.loadCardSetCards({cardSetIds: cardSetIds});
-    const cardIds = state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
+    let cardIds = state.data.cardSetCards.filter(csc => cardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
     if (cardIds.length > 0) {
+        // make unique cardIds
+        cardIds = Array.from(new Set(cardIds));
         await actions.data.loadCardSetCards({cardIds: cardIds}); // load the rest of the card-set-cards for each card.
         await actions.data.loadCards(cardIds);
     }
@@ -141,7 +147,7 @@ export const loadDrills = async ({state,actions} : Context) => {
 }
 export const loadDrillsPage = async ({state,actions} : Context) => {
     const drillsPromise = actions.page.loadDrills();
-    await actions.page.loadWorkspaces(true);
+    await actions.page.loadWorkspaces({loadCardSets: true, loadCards: true});
     await drillsPromise;
 }
 
@@ -149,7 +155,7 @@ export const loadDrillRunsPage = async ({state,actions} : Context, {drillRunId}:
     if (drillRunId === null || isNaN(drillRunId)) {
         throw new Error('drillRunId is null or NaN');
     }
-    await actions.page.loadWorkspaces(true);
+    await actions.page.loadWorkspaces({loadCardSets: true, loadCards: false});
 
     state.page.loadingDrillRuns = true;
     await actions.data.loadDrillRuns({drillRunIds: [drillRunId]});

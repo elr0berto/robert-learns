@@ -38,7 +38,7 @@ export const validateGetCardSetCardsRequest = (req: GetCardSetCardsRequest) : st
     if (req.cardIds !== undefined) {
         const uniqueCardIds = new Set(req.cardIds);
         if (uniqueCardIds.size !== req.cardIds.length) {
-            errs.push('You cannot request the same card twice');
+            errs.push('validateGetCardSetCardsRequest: You cannot request the same card twice');
         }
     }
 

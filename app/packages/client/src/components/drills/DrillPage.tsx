@@ -5,34 +5,34 @@ import Loading from "../Loading";
 import TristateCheckbox from "../TristateCheckbox";
 import {pageUrls} from "../../page-urls";
 import ResumeDrillRunModal from "./ResumeDrillRunModal";
-import {CardSetWithChildren} from "../../overmind/data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../../overmind/data/data-state";
 import {DashSquareDotted, PlusSquareDotted} from 'react-bootstrap-icons';
 
 
-const CardSetCheckbox = ({cardSetWithChildren, level}: { cardSetWithChildren: CardSetWithChildren, level: number }) => {
+const CardSetCheckbox = ({cardSetWithChildrenAndCardCounts, level}: { cardSetWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts, level: number }) => {
     const state = useAppState();
     const actions = useActions();
 
     const marginLeft = `${level*1.25}rem`;
-    const isIndeterminate = state.drillPage.indeterminateCardSetIds.includes(cardSetWithChildren.cardSet.id);
-    const isChecked = state.drillPage.selectedCardSetIds.includes(cardSetWithChildren.cardSet.id);
+    const isIndeterminate = state.drillPage.indeterminateCardSetIds.includes(cardSetWithChildrenAndCardCounts.cardSet.id);
+    const isChecked = state.drillPage.selectedCardSetIds.includes(cardSetWithChildrenAndCardCounts.cardSet.id);
 
     return (
         <>
-            {cardSetWithChildren.children.length > 0 ? (
+            {cardSetWithChildrenAndCardCounts.children.length > 0 ? (
                 <div className="d-flex flex-row" style={{marginLeft}}>
-                    <div className="me-1 expand-toggle" onClick={() => actions.drillPage.toggleExpandCardSetId(cardSetWithChildren.cardSet.id)}>
-                        {state.drillPage.expandedCardSetIds.includes(cardSetWithChildren.cardSet.id) ?
+                    <div className="me-1 expand-toggle" onClick={() => actions.drillPage.toggleExpandCardSetId(cardSetWithChildrenAndCardCounts.cardSet.id)}>
+                        {state.drillPage.expandedCardSetIds.includes(cardSetWithChildrenAndCardCounts.cardSet.id) ?
                             <DashSquareDotted/> :
                             <PlusSquareDotted/>}
                     </div>
                     <TristateCheckbox
-                        key={cardSetWithChildren.cardSet.id}
-                        label={cardSetWithChildren.cardSet.name}
+                        key={cardSetWithChildrenAndCardCounts.cardSet.id}
+                        label={cardSetWithChildrenAndCardCounts.cardSet.name + ' (' + cardSetWithChildrenAndCardCounts.cardCount + ')'}
                         checked={isChecked}
                         indeterminate={isIndeterminate}
-                        onChange={() => actions.drillPage.toggleCardSetId(cardSetWithChildren.cardSet.id)}
-                        id={"cardSetCheckbox_" + cardSetWithChildren.cardSet.id}
+                        onChange={() => actions.drillPage.toggleCardSetId(cardSetWithChildrenAndCardCounts.cardSet.id)}
+                        id={"cardSetCheckbox_" + cardSetWithChildrenAndCardCounts.cardSet.id}
                         disabled={state.drillPage.formDisabled}
                     />
                 </div>
@@ -40,18 +40,18 @@ const CardSetCheckbox = ({cardSetWithChildren, level}: { cardSetWithChildren: Ca
                 <div className="d-flex flex-row" style={{marginLeft}}>
                     <div className="me-1 expand-toggle-filler"><DashSquareDotted/></div>
                     <Form.Check
-                        key={cardSetWithChildren.cardSet.id}
+                        key={cardSetWithChildrenAndCardCounts.cardSet.id}
                         type="checkbox"
-                        label={cardSetWithChildren.cardSet.name}
+                        label={cardSetWithChildrenAndCardCounts.cardSet.name + ' (' + cardSetWithChildrenAndCardCounts.cardCount + ')'}
                         checked={isChecked}
-                        onChange={() => actions.drillPage.toggleCardSetId(cardSetWithChildren.cardSet.id)}
-                        id={"cardSetCheckbox_" + cardSetWithChildren.cardSet.id}
+                        onChange={() => actions.drillPage.toggleCardSetId(cardSetWithChildrenAndCardCounts.cardSet.id)}
+                        id={"cardSetCheckbox_" + cardSetWithChildrenAndCardCounts.cardSet.id}
                         disabled={state.drillPage.formDisabled}
                     />
                 </div>
             )}
-            {state.drillPage.expandedCardSetIds.includes(cardSetWithChildren.cardSet.id) && cardSetWithChildren.children.map(child => (
-                <CardSetCheckbox key={child.cardSet.id} cardSetWithChildren={child} level={level + 1}/>
+            {state.drillPage.expandedCardSetIds.includes(cardSetWithChildrenAndCardCounts.cardSet.id) && cardSetWithChildrenAndCardCounts.children.map(child => (
+                <CardSetCheckbox key={child.cardSet.id} cardSetWithChildrenAndCardCounts={child} level={level + 1}/>
             ))}
         </>
     );
@@ -124,27 +124,27 @@ function DrillPage() {
                             />
                         </Form.Group>
                         <div className="mt-3">
-                            {state.page.workspacesWithCardSetsWithChildren.map(wwcs =>
+                            {state.page.workspacesWithCardCountsWithCardSetsWithChildrenAndCardCounts.map(wwcs =>
                                 <>
                                     <div className="d-flex flex-row">
-                                        <div className="mt-2 me-1 expand-toggle" onClick={() => actions.drillPage.toggleExpandWorkspaceId(wwcs.workspace.id)}>
-                                        {state.drillPage.expandedWorkspaceIds.includes(wwcs.workspace.id) ?
+                                        <div className="mt-2 me-1 expand-toggle" onClick={() => actions.drillPage.toggleExpandWorkspaceId(wwcs.workspaceWithCardCount.workspace.id)}>
+                                        {state.drillPage.expandedWorkspaceIds.includes(wwcs.workspaceWithCardCount.workspace.id) ?
                                             <DashSquareDotted/> :
                                             <PlusSquareDotted/>}
                                         </div>
                                         <TristateCheckbox
                                             className="mt-2"
-                                            key={wwcs.workspace.id}
-                                            label={wwcs.workspace.name}
-                                            checked={state.drillPage.selectedWorkspaceIds.includes(wwcs.workspace.id)}
-                                            onChange={event => actions.drillPage.toggleWorkspaceId(wwcs.workspace.id)}
-                                            id={"workspaceCheckbox_"+wwcs.workspace.id}
-                                            indeterminate={state.drillPage.indeterminateWorkspaceIds.includes(wwcs.workspace.id)}
+                                            key={wwcs.workspaceWithCardCount.workspace.id}
+                                            label={wwcs.workspaceWithCardCount.workspace.name + ' (' + wwcs.workspaceWithCardCount.cardCount + ')'}
+                                            checked={state.drillPage.selectedWorkspaceIds.includes(wwcs.workspaceWithCardCount.workspace.id)}
+                                            onChange={event => actions.drillPage.toggleWorkspaceId(wwcs.workspaceWithCardCount.workspace.id)}
+                                            id={"workspaceCheckbox_"+wwcs.workspaceWithCardCount.workspace.id}
+                                            indeterminate={state.drillPage.indeterminateWorkspaceIds.includes(wwcs.workspaceWithCardCount.workspace.id)}
                                             disabled={state.drillPage.formDisabled}
                                         />
                                     </div>
-                                    {state.drillPage.expandedWorkspaceIds.includes(wwcs.workspace.id) && wwcs.cardSetsWithChildren.map(cardSetWithChildren =>
-                                        <CardSetCheckbox key={cardSetWithChildren.cardSet.id} cardSetWithChildren={cardSetWithChildren} level={1}/>
+                                    {state.drillPage.expandedWorkspaceIds.includes(wwcs.workspaceWithCardCount.workspace.id) && wwcs.cardSetsWithChildrenAndCardCounts.map(cardSetWithChildrenAndCardCounts =>
+                                        <CardSetCheckbox key={cardSetWithChildrenAndCardCounts.cardSet.id} cardSetWithChildrenAndCardCounts={cardSetWithChildrenAndCardCounts} level={1}/>
                                     )}
                                 </>
                             )}

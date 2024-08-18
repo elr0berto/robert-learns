@@ -1,11 +1,11 @@
-import {Alert, Button, Form, ListGroup, Modal} from "react-bootstrap";
+import {Button, Form, ListGroup, Modal} from "react-bootstrap";
 import React from "react";
 import {useActions, useAppState} from "../../overmind";
-import {CardSetWithChildren} from "../../overmind/data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../../overmind/data/data-state";
 import Loading from "../Loading";
 
 type CardSetItemProps = {
-    item: CardSetWithChildren;
+    item: CardSetWithChildrenAndCardCounts;
     onClick: (cardSetId: number) => void;
     parentChecked: boolean;
 }
@@ -61,7 +61,7 @@ function LinkCardSetsModal() {
             {state.linkCardSetsModal.loading ?
                 <Loading/> :
                 <ListGroup>
-                    {state.data.cardSetsWithChildren.map(item => {
+                    {state.data.cardSetsWithChildrenAndCardCounts.map(item => {
                         return <CardSetItem
                             key={item.cardSet.id}
                             item={item}

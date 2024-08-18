@@ -29,7 +29,7 @@ export const validateGetCardsRequest = (req: GetCardsRequest) : string[] => {
     // check that cardIds are unique
     const uniqueCardIds = new Set(req.cardIds);
     if (uniqueCardIds.size !== req.cardIds.length) {
-        errs.push('You cannot request the same card twice');
+        errs.push('validateGetCardsRequest: You cannot request the same card twice');
     }
 
     return errs;

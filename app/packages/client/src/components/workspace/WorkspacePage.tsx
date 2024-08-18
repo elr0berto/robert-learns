@@ -13,13 +13,12 @@ function WorkspacePage() {
     const state = useAppState();
     const actions = useActions();
 
-    if (state.page.workspace === null) {
-        if (state.page.loadingWorkspaces) {
-            return <Container><Loading text="Loading workspaces..."/></Container>;
-        } else {
-            return <Container>Workspace not found.</Container>
-        }
+    if (state.page.loadingWorkspaces) {
+        return <Container><Loading text="Loading workspaces..."/></Container>;
+    } else if (state.page.workspace === null) {
+        return <Container>Workspace not found.</Container>
     }
+
     return (
         <Container className="mb-5">
             <h1 className="my-5">Workspace {state.page.workspace.name}</h1>
@@ -40,7 +39,7 @@ function WorkspacePage() {
                     >
                         <FolderPlus/> Create card set
                     </Button> : null}
-                {state.permission.editWorkspace && state.page.cardSetsWithChildren.length > 0 ?
+                {state.permission.editWorkspace && state.page.cardSetsWithChildrenAndCardCounts.length > 0 ?
                     <Button
                         onClick={actions.workspacePage.sortCardSets}
                         variant="outline-primary"
@@ -51,7 +50,7 @@ function WorkspacePage() {
             {state.page.loadingCardSets ?
                 <Loading text="Loading card sets..."/> :
                 <div className="workspace-card-sets">
-                    <CardSetTree cardSetsWithChildren={state.workspacePage.cardSetsWithChildren} level={0} defaultOpen={false}/>
+                    <CardSetTree cardSetsWithChildrenAndCardCounts={state.workspacePage.cardSetsWithChildrenAndCardCounts} level={0} defaultOpen={false}/>
                 </div>
             }
 

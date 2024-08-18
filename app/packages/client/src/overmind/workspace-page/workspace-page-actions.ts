@@ -1,58 +1,47 @@
 import { Context } from '..';
-import {CardSetWithChildren} from "../data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../data/data-state";
 import {SortDirection, sortWithDirection} from "@elr0berto/robert-learns-shared/dist/common";
 import {
     CardSetIdsPerCardSetId,
     CardSetIdsPerCardSetIdKeyType
 } from "@elr0berto/robert-learns-shared/dist/api/card-sets";
 
-const convertCardSetIdsPerCardSetId = (cardSetsWithChildren: CardSetWithChildren[]): CardSetIdsPerCardSetId => {
+const convertCardSetIdsPerCardSetId = (cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[]): CardSetIdsPerCardSetId => {
     const result: CardSetIdsPerCardSetId = {0: []};
 
-    const processCardSets = (cardSetsWithChildren: CardSetWithChildren[], parentCardSetId: CardSetIdsPerCardSetIdKeyType) => {
-        console.log('parentCardSetId', parentCardSetId);
-        if (cardSetsWithChildren.length === 0) {
-            console.log('parentCardSetId a', parentCardSetId);
+    const processCardSets = (cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[], parentCardSetId: CardSetIdsPerCardSetIdKeyType) => {
+        if (cardSetsWithChildrenAndCardCounts.length === 0) {
             return;
         }
         if (parentCardSetId !== 0 && result[parentCardSetId]) {
-            console.log('parentCardSetId b', parentCardSetId);
             return;
         } else {
-            console.log('parentCardSetId c', parentCardSetId);
             result[parentCardSetId] = [];
         }
 
-        for (const cardSetWithChildren of cardSetsWithChildren) {
-            console.log('parentCardSetId d', parentCardSetId);
-            console.log('parentCardSetId cardSetWithChildren.cardSet.id', cardSetWithChildren.cardSet.id);
-            result[parentCardSetId].push(cardSetWithChildren.cardSet.id);
+        for (const cardSetWithChildrenAndCardCounts of cardSetsWithChildrenAndCardCounts) {
+            result[parentCardSetId].push(cardSetWithChildrenAndCardCounts.cardSet.id);
 
-            if (cardSetWithChildren.children.length > 0) {
-                console.log('parentCardSetId e', parentCardSetId);
-                processCardSets(cardSetWithChildren.children, cardSetWithChildren.cardSet.id);
+            if (cardSetWithChildrenAndCardCounts.children.length > 0) {
+                processCardSets(cardSetWithChildrenAndCardCounts.children, cardSetWithChildrenAndCardCounts.cardSet.id);
             }
         }
     };
 
-    processCardSets(cardSetsWithChildren, 0);
+    processCardSets(cardSetsWithChildrenAndCardCounts, 0);
     return result;
 };
 
 export const sortCardSets = async ({ state }: Context) => {
-    state.workspacePage.newSorting = convertCardSetIdsPerCardSetId(state.page.cardSetsWithChildren);
+    state.workspacePage.newSorting = convertCardSetIdsPerCardSetId(state.page.cardSetsWithChildrenAndCardCounts);
 }
 
 export const sortCardSet = async ({ state }: Context, {cardSetId, parentId, direction}: {cardSetId: number, parentId: number, direction: SortDirection}) => {
-    console.log('sortCardSet parentId', parentId);
-    console.log('sortCardSet cardSetId', cardSetId);
-    console.log('sortCardSet direction', direction);
     if (state.workspacePage.newSorting === null || state.workspacePage.newSorting[parentId] === undefined) {
         throw new Error('newSorting is null or undefined for parentId ' + parentId);
     }
-    const test = sortWithDirection(state.workspacePage.newSorting[parentId], cardSetId, direction);
-    console.log('test', test);
-    state.workspacePage.newSorting = {...state.workspacePage.newSorting, [parentId]: test};
+    const newId = sortWithDirection(state.workspacePage.newSorting[parentId], cardSetId, direction);
+    state.workspacePage.newSorting = {...state.workspacePage.newSorting, [parentId]: newId};
 }
 
 export const sortCardSetsSave = async ({ state, effects, actions }: Context) => {

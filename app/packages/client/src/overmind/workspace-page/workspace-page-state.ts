@@ -1,4 +1,4 @@
-import {CardSetWithChildren} from "../data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../data/data-state";
 import {derived} from "overmind";
 import {config} from "../index";
 import {
@@ -11,7 +11,7 @@ type WorkspacePageState = {
     newSorting: CardSetIdsPerCardSetId | null;
     savingSorting: boolean;
     readonly sorting: boolean;
-    readonly cardSetsWithChildren: CardSetWithChildren[];
+    readonly cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[];
 }
 
 export const getInitialWorkspacePageState = (): WorkspacePageState => ({
@@ -20,21 +20,21 @@ export const getInitialWorkspacePageState = (): WorkspacePageState => ({
     sorting: derived((state: WorkspacePageState) => {
         return state.newSorting !== null;
     }),
-    cardSetsWithChildren: derived((state: WorkspacePageState, rootState: typeof config.state) => {
+    cardSetsWithChildrenAndCardCounts: derived((state: WorkspacePageState, rootState: typeof config.state) => {
         if (state.sorting) {
-            console.log('cardSetsWithChildren derived sorting');
-            const sortChildren = (cardSetsWithChildren: CardSetWithChildren[], parentId: CardSetIdsPerCardSetIdKeyType) : CardSetWithChildren[] => {
-                const ret : CardSetWithChildren[] = [];
+            const sortChildren = (cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[], parentId: CardSetIdsPerCardSetIdKeyType) : CardSetWithChildrenAndCardCounts[] => {
+                const ret : CardSetWithChildrenAndCardCounts[] = [];
 
-                for (const cardSetWithChildren of cardSetsWithChildren) {
-                    const newCardSetWithChildren : CardSetWithChildren = {
-                        cardSet: cardSetWithChildren.cardSet,
-                        children: []
+                for (const cardSetWithChildrenAndCardCounts of cardSetsWithChildrenAndCardCounts) {
+                    const newCardSetWithChildrenAndCardCounts : CardSetWithChildrenAndCardCounts = {
+                        cardSet: cardSetWithChildrenAndCardCounts.cardSet,
+                        children: [],
+                        cardCount: cardSetWithChildrenAndCardCounts.cardCount,
                     };
-                    if (cardSetWithChildren.children.length > 0) {
-                        newCardSetWithChildren.children = sortChildren(cardSetWithChildren.children, cardSetWithChildren.cardSet.id);
+                    if (cardSetWithChildrenAndCardCounts.children.length > 0) {
+                        newCardSetWithChildrenAndCardCounts.children = sortChildren(cardSetWithChildrenAndCardCounts.children, cardSetWithChildrenAndCardCounts.cardSet.id);
                     }
-                    ret.push(newCardSetWithChildren);
+                    ret.push(newCardSetWithChildrenAndCardCounts);
                 }
 
                 if (state.newSorting === null || !state.newSorting[parentId]) {
@@ -46,17 +46,13 @@ export const getInitialWorkspacePageState = (): WorkspacePageState => ({
                     return sorting.indexOf(a.cardSet.id) - sorting.indexOf(b.cardSet.id);
                 });
 
-                console.log('sorted parentId', parentId);
-                console.log('sorted ret', ret);
 
                 return ret;
             };
 
-            const finalResult = sortChildren(rootState.page.cardSetsWithChildren, 0);
-            console.log('finalResult', finalResult);
-            return finalResult;
+            return sortChildren(rootState.page.cardSetsWithChildrenAndCardCounts, 0);
         } else {
-            return rootState.page.cardSetsWithChildren;
+            return rootState.page.cardSetsWithChildrenAndCardCounts;
         }
     }),
 });

@@ -2,11 +2,11 @@ import {useActions, useAppState} from "../../overmind";
 import {Alert, Button, Col, Container, Form, Modal, Row} from "react-bootstrap";
 import React from "react";
 import CardPreview from "./CardPreview";
-import {CardSetWithChildren} from "../../overmind/data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../../overmind/data/data-state";
 import {Folder} from 'react-bootstrap-icons';
 import Loading from "../Loading";
 
-function CardSetCheckbox({cardSetWithChildren, level}: { cardSetWithChildren: CardSetWithChildren, level: number }) {
+function CardSetCheckbox({cardSetWithChildrenAndCardCounts, level}: { cardSetWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts, level: number }) {
     const state = useAppState();
     const actions = useActions();
 
@@ -14,30 +14,30 @@ function CardSetCheckbox({cardSetWithChildren, level}: { cardSetWithChildren: Ca
 
     return (
         <>
-            {cardSetWithChildren.children.length > 0 ? (
+            {cardSetWithChildrenAndCardCounts.children.length > 0 ? (
                 <div className="mb-2" style={{marginLeft, display: 'flex', alignItems: 'center'}}>
                     <Folder style={{ marginRight: '0.5rem' }} />
-                    <span>{cardSetWithChildren.cardSet.name}</span>
+                    <span>{cardSetWithChildrenAndCardCounts.cardSet.name}</span>
                 </div>
             ) : (
-                <Form.Group className="mb-2" controlId={'editCardSet' + cardSetWithChildren.cardSet.id} style={{marginLeft}}>
+                <Form.Group className="mb-2" controlId={'editCardSet' + cardSetWithChildrenAndCardCounts.cardSet.id} style={{marginLeft}}>
                     <Form.Check
                         type="checkbox"
-                        label={cardSetWithChildren.cardSet.name}
-                        checked={state.editCardCardSetsModal.selectedCardSetIds.indexOf(cardSetWithChildren.cardSet.id) !== -1}
+                        label={cardSetWithChildrenAndCardCounts.cardSet.name}
+                        checked={state.editCardCardSetsModal.selectedCardSetIds.indexOf(cardSetWithChildrenAndCardCounts.cardSet.id) !== -1}
                         disabled={state.editCardCardSetsModal.formDisabled}
                         onChange={event => actions.editCardCardSetsModal.setSelectedCardSetId({
-                            cardSetId: cardSetWithChildren.cardSet.id,
+                            cardSetId: cardSetWithChildrenAndCardCounts.cardSet.id,
                             selected: event.target.checked
                         })}
                     />
                 </Form.Group>
             )}
 
-            {cardSetWithChildren.children.length > 0 ?
+            {cardSetWithChildrenAndCardCounts.children.length > 0 ?
                 <div className="mb-3">
-                    {cardSetWithChildren.children.map(child => (
-                        <CardSetCheckbox key={child.cardSet.id} cardSetWithChildren={child} level={level + 1}/>
+                    {cardSetWithChildrenAndCardCounts.children.map(child => (
+                        <CardSetCheckbox key={child.cardSet.id} cardSetWithChildrenAndCardCounts={child} level={level + 1}/>
                     ))}
                 </div> : null}
         </>
@@ -77,8 +77,8 @@ function EditCardCardSetsModal() {
                     <Col>
                         {state.editCardCardSetsModal.loading ?
                             <Loading/> :
-                            state.editCardCardSetsModal.cardSetsWithChildren.map(cardSetWithChildren =>
-                                <CardSetCheckbox key={cardSetWithChildren.cardSet.id} cardSetWithChildren={cardSetWithChildren} level={0}/>
+                            state.editCardCardSetsModal.cardSetsWithChildrenAndCardCounts.map(cardSetWithChildrenAndCardCounts =>
+                                <CardSetCheckbox key={cardSetWithChildrenAndCardCounts.cardSet.id} cardSetWithChildrenAndCardCounts={cardSetWithChildrenAndCardCounts} level={0}/>
                             )
                         }
                         {state.editCardCardSetsModal.validationError ? <Alert variant={'danger'}>{state.editCardCardSetsModal.validationError}</Alert> : null}

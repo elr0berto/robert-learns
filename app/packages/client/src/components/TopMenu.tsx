@@ -5,36 +5,36 @@ import {SignInStatus} from "../overmind/sign-in/sign-in-state";
 import {Pages, pageUrls} from "../page-urls";
 import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/dist/version";
 import {CollectionPlayFill, FolderPlus} from "react-bootstrap-icons";
-import {CardSetWithChildren} from "../overmind/data/data-state";
+import {CardSetWithChildrenAndCardCounts} from "../overmind/data/data-state";
 import {Workspace} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 
-const renderCardSets = (cardSetsWithChildren: CardSetWithChildren[], workspace: Workspace) => {
-    return cardSetsWithChildren.map(cardSetWithChildren => {
-        if (cardSetWithChildren.children.length > 0) {
+const renderCardSets = (cardSetsWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts[], workspace: Workspace) => {
+    return cardSetsWithChildrenAndCardCounts.map(cardSetWithChildrenAndCardCounts => {
+        if (cardSetWithChildrenAndCardCounts.children.length > 0) {
             return (
                 <NavDropdown
-                    title={cardSetWithChildren.cardSet.name}
-                    id={`dropdown-submenu-${cardSetWithChildren.cardSet.id}`}
-                    key={cardSetWithChildren.cardSet.id}
+                    title={cardSetWithChildrenAndCardCounts.cardSet.name + ' (' + cardSetWithChildrenAndCardCounts.cardCount + ')'}
+                    id={`dropdown-submenu-${cardSetWithChildrenAndCardCounts.cardSet.id}`}
+                    key={cardSetWithChildrenAndCardCounts.cardSet.id}
                 >
                     <NavDropdown.Item
-                        key={`parent-${cardSetWithChildren.cardSet.id}`}
-                        href={pageUrls.workspaceCardSet.url(workspace, cardSetWithChildren.cardSet)}
+                        key={`parent-${cardSetWithChildrenAndCardCounts.cardSet.id}`}
+                        href={pageUrls.workspaceCardSet.url(workspace, cardSetWithChildrenAndCardCounts.cardSet)}
                     >
-                        {cardSetWithChildren.cardSet.name}
+                        {cardSetWithChildrenAndCardCounts.cardSet.name} ({cardSetWithChildrenAndCardCounts.cardCount})
                     </NavDropdown.Item>
                     <NavDropdown.Divider/>
-                    {renderCardSets(cardSetWithChildren.children, workspace)}
+                    {renderCardSets(cardSetWithChildrenAndCardCounts.children, workspace)}
                 </NavDropdown>
             );
         } else {
             return (
                 <NavDropdown.Item
-                    key={cardSetWithChildren.cardSet.id}
-                    href={pageUrls.workspaceCardSet.url(workspace, cardSetWithChildren.cardSet)}
+                    key={cardSetWithChildrenAndCardCounts.cardSet.id}
+                    href={pageUrls.workspaceCardSet.url(workspace, cardSetWithChildrenAndCardCounts.cardSet)}
                 >
-                    {cardSetWithChildren.cardSet.name}
+                    {cardSetWithChildrenAndCardCounts.cardSet.name} ({cardSetWithChildrenAndCardCounts.cardCount})
                 </NavDropdown.Item>
             );
         }
@@ -81,9 +81,9 @@ function TopMenu() {
                         <NavDropdown className="recursive-nav-dropdown" title={
                                 state.page.cardSet !== null ?
                                 state.page.cardSet.name :
-                                (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets ('+ state.page.cardSets.length +')' ))}>
+                                (state.page.loadingCardSets ? 'Loading card sets...' : ('Card sets'))}>
                             {workspace !== null
-                                ? renderCardSets(state.page.cardSetsWithChildren, workspace)
+                                ? renderCardSets(state.page.cardSetsWithChildrenAndCardCounts, workspace)
                                 : null}
                             {state.page.cardSets.length > 0 ? <NavDropdown.Divider/> : null}
                             {workspace !== null ? <NavDropdown.Item as="div"><Button href={pageUrls.workspaceCardSetCreate.url(workspace)}><FolderPlus/> Create card set</Button></NavDropdown.Item> : null}
