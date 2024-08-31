@@ -7,6 +7,7 @@ import {pageUrls} from "../../page-urls";
 import ResumeDrillRunModal from "./ResumeDrillRunModal";
 import {CardSetWithChildrenAndCardCounts} from "../../overmind/data/data-state";
 import {DashSquareDotted, PlusSquareDotted} from 'react-bootstrap-icons';
+import DrillInfo from "./DrillInfo";
 
 
 const CardSetCheckbox = ({cardSetWithChildrenAndCardCounts, level}: { cardSetWithChildrenAndCardCounts: CardSetWithChildrenAndCardCounts, level: number }) => {
@@ -154,6 +155,8 @@ function DrillPage() {
                             null}
 
                         {state.drillPage.saving ? <Loading text="Saving..."/> : null}
+
+                        <DrillInfo/>
 
                         <Button
                             disabled={state.drillPage.formDisabled}

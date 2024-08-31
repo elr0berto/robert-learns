@@ -20,6 +20,7 @@ type DrillPageState = {
     expandedWorkspaceIds: number[];
     expandedCardSetIds: number[];
     readonly selectedWorkspaceIds: number[];
+    readonly selectedCardIds: number[];
     readonly indeterminateWorkspaceIds: number[];
     readonly indeterminateCardSetIds: number[];
     readonly isValid: boolean;
@@ -55,6 +56,9 @@ export const getInitialDrillPageState = () : DrillPageState => {
             });
 
             return ret;
+        }),
+        selectedCardIds: derived((state: DrillPageState, rootState: typeof config.state) => {
+            return rootState.data.cardSetCards.filter(csc => state.selectedCardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
         }),
         indeterminateWorkspaceIds: derived((state: DrillPageState, rootState: typeof config.state) => {
             const workspaces = rootState.page.workspacesWithCardSets.filter(w => w.cardSets.length > 0);

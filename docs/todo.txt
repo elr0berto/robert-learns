@@ -1,14 +1,6 @@
-show the cards under the tree for card-sets that have children card sets.
 show the number of cards in each drill and prevent drilling with zero cards
+show if there is something to resume before starting
 show stats for each card
-
-when creating or editing a card set there should be a "parents" multi choice select box
-
-add a "create card set"-button in the workspace view.
-
-auto-start pm2 on reboot
-
-drill except
 
 social logins
 invite system
@@ -16,6 +8,16 @@ invite system
 
 reverse cards when drilling
 audio first drilling mode
+
+
+when creating or editing a card set there should be a "parents" multi choice select box
+
+add a "create card set"-button in the workspace view.
+
+auto-start pm2 on reboot
+
+drill except (not the same as unchecking something.. because if you uncheck one cardset the cards could still be in other cardsets.)
+
 
 be able to delete a card from all card-sets and the card itself. without having to delete it from every card set manually.
 
@@ -39,6 +41,8 @@ adding users to workspace should not require separate save?
 look for cards not in any card sets
 
 "expand all" button in drill page tree
+
+show the cards under the tree for card-sets that have children card sets.
 
 
 COSMETIC: make loading spinner a card-shuffle
