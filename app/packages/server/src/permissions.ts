@@ -64,21 +64,21 @@ export async function checkPermissions(params: CheckPermissionsParams): Promise<
         });
         if (!card) throw new Error("Card not found. cardId: " + params.cardId + JSON.stringify(params));
         const cardSetCard = await prisma.cardSetCard.findFirst({ where: { cardId: card.id } });
-        if (!cardSetCard) throw new Error("CardSetCard not found");
+        if (!cardSetCard) throw new Error("CardSetCard not found, cardId: " + card.id);
         const cardSet = await prisma.cardSet.findUnique({ where: { id: cardSetCard.cardSetId } });
-        if (!cardSet) throw new Error("CardSet not found");
+        if (!cardSet) throw new Error("CardSet not found cardSetId: " + cardSetCard.cardSetId);
         workspace = await prisma.workspace.findUnique({ where: { id: cardSet.workspaceId }});
     } else if (!workspace && params.card) {
         const cardSetCard = await prisma.cardSetCard.findFirst({ where: { cardId: params.card.id } });
-        if (!cardSetCard) throw new Error("CardSetCard not found");
+        if (!cardSetCard) throw new Error("CardSetCard not found, cardId: " + params.card.id);
         const cardSet = await prisma.cardSet.findUnique({ where: { id: cardSetCard.cardSetId } });
-        if (!cardSet) throw new Error("CardSet not found");
+        if (!cardSet) throw new Error("CardSet not found, cardSetId: " + cardSetCard.cardSetId);
         workspace = await prisma.workspace.findUnique({ where: { id: cardSet.workspaceId }});
     }
 
     if (!workspace && params.cardSetCard) {
         const cardSet = await prisma.cardSet.findUnique({ where: { id: params.cardSetCard.cardSetId } });
-        if (!cardSet) throw new Error("CardSet not found");
+        if (!cardSet) throw new Error("CardSet not found, cardSetId: " + params.cardSetCard.cardSetId);
         workspace = await prisma.workspace.findUnique({ where: { id: cardSet.workspaceId }});
     }
 

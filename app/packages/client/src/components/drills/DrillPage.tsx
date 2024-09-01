@@ -4,7 +4,7 @@ import {Alert, Button, Col, Container, Form, Row} from "react-bootstrap";
 import Loading from "../Loading";
 import TristateCheckbox from "../TristateCheckbox";
 import {pageUrls} from "../../page-urls";
-import ResumeDrillRunModal from "./ResumeDrillRunModal";
+//import ResumeDrillRunModal from "./ResumeDrillRunModal";
 import {CardSetWithChildrenAndCardCounts} from "../../overmind/data/data-state";
 import {DashSquareDotted, PlusSquareDotted} from 'react-bootstrap-icons';
 import DrillInfo from "./DrillInfo";
@@ -161,23 +161,23 @@ function DrillPage() {
                         <Button
                             disabled={state.drillPage.formDisabled}
                             className="mt-3"
-                            variant="outline-success" onClick={() => actions.drillPage.saveDrill({run: false})}
+                            variant="outline-success" onClick={() => actions.drillPage.saveDrill({run: false, resume: false})}
                         >
-                            Save
+                            Save drill
                         </Button>
                         <Button
                             disabled={state.drillPage.formDisabled}
                             className="mt-3 ms-3"
                             variant="success"
-                            onClick={() => actions.drillPage.runDrill()}
+                            onClick={() => actions.drillPage.saveDrill({run: true, resume: false})}
                         >
-                            Run (and save)
+                            Save drill and start a new drill run
                         </Button>
                     </> :
                 null}
             </Col>
         </Row>
-        {state.drillPage.possibleResumeDrillRunWithNumbers === null ? null : <ResumeDrillRunModal/>}
+        {/*state.drillPage.possibleResumeDrillRunWithNumbers === null ? null : <ResumeDrillRunModal/>*/}
     </Container>;
 }
 

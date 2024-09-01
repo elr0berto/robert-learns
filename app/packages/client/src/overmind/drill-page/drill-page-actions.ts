@@ -1,7 +1,7 @@
 import {Context} from "..";
 import {pageUrls} from "../../page-urls";
 import {Pages} from "../../page-urls";
-export const changeDrill = ({ state }: Context, drillId: string) => {
+export const changeDrill = async ({ state, effects, actions }: Context, drillId: string) => {
     if (drillId === 'none' || drillId === 'new') {
         state.drillPage.selectedDrillId = drillId;
         state.drillPage.drillName = '';
@@ -17,6 +17,21 @@ export const changeDrill = ({ state }: Context, drillId: string) => {
         state.drillPage.drillName = drillWithCardSets.drill.name;
         state.drillPage.drillDescription = drillWithCardSets.drill.description;
         state.drillPage.selectedCardSetIds = drillWithCardSets.drillCardSets.map(dcs => dcs.cardSetId);
+
+        state.drillPage.loadingPossibleResumeDrillRun = true;
+        const uResp = await effects.api.drillRuns.getLatestUnfinishedDrillRun({drillId: state.drillPage.selectedDrillId});
+
+        if (uResp.drillRun !== null && uResp.drill !== null && uResp.drillRunQuestions !== null) {
+            actions.data.addOrUpdateDrills([uResp.drill]);
+            actions.data.addOrUpdateDrillRuns([uResp.drillRun]);
+            actions.data.addOrUpdateDrillRunQuestions(uResp.drillRunQuestions);
+            state.drillPage.possibleResumeDrillRunId = uResp.drillRun.id;
+
+            if (state.drillPage.possibleResumeDrillRunWithNumbers === null) {
+                state.drillPage.possibleResumeDrillRunId = null;
+            }
+        }
+        state.drillPage.loadingPossibleResumeDrillRun = false;
     }
 }
 
@@ -124,10 +139,10 @@ export const toggleCardSetId = ({ state }: Context, cardSetId: number) => {
 }
 
 
-export const saveDrill = async ({ state, effects, actions }: Context, {run, resume} : {run: boolean, resume?: boolean}) => {
-    if (!resume) {
+export const saveDrill = async ({ state, effects, actions }: Context, {run, resume} : {run: boolean, resume: boolean}) => {
+    /*if (!resume) {
         state.drillPage.possibleResumeDrillRunId = null;
-    }
+    }*/
     state.drillPage.saveAttempted = true;
     if (!state.drillPage.isValid) {
         return;
@@ -140,7 +155,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run, resu
     state.drillPage.saving = true;
 
     // check if there is an unfinished drill run for this drill that we can resume
-    if (run && state.drillPage.selectedDrillId !== 'new' && resume === undefined) {
+    /*if (run && state.drillPage.selectedDrillId !== 'new' && resume === undefined) {
         const uResp = await effects.api.drillRuns.getLatestUnfinishedDrillRun({drillId: state.drillPage.selectedDrillId});
 
         if (uResp.drillRun !== null && uResp.drill !== null && uResp.drillRunQuestions !== null) {
@@ -156,7 +171,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run, resu
                 state.drillPage.possibleResumeDrillRunId = null;
             }
         }
-    }
+    }*/
 
     const resp = await effects.api.drills.createDrill({
         drillId: state.drillPage.selectedDrillId === 'new' ? null : state.drillPage.selectedDrillId,
@@ -201,6 +216,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run, resu
     state.drillPage.saving = false;
 }
 
+/*
 export const runDrill = async ({ state, effects, actions }: Context) => {
     actions.drillPage.saveDrill({run: true});
 }
@@ -208,6 +224,7 @@ export const runDrill = async ({ state, effects, actions }: Context) => {
 export const closeResumeDrillModal = ({ state }: Context) => {
     state.drillPage.possibleResumeDrillRunId = null;
 }
+*/
 
 export const toggleExpandWorkspaceId = ({ state }: Context, workspaceId: number) => {
     let newExpandedWorkspaceIds = [...state.drillPage.expandedWorkspaceIds];

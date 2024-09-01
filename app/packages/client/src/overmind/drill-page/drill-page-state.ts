@@ -16,6 +16,7 @@ type DrillPageState = {
     selectedCardSetIds: number[];
     saveAttempted: boolean;
     saving: boolean;
+    loadingPossibleResumeDrillRun: boolean;
     possibleResumeDrillRunId: number | null;
     expandedWorkspaceIds: number[];
     expandedCardSetIds: number[];
@@ -41,6 +42,7 @@ export const getInitialDrillPageState = () : DrillPageState => {
         selectedCardSetIds: [],
         saveAttempted: false,
         saving: false,
+        loadingPossibleResumeDrillRun: false,
         possibleResumeDrillRunId: null,
         expandedWorkspaceIds: [],
         expandedCardSetIds: [],
@@ -106,7 +108,7 @@ export const getInitialDrillPageState = () : DrillPageState => {
             return null;
         }),
         formDisabled: derived((state: DrillPageState) => {
-            return state.saving;
+            return state.saving || state.loadingPossibleResumeDrillRun;
         }),
         selectedDrillWithDrillCardSets: derived((state: DrillPageState, rootState: typeof config.state) => {
             if (state.selectedDrillId === 'new' || state.selectedDrillId === 'none') {
