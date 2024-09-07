@@ -27,6 +27,7 @@ type DrillPageState = {
     readonly isValid: boolean;
     readonly errorMessage: string | null;
     readonly formDisabled: boolean;
+    readonly submitDisabled: boolean;
     readonly selectedDrillWithDrillCardSets: DrillWithDrillCardSets | null;
     readonly selectedDrillCardSetIds: number[];
     readonly selectedCardSetsChanged: boolean;
@@ -92,7 +93,7 @@ export const getInitialDrillPageState = () : DrillPageState => {
             return ret;
         }),
         isValid: derived((state: DrillPageState) => {
-            return state.drillName.trim().length > 0 && state.drillDescription.trim().length > 0 && state.selectedCardSetIds.length > 0;
+            return state.drillName.trim().length > 0 && state.drillDescription.trim().length > 0 && state.selectedCardSetIds.length > 0 && state.selectedCardIds.length > 0;
         }),
         errorMessage: derived((state: DrillPageState) => {
             if (state.drillName.trim().length === 0) {
@@ -105,10 +106,17 @@ export const getInitialDrillPageState = () : DrillPageState => {
                 return 'Please select at least one card set.';
             }
 
+            if (state.selectedCardIds.length === 0) {
+                return 'Please select at least one card set containing cards.';
+            }
+
             return null;
         }),
         formDisabled: derived((state: DrillPageState) => {
             return state.saving || state.loadingPossibleResumeDrillRun;
+        }),
+        submitDisabled: derived((state: DrillPageState) => {
+            return !state.isValid || state.formDisabled;
         }),
         selectedDrillWithDrillCardSets: derived((state: DrillPageState, rootState: typeof config.state) => {
             if (state.selectedDrillId === 'new' || state.selectedDrillId === 'none') {

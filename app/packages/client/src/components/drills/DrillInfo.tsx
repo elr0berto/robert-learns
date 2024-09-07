@@ -13,32 +13,32 @@ function DrillInfo() {
         return null;
     }
 
-    const drillName = state.drillPage.selectedDrillId === 'new' ? state.drillPage.drillName : state.drillPage.selectedDrillWithDrillCardSets?.drill.name ?? '';
     return (
         <>
             <Alert variant={'info'} className="mt-3">
-                <Alert.Heading>Drill {drillName}</Alert.Heading>
-                <p>Number of cards: <strong>{state.drillPage.selectedCardIds.length}</strong></p>
+                Number of cards: <strong>{state.drillPage.selectedCardIds.length}</strong>
             </Alert>
-            <Alert variant={'warning'}>
-            {state.drillPage.loadingPossibleResumeDrillRun ?
-                <Loading text={'Loading previous drill runs...'}/> :
-                state.drillPage.possibleResumeDrillRunWithNumbers !== null ?
-                    <>
-                        <p>
-                        Do you want to resume your drill run from {dayjs(state.drillPage.possibleResumeDrillRunWithNumbers.drillRun.startTime).format('LLL')}?<br/>
-                        You already answered {state.drillPage.possibleResumeDrillRunWithNumbers.answeredCount} of {state.drillPage.possibleResumeDrillRunWithNumbers.questionCount} cards.
-                        </p>
-                        <hr/>
-                        <Button variant="primary" onClick={() => actions.drillPage.saveDrill({run: true, resume: true})} disabled={state.drillPage.formDisabled}>
-                            Yes, save and resume previous drill run
-                        </Button>
-                    </> :
-                    <>
-                        No previous drill runs found.
-                    </>
+            {state.drillPage.selectedDrillId === 'new' ? null :
+                <Alert variant={'warning'}>
+                    {state.drillPage.loadingPossibleResumeDrillRun ?
+                        <Loading text={'Loading previous drill runs...'}/> :
+                        state.drillPage.possibleResumeDrillRunWithNumbers !== null ?
+                            <>
+                                <p>
+                                Do you want to resume your drill run from {dayjs(state.drillPage.possibleResumeDrillRunWithNumbers.drillRun.startTime).format('LLL')}?<br/>
+                                You already answered {state.drillPage.possibleResumeDrillRunWithNumbers.answeredCount} of {state.drillPage.possibleResumeDrillRunWithNumbers.questionCount} cards.
+                                </p>
+                                <hr/>
+                                <Button variant="primary" onClick={() => actions.drillPage.saveDrill({run: true, resume: true})} disabled={state.drillPage.formDisabled}>
+                                    Yes, save and resume previous drill run
+                                </Button>
+                            </> :
+                            <>
+                                No previous drill runs found.
+                            </>
+                    }
+                </Alert>
             }
-            </Alert>
         </>
     );
 }
