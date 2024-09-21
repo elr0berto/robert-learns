@@ -2,11 +2,13 @@ import {derived} from "overmind";
 import {config} from "../index";
 import {CardSetWithChildrenIds, DrillWithDrillCardSets} from "../data/data-state";
 import {DrillRun} from "@elr0berto/robert-learns-shared/dist/api/models";
+import dayjs from "dayjs";
 
 type DrillRunWithNumbers = {
     drillRun: DrillRun;
     answeredCount: number;
     questionCount: number;
+    lastAnsweredAt: string | null;
 }
 
 type DrillPageState = {
@@ -61,7 +63,10 @@ export const getInitialDrillPageState = () : DrillPageState => {
             return ret;
         }),
         selectedCardIds: derived((state: DrillPageState, rootState: typeof config.state) => {
-            return rootState.data.cardSetCards.filter(csc => state.selectedCardSetIds.includes(csc.cardSetId)).map(csc => csc.cardId);
+            const cardIds = rootState.data.cardSetCards
+                .filter(csc => state.selectedCardSetIds.includes(csc.cardSetId))
+                .map(csc => csc.cardId);
+            return Array.from(new Set(cardIds)); // distinct
         }),
         indeterminateWorkspaceIds: derived((state: DrillPageState, rootState: typeof config.state) => {
             const workspaces = rootState.page.workspacesWithCardSets.filter(w => w.cardSets.length > 0);
@@ -154,10 +159,22 @@ export const getInitialDrillPageState = () : DrillPageState => {
                 throw new Error('No questions found for drill run with id ' + drillRun.id);
             }
             const answeredCount = questions.filter(q => q.correct !== null).length;
+            // get the last answer date from the questions.
+            questions.sort((a, b) => {
+                if (a.answeredAt === null) {
+                    return 1;
+                }
+                if (b.answeredAt === null) {
+                    return -1;
+                }
+                return dayjs(a.answeredAt) < dayjs(b.answeredAt) ? 1 : -1;
+            });
+            const lastAnsweredAt = questions[0].answeredAt;
             return {
                 drillRun: drillRun,
                 answeredCount: answeredCount,
-                questionCount: questions.length
+                questionCount: questions.length,
+                lastAnsweredAt: lastAnsweredAt
             };
         }),
         flatCardSetsWithChildrenIds: derived((state: DrillPageState, rootState: typeof config.state) => {

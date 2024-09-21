@@ -270,5 +270,6 @@ export const getDrillRunQuestionData = (drillRunQuestion: PrismaDrillRunQuestion
         cardId: drillRunQuestion.cardId,
         order: drillRunQuestion.order,
         correct: drillRunQuestion.correct,
+        answeredAt: drillRunQuestion.answeredAt?.toISOString() ?? null,
     };
 }

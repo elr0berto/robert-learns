@@ -1,3 +1,9 @@
+// this one should not change the order of the cardSetCards or a card set where the cards have no order and you change the cardsets of a card the card will jump to the top
+export const addOrUpdateCardSetCardsForCardId = ({state} : Context, {cardId, cardSetCards}: {cardId: number, cardSetCards: CardSetCard[]}) => {
+    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== cardId);
+    state.data.cardSetCards.push(...cardSetCards);
+}
+
 show the number of cards in each drill and prevent drilling with zero cards
 show if there is something to resume before starting
 show stats for each card
@@ -8,7 +14,6 @@ invite system
 
 reverse cards when drilling
 audio first drilling mode
-
 
 when creating or editing a card set there should be a "parents" multi choice select box
 

@@ -166,13 +166,14 @@ model DrillRun {
 }
 
 model DrillRunQuestion {
-  id         Int      @id @default(autoincrement())
-  drillRun   DrillRun @relation(fields: [drillRunId], references: [id])
+  id         Int       @id @default(autoincrement())
+  drillRun   DrillRun  @relation(fields: [drillRunId], references: [id])
   drillRunId Int
-  card       Card     @relation(fields: [cardId], references: [id])
+  card       Card      @relation(fields: [cardId], references: [id])
   cardId     Int
   correct    Boolean?
-  order      Int      @default(0)
+  answeredAt DateTime?
+  order      Int       @default(0)
 }
 
 model CardSetLink {

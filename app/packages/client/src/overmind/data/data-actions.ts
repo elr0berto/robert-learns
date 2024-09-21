@@ -161,9 +161,8 @@ export const addOrUpdateCard = ({state} : Context, card: Card) => {
     }
 }
 
-export const addOrUpdateCardSetCardsForCard = ({state} : Context, {card, cardSetCards}: {card: Card, cardSetCards: CardSetCard[]}) => {
-    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== card.id);
-    state.data.cardSetCards.push(...cardSetCards);
+export const addOrUpdateCardSetCardsForCard = ({actions} : Context, {card, cardSetCards}: {card: Card, cardSetCards: CardSetCard[]}) => {
+    actions.data.addOrUpdateCardSetCardsForCardId({cardId: card.id, cardSetCards});
 }
 
 export const addOrUpdateCardSetCardsForCardId = ({state} : Context, {cardId, cardSetCards}: {cardId: number, cardSetCards: CardSetCard[]}) => {

@@ -44,7 +44,6 @@ export type CardSetWithCardsWithCardSets = {
 export type CardSetWithCardsWithCardSetsWithFlatAncestorCardSets = {
     cardSet: CardSet;
     cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
-
 }
 
 export type WorkspaceWithWorkspaceUsers = {

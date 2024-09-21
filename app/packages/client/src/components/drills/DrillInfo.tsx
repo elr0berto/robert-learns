@@ -3,6 +3,8 @@ import React from "react";
 import {Alert, Button} from "react-bootstrap";
 import Loading from "../Loading";
 import dayjs from "dayjs";
+import LocalizedFormat from "dayjs/plugin/localizedFormat";
+dayjs.extend(LocalizedFormat);
 
 
 function DrillInfo() {
@@ -16,7 +18,7 @@ function DrillInfo() {
     return (
         <>
             <Alert variant={'info'} className="mt-3">
-                Number of cards: <strong>{state.drillPage.selectedCardIds.length}</strong>
+                Number of cards selected: <strong>{state.drillPage.selectedCardIds.length}</strong>
             </Alert>
             {state.drillPage.selectedDrillId === 'new' ? null :
                 <Alert variant={'warning'}>
@@ -25,7 +27,7 @@ function DrillInfo() {
                         state.drillPage.possibleResumeDrillRunWithNumbers !== null ?
                             <>
                                 <p>
-                                Do you want to resume your drill run from {dayjs(state.drillPage.possibleResumeDrillRunWithNumbers.drillRun.startTime).format('LLL')}?<br/>
+                                Do you want to resume your drill run from {dayjs(state.drillPage.possibleResumeDrillRunWithNumbers.lastAnsweredAt ?? state.drillPage.possibleResumeDrillRunWithNumbers.drillRun.startTime).format('LLL')}?<br/>
                                 You already answered {state.drillPage.possibleResumeDrillRunWithNumbers.answeredCount} of {state.drillPage.possibleResumeDrillRunWithNumbers.questionCount} cards.
                                 </p>
                                 <hr/>

@@ -318,6 +318,7 @@ drillRuns.post('/answer-drill-run-question', async (req: Request<unknown, unknow
             },
             data: {
                 correct: req.body.correct,
+                answeredAt: new Date(),
             }
         });
 

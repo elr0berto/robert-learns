@@ -6,6 +6,7 @@ export type DrillRunQuestionData = DataType & {
     cardId: number;
     order: number;
     correct: boolean | null;
+    answeredAt: string | null;
 }
 
 export class DrillRunQuestion {
@@ -14,11 +15,13 @@ export class DrillRunQuestion {
     cardId: number;
     order: number;
     correct: boolean | null;
+    answeredAt: string | null;
     constructor(data: DrillRunQuestionData) {
         this.id = data.id;
         this.drillRunId = data.drillRunId;
         this.cardId = data.cardId;
         this.order = data.order;
         this.correct = data.correct;
+        this.answeredAt = data.answeredAt;
     }
 }
