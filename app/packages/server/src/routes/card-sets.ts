@@ -249,6 +249,7 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
                     workspace: true,
                     cards: true,
                     includedCardSets: true,
+                    includedInCardSets: true,
                 },
             });
 
@@ -265,6 +266,31 @@ cardSets.post('/delete-card-set', async (req: Request<unknown, unknown, DeleteCa
                     dataType: true,
                     status: ResponseStatus.UserError,
                     errorMessage: 'Cannot delete card set with included card sets. Please remove all included card sets from the card set first.',
+                });
+            }
+
+            // remove card-set-links where this card-set is included
+            await tx.cardSetLink.deleteMany({
+                where: {
+                    includedCardSetId: req.body.cardSetId
+                }
+            });
+
+            // check if its in any drillCardSets and delete them from there first
+            const drillCardSets = await tx.drillCardSet.findMany({
+                where: {
+                    cardSetId: req.body.cardSetId
+                }
+            });
+
+            for (const drillCardSet of drillCardSets) {
+                await tx.drillCardSet.delete({
+                    where: {
+                        drillId_cardSetId: {
+                            drillId: drillCardSet.drillId,
+                            cardSetId: drillCardSet.cardSetId,
+                        }
+                    }
                 });
             }
 

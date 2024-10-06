@@ -166,13 +166,60 @@ export const addOrUpdateCardSetCardsForCard = ({actions} : Context, {card, cardS
 }
 
 export const addOrUpdateCardSetCardsForCardId = ({state} : Context, {cardId, cardSetCards}: {cardId: number, cardSetCards: CardSetCard[]}) => {
-    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardId !== cardId);
-    state.data.cardSetCards.push(...cardSetCards);
+    // make a copy of state.data.cardSetCards
+    let copy = [...state.data.cardSetCards];
+
+    // remove all cardSetCards that have cardId and that is not in cardSetCards
+    copy = copy.filter(csc => csc.cardId !== cardId || cardSetCards.find(csc2 => csc2.cardSetId === csc.cardSetId) !== undefined);
+
+    // update the cardSetCards order property for all the existing cardSetCards
+    copy = copy.map(csc => {
+        if (csc.cardId !== cardId) {
+            return csc;
+        }
+        const newCsc2 = cardSetCards.find(csc2 => csc2.cardSetId === csc.cardSetId);
+        if (typeof newCsc2 !== 'undefined') {
+            csc.order = newCsc2.order;
+        }
+        return csc;
+    });
+
+    // add new cardSetCards that are not in copy yet
+    cardSetCards.forEach(csc => {
+        if (copy.find(csc2 => csc2.cardSetId === csc.cardSetId && csc2.cardId === csc.cardId) === undefined) {
+            copy.push(csc);
+        }
+    });
+
+    state.data.cardSetCards = copy;
 }
 
 export const addOrUpdateCardSetCardsForCardSetId = ({state} : Context, {cardSetId, cardSetCards}: {cardSetId: number, cardSetCards: CardSetCard[]}) => {
-    state.data.cardSetCards = state.data.cardSetCards.filter(csc => csc.cardSetId !== cardSetId);
-    state.data.cardSetCards.push(...cardSetCards);
+    let copy = [...state.data.cardSetCards];
+
+    // remove all cardSetCards that have cardSetId and that is not in cardSetCards
+    copy = copy.filter(csc => csc.cardSetId !== cardSetId || cardSetCards.find(csc2 => csc2.cardId === csc.cardId) !== undefined);
+
+    // update the order
+    copy = copy.map(csc => {
+        if (csc.cardSetId !== cardSetId) {
+            return csc;
+        }
+        const newCsc2 = cardSetCards.find(csc2 => csc2.cardId === csc.cardId);
+        if (typeof newCsc2 !== 'undefined') {
+            csc.order = newCsc2.order;
+        }
+        return csc;
+    });
+
+    // add new
+    cardSetCards.forEach(csc => {
+        if (copy.find(csc2 => csc2.cardId === csc.cardId && csc2.cardSetId === csc.cardSetId) === undefined) {
+            copy.push(csc);
+        }
+    });
+
+    state.data.cardSetCards = copy;
 }
 
 export const deleteCard = ({state, actions} : Context, params: {cardId: number, cardSetId: number}) => {
