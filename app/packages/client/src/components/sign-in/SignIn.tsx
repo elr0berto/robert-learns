@@ -1,15 +1,16 @@
-import {Button, Container} from "react-bootstrap";
+import { Container} from "react-bootstrap";
 import SignInForm from "./SignInForm";
 import {pageUrls} from "../../page-urls";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import {FacebookProvider, LoginButton, LoginStatus} from 'react-facebook';
-import {Facebook} from 'react-bootstrap-icons';
+import {FacebookProvider} from 'react-facebook';
 
 import {useActions, useAppState} from "../../overmind";
+import FacebookLoginButton from "./FacebookLoginButton";
 
 function SignIn() {
     const actions = useActions();
     const state = useAppState();
+
     if (!process.env.REACT_APP_GOOGLE_CLIENT_ID) {
         throw new Error('REACT_APP_GOOGLE_CLIENT_ID is not set in the environment (.env)');
     }
@@ -38,17 +39,10 @@ function SignIn() {
         </div>
 
         <div className="mt-3 col-2">
-            <FacebookProvider appId={process.env.REACT_APP_FACEBOOK_APP_ID}>
-                <LoginButton
-                    scope="email,public_profile"
-                    onSuccess={resp => actions.signIn.facebookSignIn(resp && resp.status === LoginStatus.CONNECTED ? resp.authResponse.accessToken : undefined)}
-                    onError={err => {
-                        throw err;
-                    }}
-                    asChild={Button}
-                >
-                    <Facebook/> Sign in with Facebook
-                </LoginButton>
+            <FacebookProvider
+                appId={process.env.REACT_APP_FACEBOOK_APP_ID}
+            >
+                <FacebookLoginButton/>
             </FacebookProvider>
         </div>
 

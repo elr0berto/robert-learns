@@ -1,10 +1,10 @@
-import {Button, Container} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import SignUpForm from "./SignUpForm";
 import {useActions, useAppState} from "../../overmind";
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
-import {FacebookProvider, LoginButton, LoginStatus} from "react-facebook";
-import {Facebook} from "react-bootstrap-icons";
+import {FacebookProvider} from "react-facebook";
 import {pageUrls} from "../../page-urls";
+import FacebookLoginButton from "../sign-in/FacebookLoginButton";
 
 function SignUp() {
     const state = useAppState();
@@ -41,16 +41,7 @@ function SignUp() {
         </div>
         <div className="mt-3 col-2">
             <FacebookProvider appId={process.env.REACT_APP_FACEBOOK_APP_ID}>
-                <LoginButton
-                    scope="email,public_profile"
-                    onSuccess={resp => actions.signIn.facebookSignIn(resp && resp.status === LoginStatus.CONNECTED ? resp.authResponse.accessToken : undefined)}
-                    onError={err => {
-                        throw err;
-                    }}
-                    asChild={Button}
-                >
-                    <Facebook/> Sign in with Facebook
-                </LoginButton>
+                <FacebookLoginButton/>
             </FacebookProvider>
         </div>
 
