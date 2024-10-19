@@ -15,11 +15,11 @@ const logger = winston.createLogger({
 
 import { Request } from 'express';
 
-export function logWithRequest<T = any, ResBody = any, ReqBody = any, ReqQuery = any>(
+export function logWithRequest<T, ResBody = unknown, ReqBody = unknown, ReqQuery = unknown>(
     level: 'info' | 'error' | 'warn' | 'debug' | 'verbose',
     req: Request<T, ResBody, ReqBody, ReqQuery>,
     message: string,
-    meta?: any
+    meta?: object,
 ) {
     const requestInfo = {
         url: req.originalUrl,

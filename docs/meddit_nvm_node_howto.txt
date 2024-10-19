@@ -24,6 +24,8 @@ nvm use lts
 cd work/robert-learns/app/packages/server
 (git pull)
 yarn install (required sometimes)
+npx prisma migrate deploy # run migrations
+npx prisma generate # generate prisma client
 yarn build (builds)
 pm2 reload server (reloads the server so that new version can go live)
 

@@ -65,3 +65,26 @@ export const unexpectedlySignedOut = ({ effects, state }: Context) => {
     effects.page.router.goTo('/');
 }
 
+export const googleSignIn = async ({ state, effects,actions }: Context, googleIdToken: string | undefined) => {
+    if (!googleIdToken) {
+        throw new Error('googleIdToken is required');
+    }
+    state.signIn.status = SignInStatus.SigningIn;
+    await effects.api.signIn.signInGoogle({id_token: googleIdToken});
+    await actions.signIn.check();
+    if (state.signIn.user !== null) {
+        effects.page.router.goTo('/');
+    }
+}
+
+export const facebookSignIn = async ({ state, effects,actions }: Context, accessToken: string | undefined) => {
+    if (!accessToken) {
+        throw new Error('accessToken is required');
+    }
+    state.signIn.status = SignInStatus.SigningIn;
+    await effects.api.signIn.signInFacebook({access_token: accessToken});
+    await actions.signIn.check();
+    if (state.signIn.user !== null) {
+        effects.page.router.goTo('/');
+    }
+}

@@ -23,18 +23,73 @@ import {GetVersionResponseData} from "@elr0berto/robert-learns-shared/api/versio
 import {RL_SERVER_VERSION} from "./version.js";
 import {RL_SHARED_VERSION} from "@elr0berto/robert-learns-shared/version";
 
+import GoogleTokenStrategy from 'passport-google-id-token';
+import FacebookTokenStrategy from 'passport-facebook-token';
+import passport from 'passport';
+
 class Server {
     public express;
 
     constructor() {
         this.express = express();
 
+        this.setupPassport();
         this.middlewares();
         this.routes();
         this.setupErrorHandler();
     }
 
+    setupPassport() {
+        if (!process.env.GOOGLE_CLIENT_ID) {
+            throw new Error('GOOGLE_CLIENT_ID is not set in the environment (.env)');
+        }
+        if (!process.env.FACEBOOK_APP_ID) {
+            throw new Error('FACEBOOK_APP_ID is not set in the environment (.env)');
+        }
+        if (!process.env.FACEBOOK_APP_SECRET) {
+            throw new Error('FACEBOOK_APP_SECRET is not set in the environment (.env)');
+        }
+        passport.use(new GoogleTokenStrategy(
+            {
+                clientID: process.env.GOOGLE_CLIENT_ID,
+            },
+            (parsedToken, googleId, done) => {
+                const user = {
+                    email: parsedToken.payload.email,
+                    name: parsedToken.payload.name,
+                    givenName: parsedToken.payload.given_name,
+                    familyName: parsedToken.payload.family_name,
+                    googleId: googleId,
+                };
+
+                return done(null, user);
+            }
+        ));
+        passport.use(new FacebookTokenStrategy(
+            {
+                clientID: process.env.FACEBOOK_APP_ID,
+                clientSecret: process.env.FACEBOOK_APP_SECRET,
+            },
+            async (_accessToken: string, _refreshToken: string, profile, done) => {
+                try {
+                    // Handle user based on Facebook profile
+                    const user = {
+                        facebookId: profile.id,
+                        email: profile.emails[0]?.value,
+                        name: profile.displayName,
+                    };
+
+                    // You can perform database operations or further user validation here
+                    return done(null, user);
+                } catch (error) {
+                    return done(error, null);
+                }
+            }
+        ));
+    }
     middlewares() {
+
+        this.express.use(passport.initialize());
         this.express.use(session)
         this.express.use(express.json());
     }

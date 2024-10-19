@@ -1,7 +1,7 @@
 {
   "name": "@elr0berto/robert-learns-server",
   "type": "module",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
@@ -20,6 +20,9 @@
     "file-type": "^19.0.0",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.10.0",
+    "passport": "^0.7.0",
+    "passport-facebook-token": "^4.0.0",
+    "passport-google-id-token": "^0.4.7",
     "sanitize-html": "^2.13.0",
     "tsx": "^4.11.0",
     "winston": "^3.13.0"
@@ -31,6 +34,9 @@
     "@types/file-type": "^10.9.1",
     "@types/multer": "^1.4.11",
     "@types/node": "^20.13.0",
+    "@types/passport": "^0",
+    "@types/passport-facebook-token": "^0.4.38",
+    "@types/passport-google-id-token": "^0.4.3",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.57.0",

@@ -57,3 +57,46 @@ export const signIn = async(params: SignInRequest) : Promise<SignInResponse> => 
     }
     return await apiClient.post(SignInResponse, '/sign-in', params);
 }
+
+export type SignInGoogleRequest = {
+    id_token: string; // the name is important "id_token", its used by the GoogleTokenStrategy.
+}
+
+export const validateSignInGoogleRequest = (req: SignInGoogleRequest) : string[] => {
+    const errs : string[] = [];
+    if (typeof req.id_token !== 'string' || req.id_token.length === 0) {
+        errs.push('You must provide a token');
+    }
+
+    return errs;
+}
+
+export const signInGoogle = async(params: SignInGoogleRequest) : Promise<BaseResponse> => {
+    const errors = validateSignInGoogleRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
+    return await apiClient.post(BaseResponse, '/sign-in/google', params);
+}
+
+
+export type SignInFacebookRequest = {
+    access_token: string; // the name is important "access_token", its used by the FacebookTokenStrategy.
+}
+
+export const validateSignInFacebookRequest = (req: SignInFacebookRequest) : string[] => {
+    const errs : string[] = [];
+    if (typeof req.access_token !== 'string' || req.access_token.length === 0) {
+        errs.push('You must provide a access_token');
+    }
+
+    return errs;
+}
+
+export const signInFacebook = async(params: SignInFacebookRequest) : Promise<BaseResponse> => {
+    const errors = validateSignInFacebookRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
+    return await apiClient.post(BaseResponse, '/sign-in/facebook', params);
+}

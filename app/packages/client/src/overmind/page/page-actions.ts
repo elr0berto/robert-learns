@@ -227,3 +227,11 @@ export const showDrillRunPage = async ({ state, actions }: Context, payload: Pay
     actions.page.load({page: Pages.DrillRun, payload: payload});
     state.drillRunPage = getInitialDrillRunPageState();
 }
+
+export const showPrivacyPolicyPage = async ({ actions }: Context) => {
+    actions.page.load({page: Pages.PrivacyPolicy});
+}
+
+export const showTermsOfServicePage = async ({ actions }: Context) => {
+    actions.page.load({page: Pages.TermsOfService});
+}

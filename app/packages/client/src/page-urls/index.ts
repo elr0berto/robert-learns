@@ -11,6 +11,8 @@ import {Drill, DrillRun, Workspace} from "@elr0berto/robert-learns-shared/dist/a
 import AdminLogsPage from "../components/admin/AdminLogsPage";
 import DrillPage from "../components/drills/DrillPage";
 import DrillRunPage from "../components/drills/DrillRunPage";
+import PrivacyPolicyPage from "../components/privacy-policy/PrivacyPolicyPage";
+import TermsOfServicePage from "../components/terms-of-service/TermsOfServicePage";
 
 export enum Pages {
     AdminLogs = "adminLogs",
@@ -25,6 +27,8 @@ export enum Pages {
     WorkspaceEdit = "workspaceEdit",
     Drill = "drill",
     DrillRun = "drillRun",
+    PrivacyPolicy = "privacyPolicy",
+    TermsOfService = "termsOfService",
 }
 
 function getSlug(str: string) : string {
@@ -103,7 +107,19 @@ const pageUrls = {
         url: (drill: Drill, drillRun: DrillRun) => '/drill-run/'+drillRun.id+'-'+getSlug(drill.name),
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showDrillRunPage,
         getPageComponent: () => DrillRunPage,
-    }
+    },
+    [Pages.PrivacyPolicy]: {
+        route: '/privacy-policy',
+        url: () => '/privacy-policy',
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showPrivacyPolicyPage,
+        getPageComponent: () => PrivacyPolicyPage,
+    },
+    [Pages.TermsOfService]: {
+        route: '/terms-of-service',
+        url: () => '/terms-of-service',
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showTermsOfServicePage,
+        getPageComponent: () => TermsOfServicePage,
+    },
 }
 
 export { pageUrls }

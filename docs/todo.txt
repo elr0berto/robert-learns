@@ -1,23 +1,33 @@
-show stats for each card
+social logins - testa auth0
+- auth0 onRedirectCallback - see sample app
 
-social logins
 invite system
 - invite users to workspace
 
+show stats for each card
+
 reverse cards when drilling
 audio first drilling mode
-
-when creating or editing a card set there should be a "parents" multi choice select box
-
-add a "create card set"-button in the workspace view.
-
-auto-start pm2 on reboot
 
 drill except (not the same as unchecking something.. because if you uncheck one cardset the cards could still be in other cardsets.)
 
 be able to search for cards
 
+be able to sort card-sets from within a parent card-set (not only allow sorting from the workspace card-set-tree)
+be able to delete drills
+
+ability to go back to previous card in drill.
+
+when creating or editing a card set there should be a "parents" multi choice select box
+be able to create card-sets from within a card-set
+
+add a "create card set"-button in the workspace view.
+
+auto-start pm2 on reboot
+
+
 be able to see all the cards that exists in a "parent card set"
+
 
 be able to delete a card from all card-sets and the card itself. without having to delete it from every card set manually.
 
@@ -25,8 +35,8 @@ check for duplicates when saving cards
 
 
 what to do with "abandoned" drill runs? delete them after a while?
-sign-in-form ENTER key should submit
-ability to go back to previous card in drill.
+
+
 font-sizes not working inside "add cards from other card sets modal"
 fitty
 change password
