@@ -1,8 +1,5 @@
-import { Context } from '..';
-import {
-    getInitialSignInState,
-    SignInStatus,
-} from "./sign-in-state";
+import {Context} from '..';
+import {getInitialSignInState, SignInStatus,} from "./sign-in-state";
 import {ResponseStatus} from "@elr0berto/robert-learns-shared/dist/api/models";
 
 
@@ -77,12 +74,17 @@ export const googleSignIn = async ({ state, effects,actions }: Context, googleId
     }
 }
 
-export const facebookSignIn = async ({ state, effects,actions }: Context, accessToken: string | undefined) => {
-    if (!accessToken) {
-        throw new Error('accessToken is required');
-    }
+export const facebookSignIn = async ({ state, effects, actions }: Context) => {
     state.signIn.status = SignInStatus.SigningIn;
-    await effects.api.signIn.signInFacebook({access_token: accessToken});
+    await effects.facebook.loadFacebookSdk();
+    const resp = await effects.facebook.loginToFacebook();
+    if (resp.status !== 'connected' || !resp.authResponse.accessToken) {
+        actions.notifications.addNotification('Facebook login failed.');
+        state.signIn.status = SignInStatus.Idle;
+        return;
+    }
+
+    await effects.api.signIn.signInFacebook({access_token: resp.authResponse.accessToken});
     await actions.signIn.check();
     if (state.signIn.user !== null) {
         effects.page.router.goTo('/');

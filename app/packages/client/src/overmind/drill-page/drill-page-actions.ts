@@ -208,9 +208,7 @@ export const saveDrill = async ({ state, effects, actions }: Context, {run, resu
             effects.page.router.goTo(pageUrls[Pages.DrillRun].url(resp.drill, drResp.drillRun));
         }
     } else {
-        state.notifications.notifications.push({
-            message: 'Drill saved successfully'
-        });
+        actions.notifications.addNotification('Drill saved successfully');
     }
 
     state.drillPage.saving = false;

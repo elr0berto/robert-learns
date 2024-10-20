@@ -1,24 +1,20 @@
 import {Button} from "react-bootstrap";
-import {LoginButton, LoginStatus, useFacebook} from 'react-facebook';
-import {Facebook} from 'react-bootstrap-icons';
 
-import {useActions} from "../../overmind";
+import {useActions, useAppState} from "../../overmind";
+import {Facebook} from "react-bootstrap-icons";
+import {SignInStatus} from "../../overmind/sign-in/sign-in-state";
 
 function FacebookLoginButton() {
     const actions = useActions();
-    const fb = useFacebook();
+    const state = useAppState();
 
-    return <LoginButton
-        scope="email,public_profile"
-        onSuccess={resp => actions.signIn.facebookSignIn(resp && resp.status === LoginStatus.CONNECTED ? resp.authResponse.accessToken : undefined)}
-        onError={err => {
-            throw err;
-        }}
-        asChild={Button}
-        disabled={!fb.api || fb.isLoading}
+    return <Button
+        variant={'outline-primary'}
+        onClick={actions.signIn.facebookSignIn}
+        disabled={state.signIn.status !== SignInStatus.Idle}
     >
         <Facebook/> Sign in with Facebook
-    </LoginButton>;
+    </Button>;
 }
 
 export default FacebookLoginButton;

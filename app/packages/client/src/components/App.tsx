@@ -7,6 +7,7 @@ import ErrorBoundary from "./error/ErrorBoundary";
 import TopMenu from "./TopMenu";
 import CreateCardModal from "./cards/CreateCardModal";
 import Loading from "./Loading";
+import Footer from "./Footer";
 
 function AppInner() {
     const state = useAppState();
@@ -20,7 +21,9 @@ function AppInner() {
 
     return <>
         <TopMenu/>
-        <MainContent/>
+        <div className="main-content">
+            <MainContent/>
+        </div>
         <CreateCardModal/>
         <ToastContainer position={'top-center'}>
             {state.notifications.notificationsWithId.map(notification =>
@@ -32,6 +35,7 @@ function AppInner() {
             </Toast>
             )}
         </ToastContainer>
+        <Footer/>
     </>;
 }
 

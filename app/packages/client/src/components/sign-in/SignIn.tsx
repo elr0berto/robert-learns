@@ -2,7 +2,6 @@ import { Container} from "react-bootstrap";
 import SignInForm from "./SignInForm";
 import {pageUrls} from "../../page-urls";
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import {FacebookProvider} from 'react-facebook';
 
 import {useActions, useAppState} from "../../overmind";
 import FacebookLoginButton from "./FacebookLoginButton";
@@ -23,30 +22,28 @@ function SignIn() {
         </Container>;
     }
     return <Container>
-        <h1 className="my-5">Sign In</h1>
-        <SignInForm/>
+        <div className="col-lg-5">
+            <h1 className="my-5">Sign In</h1>
+            <SignInForm/>
 
-        <hr/>
-        <div className="mt-3 col-2">
-            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-                <GoogleLogin
-                    onSuccess={resp => actions.signIn.googleSignIn(resp.credential)}
-                    onError={() => {
-                        throw new Error('Google login failed')
-                    }}
-                />
-            </GoogleOAuthProvider>
-        </div>
+            <hr/>
+            <div className="mt-3 col-5">
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                    <GoogleLogin
+                        onSuccess={resp => actions.signIn.googleSignIn(resp.credential)}
+                        onError={() => {
+                            throw new Error('Google login failed')
+                        }}
+                    />
+                </GoogleOAuthProvider>
+            </div>
 
-        <div className="mt-3 col-2">
-            <FacebookProvider
-                appId={process.env.REACT_APP_FACEBOOK_APP_ID}
-            >
+            <div className="mt-3 col-5">
                 <FacebookLoginButton/>
-            </FacebookProvider>
-        </div>
+            </div>
 
-        <div className="mt-3">Don't have an account? <a href={pageUrls.signUp.url()}>Sign up</a></div>
+            <div className="mt-3">Don't have an account? <a href={pageUrls.signUp.url()}>Sign up</a></div>
+        </div>
     </Container>;
 }
 

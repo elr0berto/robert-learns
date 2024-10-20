@@ -2,7 +2,6 @@ import {Container} from "react-bootstrap";
 import SignUpForm from "./SignUpForm";
 import {useActions, useAppState} from "../../overmind";
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
-import {FacebookProvider} from "react-facebook";
 import {pageUrls} from "../../page-urls";
 import FacebookLoginButton from "../sign-in/FacebookLoginButton";
 
@@ -25,28 +24,30 @@ function SignUp() {
     }
 
     return <Container>
-        <h1 className="my-5">Sign up</h1>
+        <div className="col-lg-5">
+            <h1 className="my-5">Sign up</h1>
 
-        <SignUpForm/>
-        <hr/>
-        <div className="mb-3 col-2">
-            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-                <GoogleLogin
-                    onSuccess={resp => actions.signIn.googleSignIn(resp.credential)}
-                    onError={() => {
-                        throw new Error('Google login failed')
-                    }}
-                />
-            </GoogleOAuthProvider>
-        </div>
-        <div className="mt-3 col-2">
-            <FacebookProvider appId={process.env.REACT_APP_FACEBOOK_APP_ID}>
+            <SignUpForm/>
+            <hr/>
+            <div className="mb-3 col-5">
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+                    <GoogleLogin
+                        onSuccess={resp => actions.signIn.googleSignIn(resp.credential)}
+                        onError={() => {
+                            throw new Error('Google login failed')
+                        }}
+                        width={"100%"}
+                    />
+                </GoogleOAuthProvider>
+            </div>
+            <div className="mt-3 col-5">
                 <FacebookLoginButton/>
-            </FacebookProvider>
-        </div>
+            </div>
 
-        <div className="mt-3">Already have an account? <a href={pageUrls.signIn.url()}>Sign in</a></div>
-    </Container>;
+            <div className="mt-3">Already have an account? <a href={pageUrls.signIn.url()}>Sign in</a></div>
+        </div>
+    </Container>
+;
 }
 
 export default SignUp;

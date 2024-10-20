@@ -13,7 +13,7 @@ function SignInForm() {
         }
     };
 
-    return <Form className="col-lg-5" onSubmit={handleSubmit}>
+    return <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formBasicUsername">
             <Form.Label>Username/Email</Form.Label>
             <Form.Control type="text" placeholder="Enter username or email" value={state.signIn.signInForm.username} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.signIn.changeSignInFormUsername(event.currentTarget.value)}/>

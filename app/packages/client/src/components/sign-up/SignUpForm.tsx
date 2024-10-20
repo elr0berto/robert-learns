@@ -13,7 +13,7 @@ function SignUpForm() {
         }
     };
 
-    return <Form className="col-lg-5" onSubmit={handleSubmit}>
+    return <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formBasicFirstName">
             <Form.Label>First Name</Form.Label>
             <Form.Control type="text" placeholder="Enter first name" value={state.signUp.firstName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => actions.signUp.changeFirstName(event.currentTarget.value)}/>

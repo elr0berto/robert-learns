@@ -14,6 +14,7 @@ import 'quill/dist/quill.snow.css'; // Add css for snow theme
 declare global {
     interface Window {
         audioFile?: File | null;
+        //FB: any;
     }
 }
 

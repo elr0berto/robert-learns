@@ -1605,15 +1605,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.20.6":
-  version: 7.25.7
-  resolution: "@babel/runtime@npm:7.25.7"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 10/73411fe0f1bff3a962586cef05b30f49e554b6563767e6d84f7d79d605b2c20e7fc3df291a3aebef69043181a8f893afdab9e6672557a5c2d08b9377d6f678cd
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.22.5":
   version: 7.23.7
   resolution: "@babel/runtime@npm:7.23.7"
@@ -1883,6 +1874,7 @@ __metadata:
   dependencies:
     "@popperjs/core": "npm:^2.11.8"
     "@react-oauth/google": "npm:^0.12.1"
+    "@types/facebook-js-sdk": "npm:^3.3.12"
     "@types/node": "npm:^20.13.0"
     "@types/page": "npm:^1.11.9"
     "@types/quill": "npm:^2.0.14"
@@ -1903,7 +1895,6 @@ __metadata:
     react-bootstrap: "npm:^2.10.2"
     react-bootstrap-icons: "npm:^1.11.4"
     react-dom: "npm:^18.3.1"
-    react-facebook: "npm:^9.0.12"
     react-h5-audio-player: "npm:^3.9.1"
     react-quilljs: "npm:^2.0.0"
     react-scripts: "npm:5.0.1"
@@ -3336,6 +3327,13 @@ __metadata:
     "@types/qs": "npm:*"
     "@types/serve-static": "npm:*"
   checksum: 10/7a6d26cf6f43d3151caf4fec66ea11c9d23166e4f3102edfe45a94170654a54ea08cf3103d26b3928d7ebcc24162c90488e33986b7e3a5f8941225edd5eb18c7
+  languageName: node
+  linkType: hard
+
+"@types/facebook-js-sdk@npm:^3.3.12":
+  version: 3.3.12
+  resolution: "@types/facebook-js-sdk@npm:3.3.12"
+  checksum: 10/4c051fbef6c66ab300896fa074859212156d77a31528c43804c8a040216603ef151f5d615f1688841a55c535bb2ae4c8eaf7d36a8ecc8fd5eab29ff4d85b7dc4
   languageName: node
   linkType: hard
 
@@ -12663,17 +12661,6 @@ __metadata:
   version: 6.0.11
   resolution: "react-error-overlay@npm:6.0.11"
   checksum: 10/b4ac746fc4fb50da733768aadbc638d34dd56d4e46ed4b2f2d1ac54dced0c5fa5fe47ebbbf90810ada44056ed0713bba5b9b930b69f4e45466e7f59fc806c44e
-  languageName: node
-  linkType: hard
-
-"react-facebook@npm:^9.0.12":
-  version: 9.0.12
-  resolution: "react-facebook@npm:9.0.12"
-  dependencies:
-    "@babel/runtime": "npm:^7.20.6"
-  peerDependencies:
-    react: ">= 16"
-  checksum: 10/fb70014a1ca23fe258d91c078e440497ad9967de2fb0e11991713b37c5b42be70663bde1ee74b8f74e67f97164555bdd033664ec3b063e6eda1d634ad7a0076f
   languageName: node
   linkType: hard
 

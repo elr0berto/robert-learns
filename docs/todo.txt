@@ -1,5 +1,4 @@
-social logins - testa auth0
-- auth0 onRedirectCallback - see sample app
+check whats going on with visitors.. bots?
 
 invite system
 - invite users to workspace

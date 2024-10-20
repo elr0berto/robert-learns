@@ -33,10 +33,7 @@ export const deleteCardSetConfirm = async ({state,effects,actions} : Context) =>
         state.workspaceCardSet.deletingCardSet = false;
         return;
     }
-
-    state.notifications.notifications.push({
-        message: 'Card set deleted',
-    });
+    actions.notifications.addNotification('Card set deleted');
 
     actions.data.deleteCardSet(cardSetId);
     if (state.page.workspace === null) {

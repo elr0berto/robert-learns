@@ -113,9 +113,7 @@ export const deleteWorkspaceConfirm = async ({state,effects,actions} : Context) 
         return;
     }
 
-    state.notifications.notifications.push({
-        message: 'Workspace deleted',
-    });
+    actions.notifications.addNotification('Workspace deleted');
 
     actions.data.deleteWorkspace(workspaceId);
     effects.page.router.goTo(pageUrls[Pages.Front].url());

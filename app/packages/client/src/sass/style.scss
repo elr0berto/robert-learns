@@ -15,6 +15,10 @@ code {
   monospace;
 }
 
+.main-content {
+  min-height: calc(100vh - 290px);
+}
+
 .btn svg {
   position: relative;
   top: -2px;
