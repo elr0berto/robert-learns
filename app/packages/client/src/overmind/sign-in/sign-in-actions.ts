@@ -78,6 +78,7 @@ export const facebookSignIn = async ({ state, effects, actions }: Context) => {
     state.signIn.status = SignInStatus.SigningIn;
     await effects.facebook.loadFacebookSdk();
     const resp = await effects.facebook.loginToFacebook();
+    console.log('facebook login response', resp);
     if (resp.status !== 'connected' || !resp.authResponse.accessToken) {
         actions.notifications.addNotification('Facebook login failed.');
         state.signIn.status = SignInStatus.Idle;
