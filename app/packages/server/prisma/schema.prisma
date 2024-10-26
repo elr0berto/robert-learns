@@ -26,16 +26,18 @@ model Session {
 }
 
 model User {
-  id         Int             @id @default(autoincrement())
-  email      String          @unique
-  username   String          @unique
-  firstName  String
-  lastName   String
-  password   String
-  admin      Boolean         @default(false)
-  workspaces WorkspaceUser[]
-  cardSets   CardSetUser[]
-  drills     Drill[]
+  id                     Int                      @id @default(autoincrement())
+  email                  String                   @unique
+  username               String                   @unique
+  firstName              String
+  lastName               String
+  password               String
+  admin                  Boolean                  @default(false)
+  emailVerified          Boolean                  @default(false) // New field
+  workspaces             WorkspaceUser[]
+  cardSets               CardSetUser[]
+  drills                 Drill[]
+  EmailVerificationToken EmailVerificationToken[]
 }
 
 enum UserRole {
@@ -184,4 +186,13 @@ model CardSetLink {
   order             Int     @default(0)
 
   @@id([parentCardSetId, includedCardSetId])
+}
+
+model EmailVerificationToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  deleted   Boolean  @default(false)
 }

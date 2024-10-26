@@ -100,3 +100,7 @@ export const signInFacebook = async(params: SignInFacebookRequest) : Promise<Bas
     }
     return await apiClient.post(BaseResponse, '/sign-in/facebook', params);
 }
+
+export const sendVerificationEmail = async() : Promise<BaseResponse> => {
+    return await apiClient.post(BaseResponse, '/sign-in/send-verification-email');
+}

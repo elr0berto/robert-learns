@@ -7,6 +7,7 @@ export type UserData = DataType & {
     firstName: string;
     lastName: string;
     admin: boolean;
+    emailVerified: boolean;
 }
 
 export class User {
@@ -16,6 +17,8 @@ export class User {
     firstName: string;
     lastName: string;
     admin: boolean;
+    emailVerified: boolean;
+
     constructor(data: UserData) {
         this.id = data.id;
         this.email = data.email;
@@ -23,6 +26,7 @@ export class User {
         this.firstName = data.firstName;
         this.lastName = data.lastName;
         this.admin = data.admin;
+        this.emailVerified = data.emailVerified;
     }
     name() : string {
         return this.firstName + " " + this.lastName;

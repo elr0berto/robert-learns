@@ -58,6 +58,7 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
     deletingWorkspace: false,
     deleteWorkspaceError: null,
     selectedUsersWithData: derived((state: WorkspaceCreateState, rootState : typeof config.state) => {
+        const signInUser = rootState.signIn.user;
         return state.selectedUsers
             .filter(u => rootState.data.users.find(u2 => u2.id === u.userId) !== undefined)
             .map(u => {
@@ -71,9 +72,9 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
                     role: u.role,
                     name: user.name(),
                     isMe: state.scope === 'create' ? false : rootState.page.workspaceUser?.userId === u.userId,
-                    canRoleBeChanged: state.scope === 'create' ? true : canUserChangeUserRole(rootState.page.workspaceUser, u),
-                    availableRoles: state.scope === 'create' ? getAllRoles() : getRolesUserCanChangeUser(rootState.page.workspaceUser, u),
-                    canBeRemoved: state.scope === 'create' ? true : canUserDeleteWorkspaceUser(rootState.page.workspaceUser, u),
+                    canRoleBeChanged: state.scope === 'create' ? true : canUserChangeUserRole(signInUser?.emailVerified ?? false, rootState.page.workspaceUser, u),
+                    availableRoles: state.scope === 'create' ? getAllRoles() : getRolesUserCanChangeUser(signInUser?.emailVerified ?? false, rootState.page.workspaceUser, u),
+                    canBeRemoved: state.scope === 'create' ? true : canUserDeleteWorkspaceUser(signInUser?.emailVerified ?? false, rootState.page.workspaceUser, u),
                 };
             });
             /*.sort((a, b) => { // commented out because it makes the users jump up and down when you change role. Moved the sorting server side.

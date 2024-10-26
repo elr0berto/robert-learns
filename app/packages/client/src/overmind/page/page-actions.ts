@@ -33,6 +33,11 @@ export const load = async ({state, actions}: Context, params?: {payload?: Payloa
         state.page.page = params.page;
     }
 
+    if (state.signIn.user !== null && state.signIn.user.emailVerified === false) {
+        state.page.initializing = false;
+        return;
+    }
+
     let promises : Promise<void>[] = [];
 
     if (params?.page === Pages.Drill) {

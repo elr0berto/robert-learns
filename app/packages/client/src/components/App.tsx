@@ -8,6 +8,7 @@ import TopMenu from "./TopMenu";
 import CreateCardModal from "./cards/CreateCardModal";
 import Loading from "./Loading";
 import Footer from "./Footer";
+import VerifyEmailMessage from "./VerifyEmailMessage";
 
 function AppInner() {
     const state = useAppState();
@@ -22,6 +23,7 @@ function AppInner() {
     return <>
         <TopMenu/>
         <div className="main-content">
+            <VerifyEmailMessage/>
             <MainContent/>
         </div>
         <CreateCardModal/>

@@ -32,16 +32,16 @@ export const guestCapabilities = [
     Capability.ViewCardSet,
 ];
 
-export const userCan = (userIsGuest: boolean, workspaceAllowsGuests: boolean, userRole: UserRole | null, capability: Capability) => {
+export const userCan = (userIsGuest: boolean, workspaceAllowsGuests: boolean, userRole: UserRole | null, capability: Capability, hasVerifiedEmail: boolean) => {
     if (capability === Capability.CreateWorkspace) {
-        return !userIsGuest;
+        return !userIsGuest && hasVerifiedEmail;
     }
 
     if (workspaceAllowsGuests && guestCapabilities.includes(capability)) {
         return true;
     }
 
-    if (userRole === null) {
+    if (userRole === null || !hasVerifiedEmail) {
         return false;
     }
 
@@ -50,8 +50,8 @@ export const userCan = (userIsGuest: boolean, workspaceAllowsGuests: boolean, us
 }
 
 
-export const canUserRemoveUser = (user1: {user_id: number, role: UserRole} | null, user2: {user_id: number, role: UserRole}) => {
-    if (user1 === null) {
+export const canUserRemoveUser = (user1HasEmailVerified: boolean, user1: {user_id: number, role: UserRole} | null, user2: {user_id: number, role: UserRole}) => {
+    if (user1 === null || !user1HasEmailVerified) {
         return false;
     }
 
@@ -73,8 +73,8 @@ export const getAllRoles = () => {
     return Object.values(UserRole);
 }
 
-export const getRolesUserCanChangeUser = (user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) : UserRole[] => {
-    if (user1 === null) {
+export const getRolesUserCanChangeUser = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) : UserRole[] => {
+    if (user1 === null || !user1HasEmailVerified) {
         return [user2.role];
     }
 
@@ -92,17 +92,17 @@ export const getRolesUserCanChangeUser = (user1: {userId: number, role: UserRole
     }
 }
 
-export const canUserChangeUserRole = (user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) => {
-    return getRolesUserCanChangeUser(user1, user2).length > 1;
+export const canUserChangeUserRole = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) => {
+    return getRolesUserCanChangeUser(user1HasEmailVerified, user1, user2).length > 1;
 }
 
-export const canUserChangeUserRoleRole = (user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}, wantedRole: UserRole) => {
-    const possibleRoles = getRolesUserCanChangeUser(user1, user2);
+export const canUserChangeUserRoleRole = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}, wantedRole: UserRole) => {
+    const possibleRoles = getRolesUserCanChangeUser(user1HasEmailVerified, user1, user2);
     return possibleRoles.filter(r => r === wantedRole).length > 0;
 }
 
-export const canUserDeleteWorkspaceUser = (user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) => {
-    if (user1 === null) {
+export const canUserDeleteWorkspaceUser = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) => {
+    if (user1 === null || !user1HasEmailVerified) {
         return false;
     }
 

@@ -12,6 +12,7 @@ export enum SignInStatus {
     SignedOutDueToInactivity = "SignedOutDueToInactivity",
     Idle = "Idle",
     Error = "Error",
+    SendingVerificationEmail = "SendingVerificationEmail",
 }
 
 type SignInFormState = {

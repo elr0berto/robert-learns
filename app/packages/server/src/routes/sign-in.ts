@@ -1,7 +1,7 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 
-import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {getSignedInUser, getUserData, sendEmailVerification, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
 import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
@@ -249,6 +249,100 @@ signIn.post('/facebook', async (req: Request<unknown, unknown, SignInFacebookReq
         })(req, res, next);
     } catch (ex) {
         console.error('/sign-in/facebook caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+signIn.post('/send-verification-email', async (req: Request<unknown, unknown, unknown>, res : TypedResponse<BaseResponseData>, next) => {
+    try {
+        const user = await getSignedInUser(req.session);
+        if (user === null) {
+            throw new Error('User is null');
+        }
+
+        // start a transaction with prisma
+        const resp = await prisma.$transaction(async prisma => {
+            // refetch user inside the transaction
+            const ru = await prisma.user.findFirst({
+                where: {
+                    id: user.id,
+                }
+            });
+
+            if (ru === null) {
+                throw new Error('User is null');
+            }
+            if (ru.emailVerified) {
+                return res.json({
+                    dataType: true,
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'Email is already verified',
+                });
+            }
+            // check that user doesnt have more than 10 tokens in the last 24 hours
+            const tokenCount = await prisma.emailVerificationToken.count({
+                where: {
+                    userId: user.id,
+                    createdAt: {
+                        gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+                    }
+                }
+            });
+            if (tokenCount >= 10) {
+                return {
+                    dataType: true,
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'Too many email verification requests in the last 24 hours',
+                };
+            }
+            // get any existing not deleted token
+            const existingToken = await prisma.emailVerificationToken.findFirst({
+                where: {
+                    userId: user.id,
+                    deleted: false,
+                }
+            });
+            if (existingToken) {
+                // check if the token is more than 5 minutes old.
+                if (existingToken.createdAt.getTime() + 5 * 60 * 1000 > Date.now()) {
+                    return {
+                        dataType: true,
+                        status: ResponseStatus.UserError,
+                        errorMessage: 'Verification email already sent. Please wait a few minutes before trying again.',
+                    };
+                }
+                // mark the existing token as deleted = true
+                await prisma.emailVerificationToken.update({
+                    where: {
+                        id: existingToken.id,
+                    },
+                    data: {
+                        deleted: true,
+                    }
+                });
+            }
+
+            // generate a new token
+            const token = Math.random().toString(36).slice(-8);
+            // create the token
+            await prisma.emailVerificationToken.create({
+                data: {
+                    token: token,
+                    userId: user.id,
+                }
+            });
+            // send the email
+            await sendEmailVerification(user, token);
+            return {
+                dataType: true,
+                status: ResponseStatus.Success,
+                errorMessage: null,
+            };
+        });
+        return res.json(resp);
+    } catch (ex) {
+        console.error('/sign-in/send-verification-email caught ex', ex);
         next(ex);
         return;
     }

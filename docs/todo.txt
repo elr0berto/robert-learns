@@ -1,7 +1,11 @@
 check whats going on with visitors.. bots?
 
 invite system
+- email verification as well?!
 - invite users to workspace
+- when user accepts invitation, make sure the invited email is the email of the user that is accepting the invitation.
+-- use the sign-up-page but with the invitation token as extra param. use the invi token to ensure that the signup is using the correct email
+- set emailVerified if we get it from google or facebook!
 
 show stats for each card
 

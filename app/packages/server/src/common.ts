@@ -1,3 +1,4 @@
+import nodemailer from 'nodemailer';
 import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
 import { format } from 'date-fns';
@@ -29,6 +30,7 @@ import {
     DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData, CardSetLinkData
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
+import {smtpTransport} from "./smtp.js";
 
 export interface TypedResponse<ResBody> extends Express.Response {
     json: Send<ResBody, this>;
@@ -68,6 +70,7 @@ export const getUserData = (user: PrismaUser) : UserData => {
         lastName: user.lastName,
         username: user.username,
         admin: user.admin,
+        emailVerified: user.emailVerified,
         dataType: true,
     };
 }
@@ -272,4 +275,26 @@ export const getDrillRunQuestionData = (drillRunQuestion: PrismaDrillRunQuestion
         correct: drillRunQuestion.correct,
         answeredAt: drillRunQuestion.answeredAt?.toISOString() ?? null,
     };
+}
+
+
+export const sendEmailVerification = async (user: PrismaUser, token: string) : Promise<void> => {
+    const verificationLink = `https://robertlearns.com/verify-email/${token}`;
+    await smtpTransport.sendMail({
+        from: '"Robert Learns" <robert@robertlearns.com>', // sender address
+        to: user.email,
+        subject: 'Verify Your Email Address',
+        text: `Please verify your email address by clicking on the following link: ${verificationLink}`, // Fallback text for clients that don’t support HTML
+        html: `
+            <div style="font-family: Arial, sans-serif; color: #333;">
+              <h2 style="color: #4CAF50;">Welcome to Robert Learns!</h2>
+              <p>Thank you for signing up. To complete your registration, please verify your email address by clicking the button below:</p>
+              <a href="${verificationLink}" style="display: inline-block; padding: 10px 20px; font-size: 16px; color: #fff; background-color: #4CAF50; text-decoration: none; border-radius: 5px; margin-top: 20px;">Verify Email</a>
+              <p style="margin-top: 20px;">Or you can paste the following link in your browser:</p>
+              <p style="word-break: break-all;"><a href="${verificationLink}">${verificationLink}</a></p>
+              <p>If you did not sign up for Robert Learns, please ignore this email.</p>
+              <p style="color: #999;">Thank you,<br>The Robert Learns Team</p>
+            </div>
+          `,
+    });
 }

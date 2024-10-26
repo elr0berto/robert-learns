@@ -91,3 +91,14 @@ export const facebookSignIn = async ({ state, effects, actions }: Context) => {
         effects.page.router.goTo('/');
     }
 }
+
+export const sendVerificationEmail = async ({ state, effects, actions }: Context) => {
+    state.signIn.status = SignInStatus.SendingVerificationEmail;
+    const resp = await effects.api.signIn.sendVerificationEmail();
+    state.signIn.status = SignInStatus.Idle;
+    if (resp.status === ResponseStatus.Success) {
+        actions.notifications.addNotification('Verification email sent.');
+    } else {
+        actions.notifications.addNotification(resp.errorMessage ?? 'Failed to send verification email, try reloading the page.');
+    }
+}
