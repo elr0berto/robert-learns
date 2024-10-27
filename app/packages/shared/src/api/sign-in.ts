@@ -104,3 +104,24 @@ export const signInFacebook = async(params: SignInFacebookRequest) : Promise<Bas
 export const sendVerificationEmail = async() : Promise<BaseResponse> => {
     return await apiClient.post(BaseResponse, '/sign-in/send-verification-email');
 }
+
+export type VerifyEmailRequest = {
+    token: string;
+}
+
+export const validateVerifyEmailRequest = (req: VerifyEmailRequest) : string[] => {
+    const errs : string[] = [];
+    if (typeof req.token !== 'string' || req.token.length === 0) {
+        errs.push('You must provide a token');
+    }
+
+    return errs;
+}
+
+export const verifyEmail = async(params: VerifyEmailRequest) : Promise<BaseResponse> => {
+    const errors = validateVerifyEmailRequest(params);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
+    return await apiClient.post(BaseResponse, '/sign-in/verify-email', params);
+}

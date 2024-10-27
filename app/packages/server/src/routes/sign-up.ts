@@ -1,6 +1,6 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
-import {getSignedInUser, getUserData, TypedResponse} from "../common.js";
+import {doEmailVerification, getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
 import {SignUpRequest, SignUpResponseData, validateSignUpRequest} from '@elr0berto/robert-learns-shared/api/sign-up';
 import { ResponseStatus } from '@elr0berto/robert-learns-shared/api/models';
@@ -57,7 +57,7 @@ signUp.post('/', async (req: Request<unknown, unknown, SignUpRequest>, res : Typ
             return res.json({
                 dataType: true,
                 status: ResponseStatus.UserError,
-                errorMessage: "User with email " + req.body.email + " already exists.",
+                errorMessage: "User with username " + req.body.username + " already exists.",
                 userData: null,
             });
         }
@@ -73,6 +73,14 @@ signUp.post('/', async (req: Request<unknown, unknown, SignUpRequest>, res : Typ
         });
 
         req.session.userId = newUser.id;
+
+        const resp = await doEmailVerification(newUser);
+
+        if (resp.status !== ResponseStatus.Success) {
+            // just log it, don't return it to the user
+            logWithRequest('error', req, 'Error sending email verification in sign-up: ' + resp.errorMessage);
+        }
+
         return res.json({
             dataType: true,
             status: ResponseStatus.Success,

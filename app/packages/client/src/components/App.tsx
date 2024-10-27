@@ -8,7 +8,7 @@ import TopMenu from "./TopMenu";
 import CreateCardModal from "./cards/CreateCardModal";
 import Loading from "./Loading";
 import Footer from "./Footer";
-import VerifyEmailMessage from "./VerifyEmailMessage";
+import VerifyEmailMessage from "./verify-email/VerifyEmailMessage";
 
 function AppInner() {
     const state = useAppState();

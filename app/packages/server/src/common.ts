@@ -1,4 +1,3 @@
-import nodemailer from 'nodemailer';
 import { Send } from 'express-serve-static-core';
 import prisma from "./db/prisma.js";
 import { format } from 'date-fns';
@@ -27,7 +26,7 @@ import {
     MediaData,
     UserData,
     WorkspaceData, WorkspaceUserData,
-    DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData, CardSetLinkData
+    DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData, CardSetLinkData, ResponseStatus
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
 import {smtpTransport} from "./smtp.js";
@@ -275,6 +274,115 @@ export const getDrillRunQuestionData = (drillRunQuestion: PrismaDrillRunQuestion
         correct: drillRunQuestion.correct,
         answeredAt: drillRunQuestion.answeredAt?.toISOString() ?? null,
     };
+}
+
+
+type DoEmailVerificationResult = {
+    status: ResponseStatus,
+    errorMessage: string | null,
+}
+export const doEmailVerification = async (user: PrismaUser) : Promise<DoEmailVerificationResult> => {
+    const resp = await prisma.$transaction(async prisma => {
+        // delete tokens older than a week
+        await prisma.emailVerificationToken.deleteMany({
+            where: {
+                createdAt: {
+                    lt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+                }
+            }
+        });
+
+        // refetch user inside the transaction
+        const ru = await prisma.user.findFirst({
+            where: {
+                id: user.id,
+            }
+        });
+
+        if (ru === null) {
+            throw new Error('User is null');
+        }
+        if (ru.emailVerified) {
+            return {
+                status: ResponseStatus.UserError,
+                errorMessage: 'Email is already verified',
+            };
+        }
+        // check that user doesnt have more than 10 tokens in the last 24 hours
+        const tokenCount = await prisma.emailVerificationToken.count({
+            where: {
+                userId: user.id,
+                createdAt: {
+                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
+                }
+            }
+        });
+        if (tokenCount >= 10) {
+            return {
+                status: ResponseStatus.UserError,
+                errorMessage: 'Too many email verification requests in the last 24 hours',
+            };
+        }
+        // get any existing not deleted token
+        const existingToken = await prisma.emailVerificationToken.findFirst({
+            where: {
+                userId: user.id,
+                deleted: false,
+            }
+        });
+        if (existingToken) {
+            // check if the token is more than 5 minutes old.
+            if (existingToken.createdAt.getTime() + 5 * 60 * 1000 > Date.now()) {
+                return {
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'Verification email already sent. Please wait a few minutes before trying again.',
+                };
+            }
+            // mark the existing token as deleted = true
+            await prisma.emailVerificationToken.update({
+                where: {
+                    id: existingToken.id,
+                },
+                data: {
+                    deleted: true,
+                }
+            });
+        }
+
+        let token : string | null = null;
+        do {
+            // generate a new token
+            token = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+
+            // check that the token doesnt exist in db already
+            const existingToken2 = await prisma.emailVerificationToken.findFirst({
+                where: {
+                    token: token,
+                }
+            });
+
+            if (existingToken2 !== null) {
+                token = null;
+            }
+        } while(token === null);
+
+        // create the token
+        await prisma.emailVerificationToken.create({
+            data: {
+                token: token,
+                userId: user.id,
+            }
+        });
+
+        // send the email
+        await sendEmailVerification(user, token);
+        return {
+            status: ResponseStatus.Success,
+            errorMessage: null,
+        };
+    });
+
+    return resp;
 }
 
 

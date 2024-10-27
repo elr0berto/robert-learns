@@ -24,6 +24,7 @@ import * as drillRunPage from './drill-run-page';
 import * as version from './version';
 import * as linkCardSetsModal from './link-card-sets-modal';
 import * as facebook from './facebook';
+import * as verifyEmailPage from './verify-email-page';
 
 import {merge, namespaced} from "overmind/es/config";
 
@@ -55,6 +56,7 @@ export const config = merge(
         version,
         linkCardSetsModal,
         facebook,
+        verifyEmailPage,
     })
 )
 

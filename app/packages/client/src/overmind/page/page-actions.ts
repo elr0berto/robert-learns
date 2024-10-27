@@ -12,6 +12,7 @@ import {getInitialEditCardCardSetsModalState} from "../edit-card-card-sets-modal
 import {getInitialAddUserModalState} from "../add-user-modal/add-user-modal-state";
 import {getInitialDrillPageState} from "../drill-page/drill-page-state";
 import {getInitialDrillRunPageState} from "../drill-run-page/drill-run-page-state";
+import {getInitialVerifyEmailPageState} from "../verify-email-page/verify-email-page-state";
 
 export type Payload = {
     params: any,
@@ -239,4 +240,11 @@ export const showPrivacyPolicyPage = async ({ actions }: Context) => {
 
 export const showTermsOfServicePage = async ({ actions }: Context) => {
     actions.page.load({page: Pages.TermsOfService});
+}
+
+export const showVerifyEmailPage = async ({ actions, state }: Context, payload: Payload) => {
+    state.verifyEmailPage = getInitialVerifyEmailPageState();
+    state.verifyEmailPage.verifying = true;
+    await actions.page.load({page: Pages.VerifyEmail, payload: payload});
+    await actions.verifyEmailPage.verifyEmail(payload.params.token);
 }

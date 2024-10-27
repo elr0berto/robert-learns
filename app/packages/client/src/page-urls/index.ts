@@ -13,6 +13,7 @@ import DrillPage from "../components/drills/DrillPage";
 import DrillRunPage from "../components/drills/DrillRunPage";
 import PrivacyPolicyPage from "../components/privacy-policy/PrivacyPolicyPage";
 import TermsOfServicePage from "../components/terms-of-service/TermsOfServicePage";
+import VerifyEmailPage from "../components/verify-email/VerifyEmailPage";
 
 export enum Pages {
     AdminLogs = "adminLogs",
@@ -29,6 +30,7 @@ export enum Pages {
     DrillRun = "drillRun",
     PrivacyPolicy = "privacyPolicy",
     TermsOfService = "termsOfService",
+    VerifyEmail = "verifyEmail",
 }
 
 function getSlug(str: string) : string {
@@ -119,6 +121,12 @@ const pageUrls = {
         url: () => '/terms-of-service',
         getRouteCallback: (actions: typeof overmind.actions) => actions.page.showTermsOfServicePage,
         getPageComponent: () => TermsOfServicePage,
+    },
+    [Pages.VerifyEmail]: {
+        route: '/verify-email/:token',
+        url: () => (token: string) => '/verify-email/'+token,
+        getRouteCallback: (actions: typeof overmind.actions) => actions.page.showVerifyEmailPage,
+        getPageComponent: () => VerifyEmailPage,
     },
 }
 

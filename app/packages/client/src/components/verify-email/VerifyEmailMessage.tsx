@@ -1,5 +1,5 @@
-import {useActions, useAppState} from "../overmind";
-import {SignInStatus} from "../overmind/sign-in/sign-in-state";
+import {useActions, useAppState} from "../../overmind";
+import {SignInStatus} from "../../overmind/sign-in/sign-in-state";
 
 function VerifyEmailMessage() {
     const state = useAppState();
@@ -23,7 +23,7 @@ function VerifyEmailMessage() {
             disabled={state.signIn.status === SignInStatus.SendingVerificationEmail}
             className="btn btn-link"
             onClick={() => actions.signIn.sendVerificationEmail()}
-        >Resend verification email</button>
+        >{state.signIn.status === SignInStatus.SendingVerificationEmail ? 'Sending...' : 'Resend verification email'}</button>
     </div>;
 }
 

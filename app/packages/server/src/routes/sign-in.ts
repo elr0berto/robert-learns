@@ -1,13 +1,13 @@
 import {Request, Router} from 'express';
 import prisma from "../db/prisma.js";
 
-import {getSignedInUser, getUserData, sendEmailVerification, TypedResponse} from "../common.js";
+import {doEmailVerification, getSignedInUser, getUserData, TypedResponse} from "../common.js";
 import bcrypt from 'bcryptjs';
 import {BaseResponseData, ResponseStatus} from '@elr0berto/robert-learns-shared/api/models';
 import {
     SignInCheckResponseData, SignInFacebookRequest, SignInGoogleRequest,
     SignInRequest, SignInResponseData,
-    validateSignInRequest
+    validateSignInRequest, validateVerifyEmailRequest, VerifyEmailRequest
 } from '@elr0berto/robert-learns-shared/api/sign-in';
 import {logWithRequest} from "../logger.js";
 import passport from "passport";
@@ -262,87 +262,96 @@ signIn.post('/send-verification-email', async (req: Request<unknown, unknown, un
         }
 
         // start a transaction with prisma
+        const resp = await doEmailVerification(user);
+
+        return res.json({
+            dataType: true,
+            status: resp.status,
+            errorMessage: resp.errorMessage,
+        });
+    } catch (ex) {
+        console.error('/sign-in/send-verification-email caught ex', ex);
+        next(ex);
+        return;
+    }
+});
+
+signIn.post('/verify-email', async (req: Request<unknown, unknown, VerifyEmailRequest>, res : TypedResponse<BaseResponseData>, next) => {
+    try {
+        const errors = validateVerifyEmailRequest(req.body);
+
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'Verify email request validation failed', {errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+            });
+        }
+
+        // begin a prisma transaction
         const resp = await prisma.$transaction(async prisma => {
-            // refetch user inside the transaction
-            const ru = await prisma.user.findFirst({
+            // check for the token
+            const token = await prisma.emailVerificationToken.findFirst({
                 where: {
-                    id: user.id,
+                    token: req.body.token,
                 }
             });
 
-            if (ru === null) {
-                throw new Error('User is null');
-            }
-            if (ru.emailVerified) {
-                return res.json({
-                    dataType: true,
-                    status: ResponseStatus.UserError,
-                    errorMessage: 'Email is already verified',
-                });
-            }
-            // check that user doesnt have more than 10 tokens in the last 24 hours
-            const tokenCount = await prisma.emailVerificationToken.count({
-                where: {
-                    userId: user.id,
-                    createdAt: {
-                        gte: new Date(Date.now() - 24 * 60 * 60 * 1000)
-                    }
-                }
-            });
-            if (tokenCount >= 10) {
+            if (token === null || token.deleted) {
                 return {
-                    dataType: true,
                     status: ResponseStatus.UserError,
-                    errorMessage: 'Too many email verification requests in the last 24 hours',
+                    errorMessage: 'Invalid token',
                 };
             }
-            // get any existing not deleted token
-            const existingToken = await prisma.emailVerificationToken.findFirst({
+
+            // find the user
+            const user = await prisma.user.findFirst({
                 where: {
-                    userId: user.id,
-                    deleted: false,
+                    id: token.userId,
                 }
             });
-            if (existingToken) {
-                // check if the token is more than 5 minutes old.
-                if (existingToken.createdAt.getTime() + 5 * 60 * 1000 > Date.now()) {
-                    return {
-                        dataType: true,
-                        status: ResponseStatus.UserError,
-                        errorMessage: 'Verification email already sent. Please wait a few minutes before trying again.',
-                    };
-                }
-                // mark the existing token as deleted = true
-                await prisma.emailVerificationToken.update({
-                    where: {
-                        id: existingToken.id,
-                    },
-                    data: {
-                        deleted: true,
-                    }
-                });
+
+            if (user === null) {
+                return {
+                    status: ResponseStatus.UserError,
+                    errorMessage: 'User not found',
+                };
             }
 
-            // generate a new token
-            const token = Math.random().toString(36).slice(-8);
-            // create the token
-            await prisma.emailVerificationToken.create({
+            // update the user
+            await prisma.user.update({
+                where: {
+                    id: user.id,
+                },
                 data: {
-                    token: token,
-                    userId: user.id,
+                    emailVerified: true,
                 }
             });
-            // send the email
-            await sendEmailVerification(user, token);
+
+            // set deleted = true on the token
+            await prisma.emailVerificationToken.update({
+                where: {
+                    id: token.id,
+                },
+                data: {
+                    deleted: true,
+                }
+            });
+
             return {
-                dataType: true,
                 status: ResponseStatus.Success,
                 errorMessage: null,
             };
         });
-        return res.json(resp);
+
+        return res.json({
+            dataType: true,
+            status: resp.status,
+            errorMessage: resp.errorMessage,
+        });
     } catch (ex) {
-        console.error('/sign-in/send-verification-email caught ex', ex);
+        console.error('/sign-in/verify-email caught ex', ex);
         next(ex);
         return;
     }
