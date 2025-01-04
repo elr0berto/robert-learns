@@ -57,14 +57,25 @@ model WorkspaceUser {
   @@id([workspaceId, userId])
 }
 
+model WorkspaceUserInvite {
+  id          Int       @id @default(autoincrement())
+  email       String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId Int
+  role        UserRole
+  createdAt   DateTime  @default(now())
+  userId      Int?
+}
+
 model Workspace {
-  id          Int             @id @default(autoincrement())
+  id          Int                   @id @default(autoincrement())
   name        String
   description String
   users       WorkspaceUser[]
+  invites     WorkspaceUserInvite[]
   cardSets    CardSet[]
   medias      Media[]
-  allowGuests Boolean         @default(false)
+  allowGuests Boolean               @default(false)
 }
 
 enum MediaType {

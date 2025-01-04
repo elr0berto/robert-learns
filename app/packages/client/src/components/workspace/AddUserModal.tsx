@@ -18,11 +18,11 @@ function AddUserModal(props: Props) {
     }
     return <Modal show={true} onHide={props.onClose}>
         <Modal.Header closeButton>
-            <Modal.Title>Add user to workspace</Modal.Title>
+            <Modal.Title>Add/Invite user to workspace</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <Form className="col-lg-5" onSubmit={e => {e.preventDefault(); actions.addUserModal.submit(props.onAdd)}}>
-                <Form.Group className="mb-3" controlId="workspaceName" >
+            <Form className="col-lg-7" onSubmit={e => {e.preventDefault(); actions.addUserModal.submit(props.onAdd)}}>
+                <Form.Group className="mb-5" controlId="workspaceName" >
                     <Form.Label>Email</Form.Label>
                     <Form.Control
                         type="text"
@@ -34,6 +34,7 @@ function AddUserModal(props: Props) {
                     {state.addUserModal.errorMessage !== null ? <Form.Control.Feedback type="invalid">
                         {state.addUserModal.errorMessage.length > 0 ? state.addUserModal.errorMessage : 'Unexpected error! Please try again later.'}
                     </Form.Control.Feedback> : null}
+                    <Form.Text className="text-muted">An invitation email will be sent to the user</Form.Text>
                 </Form.Group>
             </Form>
         </Modal.Body>
@@ -42,7 +43,7 @@ function AddUserModal(props: Props) {
                 Cancel
             </Button>
             <Button variant="primary" onClick={() => actions.addUserModal.submit(props.onAdd)} disabled={state.addUserModal.submitting}>
-                Add user
+                Add/Invite user
             </Button>
         </Modal.Footer>
     </Modal>

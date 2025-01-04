@@ -128,7 +128,7 @@ workspaces.post('/create-workspace', async (req: Request<unknown, unknown, Creat
                 }
             });
 
-            for (const permissionUser of req.body.workspaceUsers) {
+            /*for (const permissionUser of req.body.workspaceUsers) {
                 if (!Object.values(PrismaUserRole).includes(permissionUser.role)) {
                     throw new Error('invalid role: ' + permissionUser.role);
                 }
@@ -148,7 +148,7 @@ workspaces.post('/create-workspace', async (req: Request<unknown, unknown, Creat
                         role: permissionUser.role,
                     }
                 });
-            }
+            }*/
         } else {
             const existingWorkspace = await prisma.workspace.findUniqueOrThrow({
                 where: {id: workspaceId}
@@ -190,7 +190,7 @@ workspaces.post('/create-workspace', async (req: Request<unknown, unknown, Creat
                     const newWorkspaceUser = matches[0];
 
                     if (existingWorkspaceUser.role !== newWorkspaceUser.role) {
-                        if (!canUserChangeUserRoleRole(signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser.role)) {
+                        if (!canUserChangeUserRoleRole(signedInUser.emailVerified, signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser.role)) {
                             logWithRequest('error', req, 'Access denied, canUserChangeUserRoleRole', {signedInWorkspaceUser, existingWorkspaceUser, newWorkspaceUser});
                             return res.json({
                                 dataType: true,
@@ -213,7 +213,7 @@ workspaces.post('/create-workspace', async (req: Request<unknown, unknown, Creat
                     }
                 } else if (matches.length === 0) {
                     // delete existing
-                    if (!canUserDeleteWorkspaceUser(signedInWorkspaceUser, existingWorkspaceUser)) {
+                    if (!canUserDeleteWorkspaceUser(signedInUser.emailVerified, signedInWorkspaceUser, existingWorkspaceUser)) {
                         logWithRequest('error', req, 'Access denied, canUserDeleteWorkspaceUser', {signedInWorkspaceUser, existingWorkspaceUser});
                         return res.json({
                             dataType: true,
@@ -243,7 +243,7 @@ workspaces.post('/create-workspace', async (req: Request<unknown, unknown, Creat
 
                 if (matches.length === 0) {
                     // add new
-                    if (!Object.values(PrismaUserRole).includes(newWorkspaceUser.role)) {
+                    /*if (!Object.values(PrismaUserRole).includes(newWorkspaceUser.role)) {
                         throw new Error('invalid role: ' + newWorkspaceUser.role);
                     }
 
@@ -261,7 +261,8 @@ workspaces.post('/create-workspace', async (req: Request<unknown, unknown, Creat
                             userId: newWorkspaceUser.userId,
                             role: newWorkspaceUser.role,
                         }
-                    });
+                    });*/
+                    throw new Error('Adding new workspace users is done with a separate endpoint');
                 }
             }
         }

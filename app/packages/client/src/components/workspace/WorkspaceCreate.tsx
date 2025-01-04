@@ -86,7 +86,7 @@ function WorkspaceCreate() {
                         </tr>) : null}
                 </tbody>
             </Table>
-            <Button type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add user</Button>
+            <Button disabled={scope === 'create'} type="button" variant='outline-primary' size='sm' onClick={() => actions.workspaceCreate.addUserModalOpen()}>Add/Invite user{scope === 'create' ? ' (save first)' : ''}</Button>
             <hr/>
             {state.workspaceCreate.showErrors ? <Alert variant="danger">{state.workspaceCreate.allErrors.map((err: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined, i: React.Key | null | undefined) => <p key={i}>{err}</p>)}</Alert> : null}
             <Button disabled={state.workspaceCreate.submitDisabled} onClick={() => actions.workspaceCreate.formSubmit(scope)}>{scope === 'create' ? 'Create Workspace!' : 'Save workspace!'}</Button>

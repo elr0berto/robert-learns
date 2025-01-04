@@ -71,5 +71,7 @@ workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown
     }
 });
 
+// todo add a endpoint for inviting / adding a user to a workspace
+todo here.
 
 export default workspaceUsers;

@@ -183,7 +183,7 @@ export const deleteCardSetCardAndCardIfNeeded = async (card: PrismaCard, allCard
                 }
             });
         }
-    })
+    }, {timeout: 60 * 1000})
 }
 
 
@@ -380,7 +380,7 @@ export const doEmailVerification = async (user: PrismaUser) : Promise<DoEmailVer
             status: ResponseStatus.Success,
             errorMessage: null,
         };
-    });
+    }, {timeout: 60 * 1000});
 
     return resp;
 }

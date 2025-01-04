@@ -37,6 +37,10 @@ export const validateCreateWorkspaceRequest = (req: CreateWorkspaceRequest) : st
         errs.push('Please provide a description');
     }
 
+    if (typeof req.workspaceId !== 'number' && req.workspaceUsers.length > 0) {
+        errs.push('You cannot add users to a new workspace');
+    }
+
     return errs;
 }
 

@@ -49,10 +49,11 @@
   },
   "scripts": {
     "prebuild": "node -p \"'export const RL_SERVER_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
-    "build": "yarn prebuild && tsc",
-    "start": "yarn prebuild && tsx watch src/server.ts",
+    "build": "yarn prebuild && yarn type-check && tsc",
+    "start": "yarn prebuild && yarn type-check && tsx watch src/server.ts",
     "startold": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' src/server.ts",
     "lint": "nodemon --watch 'src/**/*.ts' --exec 'npx eslint --config .eslintrc.cjs src --ext .ts'",
+    "type-check": "tsc --noEmit",
     "start:prod": "node dist/server.js"
   }
 }

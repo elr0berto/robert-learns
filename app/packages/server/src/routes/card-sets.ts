@@ -47,7 +47,7 @@ cardSets.post('/get-card-sets', async (req : Request<unknown, unknown, GetCardSe
                 return res.json({
                     dataType: true,
                     status: ResponseStatus.UnexpectedError,
-                    errorMessage: 'You are not allowed to view this workspace.',
+                    errorMessage: 'You are not allowed to view this workspace (id: ' + workspaceId + ')',
                     cardSetDatas: null,
                 });
             }

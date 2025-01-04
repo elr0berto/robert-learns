@@ -343,7 +343,7 @@ signIn.post('/verify-email', async (req: Request<unknown, unknown, VerifyEmailRe
                 status: ResponseStatus.Success,
                 errorMessage: null,
             };
-        });
+        }, {timeout: 120 * 1000});
 
         return res.json({
             dataType: true,

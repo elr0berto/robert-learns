@@ -51,7 +51,7 @@ users.post('/user-get-by-email', async (req : Request<unknown,unknown,UserGetByE
             userData: user === null ? null : getUserData(user),
         });
     } catch (ex) {
-        console.error('/users/getByEmail caught ex', ex);
+        console.error('/users/user-get-by-email caught ex', ex);
         next(ex);
         return;
     }
@@ -114,10 +114,11 @@ users.post('/get-users', async (req : Request<unknown,unknown,GetUsersRequest>, 
             userDatas: users.map(u => getUserData(u)),
         });
     } catch (ex) {
-        console.error('/users/getUsers caught ex', ex);
+        console.error('/users/get-users caught ex', ex);
         next(ex);
         return;
     }
 });
+
 
 export default users;

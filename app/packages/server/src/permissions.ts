@@ -27,7 +27,7 @@ interface CheckPermissionsParams {
 
 export async function checkPermissions(params: CheckPermissionsParams): Promise<boolean> {
     if (params.capability === Capability.CreateWorkspace) {
-        return userCan(params.user === null, true, null, params.capability);
+        return userCan(params.user === null, true, null, params.capability, params.user?.emailVerified ?? false);
     }
 
     let user: PrismaUser | null = null;
@@ -101,5 +101,5 @@ export async function checkPermissions(params: CheckPermissionsParams): Promise<
         userRole = workspaceUser?.role ?? null;
     }
 
-    return userCan(user === null, workspace.allowGuests, userRole, params.capability);
+    return userCan(user === null, workspace.allowGuests, userRole, params.capability, user?.emailVerified ?? false);
 }
