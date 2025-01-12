@@ -3,6 +3,8 @@ import {getSignedInUser, getWorkspaceUserData, TypedResponse} from "../common.js
 import {ResponseStatus, UserRolesInOrder} from '@elr0berto/robert-learns-shared/api/models';
 
 import {
+    AddWorkspaceUserRequest,
+    AddWorkspaceUserResponseData,
     GetWorkspaceUsersRequest,
     GetWorkspaceUsersResponseData,
     validateGetWorkspaceUsersRequest
@@ -72,6 +74,65 @@ workspaceUsers.post('/get-workspace-users', async (req: Request<unknown, unknown
 });
 
 // todo add a endpoint for inviting / adding a user to a workspace
-todo here.
+workspaceUsers.post('/add-workspace-user', async (req: Request<unknown, unknown, AddWorkspaceUserRequest>, res : TypedResponse<AddWorkspaceUserResponseData>, next) => {
+    try {
+        const signedInUser = await getSignedInUser(req.session);
+        if (signedInUser === null) {
+            logWithRequest('error', req, 'Guest users are not allowed to add users to workspaces.');
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Guest users are not allowed to add users to workspaces.',
+                workspaceUserData: null,
+            });
+        }
+
+        const workspaceId = req.body.workspaceId;
+        const userId = req.body.userId;
+
+        const workspace = await prisma.workspace.findUnique({
+            where: {
+                id: workspaceId
+            },
+            include: {
+                users: true
+            }
+        });
+
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if (user === null) {
+            logWithRequest('error', req, 'Could not find user with id: ' + userId);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Could not find user with id: ' + userId,
+                workspaceUserData: null,
+            });
+        }
+
+        if (workspace === null) {
+            logWithRequest('error', req, 'Could not find workspace with id: ' + workspaceId);
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'Could not find workspace with id: ' + workspaceId,
+                workspaceUserData: null,
+            });
+        }
+
+        todo validate permssions, check if user is allowed to add users to this workspace. probably can copy something from the workspace-create endpoint!
+
+        also todo, make an endpoint for inviting users to workspaces (as opposed to adding users to workspaces.) (make a WorkspaceUserInvite api)
+    } catch (ex) {
+        console.error('/workspace-users/add-user caught ex', ex);
+        next(ex);
+        return;
+    }
+});
 
 export default workspaceUsers;

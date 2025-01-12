@@ -41,3 +41,24 @@ export const getWorkspaceUsers = async(req: GetWorkspaceUsersRequest) : Promise<
     }
     return await apiClient.post(GetWorkspaceUsersResponse, '/workspace-users/get-workspace-users', req);
 }
+
+export type AddWorkspaceUserRequest = {
+    workspaceId: number;
+    userId: number;
+}
+
+export type AddWorkspaceUserResponseData = BaseResponseData & {
+    workspaceUserData: WorkspaceUserData | null;
+}
+
+export class AddWorkspaceUserResponse extends BaseResponse {
+    workspaceUser: WorkspaceUser | null;
+    constructor(data: AddWorkspaceUserResponseData) {
+        super(data);
+        this.workspaceUser = data.workspaceUserData ? new WorkspaceUser(data.workspaceUserData) : null;
+    }
+}
+
+export const addWorkspaceUser = async(req: AddWorkspaceUserRequest) : Promise<AddWorkspaceUserResponse> => {
+    return await apiClient.post(AddWorkspaceUserResponse, '/workspace-users/add-workspace-user', req);
+}

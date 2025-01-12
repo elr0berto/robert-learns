@@ -5,6 +5,11 @@ invite system
 - make it so that when creating a new workspace, you cant add users before the workspace is created. (this simplifies the invite system etc)
 - make it so that when editing a workspace you can add users, adding users will save the user first with minimum role, and then you can edit the roles after.
 - adding users is only in a separate endpoint. editing workspace only changes roles of users.
+- separate inviting a user to a workspace and adding a user to a workspace.
+- first check if the email exists as a user in the system, if it does, then add the user to the workspace.
+- if the user does not exist then prompt to ask if the user wants to invite the user to robert learns and the workspace.
+- 3 endpoints: 1. get user by email. 2. add user to workspace. 3. invite user to workspace.
+
 
 - invite users to workspace
 - when user accepts invitation, make sure the invited email is the email of the user that is accepting the invitation.
