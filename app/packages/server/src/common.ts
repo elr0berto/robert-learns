@@ -13,6 +13,7 @@ import {
     User as PrismaUser,
     Workspace as PrismaWorkspace,
     WorkspaceUser as PrismaWorkspaceUser,
+    WorkspaceUserInvite as PrismaWorkspaceUserInvite,
     Logs as PrismaLogs,
     Drill as PrismaDrill,
     DrillRun as PrismaDrillRun,
@@ -25,7 +26,7 @@ import {
     LogEntryData,
     MediaData,
     UserData,
-    WorkspaceData, WorkspaceUserData,
+    WorkspaceData, WorkspaceUserData, WorkspaceUserInviteData,
     DrillData, DrillCardSetData, DrillRunData, DrillRunQuestionData, CardSetLinkData, ResponseStatus
 } from "@elr0berto/robert-learns-shared/api/models";
 import {exec} from "child_process";
@@ -203,6 +204,15 @@ export const getWorkspaceUserData = (workspaceUser: PrismaWorkspaceUser) : Works
         userId: workspaceUser.userId,
         workspaceId: workspaceUser.workspaceId,
         role: workspaceUser.role,
+    };
+}
+
+export const getWorkspaceUserInviteData = (workspaceUserInvite: PrismaWorkspaceUserInvite) : WorkspaceUserInviteData => {
+    return {
+        dataType: true,
+        workspaceId: workspaceUserInvite.workspaceId,
+        email: workspaceUserInvite.email,
+        role: workspaceUserInvite.role,
     };
 }
 

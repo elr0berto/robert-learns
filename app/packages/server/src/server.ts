@@ -4,6 +4,7 @@ import signOut from "./routes/sign-out.js";
 import signUp from './routes/sign-up.js';
 import workspaces from './routes/workspaces.js';
 import workspaceUsers from './routes/workspace-users.js';
+import workspaceUserInvites from './routes/workspace-user-invites.js';
 import cardSets from './routes/card-sets.js';
 import cardSetLinks from "./routes/card-set-links.js";
 import cardSetCards from './routes/card-set-cards.js';
@@ -101,6 +102,7 @@ class Server {
         this.express.use('/api/sign-up', signUp);
         this.express.use('/api/workspaces', workspaces);
         this.express.use('/api/workspace-users', workspaceUsers);
+        this.express.use('/api/workspace-user-invites', workspaceUserInvites);
         this.express.use('/api/card-sets', cardSets);
         this.express.use('/api/card-set-links', cardSetLinks);
         this.express.use('/api/card-set-cards', cardSetCards);

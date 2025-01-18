@@ -59,6 +59,39 @@ export class AddWorkspaceUserResponse extends BaseResponse {
     }
 }
 
+export const validateAddWorkspaceUserRequest = (req: AddWorkspaceUserRequest) : string[] => {
+    const errs : string[] = [];
+
+    if (!req.workspaceId) {
+        errs.push('No workspace id provided.');
+    }
+
+    if (!req.userId) {
+        errs.push('No user id provided.');
+    }
+
+    if (typeof req.workspaceId !== 'number') {
+        errs.push('Workspace id must be a number.');
+    }
+
+    if (typeof req.userId !== 'number') {
+        errs.push('User id must be a number.');
+    }
+
+    if (req.workspaceId < 1) {
+        errs.push('Workspace id must be greater than 0.');
+    }
+
+    if (req.userId < 1) {
+        errs.push('User id must be greater than 0.');
+    }
+
+    return errs;
+}
 export const addWorkspaceUser = async(req: AddWorkspaceUserRequest) : Promise<AddWorkspaceUserResponse> => {
+    const errors = validateAddWorkspaceUserRequest(req);
+    if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+    }
     return await apiClient.post(AddWorkspaceUserResponse, '/workspace-users/add-workspace-user', req);
 }

@@ -1,5 +1,6 @@
 check whats going on with visitors.. bots?
 
+-- up next: client logic for adding/inviting users to workspace.
 
 invite system
 - make it so that when creating a new workspace, you cant add users before the workspace is created. (this simplifies the invite system etc)
@@ -9,6 +10,7 @@ invite system
 - first check if the email exists as a user in the system, if it does, then add the user to the workspace.
 - if the user does not exist then prompt to ask if the user wants to invite the user to robert learns and the workspace.
 - 3 endpoints: 1. get user by email. 2. add user to workspace. 3. invite user to workspace.
+
 
 
 - invite users to workspace

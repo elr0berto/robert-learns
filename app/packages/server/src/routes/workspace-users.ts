@@ -6,13 +6,14 @@ import {
     AddWorkspaceUserRequest,
     AddWorkspaceUserResponseData,
     GetWorkspaceUsersRequest,
-    GetWorkspaceUsersResponseData,
+    GetWorkspaceUsersResponseData, validateAddWorkspaceUserRequest,
     validateGetWorkspaceUsersRequest
 } from "@elr0berto/robert-learns-shared/api/workspace-users";
 import {checkPermissions} from "../permissions.js";
 import {Capability} from "@elr0berto/robert-learns-shared/permissions";
 import prisma from "../db/prisma.js";
 import {logWithRequest} from "../logger.js";
+import {UserRole} from "@prisma/client";
 
 const workspaceUsers = Router();
 
@@ -87,6 +88,18 @@ workspaceUsers.post('/add-workspace-user', async (req: Request<unknown, unknown,
             });
         }
 
+        const errors = validateAddWorkspaceUserRequest(req.body);
+
+        if (errors.length !== 0) {
+            logWithRequest('error', req, 'AddWorkspaceUserRequest validation failed', {errors});
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: errors.join(', '),
+                workspaceUserData: null,
+            });
+        }
+
         const workspaceId = req.body.workspaceId;
         const userId = req.body.userId;
 
@@ -125,11 +138,54 @@ workspaceUsers.post('/add-workspace-user', async (req: Request<unknown, unknown,
             });
         }
 
-        todo validate permssions, check if user is allowed to add users to this workspace. probably can copy something from the workspace-create endpoint!
+        if (!await checkPermissions({
+            user: signedInUser,
+            workspaceId: req.body.workspaceId,
+            capability: Capability.AddUserToWorkspace,
+        })) {
+            logWithRequest('error', req, 'You are not allowed to add users to this workspace.');
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'You are not allowed to add users to this workspace.',
+                workspaceUserData: null,
+            });
+        }
 
-        also todo, make an endpoint for inviting users to workspaces (as opposed to adding users to workspaces.) (make a WorkspaceUserInvite api)
+        // get existing workspace user
+        const existingWorkspaceUser = await prisma.workspaceUser.findFirst({
+            where: {
+                workspaceId: workspaceId,
+                userId: userId
+            }
+        });
+
+        if (existingWorkspaceUser) {
+            logWithRequest('error', req, 'User is already in workspace');
+            return res.json({
+                dataType: true,
+                status: ResponseStatus.UnexpectedError,
+                errorMessage: 'User is already in workspace',
+                workspaceUserData: null,
+            });
+        }
+
+        const newWorkspaceUser = await prisma.workspaceUser.create({
+            data: {
+                workspaceId: workspaceId,
+                userId: userId,
+                role: UserRole.USER
+            }
+        });
+
+        return res.json({
+            dataType: true,
+            status: ResponseStatus.Success,
+            errorMessage: null,
+            workspaceUserData: getWorkspaceUserData(newWorkspaceUser),
+        });
     } catch (ex) {
-        console.error('/workspace-users/add-user caught ex', ex);
+        console.error('/workspace-users/add-workspace-user caught ex', ex);
         next(ex);
         return;
     }

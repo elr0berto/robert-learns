@@ -58,13 +58,14 @@ model WorkspaceUser {
 }
 
 model WorkspaceUserInvite {
-  id          Int       @id @default(autoincrement())
   email       String
   workspace   Workspace @relation(fields: [workspaceId], references: [id])
   workspaceId Int
   role        UserRole
   createdAt   DateTime  @default(now())
   userId      Int?
+
+  @@id([workspaceId, email])
 }
 
 model Workspace {

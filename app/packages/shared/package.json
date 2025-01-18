@@ -60,6 +60,14 @@
       "import": "./dist/api/workspace-users.js",
       "types": "./dist/api/workspace-users.d.ts"
     },
+    "./api/workspace-user-invites": {
+      "import": "./dist/api/workspace-user-invites.js",
+      "types": "./dist/api/workspace-user-invites.d.ts"
+    },
+    "./dist/api/workspace-user-invites": {
+      "import": "./dist/api/workspace-user-invites.js",
+      "types": "./dist/api/workspace-user-invites.d.ts"
+    },
     "./api/sign-up": {
       "import": "./dist/api/sign-up.js",
       "types": "./dist/api/sign-up.d.ts"
