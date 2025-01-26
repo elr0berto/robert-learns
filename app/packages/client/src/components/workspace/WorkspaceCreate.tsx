@@ -93,7 +93,6 @@ function WorkspaceCreate() {
             {scope === 'edit' && state.workspaceCreate.canDelete ? <Button variant="outline-danger" className="ms-2" onClick={() => actions.workspaceCreate.deleteWorkspace()}>{'Delete workspace'}</Button> : null}
         </Form>
         <AddUserModal
-            onAdd={user => actions.workspaceCreate.addUser(user)}
             open={state.workspaceCreate.addUserOpen}
             onClose={() => actions.workspaceCreate.addUserModalClose()}
         />

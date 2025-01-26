@@ -1,6 +1,6 @@
 import { validateCreateWorkspaceRequest } from '@elr0berto/robert-learns-shared/dist/api/workspaces';
 import {derived} from 'overmind'
-import {WorkspaceWithWorkspaceUsers} from "../data/data-state";
+import {WorkspaceWithWorkspaceUsersAndInvites} from "../data/data-state";
 import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models/UserRole";
 import {config} from "..";
 import {
@@ -11,7 +11,9 @@ import {
 import {Pages} from "../../page-urls";
 
 type SelectedUser = {
-    userId: number;
+    type: 'invite' | 'user';
+    email : string | null;
+    userId: number | null;
     role: UserRole;
     name: string;
     isMe: boolean;
@@ -25,7 +27,7 @@ type WorkspaceCreateState = {
     description: string;
     allowGuests: boolean;
     initialUsers: { userId: number, role: UserRole }[];
-    selectedUsers: { userId: number, role: UserRole }[];
+    selectedUsers: { type: 'invite' | 'user', email: string | null, userId: number | null, role: UserRole }[];
     submitting: boolean;
     submitAttempted: boolean;
     submissionError: string;
@@ -44,12 +46,12 @@ type WorkspaceCreateState = {
 }
 
 
-export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspaceUsers | null): WorkspaceCreateState => ({
+export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspaceUsersAndInvites | null): WorkspaceCreateState => ({
     name: workspace?.workspace.name ?? '',
     description: workspace?.workspace.description ?? '',
     allowGuests: workspace?.workspace.allowGuests ?? false,
     initialUsers: workspace?.workspaceUsers.map(u => ({userId: u.userId, role: u.role })) ?? [],
-    selectedUsers: workspace?.workspaceUsers.map(u => ({userId: u.userId, role: u.role })) ?? [],
+    selectedUsers: workspace?.workspaceUsers.map(u => ({type: 'user', email: null, userId: u.userId, role: u.role })) ?? [],
     submitting: false,
     submitAttempted: false,
     submissionError: '',
@@ -68,6 +70,8 @@ export const getInitialWorkspaceCreateState = (workspace: WorkspaceWithWorkspace
                 }
 
                 return {
+                    type: u.type,
+                    email: u.email,
                     userId: u.userId,
                     role: u.role,
                     name: user.name(),

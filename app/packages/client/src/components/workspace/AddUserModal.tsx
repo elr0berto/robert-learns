@@ -5,7 +5,6 @@ import {UserRole} from "@elr0berto/robert-learns-shared/dist/api/models/UserRole
 
 type Props = {
     open: boolean;
-    onAdd: (user: { userId: number, role: UserRole }) => void;
     onClose: () => void;
 }
 
@@ -21,7 +20,7 @@ function AddUserModal(props: Props) {
             <Modal.Title>Add/Invite user to workspace</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <Form className="col-lg-7" onSubmit={e => {e.preventDefault(); actions.addUserModal.submit(props.onAdd)}}>
+            <Form className="col-lg-7" onSubmit={e => {e.preventDefault(); actions.addUserModal.submit()}}>
                 <Form.Group className="mb-5" controlId="workspaceName" >
                     <Form.Label>Email</Form.Label>
                     <Form.Control
@@ -42,7 +41,7 @@ function AddUserModal(props: Props) {
             <Button variant="secondary" onClick={props.onClose} disabled={state.addUserModal.submitting}>
                 Cancel
             </Button>
-            <Button variant="primary" onClick={() => actions.addUserModal.submit(props.onAdd)} disabled={state.addUserModal.submitting}>
+            <Button variant="primary" onClick={() => actions.addUserModal.submit()} disabled={state.addUserModal.submitting}>
                 Add/Invite user
             </Button>
         </Modal.Footer>

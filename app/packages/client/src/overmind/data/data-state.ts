@@ -8,7 +8,7 @@ import {
     CardSet,
     Drill,
     DrillCardSet,
-    DrillRun, DrillRunQuestion, CardSetLink,
+    DrillRun, DrillRunQuestion, CardSetLink, WorkspaceUserInvite,
 } from "@elr0berto/robert-learns-shared/dist/api/models";
 
 export type WorkspaceWithCardCount = {
@@ -46,9 +46,10 @@ export type CardSetWithCardsWithCardSetsWithFlatAncestorCardSets = {
     cardsWithCardSetsWithFlatAncestorCardSets: CardWithCardSetsWithFlatAncestorCardSets[];
 }
 
-export type WorkspaceWithWorkspaceUsers = {
+export type WorkspaceWithWorkspaceUsersAndInvites = {
     workspace: Workspace;
     workspaceUsers: WorkspaceUser[];
+    workspaceUserInvites: WorkspaceUserInvite[];
 }
 
 export type WorkspaceWithCardSetsCount = {
@@ -93,6 +94,8 @@ type DataState = {
     loadingWorkspaces: boolean;
     workspaceUsers: WorkspaceUser[];
     loadingWorkspaceUsers: boolean;
+    workspaceUserInvites: WorkspaceUserInvite[];
+    loadingWorkspaceUserInvites: boolean;
     users: User[];
     loadingUsers: boolean;
     cards: Card[];
@@ -111,7 +114,7 @@ type DataState = {
     loadingDrillRuns: boolean;
     drillRunQuestions: DrillRunQuestion[];
     loadingDrillRunQuestions: boolean;
-    readonly workspacesWithWorkspaceUsers: WorkspaceWithWorkspaceUsers[];
+    readonly workspacesWithWorkspaceUsersAndInvites: WorkspaceWithWorkspaceUsersAndInvites[];
     readonly workspacesWithCardSetsCounts: WorkspaceWithCardSetsCount[];
     readonly workspacesWithCardSets: WorkspaceWithCardSets[];
     readonly cardSetsWithCards: CardSetWithCards[];
@@ -133,6 +136,8 @@ export const getInitialDataState = () : DataState => ({
     loadingWorkspaces: false,
     workspaceUsers: [],
     loadingWorkspaceUsers: false,
+    workspaceUserInvites: [],
+    loadingWorkspaceUserInvites: false,
     users: [],
     loadingUsers: false,
     cards: [],
@@ -151,10 +156,11 @@ export const getInitialDataState = () : DataState => ({
     loadingDrillRuns: false,
     drillRunQuestions: [],
     loadingDrillRunQuestions: false,
-    workspacesWithWorkspaceUsers: derived((state: DataState) => {
+    workspacesWithWorkspaceUsersAndInvites: derived((state: DataState) => {
         return state.workspaces.map(w => ({
             workspace: w,
             workspaceUsers: state.workspaceUsers.filter(wu => wu.workspaceId === w.id),
+            workspaceUserInvites: state.workspaceUserInvites.filter(wui => wui.workspaceId === w.id),
         }));
     }),
     workspacesWithCardSetsCounts: derived((state: DataState) => {

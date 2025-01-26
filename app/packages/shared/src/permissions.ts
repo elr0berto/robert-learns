@@ -75,12 +75,12 @@ export const getAllRoles = () => {
     return Object.values(UserRole);
 }
 
-export const getRolesUserCanChangeUser = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) : UserRole[] => {
+export const getRolesUserCanChangeUser = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {type: 'invite' | 'user', userId: number | null, role: UserRole}) : UserRole[] => {
     if (user1 === null || !user1HasEmailVerified) {
         return [user2.role];
     }
 
-    if (user1.userId === user2.userId) {
+    if (user2.type === 'user' && user1.userId === user2.userId) {
         return [user2.role];
     }
 
@@ -94,21 +94,21 @@ export const getRolesUserCanChangeUser = (user1HasEmailVerified: boolean, user1:
     }
 }
 
-export const canUserChangeUserRole = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) => {
+export const canUserChangeUserRole = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {type: 'invite' | 'user', userId: number | null, role: UserRole}) => {
     return getRolesUserCanChangeUser(user1HasEmailVerified, user1, user2).length > 1;
 }
 
-export const canUserChangeUserRoleRole = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}, wantedRole: UserRole) => {
+export const canUserChangeUserRoleRole = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {type: 'invite' | 'user', userId: number | null, role: UserRole}, wantedRole: UserRole) => {
     const possibleRoles = getRolesUserCanChangeUser(user1HasEmailVerified, user1, user2);
     return possibleRoles.filter(r => r === wantedRole).length > 0;
 }
 
-export const canUserDeleteWorkspaceUser = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {userId: number, role: UserRole}) => {
+export const canUserDeleteWorkspaceUser = (user1HasEmailVerified: boolean, user1: {userId: number, role: UserRole} | null, user2: {type: 'invite' | 'user', userId: number | null, role: UserRole}) => {
     if (user1 === null || !user1HasEmailVerified) {
         return false;
     }
 
-    if (user1.userId === user2.userId) {
+    if (user2.type === 'user' && user1.userId === user2.userId) {
         return false;
     }
 

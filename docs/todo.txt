@@ -1,6 +1,6 @@
 check whats going on with visitors.. bots?
 
--- up next: client logic for adding/inviting users to workspace.
+-- up next: continue client logic for adding/inviting users to workspace.
 
 invite system
 - make it so that when creating a new workspace, you cant add users before the workspace is created. (this simplifies the invite system etc)

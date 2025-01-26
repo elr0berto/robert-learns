@@ -1,6 +1,6 @@
 import {apiClient} from "./ApiClient.js";
 import {BaseResponse, BaseResponseData, WorkspaceUserInvite, WorkspaceUserInviteData} from "./models/index.js";
-import {validateEmail} from "validation/index.js";
+import {validateEmail} from "../validation/index.js";
 
 
 export type AddWorkspaceUserInviteRequest = {

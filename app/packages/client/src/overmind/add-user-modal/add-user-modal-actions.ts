@@ -7,11 +7,14 @@ export const changeEmail = ({ state }: Context, email: string) => {
     state.addUserModal.errorMessage = null;
 };
 
-export const submit = async ({ state, effects, actions }: Context, onAdd: (user: { userId: number, role: UserRole }) => void) => {
+export const submit = async ({ state, effects, actions }: Context) => {
     state.addUserModal.errorMessage = null;
     state.addUserModal.submitting = true;
     if (state.signIn.user === null) {
         throw new Error('User is not signed in!');
+    }
+    if (state.page.workspaceId === null) {
+        throw new Error('No workspace id provided!');
     }
     if (state.addUserModal.email === state.signIn.user.email) {
         state.addUserModal.submitting = false;
@@ -31,9 +34,19 @@ export const submit = async ({ state, effects, actions }: Context, onAdd: (user:
         state.addUserModal.errorMessage = response.errorMessage;
         return;
     }
+
     if (response.user === null) {
-        state.addUserModal.errorMessage = 'Could not find user with this email! Maybe they did not register with this email yet.';
-        return;
+        const resp = await effects.api.workspaceUserInvites.addWorkspaceUserInvite({
+            workspaceId: state.page.workspaceId,
+            email: state.addUserModal.email,
+        });
+    } else {
+        const resp = await effects.api.workspaceUsers.addWorkspaceUser({
+            workspaceId: state.page.workspaceId,
+            userId: response.user.id,
+        });
+        actions.data.addOrUpdateUser(response.user);
+        actions.workspaceCreate.addUser(user);
     }
 
     actions.data.addOrUpdateUser(response.user);

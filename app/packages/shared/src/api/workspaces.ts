@@ -16,7 +16,9 @@ export class CreateWorkspaceResponse extends BaseResponse {
 }
 
 interface CreateWorkspaceUser {
-    userId: number;
+    type: 'invite' | 'user';
+    email: string | null;
+    userId: number | null;
     role: UserRole;
 }
 
